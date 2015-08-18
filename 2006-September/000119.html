@@ -1,0 +1,473 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r231 - / branches/schema_based/lib	branches/schema_based/lib/Parley/Controller	branches/schema_based/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r231%20-%20/%20branches/schema_based/lib%0A%09branches/schema_based/lib/Parley/Controller%0A%09branches/schema_based/root/base/thread&In-Reply-To=%3C200609121459.k8CExF1t028203%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000120.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r231 - / branches/schema_based/lib	branches/schema_based/lib/Parley/Controller	branches/schema_based/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r231%20-%20/%20branches/schema_based/lib%0A%09branches/schema_based/lib/Parley/Controller%0A%09branches/schema_based/root/base/thread&In-Reply-To=%3C200609121459.k8CExF1t028203%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r231 - / branches/schema_based/lib	branches/schema_based/lib/Parley/Controller	branches/schema_based/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Sep 12 16:59:15 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000120.html">[Parley-svn] r232 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#119">[ date ]</a>
+              <a href="thread.html#119">[ thread ]</a>
+              <a href="subject.html#119">[ subject ]</a>
+              <a href="author.html#119">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-12 16:59:15 +0200 (Tue, 12 Sep 2006)
+New Revision: 231
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+   branches/schema_based/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r865 at ferrari</A>:  chisel | 2006-08-24 17:55:05 +0100
+ + added skel for thread/reply
+ / fleshed out thread/view
+ / factored out some thread/view functionality into private methods
+ + add pager setup to thread/view
+ + added funtions related to watching threads
+ + padded out POD
+ + added app-level functions; is_logged_in() and login_if_required()
+ - removed old thread/view layout code [previously disabled with &quot;if 0&quot; in TT]
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:865
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:45:02 UTC (rev 230)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-09-12 14:59:15 UTC (rev 231)
+@@ -3,15 +3,29 @@
+ use strict;
+ use warnings;
+ use base 'Catalyst::Controller';
++use Data::SpreadPagination;
+ 
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub reply : Local {
++    my ($self, $c) = @_;
++
++    # make sure we're logged in
++    $c-&gt;login_if_required(q{You must be logged in before you can add a reply.});
++
++    # make sure we're authenticated
++
++    $c-&gt;stash-&gt;{error}{message} = q{This action isn't completed yet.};
++}
++
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
+-    # TODO - configure this somewhere, maybe a user preference
+-    my $rows_per_page = $c-&gt;config-&gt;{posts_per_page};
+ 
+     # page to show - either a param, or show the first
+-    my $page = $c-&gt;request-&gt;param('page') || 1;
++    $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
+ 
+     # if we have a current_post, view the page with the post on it
+     if ($c-&gt;_current_post) {
+@@ -27,8 +41,8 @@
+         },
+         {
+             order_by    =&gt; 'created ASC',
+-            rows        =&gt; $rows_per_page,
+-            page        =&gt; $page,
++            rows        =&gt; $c-&gt;config-&gt;{posts_per_page},
++            page        =&gt; $c-&gt;stash-&gt;{current_page},
+         }
+     );
+ 
+@@ -51,33 +65,60 @@
+     {
+         # get the number of people watching the thread
+         $self-&gt;_thread_watch_count($c);
++
++        # setup the pager
++        $self-&gt;_thread_view_pager($c);
+     }
+ 
+     1; # return 'true'
+ }
+ 
+-sub _thread_watch_count {
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller (Private/Helper) Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _thread_view_pager {
+     my ($self, $c) = @_;
+ 
+-    # how many people are watching the current thread?
+-    $c-&gt;stash-&gt;{watcher_count} = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;count(
++    $c-&gt;stash-&gt;{page} = $c-&gt;stash-&gt;{post_list}-&gt;pager();
++
++    # TODO - find a better way to do this if possible
++    # set up Data::SpreadPagination
++    my $pagination = Data::SpreadPagination-&gt;new(
+         {
+-            thread  =&gt; $c-&gt;_current_thread()-&gt;id(),
+-            watched =&gt; 1,
++            totalEntries        =&gt; $c-&gt;stash-&gt;{page}-&gt;total_entries(),
++            entriesPerPage      =&gt; $c-&gt;config-&gt;{posts_per_page},
++            currentPage         =&gt; $c-&gt;stash-&gt;{current_page},
++            maxPages            =&gt; 4,
+         }
+     );
++    $c-&gt;stash-&gt;{page_range_spread} = $pagination-&gt;pages_in_spread();
+ }
+ 
++sub _thread_watch_count {
++    my ($self, $c) = @_;
+ 
++    # how many people are watching the current thread?
++    $c-&gt;stash-&gt;{watcher_count} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;count(
++            {
++                thread  =&gt; $c-&gt;_current_thread()-&gt;id(),
++                watched =&gt; 1,
++            }
++        )
++    ;
++}
+ 
+ sub _watching_thread {
+     my ($self, $c) = @_;
+     
+     # find out if the user is watching the thread, and store it in the stash
+-    $c-&gt;stash-&gt;{watching_thread} = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;watching_thread(
+-        $c-&gt;_current_thread(),
+-        $c-&gt;_authed_user(),
+-    );
++    $c-&gt;stash-&gt;{watching_thread} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;watching_thread(
++            $c-&gt;_current_thread(),
++            $c-&gt;_authed_user(),
++        )
++    ;
+ }
+ 
+ sub _update_thread_view {
+@@ -94,13 +135,15 @@
+     $c-&gt;log-&gt;debug( $last_post_timestamp );
+ 
+     # make a note of when the user last viewed this thread, if a record doesn't already exist
+-    my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find_or_create(
+-        {
+-            person      =&gt; $c-&gt;_authed_user()-&gt;id(),
+-            thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
+-            timestamp   =&gt; $last_post_timestamp,
+-        },
+-    );
++    my $thread_view =
++        $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find_or_create(
++            {
++                person      =&gt; $c-&gt;_authed_user()-&gt;id(),
++                thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++                timestamp   =&gt; $last_post_timestamp,
++            },
++        )
++    ;
+ 
+     # set the timestamp the time of the last post on the page (unless the
+     # existing time is later)
+@@ -129,6 +172,8 @@
+ 
+ =head1 ACTIONS
+ 
++=head2 reply
++
+ =head2 view
+ 
+ This action prepares data in the stash for viewing the current thread.
+@@ -137,9 +182,15 @@
+ 
+ =head2 _thread_watch_count
+ 
+-Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watcher_count}&gt; with the number of people who have a watch
+-set for the current thread.
++Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watcher_count}&gt; with the number of people who have a
++watch set for the current thread.
+ 
++=head2 _thread_view_pager
++
++Set-up C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{page}&gt; and
++C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{page_range_spread}&gt; for the current thread.
++These are used by the pager in the templates (Page X of Y, etc).
++
+ =head2 _watching_thread
+ 
+ Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watching_thread}&gt; with a true|false value indicating
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-08-16 13:45:02 UTC (rev 230)
++++ branches/schema_based/lib/Parley.pm	2006-09-12 14:59:15 UTC (rev 231)
+@@ -66,6 +66,34 @@
+     }
+ }
+ 
++################################################################################
++
++sub is_logged_in {
++    my ($c) = @_;
++
++    if ($c-&gt;user) {
++        return 1;
++    }
++
++    return 0;
++}
++
++sub login_if_required {
++    my ($c, $message) = @_;
++
++    if( not $c-&gt;is_logged_in($c) ) {
++        # make sure we return here after a successful login
++        $c-&gt;session-&gt;{after_login} = $c-&gt;request-&gt;uri();
++        # set an informative message to display on the login screen
++        if (defined $message) {
++            $c-&gt;session-&gt;{login_message} = $message;
++        }
++        # send the user to the login screen
++        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/user/login') );
++        return;
++    }
++}
++
+ 1;
+ 
+ __END__
+@@ -84,6 +112,21 @@
+ 
+ Catalyst driven forum application
+ 
++=head1 METHODS
++
++=head2 is_logged_in
++
++Returns 1 or 0 depending on whether there is a logged-in user or not.
++
++=head2 login_if_required($message)
++
++If a user isn't logged in, send them to the login page, optionally setting the
++message for the login box.
++
++Once logged in the user should (by virtue of stored session data, and login
++magic) be redirected to wherever they were trying to view before the required
++login.
++
+ =head1 EVIL, LAZY STASH ACCESS
+ 
+ I know someone will look at this at some point and tell me this is evil, but
+
+Modified: branches/schema_based/root/base/thread/view
+===================================================================
+--- branches/schema_based/root/base/thread/view	2006-08-16 13:45:02 UTC (rev 230)
++++ branches/schema_based/root/base/thread/view	2006-09-12 14:59:15 UTC (rev 231)
+@@ -1,135 +1,3 @@
+-[% IF 0 %]
+-&lt;table&gt;
+-    &lt;tr&gt;
+-        &lt;td&gt;
+-            &lt;b&gt;Topic: [% HTML.escape(current_thread.subject) %]&lt;/b&gt;
+-        &lt;/td&gt;
+-
+-        &lt;td class=&quot;right_align&quot;&gt;
+-            &lt;small&gt;
+-            [% INCLUDE shared/pager_advanced %]
+-            &lt;/small&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-&lt;/table&gt;
+-
+-[%- IF authed_user %]
+-&lt;table&gt;
+-    &lt;tr&gt;
+-        &lt;td class=&quot;right_align&quot;&gt;
+-            &lt;small&gt;
+-                &lt;strong&gt;[% watcher_count %] [% IF watcher_count == 1 %]person[% ELSE %]people[% END %] watching this thread.&lt;/strong&gt;
+-
+-                [%- IF watching_thread %]
+-                    You are watching this thread.
+-                    (
+-                    &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0&quot;&gt;Remove Watch&lt;/a&gt;
+-                    )
+-                [%- ELSE %]
+-                    &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&quot;&gt;Watch this thread&lt;/a&gt;
+-                [%- END%]
+-            &lt;/small&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-&lt;/table&gt;
+-[%- END %]
+-
+-[% SET dummy_value = post_list.reset %]
+-[% IF post_list.count &gt; 0 %]
+-    [% IF current_thread.locked %]
+-    [% rowspan = 2 %]
+-    [% ELSE %]
+-    [% rowspan = 3 %]
+-    [% END %]
+-    &lt;table&gt;
+-    [% WHILE (post = post_list.next) %]
+-        &lt;tr&gt;
+-            &lt;td rowspan=&quot;[% rowspan %]&quot;&gt;
+-            &lt;a name=&quot;[% post.id %]&quot; /&gt;
+-            &lt;span class=&quot;post_creator&quot;&gt;
+-            [% post.creator.forum_name %]
+-            &lt;/span&gt;
+-            &lt;br /&gt;
+-            [% post.creator.post_count %]
+-            post[% IF (post.creator.post_count != 1) %]s[% END %]
+-            &lt;/td&gt;
+-            &lt;td class=&quot;post_created&quot;&gt;
+-            Posted at &lt;i&gt;[% nicedate(post.created) %]&lt;/i&gt;
+-            (#[% post.id %])
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-        &lt;tr&gt;
+-            &lt;td&gt;
+-                [% IF post.quoted_post %]
+-                    &lt;span class=&quot;post_message&quot;&gt;
+-                        &lt;span class=&quot;in_response_to&quot;&gt;
+-                        [% nicedate(post.quoted_post.created) %],
+-                        [% post.quoted_post.creator.forum_name %] said:
+-                        &lt;/span&gt;
+-                        &lt;br /&gt;
+-                        &lt;span class=&quot;quoted_message&quot;&gt;
+-                        [% ForumCode.forumcode(post.quoted_text) %]
+-                        &lt;/span&gt;
+-                    [% ForumCode.forumcode(post.message) %]&lt;br /&gt;
+-                    &lt;/span&gt;
+-                [% ELSE %]
+-                    &lt;span class=&quot;post_message&quot;&gt;
+-                    [% ForumCode.forumcode(post.message) %]&lt;br /&gt;
+-                    &lt;/span&gt;
+-                [% END %]
+-                [% IF post.edited %]
+-                &lt;span class=&quot;post_edited_alert&quot;&gt;Edited: [% nicedate(post.edited) %]&lt;/span&gt;
+-                [% END %]
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-        [% UNLESS current_thread.locked %]
+-        &lt;tr&gt;
+-        &lt;td style=&quot;text-align: right;&quot;&gt;
+-            [% IF authed_user.id == post.creator.id %]
+-            &lt;form action=&quot;post/edit?post=[% post.id %]&quot; method=&quot;POST&quot; name=&quot;post_actions&quot; class=&quot;inline_form&quot;&gt;
+-                &lt;input type=&quot;submit&quot; value=&quot;Edit&quot; name=&quot;edit_post&quot; class=&quot;small_input_button&quot; /&gt;
+-            &lt;/form&gt;
+-            [% END %]
+-            &lt;form action=&quot;thread/reply?post=[% post.id %]&quot; method=&quot;POST&quot; name=&quot;post_actions&quot; class=&quot;inline_form&quot;&gt;
+-                &lt;input type=&quot;submit&quot; value=&quot;Quote&quot; name=&quot;quote_post&quot; class=&quot;small_input_button&quot; /&gt;
+-                &lt;input type=&quot;submit&quot; value=&quot;Reply&quot; name=&quot;reply_to_post&quot; class=&quot;small_input_button&quot; /&gt;
+-            &lt;/form&gt;
+-        &lt;/td&gt;
+-        &lt;/tr&gt;
+-        [% END %]
+-    [% END %]
+-    [% UNLESS current_thread.locked %]
+-    &lt;form action=&quot;thread/reply?thread=[% current_thread.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
+-        &lt;tr&gt;
+-        &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-            &lt;input type=&quot;submit&quot; value=&quot;New Reply&quot; name=&quot;reply_to_thread&quot;    class=&quot;input_button&quot; /&gt;
+-        &lt;/td&gt;
+-        &lt;/tr&gt;
+-    &lt;/form&gt;
+-    [% END %]
+-    &lt;/table&gt;
+-&lt;table&gt;
+-    &lt;tr&gt;
+-        &lt;td class=&quot;right_align&quot;&gt;
+-            &lt;small&gt;
+-            [% INCLUDE shared/pager_advanced %]
+-            &lt;/small&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-&lt;/table&gt;
+-
+-
+-[% ELSE %]
+-  No active posts in this thread
+-[% END %]
+-
+-&lt;hr /&gt;
+-&lt;br /&gt;
+-&lt;br /&gt;
+-&lt;br /&gt;
+-&lt;br /&gt;
+-[% END %]
+-
+ &lt;style type=&quot;text/css&quot;&gt;
+ 
+ 
+@@ -713,8 +581,8 @@
+                 [% INCLUDE shared/pager_advanced %]
+                 &lt;/small&gt;
+                 &lt;br /&gt;
+-                &lt;form action=&quot;thread/reply?post=[% post.id %]&quot; method=&quot;POST&quot; name=&quot;post_actions&quot; class=&quot;inline_form&quot;&gt;
+-                    &lt;input type=&quot;submit&quot; value=&quot;Reply&quot; name=&quot;reply_to_post&quot; class=&quot;small_input_button&quot; /&gt;
++                &lt;form action=&quot;thread/reply?thread=[% current_thread.id %]&quot; method=&quot;POST&quot; name=&quot;post_actions&quot; class=&quot;inline_form&quot;&gt;
++                    &lt;input type=&quot;submit&quot; value=&quot;Reply&quot; name=&quot;reply_to_thread&quot; class=&quot;small_input_button&quot; /&gt;
+                 &lt;/form&gt;
+               &lt;/td&gt;
+             &lt;/tr&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000120.html">[Parley-svn] r232 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#119">[ date ]</a>
+              <a href="thread.html#119">[ thread ]</a>
+              <a href="subject.html#119">[ subject ]</a>
+              <a href="author.html#119">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1075 - / trunk/db
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1075%20-%20/%20trunk/db&In-Reply-To=%3C200904261459.n3QExRVu031589%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000956.html">
+   <LINK REL="Next"  HREF="000958.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1075 - / trunk/db</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1075%20-%20/%20trunk/db&In-Reply-To=%3C200904261459.n3QExRVu031589%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1075 - / trunk/db">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sun Apr 26 16:59:27 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000956.html">[Parley-svn] r1074 - / trunk trunk/db trunk/lib/Parley/Schema	trunk/t.output
+</A></li>
+        <LI>Next message: <A HREF="000958.html">[Parley-svn] r1076 - / trunk/root/static/yui trunk/root/static/yui/animation trunk/root/static/yui/assets/skins/sam trunk/root/static/yui/autocomplete trunk/root/static/yui/autocomplete/assets trunk/root/static/yui/autocomplete/assets/skins/sam trunk/root/static/yui/base trunk/root/static/yui/button trunk/root/static/yui/button/assets trunk/root/static/yui/button/assets/skins/sam trunk/root/static/yui/calendar trunk/root/static/yui/calendar/assets trunk/root/static/yui/calendar/assets/skins/sam trunk/root/static/yui/carousel trunk/root/static/yui/carousel/assets trunk/root/static/yui/carousel/assets/skins/sam trunk/root/static/yui/charts trunk/root/static/yui/charts/assets trunk/root/static/yui/colorpicker trunk/root/static/yui/colorpicker/assets trunk/root/static/yui/colorpicker/assets/skins/sam trunk/root/static/yui/connection trunk/root/static/yui/container trunk/root/static/yui/container/assets trunk/root/static/yui/container/assets/skins/sam trunk/root/static/yui/cookie tru! nk/root/static/yui/datasource trunk/root/static/yui/datatable trunk/root/static/yui/datatable/assets trunk/root/static/yui/datatable/assets/skins/sam trunk/root/static/yui/dom trunk/root/static/yui/dragdrop trunk/root/static/yui/editor trunk/root/static/yui/editor/assets trunk/root/static/yui/editor/assets/skins/sam trunk/root/static/yui/element trunk/root/static/yui/event trunk/root/static/yui/fonts trunk/root/static/yui/get trunk/root/static/yui/grids trunk/root/static/yui/history trunk/root/static/yui/imagecropper trunk/root/static/yui/imagecropper/assets trunk/root/static/yui/imagecropper/assets/skins/sam trunk/root/static/yui/imageloader trunk/root/static/yui/json trunk/root/static/yui/layout trunk/root/static/yui/layout/assets trunk/root/static/yui/layout/assets/skins/sam trunk/root/static/yui/logger trunk/root/static/yui/logger/assets trunk/root/static/yui/logger/assets/skins/sam trunk/root/static/yui/menu trunk/root/static/yui/menu/assets trunk/root/static/yui/menu/! assets/skins/sam trunk/root/static/yui/paginator trunk/root/st! atic/yui
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#957">[ date ]</a>
+              <a href="thread.html#957">[ thread ]</a>
+              <a href="subject.html#957">[ subject ]</a>
+              <a href="author.html#957">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-04-26 16:59:26 +0200 (Sun, 26 Apr 2009)
+New Revision: 1075
+
+Modified:
+   /
+   trunk/db/patch_1.0.3_to_1.2.0.psql
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9378 at wiggin</A>:  chisel | 2009-04-26 15:59:18 +0100
+ / fix schema owner in patch file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9373
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9378
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/patch_1.0.3_to_1.2.0.psql
+===================================================================
+--- trunk/db/patch_1.0.3_to_1.2.0.psql	2009-04-26 14:55:43 UTC (rev 1074)
++++ trunk/db/patch_1.0.3_to_1.2.0.psql	2009-04-26 14:59:26 UTC (rev 1075)
+@@ -10,6 +10,7 @@
+ 
+ -- patch starts here --
+     CREATE SCHEMA parley;
++    ALTER SCHEMA parley OWNER TO parley;
+ 
+     ALTER TABLE public.admin_action                 SET SCHEMA parley;
+     ALTER TABLE public.authentication               SET SCHEMA parley;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000956.html">[Parley-svn] r1074 - / trunk trunk/db trunk/lib/Parley/Schema	trunk/t.output
+</A></li>
+	<LI>Next message: <A HREF="000958.html">[Parley-svn] r1076 - / trunk/root/static/yui trunk/root/static/yui/animation trunk/root/static/yui/assets/skins/sam trunk/root/static/yui/autocomplete trunk/root/static/yui/autocomplete/assets trunk/root/static/yui/autocomplete/assets/skins/sam trunk/root/static/yui/base trunk/root/static/yui/button trunk/root/static/yui/button/assets trunk/root/static/yui/button/assets/skins/sam trunk/root/static/yui/calendar trunk/root/static/yui/calendar/assets trunk/root/static/yui/calendar/assets/skins/sam trunk/root/static/yui/carousel trunk/root/static/yui/carousel/assets trunk/root/static/yui/carousel/assets/skins/sam trunk/root/static/yui/charts trunk/root/static/yui/charts/assets trunk/root/static/yui/colorpicker trunk/root/static/yui/colorpicker/assets trunk/root/static/yui/colorpicker/assets/skins/sam trunk/root/static/yui/connection trunk/root/static/yui/container trunk/root/static/yui/container/assets trunk/root/static/yui/container/assets/skins/sam trunk/root/static/yui/cookie tru! nk/root/static/yui/datasource trunk/root/static/yui/datatable trunk/root/static/yui/datatable/assets trunk/root/static/yui/datatable/assets/skins/sam trunk/root/static/yui/dom trunk/root/static/yui/dragdrop trunk/root/static/yui/editor trunk/root/static/yui/editor/assets trunk/root/static/yui/editor/assets/skins/sam trunk/root/static/yui/element trunk/root/static/yui/event trunk/root/static/yui/fonts trunk/root/static/yui/get trunk/root/static/yui/grids trunk/root/static/yui/history trunk/root/static/yui/imagecropper trunk/root/static/yui/imagecropper/assets trunk/root/static/yui/imagecropper/assets/skins/sam trunk/root/static/yui/imageloader trunk/root/static/yui/json trunk/root/static/yui/layout trunk/root/static/yui/layout/assets trunk/root/static/yui/layout/assets/skins/sam trunk/root/static/yui/logger trunk/root/static/yui/logger/assets trunk/root/static/yui/logger/assets/skins/sam trunk/root/static/yui/menu trunk/root/static/yui/menu/assets trunk/root/static/yui/menu/! assets/skins/sam trunk/root/static/yui/paginator trunk/root/st! atic/yui
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#957">[ date ]</a>
+              <a href="thread.html#957">[ thread ]</a>
+              <a href="subject.html#957">[ subject ]</a>
+              <a href="author.html#957">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

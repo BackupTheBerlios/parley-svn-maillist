@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r678 - / trunk trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r678%20-%20/%20trunk%20trunk/lib/Parley/I18N&In-Reply-To=%3C200712042304.lB4N4OtR032298%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000567.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r678 - / trunk trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r678%20-%20/%20trunk%20trunk/lib/Parley/I18N&In-Reply-To=%3C200712042304.lB4N4OtR032298%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r678 - / trunk trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Dec  5 00:04:24 CET 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000567.html">[Parley-svn] r679 - / trunk trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#566">[ date ]</a>
+              <a href="thread.html#566">[ thread ]</a>
+              <a href="subject.html#566">[ subject ]</a>
+              <a href="author.html#566">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-05 00:04:23 +0100 (Wed, 05 Dec 2007)
+New Revision: 678
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/lib/Parley/I18N/i_default.po
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4292 at wiggin</A>:  chisel | 2007-12-03 20:12:24 +0000
+ + added &quot;replies&quot; and &quot;views&quot; to i18n
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4290
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4292
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2007-11-30 21:33:38 UTC (rev 677)
++++ trunk/Changes.i18n	2007-12-04 23:04:23 UTC (rev 678)
+@@ -12,6 +12,8 @@
+     i_default.po:
+         - 'There is no current forum to view'
+         - 'There is no current thread to view'
++        - &quot;%quant(%1,reply)&quot;
++        - &quot;%quant(%1,view)&quot;
+ 
+ 0.57
+     - initial i18n inplementation (en only)
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2007-11-30 21:33:38 UTC (rev 677)
++++ trunk/lib/Parley/I18N/i_default.po	2007-12-04 23:04:23 UTC (rev 678)
+@@ -1,4 +1,10 @@
+-msgid &quot;406 Not Found&quot;
++msgid &quot;%quant(%1,reply)&quot;
++msgstr &quot;%quant(%1,reply,replies)&quot;
++
++msgid &quot;%quant(%1,view)&quot;
++msgstr &quot;%quant(%1,view,views)&quot;
++
++msgid &quot;404 Not Found&quot;
+ msgstr &quot;404 Not Found&quot;
+ 
+ msgid &quot;ACCEPT TERMS&quot;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000567.html">[Parley-svn] r679 - / trunk trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#566">[ date ]</a>
+              <a href="thread.html#566">[ thread ]</a>
+              <a href="subject.html#566">[ subject ]</a>
+              <a href="author.html#566">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r581 - / trunk trunk/incoming trunk/incoming/patch
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r581%20-%20/%20trunk%20trunk/incoming%20trunk/incoming/patch&In-Reply-To=%3C200710231912.l9NJCKP1017921%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000468.html">
+   <LINK REL="Next"  HREF="000470.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r581 - / trunk trunk/incoming trunk/incoming/patch</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r581%20-%20/%20trunk%20trunk/incoming%20trunk/incoming/patch&In-Reply-To=%3C200710231912.l9NJCKP1017921%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r581 - / trunk trunk/incoming trunk/incoming/patch">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Oct 23 21:12:20 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000468.html">[Parley-svn] r580 - / trunk/lib
+</A></li>
+        <LI>Next message: <A HREF="000470.html">[Parley-svn] r582 - / trunk/lib/Parley
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#469">[ date ]</a>
+              <a href="thread.html#469">[ thread ]</a>
+              <a href="subject.html#469">[ subject ]</a>
+              <a href="author.html#469">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-23 21:12:20 +0200 (Tue, 23 Oct 2007)
+New Revision: 581
+
+Added:
+   trunk/incoming/
+   trunk/incoming/patch/
+   trunk/incoming/patch/0.57_02_KAARE.patch
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4021 at wiggin</A>:  chisel | 2007-10-23 19:12:00 +0100
+ + checking in a contributed patch
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4020
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4021
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/incoming/patch/0.57_02_KAARE.patch
+===================================================================
+--- trunk/incoming/patch/0.57_02_KAARE.patch	2007-10-23 19:11:57 UTC (rev 580)
++++ trunk/incoming/patch/0.57_02_KAARE.patch	2007-10-23 19:12:20 UTC (rev 581)
+@@ -0,0 +1,30 @@
++diff -rup Parley-0.57_02_orig/lib/Parley/Controller/Post.pm Parley-0.57_02/lib/Parley/Controller/Post.pm
++--- Parley-0.57_02_orig/lib/Parley/Controller/Post.pm	2007-10-03 12:52:39.000000000 +0200
+++++ Parley-0.57_02/lib/Parley/Controller/Post.pm	2007-10-22 15:30:02.000000000 +0200
++@@ -55,7 +55,8 @@ sub edit : Local {
++     }
++ 
++     # process the form submission
++-    else {
+++    elsif (defined $c-&gt;request-&gt;method() and $c-&gt;request-&gt;method() eq 'POST') {
++         # validate the form data
++         $c-&gt;form(
++             $dfv_profile_for{edit_post}
++diff -rup Parley-0.57_02_orig/lib/Parley/Controller/Thread.pm Parley-0.57_02/lib/Parley/Controller/Thread.pm
++--- Parley-0.57_02_orig/lib/Parley/Controller/Thread.pm	2007-10-03 12:51:31.000000000 +0200
+++++ Parley-0.57_02/lib/Parley/Controller/Thread.pm	2007-10-22 15:30:59.000000000 +0200
++@@ -388,12 +388,14 @@ sub _add_new_reply {
++         foreach my $f ( $c-&gt;form-&gt;missing ) {
++             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++         }
+++        return;
++     }
++     elsif ($c-&gt;form-&gt;has_invalid()) {
++         $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++         foreach my $f ( $c-&gt;form-&gt;invalid ) {
++             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++         }
+++        return;
++     }
++ 
++     # otherwise, the form data is ok ...
+
+
+Property changes on: trunk/incoming/patch/0.57_02_KAARE.patch
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000468.html">[Parley-svn] r580 - / trunk/lib
+</A></li>
+	<LI>Next message: <A HREF="000470.html">[Parley-svn] r582 - / trunk/lib/Parley
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#469">[ date ]</a>
+              <a href="thread.html#469">[ thread ]</a>
+              <a href="subject.html#469">[ subject ]</a>
+              <a href="author.html#469">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

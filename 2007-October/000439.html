@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r551 - / trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r551%20-%20/%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N&In-Reply-To=%3C200710121920.l9CJKrXk028368%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000438.html">
+   <LINK REL="Next"  HREF="000440.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r551 - / trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r551%20-%20/%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N&In-Reply-To=%3C200710121920.l9CJKrXk028368%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r551 - / trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Oct 12 21:20:53 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000438.html">[Parley-svn] r550 - / trunk/root/base/menu
+</A></li>
+        <LI>Next message: <A HREF="000440.html">[Parley-svn] r552 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#439">[ date ]</a>
+              <a href="thread.html#439">[ thread ]</a>
+              <a href="subject.html#439">[ subject ]</a>
+              <a href="author.html#439">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-12 21:20:52 +0200 (Fri, 12 Oct 2007)
+New Revision: 551
+
+Added:
+   trunk/lib/Parley/I18N/
+   trunk/lib/Parley/I18N/en.po
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Root.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3961 at wiggin</A>:  chisel | 2007-10-12 19:28:47 +0100
+ + start the i18n process for the application
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3960
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3961
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-10-12 19:20:35 UTC (rev 550)
++++ trunk/lib/Parley/Controller/Root.pm	2007-10-12 19:20:52 UTC (rev 551)
+@@ -22,6 +22,11 @@
+     my ($self, $c) = @_;
+     $c-&gt;log-&gt;debug('global auto() called');
+ 
++    # i18n poking
++    $c-&gt;log-&gt;info(join q{ }, @{ $c-&gt;languages });
++    $c-&gt;log-&gt;info( $c-&gt;localize('Hello Catalyst') );
++    $c-&gt;log-&gt;info( $c-&gt;localize(&quot;non integer post id passed&quot;) );
++
+     # get a list of (all/available) forums
+     $c-&gt;stash-&gt;{available_forums} = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
+         {
+@@ -38,7 +43,9 @@
+     if (defined $c-&gt;request-&gt;param('post')) {
+         # make sure the paramter looks sane
+         if (not $c-&gt;request-&gt;param('post') =~ m{\A\d+\z}) {
+-            $c-&gt;stash-&gt;{error}{message} = 'non-integer post id passed: ['
++            $c-&gt;stash-&gt;{error}{message} =
++                  $c-&gt;localize('non-integer post id passed')
++                . ': ['
+                 . $c-&gt;request-&gt;param('post')
+                 . ']';
+             return;
+@@ -69,7 +76,9 @@
+     elsif (defined $c-&gt;request-&gt;param('thread')) {
+         # make sure the paramter looks sane
+         if (not $c-&gt;request-&gt;param('thread') =~ m{\A\d+\z}) {
+-            $c-&gt;stash-&gt;{error}{message} = 'non-integer thread id passed: ['
++            $c-&gt;stash-&gt;{error}{message} =
++                  $c-&gt;localize('non-integer thread id passed')
++                . ': ['
+                 . $c-&gt;request-&gt;param('thread')
+                 . ']';
+             return;
+@@ -95,7 +104,9 @@
+     elsif (defined $c-&gt;request-&gt;param('forum')) {
+         # make sure the paramter looks sane
+         if (not $c-&gt;request-&gt;param('forum') =~ m{\A\d+\z}) {
+-            $c-&gt;stash-&gt;{error}{message} = 'non-integer forum id passed: ['
++            $c-&gt;stash-&gt;{error}{message} =
++                  $c-&gt;localize('non-integer forum id passed')
++                . ': ['
+                 . $c-&gt;request-&gt;param('forum')
+                 . ']';
+             return;
+@@ -193,7 +204,7 @@
+     my ( $self, $c ) = @_;
+ 
+     $c-&gt;response-&gt;status(404);
+-    $c-&gt;response-&gt;body( '404 Not Found' );
++    $c-&gt;response-&gt;body( $c-&gt;localize('404 Not Found') );
+ }
+ 
+ 
+
+
+Property changes on: trunk/lib/Parley/I18N
+___________________________________________________________________
+Name: svn:ignore
+   + *.swp
+
+
+Added: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-12 19:20:35 UTC (rev 550)
++++ trunk/lib/Parley/I18N/en.po	2007-10-12 19:20:52 UTC (rev 551)
+@@ -0,0 +1,11 @@
++msgid &quot;404 Not Found&quot;
++msgstr &quot;404 Not Found&quot;
++
++msgid &quot;non-integer post id passed&quot;
++msgstr &quot;Non-integer post id passed&quot;
++
++msgid &quot;non-integer thread id passed&quot;
++msgstr &quot;Non-integer thread id passed&quot;
++
++msgid &quot;non-integer forum id passed&quot;
++msgstr &quot;Non-integer forum id passed&quot;
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-10-12 19:20:35 UTC (rev 550)
++++ trunk/lib/Parley.pm	2007-10-12 19:20:52 UTC (rev 551)
+@@ -24,6 +24,8 @@
+     Authentication
+     Authentication::Store::DBIC
+     Authentication::Credential::Password
++
++    I18N
+ /;
+ 
+ use Parley::App::Communication::Email qw( :email );
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000438.html">[Parley-svn] r550 - / trunk/root/base/menu
+</A></li>
+	<LI>Next message: <A HREF="000440.html">[Parley-svn] r552 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#439">[ date ]</a>
+              <a href="thread.html#439">[ thread ]</a>
+              <a href="subject.html#439">[ subject ]</a>
+              <a href="author.html#439">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

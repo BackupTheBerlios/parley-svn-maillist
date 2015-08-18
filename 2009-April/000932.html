@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1050 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1050%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User&In-Reply-To=%3C200904222121.n3MLLVd5011227%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000933.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1050 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1050%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User&In-Reply-To=%3C200904222121.n3MLLVd5011227%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1050 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Apr 22 23:21:31 CEST 2009</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000933.html">[Parley-svn] r1051 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#932">[ date ]</a>
+              <a href="thread.html#932">[ thread ]</a>
+              <a href="subject.html#932">[ subject ]</a>
+              <a href="author.html#932">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-04-22 23:21:30 +0200 (Wed, 22 Apr 2009)
+New Revision: 1050
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9328 at wiggin</A>:  chisel | 2009-04-22 18:35:06 +0100
+ - drop some &quot;use base 'Catalyst::Controller';&quot; to resolve the error: Inconsistent hierarchy during C3 merge of class '[some_module]': merging failed on parent 'Catalyst::Controller'
+   This should probably be revisited (TODO entry to follow)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9203
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9328
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2009-03-01 20:52:04 UTC (rev 1049)
++++ trunk/lib/Parley/Controller/Root.pm	2009-04-22 21:21:30 UTC (rev 1050)
+@@ -4,8 +4,9 @@
+ use warnings;
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+-use base 'Catalyst::Controller';
+-use base 'Catalyst::Controller::Validation::DFV';
++use base qw&lt;
++    Catalyst::Controller::Validation::DFV
++&gt;;
+ 
+ use DateTime;
+ use List::MoreUtils qw(uniq);
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2009-03-01 20:52:04 UTC (rev 1049)
++++ trunk/lib/Parley/Controller/Search.pm	2009-04-22 21:21:30 UTC (rev 1050)
+@@ -4,7 +4,6 @@
+ use warnings;
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+-use base 'Catalyst::Controller';
+ use base 'Catalyst::Controller::FormValidator';
+ 
+ use Data::Dump qw(pp);
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2009-03-01 20:52:04 UTC (rev 1049)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2009-04-22 21:21:30 UTC (rev 1050)
+@@ -4,7 +4,6 @@
+ use warnings;
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+-use base 'Catalyst::Controller';
+ use base 'Catalyst::Controller::FormValidator';
+ use base 'Catalyst::Controller::reCAPTCHA';
+ use base 'Parley::ControllerBase::FormValidation';
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000933.html">[Parley-svn] r1051 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#932">[ date ]</a>
+              <a href="thread.html#932">[ thread ]</a>
+              <a href="subject.html#932">[ subject ]</a>
+              <a href="author.html#932">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,341 @@
+From chiselwright at mail.berlios.de  Tue Feb 24 23:58:44 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 24 Feb 2009 23:58:44 +0100
+Subject: [Parley-svn] r1036 - / branches/parley-1.1
+	branches/parley-1.1/root/base branches/parley-1.1/root/base/shared
+Message-ID: <200902242258.n1OMwiT8021731@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-02-24 23:58:43 +0100 (Tue, 24 Feb 2009)
+New Revision: 1036
+
+Added:
+   branches/parley-1.1/root/base/shared/google_analytics
+Modified:
+   /
+   branches/parley-1.1/Changes
+   branches/parley-1.1/TODO
+   branches/parley-1.1/parley.conf
+   branches/parley-1.1/root/base/footer
+Log:
+ r8903 at wiggin:  chisel | 2008-12-31 02:02:24 +0000
+ + added Google Analytics
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8901
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8903
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/parley-1.1/Changes
+===================================================================
+--- branches/parley-1.1/Changes	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/Changes	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -7,6 +7,7 @@
+     - modified CSS for "user information"; now the header is a fixed-width we
+       can place this div inside it (instead of flushed to the RHS of the
+       page/window)
++    - added Google Analytics (configurable via parley.conf)
+ 
+ 1.0.4   Wed Dec 24 18:54:24 GMT 2008
+     - fixed skin2
+
+Modified: branches/parley-1.1/TODO
+===================================================================
+--- branches/parley-1.1/TODO	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/TODO	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -1,13 +1,12 @@
+ TODO LIST
+ 
++  - refactor/tidy conf file(s)
+   - update i18n from Advanced Search additions
+   - move search_dialog inline styles into CSS file
+   - fix "oversized image" bug
+-  - fix "user information" CSS location
+   - local file permissions (for avatar uploads)
+   - optional ReCAPTCHA during sign-up
+   - optional google ads
+-  - optional google analytics
+   - 11:58 <marcus> btw did you consider packing the css and js to reduce the number of includes?
+     http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm
+     http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm
+@@ -24,7 +23,6 @@
+   - investigate in-application language preference/choice
+   - write some sensible T&Cs
+   - update avatar update response to force a No-Cache?
+-  - advanced search page
+   - proper moderator support/management
+      - forum creation
+      - abuse handling
+@@ -40,6 +38,9 @@
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++D - optional google analytics
++D - advanced search page
++D - fix "user information" CSS location
+ D - skinning (user pref overrides CSS used?)
+ D - skinning (config frile driven)
+ D - use HTML::ForumCode::Cookbook::Recipe1 for message preview(s)
+
+Modified: branches/parley-1.1/parley.conf
+===================================================================
+--- branches/parley-1.1/parley.conf	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/parley.conf	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -22,7 +22,11 @@
+ # "Add This"
+ add_this_account            chiselwright
+ 
++# Google Analytics - change this for your "Web Property ID", or comment out to
++# disable
++google_analytics_id         UA-116361-5
+ 
++
+ # comment out any log levels you don't want to see in your logs
+ # 'info' and 'debug' are common choices for suppresing in a live environment
+ log_levels                  info
+
+Modified: branches/parley-1.1/root/base/footer
+===================================================================
+--- branches/parley-1.1/root/base/footer	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/root/base/footer	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -23,6 +23,7 @@
+             [% PROCESS shared/login_dialog %]
+             [% PROCESS shared/language_dialog %]
+         </div><!-- id="doc3" -->
++        [% PROCESS shared/google_analytics %]
+     </body>
+ </html>
+ <!-- Footer : End -->
+
+Added: branches/parley-1.1/root/base/shared/google_analytics
+===================================================================
+--- branches/parley-1.1/root/base/shared/google_analytics	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/root/base/shared/google_analytics	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -0,0 +1,13 @@
++[% IF c.config.google_analytics_id %]
++<script type="text/javascript">
++var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
++document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
++</script>
++<script type="text/javascript">
++try {
++var pageTracker = _gat._getTracker("[%c.config.google_analytics_id%]");
++pageTracker._trackPageview();
++} catch(err) {}</script>
++[% ELSE %]
++<!-- Google Analytics Not Enabled -->
++[% END %]
+
+
+
+From chiselwright at mail.berlios.de  Tue Feb 24 23:58:52 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 24 Feb 2009 23:58:52 +0100
+Subject: [Parley-svn] r1037 - / branches/parley-1.1
+	branches/parley-1.1/root/base/user
+Message-ID: <200902242258.n1OMwqVf021801@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-02-24 23:58:52 +0100 (Tue, 24 Feb 2009)
+New Revision: 1037
+
+Modified:
+   /
+   branches/parley-1.1/MANIFEST
+   branches/parley-1.1/root/base/user/profile
+Log:
+ r8904 at wiggin:  chisel | 2008-12-31 23:33:14 +0000
+ + added missing file to MANIFEST
+ / fixed ip_addr error (admin viewing user profile for user with >0 NULL values)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8903
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8904
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/parley-1.1/MANIFEST
+===================================================================
+--- branches/parley-1.1/MANIFEST	2009-02-24 22:58:43 UTC (rev 1036)
++++ branches/parley-1.1/MANIFEST	2009-02-24 22:58:52 UTC (rev 1037)
+@@ -145,6 +145,7 @@
+ root/base/shared/ajax_dialog
+ root/base/shared/autocomplete_style
+ root/base/shared/focus_username_js
++root/base/shared/google_analytics
+ root/base/shared/language_dialog
+ root/base/shared/loading_please_wait
+ root/base/shared/login_dialog
+
+Modified: branches/parley-1.1/root/base/user/profile
+===================================================================
+--- branches/parley-1.1/root/base/user/profile	2009-02-24 22:58:43 UTC (rev 1036)
++++ branches/parley-1.1/root/base/user/profile	2009-02-24 22:58:52 UTC (rev 1037)
+@@ -86,8 +86,8 @@
+     [% END %]
+ 
+     [% IF authed_user.can_ip_ban %]
++        <h2>[%l('IP Addresses')%]</h2>
+         [% SET ips = profiled_user.ips_posted_from %]
+-        <h2>[%l('IP Addresses')%]</h2>
+         <div class="yui-gf top_padded">
+             <div class="yui-u first align_right">
+                 [% IF ips.size %]
+@@ -99,24 +99,34 @@
+             <div class="yui-u">
+                 [% IF ips.size %]
+                     [% FOR ip IN ips %]
+-                    <span id="ctx_[%ip%]">
+-                        <a href="[%c.uri_for('/site/ip_info',{'address'=>ip})%]">[% ip %]</a>
+-                    </span>[% UNLESS loop.last %], [% END %]
+-                    <script type="text/javascript">
+-                        YAHOO.namespace("example.container");
+-                        [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip("$ip") %]
+-                        [% SET ttTxt = '' %]
+-                        [% WHILE (post = people_posting.next) %]
+-                        [% ttTxt = "${ttTxt} <li>$post.creator.forum_name</li>" %]
++                        [% IF ip %]
++                        <span id="ctx_[%ip%]">
++                            <a href="[%c.uri_for('/site/ip_info',{'address'=>ip})%]">[% ip || 'No Address Recorded' %]</a>
++                        </span>
++                        [% ELSE %]
++                        No Address Recorded
++                        [% END %][% UNLESS loop.last %], [% END %]
++                        [% NEXT UNLESS ip %]
++                        [% TRY %]
++                        <script type="text/javascript">
++                            YAHOO.namespace("example.container");
++                                [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip("$ip") %]
++                                [% SET ttTxt = '' %]
++                                [% WHILE (post = people_posting.next) %]
++                                [% ttTxt = "${ttTxt} <li>$post.creator.forum_name</li>" %]
++                                [% END %]
++                                YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
++                                    "tt_[%ip%]",
++                                    {
++                                        context:"ctx_[%ip%]",
++                                        text:"Users posting from [%ip%]: <ul>[%ttTxt%]</ul>"
++                                    }
++                                );
++                        </script>
++                        [% CATCH %]
++                        </script>
++                        An error occurred!
+                         [% END %]
+-                        YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
+-                            "tt_[%ip%]",
+-                            {
+-                                context:"ctx_[%ip%]",
+-                                text:"Users posting from [%ip%]: <ul>[%ttTxt%]</ul>"
+-                            }
+-                        );
+-                    </script>
+                     [% END %]
+                 [% END %]
+             </div>
+
+
+
+From chiselwright at mail.berlios.de  Tue Feb 24 23:59:00 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 24 Feb 2009 23:59:00 +0100
+Subject: [Parley-svn] r1038 - / branches/parley-1.1/lib/Parley/Controller
+	branches/parley-1.1/root/base/search
+Message-ID: <200902242259.n1OMx0V2021871@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-02-24 23:58:59 +0100 (Tue, 24 Feb 2009)
+New Revision: 1038
+
+Modified:
+   /
+   branches/parley-1.1/lib/Parley/Controller/Search.pm
+   branches/parley-1.1/root/base/search/
+   branches/parley-1.1/root/base/search/advanced
+Log:
+ r9189 at wiggin:  chisel | 2009-02-24 19:40:13 +0000
+ + svn:ignore property on a couple of dirs
+ / advanced search tweaks
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8904
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9189
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/parley-1.1/lib/Parley/Controller/Search.pm
+===================================================================
+--- branches/parley-1.1/lib/Parley/Controller/Search.pm	2009-02-24 22:58:52 UTC (rev 1037)
++++ branches/parley-1.1/lib/Parley/Controller/Search.pm	2009-02-24 22:58:59 UTC (rev 1038)
+@@ -85,7 +85,8 @@
+         # something didn't validate
+         else {
+             $c->log->debug(
+-                pp($c->stash->{validation})
++                q{Something didn't validate}
++                #pp($c->stash->{validation})
+             );
+         }
+     }
+
+
+Property changes on: branches/parley-1.1/root/base/search
+___________________________________________________________________
+Name: svn:ignore
+   + *\.sw?
+blib
+inc
+Makefile
+Makefile.old
+MANIFEST.bak
+
+Modified: branches/parley-1.1/root/base/search/advanced
+===================================================================
+--- branches/parley-1.1/root/base/search/advanced	2009-02-24 22:58:52 UTC (rev 1037)
++++ branches/parley-1.1/root/base/search/advanced	2009-02-24 22:58:59 UTC (rev 1038)
+@@ -37,6 +37,17 @@
+ </select>
+ <br />
+ 
++Forum:
++[% IF available_forums %]
++<select id="search_forum" name="search_forum" multiple="multiple">
++[% SET dummy=available_forums.reset %]
++<optgroup label="[%l('Forums')%]">
++[% WHILE (forum = available_forums.next) %]
++<option value="[% forum.id %]">[% forum.name %]</option>
++[% END %]
++</select>
++[% END %]
++
+ <input type="submit" value="Search" />
+ 
+ [% PROCESS search/results %]
+
+
+

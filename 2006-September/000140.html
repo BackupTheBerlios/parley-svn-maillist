@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r252 - / branches/schema_based/root	branches/schema_based/root/email_templates
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r252%20-%20/%20branches/schema_based/root%0A%09branches/schema_based/root/email_templates&In-Reply-To=%3C200609121547.k8CFlJ1k002257%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000139.html">
+   <LINK REL="Next"  HREF="000141.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r252 - / branches/schema_based/root	branches/schema_based/root/email_templates</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r252%20-%20/%20branches/schema_based/root%0A%09branches/schema_based/root/email_templates&In-Reply-To=%3C200609121547.k8CFlJ1k002257%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r252 - / branches/schema_based/root	branches/schema_based/root/email_templates">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Sep 12 17:47:19 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000139.html">[Parley-svn] r251 - / branches/schema_based/lib
+</A></li>
+        <LI>Next message: <A HREF="000141.html">[Parley-svn] r253 - / branches/schema_based/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#140">[ date ]</a>
+              <a href="thread.html#140">[ thread ]</a>
+              <a href="subject.html#140">[ subject ]</a>
+              <a href="author.html#140">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-12 17:47:19 +0200 (Tue, 12 Sep 2006)
+New Revision: 252
+
+Added:
+   branches/schema_based/root/email_templates/
+   branches/schema_based/root/email_templates/authentication_email.eml
+   branches/schema_based/root/email_templates/password_reset.eml
+   branches/schema_based/root/email_templates/username_reminder.eml
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r1209 at ferrari</A>:  chisel | 2006-09-12 16:26:52 +0100
+ + added templates for email messages
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1208
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1209
+
+Added: branches/schema_based/root/email_templates/authentication_email.eml
+===================================================================
+--- branches/schema_based/root/email_templates/authentication_email.eml	2006-09-12 15:47:16 UTC (rev 251)
++++ branches/schema_based/root/email_templates/authentication_email.eml	2006-09-12 15:47:19 UTC (rev 252)
+@@ -0,0 +1,12 @@
++[% person.first_name %],
++
++Thanks for registering with [% c.config.name %]
++To complete your registration please click on the link below.
++
++  [% c.request.base %]user/authenticate/[% regauth.id %]
++
++and follow the on-screen instructions.
++
++Regards,
++
++The [% c.config.name %] team.
+
+Added: branches/schema_based/root/email_templates/password_reset.eml
+===================================================================
+--- branches/schema_based/root/email_templates/password_reset.eml	2006-09-12 15:47:16 UTC (rev 251)
++++ branches/schema_based/root/email_templates/password_reset.eml	2006-09-12 15:47:19 UTC (rev 252)
+@@ -0,0 +1,11 @@
++[% person.first_name %],
++
++To reset your account password please click on the link below.
++
++  [% c.request.base %]user/password/reset/[% pwd_reset.id %]
++
++and follow the on-screen instructions.
++
++Regards,
++
++The [% c.config.name %] team.
+
+Added: branches/schema_based/root/email_templates/username_reminder.eml
+===================================================================
+--- branches/schema_based/root/email_templates/username_reminder.eml	2006-09-12 15:47:16 UTC (rev 251)
++++ branches/schema_based/root/email_templates/username_reminder.eml	2006-09-12 15:47:19 UTC (rev 252)
+@@ -0,0 +1,13 @@
++[% person.first_name %],
++
++Your username for [% c.config.name %] is:
++
++  [% person.authentication.username %]
++
++You can visit [% c.config.name %] at:
++
++  [% c.request.base %]
++
++Regards,
++
++The [% c.config.name %] team.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000139.html">[Parley-svn] r251 - / branches/schema_based/lib
+</A></li>
+	<LI>Next message: <A HREF="000141.html">[Parley-svn] r253 - / branches/schema_based/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#140">[ date ]</a>
+              <a href="thread.html#140">[ thread ]</a>
+              <a href="subject.html#140">[ subject ]</a>
+              <a href="author.html#140">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

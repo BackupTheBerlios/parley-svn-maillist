@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1034 - / branches/parley-1.1	branches/parley-1.1/root/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1034%20-%20/%20branches/parley-1.1%0A%09branches/parley-1.1/root/base&In-Reply-To=%3C200812310134.mBV1YKMA030429%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000915.html">
+   <LINK REL="Next"  HREF="000917.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1034 - / branches/parley-1.1	branches/parley-1.1/root/base</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1034%20-%20/%20branches/parley-1.1%0A%09branches/parley-1.1/root/base&In-Reply-To=%3C200812310134.mBV1YKMA030429%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1034 - / branches/parley-1.1	branches/parley-1.1/root/base">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Dec 31 02:34:20 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000915.html">[Parley-svn] r1033 - / branches/parley-1.1/contrib	branches/parley-1.1/contrib/example
+</A></li>
+        <LI>Next message: <A HREF="000917.html">[Parley-svn] r1035 - / branches/parley-1.1/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#916">[ date ]</a>
+              <a href="thread.html#916">[ thread ]</a>
+              <a href="subject.html#916">[ subject ]</a>
+              <a href="author.html#916">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-31 02:34:19 +0100 (Wed, 31 Dec 2008)
+New Revision: 1034
+
+Modified:
+   /
+   branches/parley-1.1/MANIFEST
+   branches/parley-1.1/root/base/header
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8898 at wiggin</A>:  chisel | 2008-12-31 01:32:40 +0000
+ / Updated MANIFEST file
+ - Removed version number from page title (it's in the footer anyway)
+ / reordered information that appears in the page title (app name last)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8897
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8898
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/parley-1.1/MANIFEST
+===================================================================
+--- branches/parley-1.1/MANIFEST	2008-12-31 01:34:08 UTC (rev 1033)
++++ branches/parley-1.1/MANIFEST	2008-12-31 01:34:19 UTC (rev 1034)
+@@ -2,6 +2,7 @@
+ Changes.i18n
+ config/parley.fastcgi
+ config/parley.sites-available
++contrib/example/deploy.sh
+ contrib/patch/0.57_02_KAARE.patch
+ contrib/patch/0.59_001_TJC.patch
+ db/parley.psql
+@@ -39,6 +40,8 @@
+ inc/Module/Install/Metadata.pm
+ inc/Module/Install/Win32.pm
+ inc/Module/Install/WriteAll.pm
++lib/Catalyst/Controller/FormValidator.pm
++lib/Catalyst/Plugin/Dumper.pm
+ lib/Parley.pm
+ lib/Parley/App/Communication/Email.pm
+ lib/Parley/App/DateTime.pm
+@@ -111,6 +114,8 @@
+ README
+ ROADMAP
+ root/base/about/modules
++root/base/dfv/display_validation_messages
++root/base/dfv/validation_messages_data
+ root/base/error/simple
+ root/base/footer
+ root/base/forum/list
+@@ -119,6 +124,7 @@
+ root/base/help/i_default/contents
+ root/base/help/i_default/faq
+ root/base/help/i_default/formatting_posts
++root/base/help/i_default/wide
+ root/base/help/unknown
+ root/base/menu/left/main
+ root/base/menu/menubar
+@@ -132,7 +138,10 @@
+ root/base/my/tab_watch
+ root/base/my/tab_you
+ root/base/post/edit
++root/base/search/advanced
+ root/base/search/forum
++root/base/search/results
++root/base/shared/add_this
+ root/base/shared/ajax_dialog
+ root/base/shared/autocomplete_style
+ root/base/shared/focus_username_js
+@@ -161,6 +170,7 @@
+ root/base/thread/add
+ root/base/thread/recent
+ root/base/thread/reply
++root/base/thread/reply-yuirte
+ root/base/thread/view
+ root/base/thread/watches
+ root/base/user/access_ip_banned
+@@ -194,6 +204,8 @@
+ root/email_templates/nl/username_reminder.eml
+ root/favicon.ico
+ root/skin2/about/modules
++root/skin2/dfv/display_validation_messages
++root/skin2/dfv/validation_messages_data
+ root/skin2/error/simple
+ root/skin2/footer
+ root/skin2/forum/list
+@@ -215,7 +227,10 @@
+ root/skin2/my/tab_watch
+ root/skin2/my/tab_you
+ root/skin2/post/edit
++root/skin2/search/advanced
+ root/skin2/search/forum
++root/skin2/search/results
++root/skin2/shared/add_this
+ root/skin2/shared/ajax_dialog
+ root/skin2/shared/autocomplete_style
+ root/skin2/shared/focus_username_js
+
+Modified: branches/parley-1.1/root/base/header
+===================================================================
+--- branches/parley-1.1/root/base/header	2008-12-31 01:34:08 UTC (rev 1033)
++++ branches/parley-1.1/root/base/header	2008-12-31 01:34:19 UTC (rev 1034)
+@@ -8,23 +8,18 @@
+     &lt;head&gt;
+         &lt;base href=&quot;[% c.request.base %]&quot; /&gt;
+         &lt;title&gt;
+-            [% c.config.name %]
+-
+-            [%# Show version if we're debugging %]
+-            [% IF c.debug %]
+-            ([% c.config.version %])
+-            [% END %]
+-
+             [%# Show custom page title if we have one %]
+             [% IF page_title %]
+-             : [% page_title %]
++             [% page_title %] :
+             [%# Show thread name if we have one %]
+             [% ELSIF current_thread %]
+-             : [% current_thread.subject %]
++             [% current_thread.subject %] :
+             [%# Show forum name if we have one %]
+             [% ELSIF current_forum %]
+-             : [% current_forum.name %]
++             [% current_forum.name %] :
+             [% END %]
++
++            [% c.config.name %]
+         &lt;/title&gt;
+         &lt;meta name=&quot;author&quot; content=&quot;Chisel Wright&quot; /&gt;
+         &lt;link rel=&quot;shortcut icon&quot; href=&quot;[% c.request.base %]/favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000915.html">[Parley-svn] r1033 - / branches/parley-1.1/contrib	branches/parley-1.1/contrib/example
+</A></li>
+	<LI>Next message: <A HREF="000917.html">[Parley-svn] r1035 - / branches/parley-1.1/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#916">[ date ]</a>
+              <a href="thread.html#916">[ thread ]</a>
+              <a href="subject.html#916">[ subject ]</a>
+              <a href="author.html#916">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

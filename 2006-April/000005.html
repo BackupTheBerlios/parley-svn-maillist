@@ -1,0 +1,521 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r115 - in trunk: . lib lib/Parley/App lib/Parley/Controller root/base/forum root/base/menu root/base/shared root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r115%20-%20in%20trunk%3A%20.%20lib%20lib/Parley/App%20lib/Parley/Controller%20root/base/forum%20root/base/menu%20root/base/shared%20root/base/thread&In-Reply-To=%3C200604052027.k35KR3BL023422%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000004.html">
+   <LINK REL="Next"  HREF="000006.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r115 - in trunk: . lib lib/Parley/App lib/Parley/Controller root/base/forum root/base/menu root/base/shared root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r115%20-%20in%20trunk%3A%20.%20lib%20lib/Parley/App%20lib/Parley/Controller%20root/base/forum%20root/base/menu%20root/base/shared%20root/base/thread&In-Reply-To=%3C200604052027.k35KR3BL023422%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r115 - in trunk: . lib lib/Parley/App lib/Parley/Controller root/base/forum root/base/menu root/base/shared root/base/thread">chiselwright at berlios.de
+       </A><BR>
+    <I>Wed Apr  5 22:27:03 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000004.html">[Parley-svn] r114 - trunk
+</A></li>
+        <LI>Next message: <A HREF="000006.html">[Parley-svn] r116 - in trunk: . lib/Parley/Controller root/base root/base/about t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-04-05 22:26:59 +0200 (Wed, 05 Apr 2006)
+New Revision: 115
+
+Modified:
+   trunk/
+   trunk/Changes
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/App/Helper.pm
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/parley.yml
+   trunk/root/base/forum/view
+   trunk/root/base/menu/statusbar
+   trunk/root/base/shared/useful_tt_stuff
+   trunk/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14382 at ferrari</A>:  chisel | 2006-04-05 21:27:11 +0100
+ - modify log-in check in auto() to use Auth::DBIC calling style
+ - use ConfigLoader plugin to load application config
+ - add authed_user() function, and alter instances of
+   $c-&gt;session-&gt;{authed_user} accordingly
+ - added new function to Parley::App::Helper - application_email_address()
+ - added Template::Plugin::ForumCode (not all BBCode functionality is
+   complete yet)
+ - use ForumCode plugin to process various display elements
+ - email from-address for emails is now set in config file
+ - new helper function application_email_address()
+ - change name of session file
+ - ammend statusbar and post-edit templating to work correctly with new
+   storage location of authed_user object
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14381
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14382
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/Changes	2006-04-05 20:26:59 UTC (rev 115)
+@@ -1,9 +1,20 @@
+ This file documents the revision history for Perl extension Forum.
+ 
+-    - added Template::Plugin::ForumCode (not all BBCode functionality is complete yet)
+-    - from-address for emails is now set in config file
++    - modify log-in check in auto() to use Auth::DBIC calling style
++    - use ConfigLoader plugin to load application config
++    - add authed_user() function, and alter instances of
++      $c-&gt;session-&gt;{authed_user} accordingly
++    - added new function to Parley::App::Helper - application_email_address()
++    - update dependencies/versions in Makefile.PL
++    - added Template::Plugin::ForumCode (not all BBCode functionality is
++      complete yet)
++    - use ForumCode plugin to process various display elements
++    - email from-address for emails is now set in config file
+     - new helper function application_email_address()
+     - small layout fixes
++    - change name of session file
++    - ammend statusbar and post-edit templating to work correctly with new
++      storage location of authed_user object
+ 
+ 0.08  Tue Jan 31 08:54:32 GMT 2006
+     - move to using uri_for(...) in redirects
+
+Modified: trunk/lib/Parley/App/Helper.pm
+===================================================================
+--- trunk/lib/Parley/App/Helper.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/App/Helper.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -2,7 +2,19 @@
+ use strict;
+ use warnings;
+ 
++sub application_email_address {
++    my ($self, $c) = @_;
+ 
++    my $address = 
++          $c-&gt;config-&gt;{alerts}{from_name}
++        . q{ &lt;}
++        . $c-&gt;config-&gt;{alerts}{from_address}
++        . q{&gt;}
++    ;
++
++    return $address;
++}
++
+ sub is_logged_in {
+     my ($self, $c) = @_;
+ 
+@@ -55,8 +67,8 @@
+     }
+ 
+     # for now only user #0 can lock threads
+-    $c-&gt;log-&gt;dumper( $c-&gt;session-&gt;{authed_user}-&gt;id() );
+-    return (0 == $c-&gt;session-&gt;{authed_user}-&gt;id());
++    $c-&gt;log-&gt;dumper( $c-&gt;authed_user-&gt;id() );
++    return (0 == $c-&gt;authed_user-&gt;id());
+ }
+ 
+ sub can_make_sticky {
+@@ -68,17 +80,18 @@
+     }
+ 
+     # for now only user #0 can lock threads
+-    return (0 == $c-&gt;session-&gt;{authed_user}-&gt;id());
++    return (0 == $c-&gt;authed_user-&gt;id());
+ }
+ 
+ 
+ sub user_preference_check {
+     my ($self, $c) = @_;
+ 
+-    if (not defined $c-&gt;session-&gt;{authed_user}-&gt;preference()) {
++    if (not defined $c-&gt;authed_user-&gt;preference()) {
+         $c-&gt;log-&gt;error(
+                 q{User #}
+-            . $c-&gt;session-&gt;{authed_user}-&gt;id()
++            . $c-&gt;authed_user-&gt;id()
++            #. $c-&gt;stash-&gt;{authed_user}-&gt;id()
+             . q{ doesn't have any preferences. Fixing.}
+         );
+ 
+@@ -90,8 +103,8 @@
+                 timezone =&gt; 'UTC',
+             }
+         );
+-        $c-&gt;session-&gt;{authed_user}-&gt;preference( $new_preference-&gt;id() );
+-        $c-&gt;session-&gt;{authed_user}-&gt;update();
++        $c-&gt;authed_user-&gt;preference( $new_preference-&gt;id() );
++        $c-&gt;authed_user-&gt;update();
+     }
+ }
+ 
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/My.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -33,7 +33,7 @@
+     $c-&gt;stash-&gt;{tz_categories} = $tz_categories;
+ 
+     # if the user has a timezone picked (and it's not UTC) pre-populate the menus
+-    my $user_pref = $c-&gt;session-&gt;{authed_user}-&gt;preference();
++    my $user_pref = $c-&gt;authed_user-&gt;preference();
+     if (defined (my $user_tz = $user_pref-&gt;timezone())) {
+         # deal with UTC differently
+         if ($user_tz eq 'UTC') {
+@@ -60,7 +60,7 @@
+ 
+ sub preferences_update : Path('/my/preferences/update') {
+     my ($self, $c) = @_;
+-    my $user_pref = $c-&gt;session-&gt;{authed_user}-&gt;preference();
++    my $user_pref = $c-&gt;authed_user-&gt;preference();
+     
+     # we always want to see the preferences screen
+     $c-&gt;stash-&gt;{template} = 'my/preferences';
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/Post.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -61,7 +61,7 @@
+     Parley::App::Helper-&gt;login_if_required($c, q{You must be logged in to edit your posts});
+ 
+     # you can only edit posts you've created
+-    if ($c-&gt;session-&gt;{authed_user}-&gt;id() != $c-&gt;stash-&gt;{current_post}-&gt;creator()-&gt;id()) {
++    if ($c-&gt;authed_user-&gt;id() != $c-&gt;stash-&gt;{current_post}-&gt;creator()-&gt;id()) {
+         push @messages, q{You can only edit your own posts};
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/Thread.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -196,7 +196,7 @@
+                 {
+                     forum       =&gt; $c-&gt;stash-&gt;{current_forum}-&gt;id(),
+                     subject     =&gt; $results-&gt;valid-&gt;{thread_subject},
+-                    creator     =&gt; $c-&gt;session-&gt;{authed_user}-&gt;id(),
++                    creator     =&gt; $c-&gt;authed_user-&gt;id(),
+                 }
+             );
+ 
+@@ -206,7 +206,7 @@
+                     thread      =&gt; $new_thread-&gt;id(),
+                     subject     =&gt; $results-&gt;valid-&gt;{thread_subject},
+                     message     =&gt; $results-&gt;valid-&gt;{thread_message},
+-                    creator     =&gt; $c-&gt;session-&gt;{authed_user}-&gt;id(),
++                    creator     =&gt; $c-&gt;authed_user-&gt;id(),
+                 }
+             );
+ 
+@@ -217,7 +217,7 @@
+             $self-&gt;_increase_post_count($c, $new_thread);
+ 
+             # increase the post count for the user
+-            $self-&gt;_update_person_post_info($c, $c-&gt;session-&gt;{authed_user}, $new_post);
++            $self-&gt;_update_person_post_info($c, $c-&gt;authed_user, $new_post);
+ 
+             # commit everything
+             $c-&gt;model('ParleyDB')-&gt;table('thread')-&gt;storage-&gt;txn_commit;
+@@ -271,7 +271,7 @@
+                     thread      =&gt; $c-&gt;stash-&gt;{current_thread}-&gt;id(),
+                     subject     =&gt; ($results-&gt;valid-&gt;{thread_subject} || undef),
+                     message     =&gt; $results-&gt;valid-&gt;{thread_message},
+-                    creator     =&gt; $c-&gt;session-&gt;{authed_user}-&gt;id(),
++                    creator     =&gt; $c-&gt;authed_user-&gt;id(),
+                 }
+             );
+ 
+@@ -298,7 +298,7 @@
+             $self-&gt;_increase_post_count($c, $c-&gt;stash-&gt;{current_thread});
+ 
+             # increase the post count for the user
+-            $self-&gt;_update_person_post_info($c, $c-&gt;session-&gt;{authed_user}, $new_post);
++            $self-&gt;_update_person_post_info($c, $c-&gt;authed_user, $new_post);
+ 
+             # commit everything
+             $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;storage-&gt;txn_commit;
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/User.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -319,7 +319,7 @@
+     $c-&gt;log-&gt;info('about to send an email');
+     $c-&gt;email(
+         header =&gt; [
+-            From    =&gt; q{Parley Registration &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">parley at herlpacker.co.uk</A>&gt;},
++            From    =&gt; Parley::App::Helper-&gt;application_email_address($c),
+             To      =&gt; $person-&gt;email(),
+             Subject =&gt; qq{Activate your @{[$c-&gt;config-&gt;{name}]} registration},
+         ],
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -14,6 +14,8 @@
+     Dumper
+     StackTrace
+ 
++    ConfigLoader
++
+     Email
+     Static::Simple
+ 
+@@ -38,28 +40,19 @@
+ #
+ # Configure the application
+ #
+-__PACKAGE__-&gt;config( YAML::LoadFile(__PACKAGE__-&gt;config-&gt;{'home'}.'/parley.yml') );
+ __PACKAGE__-&gt;config( version =&gt; $VERSION );
+ __PACKAGE__-&gt;setup;
+ 
+-=head1 NAME
++sub authed_user {
++    my ($c, $value) = @_;
+ 
+-Parley - Catalyst based application
++    if (defined $value) {
++        $c-&gt;stash-&gt;{authed_user} = $value;
++    }
+ 
+-=head1 SYNOPSIS
++    return $c-&gt;stash-&gt;{authed_user};
++}
+ 
+-    script/forum_server.pl
+-
+-=head1 DESCRIPTION
+-
+-Catalyst based application.
+-
+-=head1 METHODS
+-
+-=head2 default
+-
+-=cut
+-
+ sub auto : Private {
+     my ($self, $c) = @_;
+ 
+@@ -76,19 +69,19 @@
+     }
+ 
+     # if we have a user ... fetch some info (if we don't already have it)
+-    if ( $c-&gt;user and not defined $c-&gt;session-&gt;{authed_user} ) {
+-        $c-&gt;log-&gt;info('Fetching user information');
++    if ( $c-&gt;user and not defined $c-&gt;authed_user ) {
++        $c-&gt;log-&gt;info('Fetching user information for ' . $c-&gt;user-&gt;id);
+ 
+         # get the person info for the username
+         my $results = $c-&gt;model('ParleyDB')-&gt;table('person')-&gt;search(
+             {
+-                'authentication.username'   =&gt; $c-&gt;user-&gt;user-&gt;username(),
++                'authentication.username'   =&gt; $c-&gt;user-&gt;username(),
+             },
+             {
+                 join =&gt; 'authentication',
+             },
+         );
+-        $c-&gt;session-&gt;{authed_user} = $results-&gt;first();
++        $c-&gt;authed_user( $results-&gt;first() );
+ 
+         #####################################################################
+         # cater for database upgrades, and make sure the user has preferences
+@@ -188,7 +181,25 @@
+     # (re)populate the form
+     $c-&gt;fillform( $c-&gt;stash-&gt;{formdata} );
+ }
+-        
++
++
++
++=head1 NAME
++
++Parley - Catalyst based application
++
++=head1 SYNOPSIS
++
++    script/forum_server.pl
++
++=head1 DESCRIPTION
++
++Catalyst based application.
++
++=head1 METHODS
++
++=head2 auto
++
+ =head1 AUTHOR
+ 
+ Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt; &gt;&gt;
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/parley.yml	2006-04-05 20:26:59 UTC (rev 115)
+@@ -3,6 +3,10 @@
+ name:         Parley
+ default_uri:  /forum/list
+ 
++alerts:
++    from_name:      'Parley'
++    from_address:   '<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">parley at localhost</A>'
++
+ #--
+ #-- LINES BELOW THIS SHOULDN'T NEED CHANGING
+ #--
+@@ -22,7 +26,7 @@
+ # session settings; perldoc Catalyst::Plugin::Session::FastMmap
+ session:
+     expires:    3600
+-    storage:    '/tmp/forum.session'
++    storage:    '/tmp/parley.session'
+ 
+ 
+ # template toolkit options
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/forum/view	2006-04-05 20:26:59 UTC (rev 115)
+@@ -26,7 +26,7 @@
+     &lt;/td&gt;
+ 
+     &lt;td&gt;
+-    &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% thread.subject %]&lt;/a&gt;
++    &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% ForumCode.escape(thread.subject) %]&lt;/a&gt;
+     &lt;br /&gt;
+     &lt;span class=&quot;topic_creator&quot;&gt;created by
+         &lt;span class=&quot;post_creator&quot;&gt;[% thread.creator.forum_name %]&lt;/span&gt;
+@@ -39,7 +39,6 @@
+      &lt;span class=&quot;topic_creator&quot;&gt;posted by
+         &lt;span class=&quot;post_creator&quot;&gt;[% thread.last_post.creator.forum_name %]&lt;/span&gt;
+      &lt;/span&gt;
+-     [% IF can_lock %] [Lock] [% END %]
+     &lt;/td&gt;
+ 
+     &lt;td style=&quot;text-align: center;&quot;&gt;
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/menu/statusbar	2006-04-05 20:26:59 UTC (rev 115)
+@@ -14,7 +14,7 @@
+                 &lt;/td&gt;
+ 
+                 &lt;td width=&quot;40%&quot; class=&quot;right&quot;&gt;
+-                        [% IF (authed_user = c.session.authed_user) %]
++                        [% IF (authed_user = c.authed_user) %]
+                         Logged in as &lt;b&gt;[% authed_user.first_name %] [% authed_user.last_name %]&lt;/b&gt;
+                         [% UNLESS authed_user.authentication.authenticated %]
+                         (&lt;b&gt;&lt;i&gt;Not Authenticated&lt;/i&gt;&lt;/b&gt;)
+
+Modified: trunk/root/base/shared/useful_tt_stuff
+===================================================================
+--- trunk/root/base/shared/useful_tt_stuff	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/shared/useful_tt_stuff	2006-04-05 20:26:59 UTC (rev 115)
+@@ -1,11 +1,12 @@
+ [% USE HTML %]
++[% USE ForumCode %]
+ 
+ [% MACRO nicedate(d) BLOCK %]
+     [%# if a person has preferences, and there's a time_zone option set, use it to
+         set the TZ used to display the time in nicedate
+     %]
+-    [% IF c.session.authed_user.preference.timezone %]
+-    [% CALL d.set_time_zone(c.session.authed_user.preference.timezone) %]
++    [% IF c.authed_user.preference.timezone %]
++    [% CALL d.set_time_zone(c.authed_user.preference.timezone) %]
+     [% END %]
+ 
+     [% d.strftime('%A %d %B %Y at %R') %]
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/thread/view	2006-04-05 20:26:59 UTC (rev 115)
+@@ -1,4 +1,3 @@
+-
+ &lt;table&gt;
+     &lt;tr&gt;
+         &lt;td&gt;
+@@ -46,13 +45,13 @@
+                         &lt;/span&gt;
+                         &lt;br /&gt;
+                         &lt;span class=&quot;quoted_message&quot;&gt;
+-                        [% FILTER html_line_break %][% HTML.escape(post.quoted_text) %][% END %]
++                        [% ForumCode.forumcode(post.quoted_text) %]
+                         &lt;/span&gt;
+-                    [% FILTER html_line_break %][% HTML.escape(post.message) %][% END %]
++                    [% ForumCode.forumcode(post.message) %]&lt;br /&gt;
+                     &lt;/span&gt;
+                 [% ELSE %]
+                     &lt;span class=&quot;post_message&quot;&gt;
+-                    [% FILTER html_line_break %][% HTML.escape(post.message) %][% END %]
++                    [% ForumCode.forumcode(post.message) %]&lt;br /&gt;
+                     &lt;/span&gt;
+                 [% END %]
+                 [% IF post.edited %]
+@@ -63,7 +62,7 @@
+         [% UNLESS current_thread.locked %]
+         &lt;tr&gt;
+         &lt;td style=&quot;text-align: right;&quot;&gt;
+-            [% IF c.session.authed_user.id == post.creator.id %]
++            [% IF c.authed_user.id == post.creator.id %]
+             &lt;form action=&quot;post/edit?post=[% post.id %]&quot; method=&quot;POST&quot; name=&quot;post_actions&quot; class=&quot;inline_form&quot;&gt;
+                 &lt;input type=&quot;submit&quot; value=&quot;Edit&quot; name=&quot;edit_post&quot; class=&quot;small_input_button&quot; /&gt;
+             &lt;/form&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000004.html">[Parley-svn] r114 - trunk
+</A></li>
+	<LI>Next message: <A HREF="000006.html">[Parley-svn] r116 - in trunk: . lib/Parley/Controller root/base root/base/about t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

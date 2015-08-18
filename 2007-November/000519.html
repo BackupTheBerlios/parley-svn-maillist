@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r631 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r631%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200711012156.lA1LuZOs030142%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000518.html">
+   <LINK REL="Next"  HREF="000520.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r631 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r631%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200711012156.lA1LuZOs030142%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r631 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Nov  1 22:56:35 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000518.html">[Parley-svn] r630 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000520.html">[Parley-svn] r632 - / trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#519">[ date ]</a>
+              <a href="thread.html#519">[ thread ]</a>
+              <a href="subject.html#519">[ subject ]</a>
+              <a href="author.html#519">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-01 22:56:34 +0100 (Thu, 01 Nov 2007)
+New Revision: 631
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Schema/ThreadView.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4113 at wiggin</A>:  chisel | 2007-11-01 21:16:49 +0000
+ / more alterations to match recent column renaming
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4112
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4113
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2007-11-01 21:56:20 UTC (rev 630)
++++ trunk/lib/Parley/Controller/Forum.pm	2007-11-01 21:56:34 UTC (rev 631)
+@@ -14,7 +14,7 @@
+                 active =&gt; 1,
+             },
+             {
+-                'order_by'  =&gt; 'forum_id ASC',
++                'order_by'  =&gt; 'me.id ASC',
+             }
+         );
+ }
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-11-01 21:56:20 UTC (rev 630)
++++ trunk/lib/Parley/Controller/My.pm	2007-11-01 21:56:34 UTC (rev 631)
+@@ -154,7 +154,7 @@
+     # watched threads
+     my $watches = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;search(
+         {
+-            person      =&gt; $c-&gt;_authed_user()-&gt;id(),
++            person_id   =&gt; $c-&gt;_authed_user()-&gt;id(),
+             watched     =&gt; 1,
+         },
+         {
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2007-11-01 21:56:20 UTC (rev 630)
++++ trunk/lib/Parley/Controller/Search.pm	2007-11-01 21:56:34 UTC (rev 631)
+@@ -68,7 +68,7 @@
+         eval {
+             $forum = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;find(
+                 {
+-                    forum_id    =&gt; $c-&gt;request-&gt;param('search_forum'),
++                    'me.id'    =&gt; $c-&gt;request-&gt;param('search_forum'),
+                 }
+             );
+         };
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-11-01 21:56:20 UTC (rev 630)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-11-01 21:56:34 UTC (rev 631)
+@@ -276,8 +276,8 @@
+     # get the ThreadView so we can update it
+     my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
+         {
+-            person  =&gt; $c-&gt;_authed_user()-&gt;id(),
+-            thread  =&gt; $c-&gt;_current_thread()-&gt;id(),
++            person_id  =&gt; $c-&gt;_authed_user()-&gt;id(),
++            thread_id  =&gt; $c-&gt;_current_thread()-&gt;id(),
+         }
+     );
+ 
+@@ -333,7 +333,7 @@
+     # watched threads
+     my $watches = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;search(
+         {
+-            person      =&gt; $c-&gt;_authed_user()-&gt;id(),
++            person_id   =&gt; $c-&gt;_authed_user()-&gt;id(),
+             watched     =&gt; 1,
+         },
+         {
+@@ -352,8 +352,8 @@
+             # get the ThreadView so we can update it
+             my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
+                 {
+-                    person  =&gt; $c-&gt;_authed_user()-&gt;id(),
+-                    thread  =&gt; $thread_id,
++                    person_id  =&gt; $c-&gt;_authed_user()-&gt;id(),
++                    thread_id  =&gt; $thread_id,
+                 }
+             );
+ 
+@@ -512,7 +512,7 @@
+         # get the first post in the thread
+         $posts = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
+             {
+-                thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++                'me.id'     =&gt; $c-&gt;_current_thread()-&gt;id(),
+             },
+             {
+                 order_by    =&gt; 'created ASC',
+@@ -626,7 +626,7 @@
+     $c-&gt;stash-&gt;{watcher_count} =
+         $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;count(
+             {
+-                thread  =&gt; $c-&gt;_current_thread()-&gt;id(),
++                'me.id' =&gt; $c-&gt;_current_thread()-&gt;id(),
+                 watched =&gt; 1,
+             }
+         )
+@@ -708,8 +708,8 @@
+     my $thread_view =
+         $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find_or_create(
+             {
+-                person      =&gt; $c-&gt;_authed_user()-&gt;id(),
+-                thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++                person_id   =&gt; $c-&gt;_authed_user()-&gt;id(),
++                thread_id   =&gt; $c-&gt;_current_thread()-&gt;id(),
+                 timestamp   =&gt; $last_post_timestamp,
+             },
+         )
+@@ -756,10 +756,10 @@
+     # create a new post in the current thread
+     $new_post = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;create(
+         {
+-            thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++            'me.id'     =&gt; $c-&gt;_current_thread()-&gt;id(),
+             subject     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_subject},
+             message     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_message},
+-            creator     =&gt; $c-&gt;_authed_user-&gt;id(),
++            creator_id  =&gt; $c-&gt;_authed_user-&gt;id(),
+             ip_addr     =&gt; $c-&gt;request-&gt;address(),
+         }
+     );
+@@ -804,8 +804,8 @@
+         my $thread_view =
+             $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
+                 {
+-                    person      =&gt; $c-&gt;_authed_user()-&gt;id(),
+-                    thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++                    person_id   =&gt; $c-&gt;_authed_user()-&gt;id(),
++                    thread_id   =&gt; $c-&gt;_current_thread()-&gt;id(),
+                 },
+             )
+         ;
+@@ -833,19 +833,19 @@
+     # create a new thread
+     $new_thread = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;create(
+         {
+-            forum       =&gt; $c-&gt;_current_forum-&gt;id(),
++            forum_id    =&gt; $c-&gt;_current_forum-&gt;id(),
+             subject     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_subject},
+-            creator     =&gt; $c-&gt;_authed_user-&gt;id(),
++            creator_id  =&gt; $c-&gt;_authed_user-&gt;id(),
+         }
+     );
+ 
+     # create a new post in the new thread
+     $new_post = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;create(
+         {
+-            thread      =&gt; $new_thread-&gt;id(),
++            thread_id   =&gt; $new_thread-&gt;id(),
+             subject     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_subject},
+             message     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_message},
+-            creator     =&gt; $c-&gt;_authed_user-&gt;id(),
++            creator_id  =&gt; $c-&gt;_authed_user-&gt;id(),
+             ip_addr     =&gt; $c-&gt;request-&gt;address(),
+         }
+     );
+@@ -866,8 +866,8 @@
+         my $thread_view =
+             $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;create(
+                 {
+-                    person      =&gt; $c-&gt;_authed_user()-&gt;id(),
+-                    thread      =&gt; $new_thread-&gt;id(),
++                    person_id   =&gt; $c-&gt;_authed_user()-&gt;id(),
++                    thread_id   =&gt; $new_thread-&gt;id(),
+                     watched     =&gt; 1,
+                 },
+             )
+
+Modified: trunk/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ThreadView.pm	2007-11-01 21:56:20 UTC (rev 630)
++++ trunk/lib/Parley/Schema/ThreadView.pm	2007-11-01 21:56:34 UTC (rev 631)
+@@ -92,8 +92,8 @@
+ 
+     my $thread_view = $self-&gt;find(
+         {
+-            person  =&gt; $person-&gt;id(),
+-            thread  =&gt; $thread-&gt;id(),
++            person_id =&gt; $person-&gt;id(),
++            thread_id =&gt; $thread-&gt;id(),
+         }
+     );
+ 
+@@ -124,7 +124,7 @@
+     my $notification_list = $self-&gt;search(
+         {
+             # the thread the post belongs to
+-            thread          =&gt; $post-&gt;thread()-&gt;id(),
++            thread_id       =&gt; $post-&gt;thread()-&gt;id(),
+             # only interested in records where a person is watching
+             watched         =&gt; 1,
+             # and they last viewed the thread before the last post
+@@ -140,7 +140,7 @@
+                    \'&lt; timestamp'    ,
+             ],
+             # and they aren't the person that created the post itself
+-            person          =&gt; {
++            person_id =&gt; {
+                 '!=',
+                 $post-&gt;creator()-&gt;id(),
+             },
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000518.html">[Parley-svn] r630 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000520.html">[Parley-svn] r632 - / trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#519">[ date ]</a>
+              <a href="thread.html#519">[ thread ]</a>
+              <a href="subject.html#519">[ subject ]</a>
+              <a href="author.html#519">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

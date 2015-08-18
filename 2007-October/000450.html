@@ -1,0 +1,498 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r562 - / trunk/lib/Parley/I18N trunk/root/base/terms	trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r562%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/terms%0A%09trunk/root/base/thread&In-Reply-To=%3C200710141420.l9EEK6tu021396%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000449.html">
+   <LINK REL="Next"  HREF="000451.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r562 - / trunk/lib/Parley/I18N trunk/root/base/terms	trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r562%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/terms%0A%09trunk/root/base/thread&In-Reply-To=%3C200710141420.l9EEK6tu021396%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r562 - / trunk/lib/Parley/I18N trunk/root/base/terms	trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sun Oct 14 16:20:06 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000449.html">[Parley-svn] r561 - / trunk/lib/Parley/I18N trunk/root/base/post	trunk/root/base/search trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms
+</A></li>
+        <LI>Next message: <A HREF="000451.html">[Parley-svn] r563 - / trunk/lib/Parley/I18N trunk/root/base/user	trunk/root/base/user/lostpassword trunk/root/base/user/signup
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#450">[ date ]</a>
+              <a href="thread.html#450">[ thread ]</a>
+              <a href="subject.html#450">[ subject ]</a>
+              <a href="author.html#450">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-14 16:20:06 +0200 (Sun, 14 Oct 2007)
+New Revision: 562
+
+Modified:
+   /
+   trunk/lib/Parley/I18N/en.po
+   trunk/root/base/terms/index
+   trunk/root/base/thread/add
+   trunk/root/base/thread/recent
+   trunk/root/base/thread/reply
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3983 at wiggin</A>:  chisel | 2007-10-14 15:19:32 +0100
+ + another batch of template i18n
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3982
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3983
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-14 14:19:46 UTC (rev 561)
++++ trunk/lib/Parley/I18N/en.po	2007-10-14 14:20:06 UTC (rev 562)
+@@ -1,4 +1,4 @@
+-msgid &quot;404 Not Found&quot;
++msgid &quot;406 Not Found&quot;
+ msgstr &quot;404 Not Found&quot;
+ 
+ msgid &quot;ACCEPT TERMS&quot;
+@@ -7,6 +7,9 @@
+ msgid &quot;Active&quot;
+ msgstr &quot;Active&quot;
+ 
++msgid &quot;ADD THREAD WATCH&quot;
++msgstr &quot;Add a Thread Watch&quot;
++
+ msgid &quot;Add Reply&quot;
+ msgstr &quot;Add Reply&quot;
+ 
+@@ -16,6 +19,9 @@
+ msgid &quot;Add Watch&quot;
+ msgstr &quot;Add Watch&quot;
+ 
++msgid &quot;ago&quot;
++msgstr &quot;ago&quot;
++
+ msgid &quot;All Forums&quot;
+ msgstr &quot;All Forums&quot;
+ 
+@@ -49,6 +55,9 @@
+ msgid &quot;Create New Thread&quot;
+ msgstr &quot;Create New Thread&quot;
+ 
++msgid &quot;created by&quot;
++msgstr &quot;created by&quot;
++
+ msgid &quot;Current Avatar&quot;
+ msgstr &quot;Current Avatar&quot;
+ 
+@@ -73,6 +82,9 @@
+ msgid &quot;Email Engine&quot;
+ msgstr &quot;Email Engine&quot;
+ 
++msgid &quot;ENTER REPLY&quot;
++msgstr &quot;Please enter your reply in the form below&quot;
++
+ msgid &quot;First&quot;
+ msgstr &quot;First&quot;
+ 
+@@ -133,6 +145,9 @@
+ msgid &quot;Last Viewed&quot;
+ msgstr &quot;Last Viewed&quot;
+ 
++msgid &quot;LOCK AFTER POSTING&quot;
++msgstr &quot;Lock thread after posting&quot;
++
+ msgid &quot;Lock Thread&quot;
+ msgstr &quot;Lock Thread&quot;
+ 
+@@ -157,6 +172,9 @@
+ msgid &quot;Main Page&quot;
+ msgstr &quot;Main Page&quot;
+ 
++msgid &quot;Message&quot;
++msgstr &quot;Message&quot;
++
+ msgid &quot;Moderate&quot;
+ msgstr &quot;Moderate&quot;
+ 
+@@ -178,6 +196,9 @@
+ msgid &quot;No posts&quot;
+ msgstr &quot;No posts&quot;
+ 
++msgid &quot;NO RECENT THREADS&quot;
++msgstr &quot;No recent threads to display&quot;
++
+ msgid &quot;NO SEARCH RESULTS&quot;
+ msgstr &quot;No results found matching specified terms&quot;
+ 
+@@ -241,6 +262,9 @@
+ msgid &quot;Posts&quot;
+ msgstr &quot;Posts&quot;
+ 
++msgid &quot;posts&quot;
++msgstr &quot;posts&quot;
++
+ msgid &quot;PREFS ADD WATCHES&quot;
+ msgstr &quot;Automatically add watches for new posts&quot;
+ 
+@@ -259,6 +283,9 @@
+ msgid &quot;Post New Terms&quot;
+ msgstr &quot;Post New Terms&quot;
+ 
++msgid &quot;Post New Topic&quot;
++msgstr &quot;Post New Topic&quot;
++
+ msgid &quot;Quote&quot;
+ msgstr &quot;Quote&quot;
+ 
+@@ -280,6 +307,9 @@
+ msgid &quot;Return to the forum&quot;
+ msgstr &quot;Return to the forum&quot;
+ 
++msgid &quot;said&quot;
++msgstr &quot;said&quot;
++
+ msgid &quot;Search&quot;
+ msgstr &quot;Search&quot;
+ 
+@@ -316,9 +346,18 @@
+ msgid &quot;Start&quot;
+ msgstr &quot;Start&quot;
+ 
++msgid &quot;Start A New Topic&quot;
++msgstr &quot;Start A New Topic&quot;
++
+ msgid &quot;Stick Thread&quot;
+ msgstr &quot;Stick Thread&quot;
+ 
++msgid &quot;Sticky&quot;
++msgstr &quot;Sticky&quot;
++
++msgid &quot;Sticky Topic&quot;
++msgstr &quot;Sticky Topic&quot;
++
+ msgid &quot;Stop&quot;
+ msgstr &quot;Stop&quot;
+ 
+@@ -358,6 +397,9 @@
+ msgid &quot;Time formatting example&quot;
+ msgstr &quot;Time formatting example&quot;
+ 
++msgid &quot;Topic&quot;
++msgstr &quot;Topic&quot;
++
+ msgid &quot;Unlock Thread&quot;
+ msgstr &quot;Unlock Thread&quot;
+ 
+
+Modified: trunk/root/base/terms/index
+===================================================================
+--- trunk/root/base/terms/index	2007-10-14 14:19:46 UTC (rev 561)
++++ trunk/root/base/terms/index	2007-10-14 14:20:06 UTC (rev 562)
+@@ -1,20 +1,20 @@
+ [% IF terms %]
+-    &lt;h1&gt;Terms and Conditions&lt;/h1&gt;
++    &lt;h1&gt;[%l('Terms and Conditions')%]&lt;/h1&gt;
+     &lt;div class=&quot;site_terms&quot;&gt;
+         [% ForumCode.forumcode(terms.content) %]
+         &lt;div style=&quot;text-align: right;&quot;&gt;
+-        Last Modified: [% nicedate(terms.created) %]
++        [%l('Last Modified')%]: [% nicedate(terms.created) %]
+         &lt;/div&gt;
+     &lt;/div&gt;
+ 
+     [% IF terms.change_summary %]
+-    &lt;h1&gt;Summary of Changes&lt;/h1&gt;
++    &lt;h1&gt;[%l('Summary of Changes')%]&lt;/h1&gt;
+     &lt;div class=&quot;site_terms&quot;&gt;
+         [% ForumCode.forumcode(terms.change_summary) %]
+     &lt;/div&gt;
+     [% END %]
+ [% ELSE %]
+-This site has no Terms and Conditions to view.
++[%l('NO SITE TERMS')%].
+ [% END %]
+ 
+ [% IF all_site_terms %]
+@@ -27,7 +27,7 @@
+             &lt;/option&gt;
+             [% END %]
+         &lt;/select&gt;
+-        &lt;input type=&quot;submit&quot; value=&quot;View&quot;/&gt;
++        &lt;input type=&quot;submit&quot; value=&quot;[%l('View')%]&quot;/&gt;
+     &lt;/div&gt;
+ &lt;/form&gt;
+ [% END %]
+
+Modified: trunk/root/base/thread/add
+===================================================================
+--- trunk/root/base/thread/add	2007-10-14 14:19:46 UTC (rev 561)
++++ trunk/root/base/thread/add	2007-10-14 14:20:06 UTC (rev 562)
+@@ -1,4 +1,4 @@
+-&lt;h1&gt;Start A New Topic&lt;/h1&gt;
++&lt;h1&gt;[%l('Start A New Topic')%]&lt;/h1&gt;
+ 
+ [% IF view.error.message %]
+     [% view.error.message %]
+@@ -15,14 +15,14 @@
+ &lt;table&gt;
+ 
+   &lt;tr&gt;
+-    &lt;td&gt; Topic &lt;/td&gt;
++    &lt;td&gt; [%l('Topic')%] &lt;/td&gt;
+     &lt;td&gt;
+       &lt;input type=&quot;text&quot; name=&quot;thread_subject&quot; size=&quot;60&quot; class=&quot;input_text&quot; /&gt;
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ 
+   &lt;tr&gt;
+-    &lt;td&gt; Message &lt;/td&gt;
++    &lt;td&gt; [%l('Message')%] &lt;/td&gt;
+     &lt;td&gt;
+         &lt;textarea name=&quot;thread_message&quot; id=&quot;thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
+     &lt;/td&gt;
+@@ -30,15 +30,15 @@
+ 
+   &lt;tr&gt;
+     &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-      &lt;input type=&quot;button&quot; value=&quot;Preview&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
+-      &lt;input type=&quot;submit&quot; value=&quot;Post New Topic&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
++      &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
++      &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Topic')%]&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ 
+   &lt;tr&gt;
+     &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
+         &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %]/&gt;
+-        Add a Thread Watch
++        [%l('ADD THREAD WATCH')%] 
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ &lt;/table&gt;
+@@ -96,7 +96,7 @@
+ 
+ 
+                     // update the button
+-                    obj.trigger.value = 'Edit';
++                    obj.trigger.value = '[%l('Edit')%]';
+ 
+                     YU.Event.removeListener( obj.trigger, 'click' );
+                     YU.Event.addListener(
+@@ -115,7 +115,7 @@
+ 
+             this.edit = function() {
+                 // update the button
+-                this.trigger.value = 'Preview';
++                this.trigger.value = '[%l('Preview')%]';
+ 
+                 this.user_input.style.visibility     = 'visible';
+                 this.preview_overlay.destroy();
+
+Modified: trunk/root/base/thread/recent
+===================================================================
+--- trunk/root/base/thread/recent	2007-10-14 14:19:46 UTC (rev 561)
++++ trunk/root/base/thread/recent	2007-10-14 14:20:06 UTC (rev 562)
+@@ -1,4 +1,4 @@
+-&lt;h1&gt;Recently Updated Threads&lt;/h1&gt;
++&lt;h1&gt;[%l('Recently Updated Threads')%]&lt;/h1&gt;
+ 
+ [%- IF thread_list.count &gt; 0 %]
+ [% PROCESS shared/pager_advanced %]
+@@ -8,10 +8,10 @@
+         &lt;td width=&quot;36&quot;&gt;
+         &lt;!-- interesting things about the thread; sticky, locked, etc --&gt;
+         [%- IF thread.sticky %]
+-        &lt;img src=&quot;static/images/sticky.png&quot; alt=&quot;Sticky&quot; title=&quot;Sticky Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++        &lt;img src=&quot;static/images/sticky.png&quot; alt=&quot;[%l('Sticky')%]&quot; title=&quot;[%l('Sticky Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+         [%- END %]
+         [%- IF thread.locked %]
+-        &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++        &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+         [%- END %]
+         &lt;/td&gt;
+ 
+@@ -22,12 +22,12 @@
+             [%- IF authed_user || mini_pager %]
+             [
+                 [%- IF authed_user %]
+-                &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;Continue&lt;/a&gt;
++                &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;[%l('Continue')%]&lt;/a&gt;
+                 [%- END %]
+             ]
+             [%- END %]
+         &lt;/span&gt;
+-        &lt;span class=&quot;topic_creator&quot;&gt;created by
++        &lt;span class=&quot;topic_creator&quot;[%l('created by')%]&gt;
+             &lt;span class=&quot;post_creator&quot;&gt;[% thread.creator.forum_name %]&lt;/span&gt;
+         &lt;/span&gt;
+         &lt;/td&gt;
+@@ -35,10 +35,10 @@
+         &lt;td&gt;
+         [% nicedate(thread.last_post.created) %]
+         &lt;br /&gt;&lt;span class=&quot;interval_ago&quot;&gt;
+-            [% thread.last_post.interval_ago %] ago
++            [% thread.last_post.interval_ago %] [%l('ago')%] 
+             &lt;/span&gt;
+         &lt;br /&gt;
+-        &lt;span class=&quot;topic_creator&quot;&gt;posted by
++        &lt;span class=&quot;topic_creator&quot;[%l('posted by')%]&gt;
+             &lt;span class=&quot;post_creator&quot;&gt;[% thread.last_post.creator.forum_name %]&lt;/span&gt;
+         &lt;/span&gt;
+         &lt;/td&gt;
+@@ -49,9 +49,9 @@
+         &lt;/td&gt;
+         
+         &lt;td align=&quot;right&quot;&gt;
+-        [% thread.view_count %] views&lt;br /&gt;
++        [% thread.view_count %] [%l('views')%]&lt;br /&gt;
+         &lt;br /&gt;
+-        [% thread.post_count %] posts&lt;br /&gt;
++        [% thread.post_count %] [%l('posts')%]&lt;br /&gt;
+         &lt;/td&gt;
+ 
+         &lt;td&gt;
+@@ -81,5 +81,5 @@
+ [% END %]
+ &lt;/table&gt;
+ [% ELSE %]
+-  No recent threads to display
++[%l('NO RECENT THREADS')%]
+ [% END %]
+
+Modified: trunk/root/base/thread/reply
+===================================================================
+--- trunk/root/base/thread/reply	2007-10-14 14:19:46 UTC (rev 561)
++++ trunk/root/base/thread/reply	2007-10-14 14:20:06 UTC (rev 562)
+@@ -2,8 +2,6 @@
+ 
+ [% PROCESS shared/loading_please_wait %]
+ 
+-
+-
+ &lt;h1&gt;
+ [% current_forum.name %]
+ &nbsp;:&nbsp;
+@@ -51,13 +49,13 @@
+ [% END %]
+ 
+     
+-&lt;p&gt;Please enter your reply in the form below:&lt;/p&gt;
++&lt;p&gt;[%l('ENTER REPLY')%]:&lt;/p&gt;
+ 
+ 
+ &lt;table&gt;
+   [% IF c.config.replies_have_own_subject %]
+   &lt;tr&gt;
+-    &lt;td&gt; Topic &lt;/td&gt;
++    &lt;td&gt; [%l('Topic')%] &lt;/td&gt;
+     &lt;td&gt;
+       &lt;input type=&quot;text&quot; name=&quot;thread_subject&quot; size=&quot;60&quot; class=&quot;input_text&quot; value=&quot;[% current_thread.subject %]&quot; /&gt;
+     &lt;/td&gt;
+@@ -71,7 +69,7 @@
+   &lt;td&gt;&nbsp;&lt;/td&gt;
+   &lt;td&gt;
+     &lt;span class=&quot;post_creator&quot;&gt;
+-      [% quote_post.creator.forum_name %] said:
++      [% quote_post.creator.forum_name %] [%l('said')%]:
+     &lt;/span&gt;
+     &lt;br /&gt;
+     &lt;textarea name=&quot;quote_message&quot; cols=&quot;60&quot; rows=&quot;10&quot; class=&quot;quoted_reply_textarea&quot; /&gt;[% quote_post.message %]&lt;/textarea&gt;
+@@ -80,7 +78,7 @@
+   [% END %]
+ 
+   &lt;tr valign=&quot;top&quot;&gt;
+-    &lt;td&gt; Message &lt;/td&gt;
++    &lt;td&gt; [%l('Message')%] &lt;/td&gt;
+     &lt;td&gt;
+         &lt;textarea name=&quot;thread_message&quot; id=&quot;thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
+     &lt;/td&gt;
+@@ -88,22 +86,22 @@
+ 
+   &lt;tr&gt;
+     &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-      &lt;input type=&quot;button&quot; value=&quot;Preview&quot;   name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
+-      &lt;input type=&quot;submit&quot; value=&quot;Add Reply&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
++      &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;   name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
++      &lt;input type=&quot;submit&quot; value=&quot;[%l('Add Reply')%]&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ 
+   [% IF moderator %]
+   &lt;tr&gt;
+     &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
+-        &lt;input type=&quot;checkbox&quot; name=&quot;lock_thread&quot; value=&quot;1&quot; /&gt; Lock thread after posting
++        &lt;input type=&quot;checkbox&quot; name=&quot;lock_thread&quot; value=&quot;1&quot; /&gt; [%l('LOCK AFTER POSTING')%] 
+     &lt;/td&gt;
+   &lt;/tr&gt;
+   [% END %]
+   &lt;tr&gt;
+     &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
+         &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %]/&gt;
+-        Add a Thread Watch
++        [%l('ADD THREAD WATCH')%] 
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ &lt;/table&gt;
+@@ -162,7 +160,7 @@
+ 
+ 
+                     // update the button
+-                    obj.trigger.value = 'Edit';
++                    obj.trigger.value = '[%l('Edit')%]';
+ 
+                     YU.Event.removeListener( obj.trigger, 'click' );
+                     YU.Event.addListener(
+@@ -181,7 +179,7 @@
+ 
+             this.edit = function() {
+                 // update the button
+-                this.trigger.value = 'Preview';
++                this.trigger.value = '[%l('Preview')%]';
+ 
+                 this.user_input.style.visibility     = 'visible';
+                 this.preview_overlay.destroy();
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000449.html">[Parley-svn] r561 - / trunk/lib/Parley/I18N trunk/root/base/post	trunk/root/base/search trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms
+</A></li>
+	<LI>Next message: <A HREF="000451.html">[Parley-svn] r563 - / trunk/lib/Parley/I18N trunk/root/base/user	trunk/root/base/user/lostpassword trunk/root/base/user/signup
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#450">[ date ]</a>
+              <a href="thread.html#450">[ thread ]</a>
+              <a href="subject.html#450">[ subject ]</a>
+              <a href="author.html#450">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

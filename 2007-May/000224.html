@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r337 - / trunk/root/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r337%20-%20/%20trunk/root/base&In-Reply-To=%3C200705140838.l4E8cAIW016902%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000225.html">
+   <LINK REL="Next"  HREF="000226.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r337 - / trunk/root/base</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r337%20-%20/%20trunk/root/base&In-Reply-To=%3C200705140838.l4E8cAIW016902%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r337 - / trunk/root/base">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon May 14 10:38:10 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000225.html">[Parley-svn] r336 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000226.html">[Parley-svn] r338 - / trunk/root/base/forum trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#224">[ date ]</a>
+              <a href="thread.html#224">[ thread ]</a>
+              <a href="subject.html#224">[ subject ]</a>
+              <a href="author.html#224">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-14 10:38:10 +0200 (Mon, 14 May 2007)
+New Revision: 337
+
+Modified:
+   /
+   trunk/root/base/footer
+   trunk/root/base/header
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3267 at wiggin</A>:  chisel | 2007-05-11 19:01:49 +0100
+ + new header and footer markup for new styling
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3266
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3267
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-05-14 08:38:05 UTC (rev 336)
++++ trunk/root/base/footer	2007-05-14 08:38:10 UTC (rev 337)
+@@ -1,18 +1,37 @@
+ &lt;!-- Footer : Start --&gt;
+-	&lt;/div&gt;
+-	&lt;!-- end the main content --&gt;
++                    &lt;/p&gt;
++                &lt;/div&gt;&lt;!-- content div --&gt;
++            &lt;/div&gt;&lt;!-- wrapper div --&gt;
+ 
+-&lt;span style=&quot;display: block; float: right; margin-right: 20px;&quot;&gt;
+-  &lt;a href=&quot;<A HREF="http://catalystframework.org">http://catalystframework.org</A>&quot;&gt;&lt;img
+-    src=&quot;static/images/btn_88x31_powered.png&quot;
+-    width=&quot;88&quot;
+-    height=&quot;31&quot;
+-    alt=&quot;Powered By Catalyst&quot;
+-    style=&quot;border: none;&quot;
+-    /&gt;&lt;/a&gt;
+-&lt;/span&gt;
++            &lt;div id=&quot;navigation&quot;&gt;
++                &lt;p&gt;Navigation&lt;/p&gt;
++                [% PROCESS shared/navigation %]
++            &lt;/div&gt;&lt;!-- navigation div --&gt;
+ 
+-&lt;/body&gt;
++            &lt;div id=&quot;extra&quot;&gt;
++                [% PROCESS shared/user_status %]
++            &lt;/div&gt;&lt;!-- extra div --&gt;
++
++            &lt;div id=&quot;footer&quot;&gt;
++                &lt;p&gt;&copy; Chisel Wright 2006-2007. All Rights Reserved.&lt;/p&gt;
++            &lt;/div&gt;&lt;!-- footer div --&gt;
++
++
++            &lt;span style=&quot;display: block; float: right; margin-right: 20px;&quot;&gt;
++            &lt;a href=&quot;<A HREF="http://catalystframework.org">http://catalystframework.org</A>&quot;&gt;&lt;img
++                src=&quot;static/images/btn_88x31_powered.png&quot;
++                width=&quot;88&quot;
++                height=&quot;31&quot;
++                alt=&quot;Powered By Catalyst&quot;
++                style=&quot;border: none;&quot;
++                /&gt;&lt;/a&gt;
++            &lt;/span&gt;
++
++            [% INCLUDE shared/login_dialog %]
++            [% INCLUDE shared/search_dialog %]
++        &lt;/div&gt;&lt;!-- container div --&gt;
++
++    &lt;/body&gt;
+ &lt;/html&gt;
+ &lt;!-- Footer : End --&gt;
+ 
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-05-14 08:38:05 UTC (rev 336)
++++ trunk/root/base/header	2007-05-14 08:38:10 UTC (rev 337)
+@@ -5,7 +5,7 @@
+ 
+ &lt;!-- Header : Start --&gt;
+ &lt;html&gt;
+-	&lt;head&gt;
++    &lt;head&gt;
+         &lt;base href=&quot;[% c.req.base %]&quot; /&gt;
+         &lt;title&gt;
+             [% c.config.name %]
+@@ -26,15 +26,12 @@
+              : [% current_forum.name %]
+             [% END %]
+         &lt;/title&gt;
+-		&lt;meta name=&quot;author&quot; content=&quot;Chisel Wright&quot; /&gt;
+-                &lt;link rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;css/default.css&quot; /&gt;
+-		&lt;link rel=&quot;shortcut icon&quot; href=&quot;favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
++        &lt;meta name=&quot;author&quot; content=&quot;Chisel Wright&quot; /&gt;
++        &lt;link rel=&quot;shortcut icon&quot; href=&quot;favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
++        &lt;link rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;css/common.css&quot; /&gt;
++        &lt;link rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;css/layout23.css&quot; /&gt;
+ 
+-        &lt;!-- MARKER --&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;prototype.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;controls.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;effects.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;dragdrop.js&quot;&gt;&lt;/script&gt;
++        &lt;link rel=&quot;alternate stylesheet&quot; title=&quot;Layout 33&quot; href=&quot;css/layout33.css&quot; /&gt;
+ 
+         &lt;!-- Dojo Magic --&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;/static/magic/dojo.js&quot;&gt;&lt;/script&gt;
+@@ -43,21 +40,15 @@
+             dojo.require(&quot;dojo.widget.Dialog&quot;);
+             dojo.require(&quot;dojo.widget.Button&quot;);
+         &lt;/script&gt;
+-	&lt;/head&gt;
++    &lt;/head&gt;
+ 
+-	&lt;div id=&quot;top&quot;&gt;
+-	&lt;/div&gt;
++    &lt;body&gt;
++        &lt;div id=&quot;container&quot;&gt;
++            &lt;div id=&quot;header&quot;&gt;
++                &lt;h1&gt;Header&lt;/h1&gt;
++            &lt;/div&gt;&lt;!-- header div --&gt;
+ 
+-	&lt;div id=&quot;statusbar&quot;&gt;
+-		[% INCLUDE menu/statusbar %]
+-	&lt;/div&gt;
+-
+-	&lt;div id=&quot;left&quot;&gt;
+-		[% INCLUDE menu/left/main %]
+-	&lt;/div&gt;
+-
+-	&lt;!-- start the main content area --&gt;
+-	&lt;div id=&quot;middle&quot;&gt;
+-&lt;body&gt;
+-
++            &lt;div id=&quot;wrapper&quot;&gt;
++                &lt;div id=&quot;content&quot;&gt;
++                    &lt;p&gt;
+ &lt;!-- Header : End --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000225.html">[Parley-svn] r336 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000226.html">[Parley-svn] r338 - / trunk/root/base/forum trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#224">[ date ]</a>
+              <a href="thread.html#224">[ thread ]</a>
+              <a href="subject.html#224">[ subject ]</a>
+              <a href="author.html#224">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

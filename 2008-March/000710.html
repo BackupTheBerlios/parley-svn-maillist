@@ -1,0 +1,741 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r822 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/base trunk/root/base/user trunk/root/static/script	trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r822%20-%20/%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%0A%09trunk/root/base%20trunk/root/base/user%20trunk/root/static/script%0A%09trunk/t/schema&In-Reply-To=%3C200803062101.m26L1t1h000829%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000711.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r822 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/base trunk/root/base/user trunk/root/static/script	trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r822%20-%20/%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%0A%09trunk/root/base%20trunk/root/base/user%20trunk/root/static/script%0A%09trunk/t/schema&In-Reply-To=%3C200803062101.m26L1t1h000829%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r822 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/base trunk/root/base/user trunk/root/static/script	trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Mar  6 22:01:55 CET 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000711.html">[Parley-svn] r823 - / trunk/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#710">[ date ]</a>
+              <a href="thread.html#710">[ thread ]</a>
+              <a href="subject.html#710">[ subject ]</a>
+              <a href="author.html#710">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-06 22:01:54 +0100 (Thu, 06 Mar 2008)
+New Revision: 822
+
+Added:
+   trunk/lib/Parley/Schema/LogAdminAction.pm
+   trunk/root/static/script/ajax_error_dlg.js
+   trunk/root/static/script/user_suspend.js
+   trunk/t/schema/logadminaction.t
+Modified:
+   /
+   trunk/db/patch_0.58_to_0.59.psql
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/Schema.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/lib/Parley/Schema/Thread.pm
+   trunk/root/base/header
+   trunk/root/base/user/profile
+   trunk/t/schema/person.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4725 at wiggin</A>:  chisel | 2008-03-06 19:01:15 +0000
+ Intermediate check-in along the long road of Admin Functionality:
+ + new role, Suspend Account
+ + new table: log_admin_action
+ / improvements to user-role editing (e.g. no site_moderator suicide)
+ + implement a large chunk of the user-suspend functionality
+ + extended Person DBIC class with role methods: is_site_moderator(), can_suspend_account()
+ + added LogAdminAction DBIC class
+ / extended user profile to show suspend checkbox (for authed users)
+ + added javascript to get suspension-reason and post back to server (through ajax)
+ + added &quot;ajax error dialog&quot; - just nicer than a straight javascript alert()
+ + created and extended tests
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4721
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4725
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/patch_0.58_to_0.59.psql
+===================================================================
+--- trunk/db/patch_0.58_to_0.59.psql	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/db/patch_0.58_to_0.59.psql	2008-03-06 21:01:54 UTC (rev 822)
+@@ -6,6 +6,7 @@
+ --  add flagging of posts edited by admin
+ --  lock posts (so they can't be changed after being edited by admin)
+ --  allow user accounts to be suspended
++--  logging of admin actions on users (e.g. why suspended)
+ 
+ BEGIN;
+ 
+@@ -26,13 +27,20 @@
+     name        varchar(30) not null unique,
+     description text
+ );
++CREATE INDEX idx_role_name ON role(name);
++
+ -- a couple of roles
+ INSERT INTO role (idx, name, description) VALUES (
+     0,
+     'site_moderator',
+-    'Site Moderator (aka Da Boss)'
++    'Site Moderator'
+ );
+ INSERT INTO role (idx, name, description) VALUES (
++    50,
++    'suspend_account',
++    'Suspend Account'
++);
++INSERT INTO role (idx, name, description) VALUES (
+     100,
+     'ip_ban_posting',
+     'Restrict Posting by IP'
+@@ -56,6 +64,8 @@
+                             references role(id),
+     UNIQUE (person_id, role_id)
+ );
++CREATE INDEX idx_userroles_personid ON user_roles(person_id);
++CREATE INDEX idx_userroles_roleid   ON user_roles(role_id);
+ 
+ -- make topdog a site_moderator
+ INSERT INTO user_roles
+@@ -65,6 +75,24 @@
+     (SELECT id FROM role WHERE name='site_moderator')
+ );
+ 
++-- admin action log actions/messages
++CREATE TABLE log_admin_action (
++    id          serial      primary key,
++    person_id   integer     not null
++                            references person(id),
++    admin_id    integer     not null
++                            references person(id),
++    created     timestamp   with time zone
++                            not null
++                            default CURRENT_TIMESTAMP,
++
++    message     text        not null
++                            default 'No Message Supplied'
++);
++CREATE INDEX idx_adminaction_personid ON admin_action(person_id);
++CREATE INDEX idx_adminaction_adminid  ON admin_action(admin_id);
++
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/lib/Parley/Controller/Site.pm	2008-03-06 21:01:54 UTC (rev 822)
+@@ -139,13 +139,28 @@
+         eval {
+             $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
+                 sub {
+-                    $c-&gt;model('ParleyDB::UserRole')-&gt;search(
++                    my $userrole = $c-&gt;model('ParleyDB::UserRole')-&gt;find(
+                         {
+                             person_id   =&gt; $person_id,
+                             role_id     =&gt; $role_id,
+                         }
+-                    )
+-                    -&gt;delete;
++                    );
++
++                    # moderator suicide?
++                    if (
++                        $person_id = $c-&gt;_authed_user-&gt;id
++                            and
++                        q{site_moderator} eq $userrole-&gt;role-&gt;name
++                    ) {
++                        $return_data-&gt;{error}{message} =
++                            $c-&gt;localize(
++                                q{You can't commit moderator suicide}
++                            );
++                    }
++                    else {
++                        # remove the role
++                        $userrole-&gt;delete;
++                    }
+                 }
+             );
+             $return_data-&gt;{updated} = 1;
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/lib/Parley/Controller/User.pm	2008-03-06 21:01:54 UTC (rev 822)
+@@ -6,6 +6,8 @@
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
++use JSON;
++
+ # deal with user login requests on user/login
+ sub login : Path('/user/login') {
+     my ( $self, $c ) = @_;
+@@ -118,7 +120,66 @@
+     }
+ }
+ 
++sub suspend :Local {
++    my ($self, $c) = @_;
++    my ($json, $return_data, $person);
+ 
++    if (not $c-&gt;_authed_user-&gt;can_suspend_account) {
++        $return_data-&gt;{error}{message} =
++            $c-&gt;localize(q{You don't have the required privileges to do that});
++    }
++
++    else {
++        my ($suspended, $person);
++
++        # default to turning OFF a suspension
++        $suspended = 0;
++
++        # see if we meet the criteria for a suspend action
++        if (
++            defined $c-&gt;request-&gt;param('suspend')
++                and
++            1 == $c-&gt;request-&gt;param('suspend')
++        ) {
++            $suspended = 1;
++        }
++
++        eval {
++            # see if we can find the person to suspend
++            $person = $c-&gt;model('ParleyDB::Person')-&gt;find(
++                $c-&gt;request-&gt;param('person')
++            );
++
++            if (defined $person) {
++                $return_data-&gt;{error}{suspended} = $suspended;
++                $return_data-&gt;{error}{name} = $person-&gt;forum_name;
++
++                # suspend a person, giving a reson
++                $person-&gt;set_suspended(
++                    {
++                        value   =&gt; $suspended,
++                        reason  =&gt; $c-&gt;request-&gt;param('reason'),
++                    }
++                );
++            }
++            else {
++                $return_data-&gt;{error}{message} =
++                    $c-&gt;localize(q{We're not in Kansas any more});
++            }
++        };
++        if ($@) {
++            $return_data-&gt;{error}{message} = $@;
++            $c-&gt;log-&gt;error($@);
++        }
++    }
++
++    # return some JSON
++    $json = to_json($return_data);
++    $c-&gt;response-&gt;body( $json );
++    $c-&gt;log-&gt;info( $json );
++    return;
++}
++
+ 1;
+ 
+ __END__
+
+Added: trunk/lib/Parley/Schema/LogAdminAction.pm
+===================================================================
+--- trunk/lib/Parley/Schema/LogAdminAction.pm	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/lib/Parley/Schema/LogAdminAction.pm	2008-03-06 21:01:54 UTC (rev 822)
+@@ -0,0 +1,42 @@
++package Parley::Schema::LogAdminAction;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base 'DBIx::Class';
++use DateTime::Format::Pg;
++
++use Parley::App::DateTime qw( :interval );
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;log_admin_action&quot;);
++__PACKAGE__-&gt;add_columns(
++  id            =&gt; { },
++  person_id     =&gt; { },
++  admin_id      =&gt; { },
++  created       =&gt; { },
++  message       =&gt; { },
++);
++
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++#__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Role');
++
++__PACKAGE__-&gt;belongs_to(
++    &quot;person&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; &quot;self.person_id&quot; }
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;admin&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; &quot;self.person_id&quot; }
++);
++
++foreach my $datecol (qw/created/) {
++    __PACKAGE__-&gt;inflate_column($datecol, {
++        inflate =&gt; sub { DateTime::Format::Pg-&gt;parse_datetime(shift); },
++        deflate =&gt; sub { DateTime::Format::Pg-&gt;format_datetime(shift); },
++    });
++}
++
++1;
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/lib/Parley/Schema/Person.pm	2008-03-06 21:01:54 UTC (rev 822)
+@@ -66,6 +66,8 @@
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
++
++  suspended     =&gt; {},
+ );
+ 
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+@@ -143,6 +145,9 @@
+     my $record = shift;
+     my @roles  = @_;
+ 
++    return
++        if (not @roles);
++
+     my ($schema, $rs);
+ 
+     $schema = $record-&gt;result_source()-&gt;schema();
+@@ -164,4 +169,21 @@
+     return ($rs-&gt;count == scalar(@roles) || 0);
+ }
+ 
++# thin wrapper around check_user_roles() for convenience
++sub is_site_moderator {
++    my $record = shift;
++
++    return $record-&gt;check_user_roles(
++        'site_moderator'
++    );
++}
++# thin wrapper around check_user_roles() for convenience
++sub can_suspend_account {
++    my $record = shift;
++
++    return $record-&gt;check_user_roles(
++        'site_moderator'
++    );
++}
++
+ 1;
+
+Modified: trunk/lib/Parley/Schema/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Thread.pm	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/lib/Parley/Schema/Thread.pm	2008-03-06 21:01:54 UTC (rev 822)
+@@ -6,6 +6,7 @@
+ use warnings;
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
++use DateTime::Format::Pg;
+ 
+ use base 'DBIx::Class';
+ 
+
+Modified: trunk/lib/Parley/Schema.pm
+===================================================================
+--- trunk/lib/Parley/Schema.pm	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/lib/Parley/Schema.pm	2008-03-06 21:01:54 UTC (rev 822)
+@@ -13,6 +13,7 @@
+         'EmailQueue',
+         'ForumModerator',
+         'Forum',
++        'LogAdminAction',
+         'PasswordReset',
+         'Person',
+         'Post',
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/root/base/header	2008-03-06 21:01:54 UTC (rev 822)
+@@ -50,6 +50,8 @@
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/tabview/tabview-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/yui/autocomplete/autocomplete-min.js')%]&quot;&gt;&lt;/script&gt;
+ 
++        &lt;!-- homebrew javascript --&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/script/ajax_error_dlg.js')%]&quot;&gt;&lt;/script&gt;
+ 
+         &lt;!-- defined styles for parley --&gt;
+         &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Simple&quot; href=&quot;[%c.uri_for('/static/css/parley-min.css')%]&quot; /&gt;
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/root/base/user/profile	2008-03-06 21:01:54 UTC (rev 822)
+@@ -42,7 +42,50 @@
+ 
+         &lt;/div&gt;
+     &lt;/div&gt;
++
++    [% IF authed_user.is_site_moderator || authed_user.can_suspend_account %]
++    &lt;h2&gt;Administration&lt;/h2&gt;
++
++    &lt;div class=&quot;yui-gf top_padded&quot;&gt;
++        [% IF authed_user.can_suspend_account %]
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++        Suspend Account
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++        &lt;input
++            type=&quot;checkbox&quot;
++            name=&quot;suspend_account&quot;
++            id=&quot;suspend_account&quot;
++            value=&quot;[%profiled_user.id%]&quot;
++            [% IF profiled_user.suspended %]checked=&quot;true&quot;[% END %]
++        &gt;
++        &lt;/div&gt;
++        [% END %]
++    &lt;/div&gt;
++
++    [% END %]
+ [% ELSE %]
+     &lt;p&gt;[%l('PROFILE NOT FOUND')%]&lt;/p&gt;
+ [% END %]
+ &lt;!-- end : user/profile --&gt;
++
++
++&lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/script/user_suspend.js')%]&quot;&gt;&lt;/script&gt;
++&lt;div id=&quot;suspend_reason_dialog&quot;&gt;
++    &lt;div class=&quot;hd&quot;&gt;Please enter suspension information&lt;/div&gt;
++    &lt;div class=&quot;bd&quot;&gt;
++        &lt;form method=&quot;POST&quot; action=&quot;assets/post.php&quot;&gt;
++            &lt;label for=&quot;suspension_reason&quot;&gt;Reason for suspension:&lt;/label&gt;
++            &lt;br /&gt;
++            &lt;textarea id=&quot;suspension_reason&quot; cols=&quot;30&quot; rows=&quot;6&quot;&gt;&lt;/textarea&gt;
++        &lt;/form&gt;
++    &lt;/div&gt;
++&lt;/div&gt;
++
++&lt;div id=&quot;ajax_dialog&quot;&gt;
++    &lt;div class=&quot;hd&quot;&gt;AJAX Message Dialog&lt;/div&gt;
++    &lt;div class=&quot;bd&quot;&gt;
++        Message
++    &lt;/div&gt;
++&lt;/div&gt;
++
+
+Added: trunk/root/static/script/ajax_error_dlg.js
+===================================================================
+--- trunk/root/static/script/ajax_error_dlg.js	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/root/static/script/ajax_error_dlg.js	2008-03-06 21:01:54 UTC (rev 822)
+@@ -0,0 +1,56 @@
++(function () {
++    var ajax_dialog_init = function() {
++        YAHOO.namespace(&quot;parley.ajax_dialog&quot;);
++
++        var handleClose = function() {
++            this.cancel();
++        };
++
++        YAHOO.parley.ajax_dialog.dlg =
++            new YAHOO.widget.Dialog(
++                &quot;ajax_dialog&quot;,
++                {
++                    postmethod:             'none',
++                    modal: true,
++                    //width:                  '350px',
++                    fixedcenter:            true,
++                    visible:                false, 
++                    constraintoviewport:    true,
++
++                    buttons: [
++                        { text:&quot;Close&quot;, handler:handleClose, isDefault:true }
++                    ]
++                }
++            )
++        ; // End of new()
++
++        YAHOO.parley.ajax_dialog.dlg.show_message = function(e) {
++            try {
++                // set the body of the dialog to the message, if we have one
++                if(undefined!=e &amp;&amp; undefined!=e.message) {
++                    this.setBody(e.message);
++                }
++                else {
++                    this.setBody('No error message passed to show_message()');
++                }
++
++                // set the dialog header
++                if(undefined!=e &amp;&amp; undefined!=e.title) {
++                    this.setHeader(e.title);
++                }
++                else {
++                    this.setHeader('Application Error');
++                }
++            } catch(e){alert(e);}
++
++            // show the dialog
++            this.show();
++        }
++
++        // Render the Dialog
++        YAHOO.parley.ajax_dialog.dlg.render();
++    };
++
++
++    YAHOO.util.Event.onDOMReady(ajax_dialog_init);
++})();
+
+Added: trunk/root/static/script/user_suspend.js
+===================================================================
+--- trunk/root/static/script/user_suspend.js	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/root/static/script/user_suspend.js	2008-03-06 21:01:54 UTC (rev 822)
+@@ -0,0 +1,104 @@
++YAHOO.namespace(&quot;parley.suspend_reason&quot;);
++
++function suspend_init() {
++    var YU  = YAHOO.util,
++        Dom = YAHOO.util.Dom;
++
++    var suspend_account = function() {
++        var elID = this.id,
++            checked = (this.checked ? true : false);
++
++        try {
++            // do we want to suspend the tinker?
++            if (checked) {
++                YAHOO.parley.suspend_reason.suspend_reason_dialog.show();
++            }
++
++            // do we want to un-suspend the user?
++            else {
++                //alert('un-suspend');
++            }
++        } catch(e) { alert(e); }
++    }
++
++    YU.Event.addListener(
++        'suspend_account',
++        'change',
++        suspend_account
++    );
++}
++
++
++function suspend_reason_init() {
++    var YU  = YAHOO.util,
++        Dom = YAHOO.util.Dom;
++
++    // Define various event handlers for Dialog
++    var handleSubmit = function() {
++        YAHOO.parley.small_loading.wait.show();
++
++        var checked =
++            (Dom.get('suspend_account').checked ? 1 : 0);
++
++        var person_id =
++            Dom.get('suspend_account').value;
++        var reason =
++            Dom.get('suspension_reason').value;
++
++        try {
++            var request = YU.Connect.asyncRequest(
++                'POST',
++                '/user/suspend',
++                {
++                    success: handleSuccess,
++                    failure: handleFailure,
++                    argument: {
++                        node: Dom.get('suspend_account')
++                    }
++                },
++                  'suspend='    + checked
++                + '&amp;person='    + person_id
++                + '&amp;reason='    + reason
++            );
++        } catch(e) { alert(e); }
++    };
++    var handleCancel = function() {
++        YAHOO.parley.small_loading.wait.hide();
++        this.cancel();
++    };
++    var handleSuccess = function(o) {
++        YAHOO.parley.small_loading.wait.hide();
++        YAHOO.parley.suspend_reason.suspend_reason_dialog.hide();
++        var response = o.responseText;
++        var data = eval('(' + o.responseText + ')');
++
++        try {
++        YAHOO.parley.ajax_dialog.dlg.show_message(data.error);
++        } catch(e) { alert(e); }
++    };
++    var handleFailure = function(o) {
++        YAHOO.parley.small_loading.wait.hide();
++        alert(&quot;Submission failed: &quot; + o.status);
++    };
++
++    // Instantiate the Dialog
++    YAHOO.parley.suspend_reason.suspend_reason_dialog =
++        new YAHOO.widget.Dialog(&quot;suspend_reason_dialog&quot;,
++        {
++            postmethod:             'async',
++            width : &quot;350px&quot;,
++            fixedcenter : true,
++            visible : false, 
++            constraintoviewport : true,
++            buttons : [ { text:&quot;Submit&quot;, handler:handleSubmit, isDefault:true },
++                        { text:&quot;Cancel&quot;, handler:handleCancel } ]
++        }
++    );
++
++    // Render the Dialog
++    YAHOO.parley.suspend_reason.suspend_reason_dialog.render();
++}
++
++YAHOO.util.Event.onDOMReady(suspend_reason_init);
++YAHOO.util.Event.onDOMReady(suspend_init);
++
+
+Added: trunk/t/schema/logadminaction.t
+===================================================================
+--- trunk/t/schema/logadminaction.t	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/t/schema/logadminaction.t	2008-03-06 21:01:54 UTC (rev 822)
+@@ -0,0 +1,49 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'LogAdminAction',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                person_id
++                admin_id
++                created
++                message
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                person
++                admin
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/logadminaction.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Modified: trunk/t/schema/person.t
+===================================================================
+--- trunk/t/schema/person.t	2008-02-28 22:32:08 UTC (rev 821)
++++ trunk/t/schema/person.t	2008-03-06 21:01:54 UTC (rev 822)
+@@ -28,6 +28,7 @@
+                 preference_id
+                 last_post_id
+                 post_count
++                suspended
+             ]
+         ],
+ 
+@@ -46,6 +47,10 @@
+ 
+         custom =&gt; [
+             qw[
++                roles
++                check_user_roles
++                is_site_moderator
++                can_suspend_account
+             ]
+         ],
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000711.html">[Parley-svn] r823 - / trunk/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#710">[ date ]</a>
+              <a href="thread.html#710">[ thread ]</a>
+              <a href="subject.html#710">[ subject ]</a>
+              <a href="author.html#710">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

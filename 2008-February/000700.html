@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r812 - / trunk/lib/Parley/ResultSet	trunk/root/base/site
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r812%20-%20/%20trunk/lib/Parley/ResultSet%0A%09trunk/root/base/site&In-Reply-To=%3C200802270945.m1R9jQDv010939%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000699.html">
+   <LINK REL="Next"  HREF="000701.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r812 - / trunk/lib/Parley/ResultSet	trunk/root/base/site</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r812%20-%20/%20trunk/lib/Parley/ResultSet%0A%09trunk/root/base/site&In-Reply-To=%3C200802270945.m1R9jQDv010939%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r812 - / trunk/lib/Parley/ResultSet	trunk/root/base/site">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Feb 27 10:45:26 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000699.html">[Parley-svn] r811 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/static/css trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000701.html">[Parley-svn] r813 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User	trunk/lib/Parley/Model trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema trunk/lib/Parley/View trunk/lib/Text/Search
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#700">[ date ]</a>
+              <a href="thread.html#700">[ thread ]</a>
+              <a href="subject.html#700">[ subject ]</a>
+              <a href="author.html#700">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-27 10:45:26 +0100 (Wed, 27 Feb 2008)
+New Revision: 812
+
+Added:
+   trunk/lib/Parley/ResultSet/Role.pm
+   trunk/root/base/site/user
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4703 at wiggin</A>:  chisel | 2008-02-27 08:42:29 +0000
+ + added new files
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4702
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4703
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/ResultSet/Role.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Role.pm	2008-02-27 09:44:54 UTC (rev 811)
++++ trunk/lib/Parley/ResultSet/Role.pm	2008-02-27 09:45:26 UTC (rev 812)
+@@ -0,0 +1,23 @@
++package Parley::ResultSet::Role;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use base 'DBIx::Class::ResultSet';
++
++sub role_list {
++    my $resultsource = shift;
++    my ($rs);
++
++    $rs = $resultsource-&gt;search(
++        {
++        },
++        {
++            'order_by' =&gt; [ 'idx ASC', 'description ASC' ],
++        },
++    );
++
++    return $rs;
++}
++
++1;
+
+Added: trunk/root/base/site/user
+===================================================================
+--- trunk/root/base/site/user	2008-02-27 09:44:54 UTC (rev 811)
++++ trunk/root/base/site/user	2008-02-27 09:45:26 UTC (rev 812)
+@@ -0,0 +1,23 @@
++&lt;h1&gt;User Stuff&lt;/h1&gt;
++
++&lt;h2&gt;[% person.forum_name %] ([%person.first_name%] [%person.last_name%])&lt;/h2&gt;
++
++&lt;table class=&quot;forum_list&quot;&gt;
++    &lt;tbody&gt;
++
++        [% WHILE (role = roles.next) %]
++        [% toggler = (1 - (toggler||0)) %]
++        &lt;tr class=&quot;row [% row_styles.$toggler %]&quot;&gt;
++            &lt;td&gt;
++                [% role.description %]
++            &lt;/td&gt;
++            &lt;td&gt;
++                [% person.check_user_roles(role.name) %]
++            &lt;/td&gt;
++        &lt;/tr&gt;
++        [% END %]
++
++    &lt;/tbody&gt;
++&lt;/table&gt;
++
++&lt;hr /&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000699.html">[Parley-svn] r811 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/static/css trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000701.html">[Parley-svn] r813 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User	trunk/lib/Parley/Model trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema trunk/lib/Parley/View trunk/lib/Text/Search
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#700">[ date ]</a>
+              <a href="thread.html#700">[ thread ]</a>
+              <a href="subject.html#700">[ subject ]</a>
+              <a href="author.html#700">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

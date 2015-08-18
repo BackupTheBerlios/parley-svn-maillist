@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r140 - / trunk/root/base/user trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r140%20-%20/%20trunk/root/base/user%20trunk/root/css&In-Reply-To=%3C200605111951.k4BJpA9i023564%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000043.html">
+   <LINK REL="Next"  HREF="000042.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r140 - / trunk/root/base/user trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r140%20-%20/%20trunk/root/base/user%20trunk/root/css&In-Reply-To=%3C200605111951.k4BJpA9i023564%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r140 - / trunk/root/base/user trunk/root/css">chiselwright at berlios.de
+       </A><BR>
+    <I>Thu May 11 21:51:10 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000043.html">[Parley-svn] r139 - / trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000042.html">[Parley-svn] r141 - / trunk trunk/root/base/menu trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#37">[ date ]</a>
+              <a href="thread.html#37">[ thread ]</a>
+              <a href="subject.html#37">[ subject ]</a>
+              <a href="author.html#37">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-05-11 21:51:10 +0200 (Thu, 11 May 2006)
+New Revision: 140
+
+Modified:
+   /
+   trunk/root/base/user/login
+   trunk/root/css/default.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14404 at ferrari</A>:  chisel | 2006-04-13 18:24:35 +0100
+ / move away from a table based layout for the login page/form
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14394
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14404
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2006-05-11 19:51:06 UTC (rev 139)
++++ trunk/root/base/user/login	2006-05-11 19:51:10 UTC (rev 140)
+@@ -1,47 +1,21 @@
+ &lt;form action=&quot;user/login&quot; method=&quot;post&quot; name=&quot;login_form&quot;&gt;
+-    &lt;div class=&quot;no_table_border&quot;&gt;
+-    &lt;table width=&quot;100%&quot;&gt;
+-        &lt;tr&gt;
+-            &lt;td colspan=&quot;2&quot;&gt;
+-                [% IF login_message %]
+-                [% login_message %]&lt;br /&gt;
+-                [% ELSE %]
+-                [% message %]&lt;br /&gt;
+-                [% END %]
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
++    &lt;fieldset&gt;
++        &lt;p&gt;
++            [% IF login_message %]
++            [% login_message %]&lt;br /&gt;
++            [% ELSE %]
++            [% message %]&lt;br /&gt;
++            [% END %]
++        &lt;/p&gt;
++        &lt;label for=&quot;username&quot; accesskey=&quot;u&quot;&gt;&lt;b&gt;Username:&lt;/b&gt;&lt;/label&gt;
++        &lt;input type=&quot;login_text&quot; id=&quot;login_username&quot; name=&quot;username&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; /&gt;
+ 
+-        &lt;tr&gt;
+-            &lt;td&gt;
+-                &lt;label for=&quot;username&quot;&gt;&lt;b&gt;Username:&lt;/b&gt;&lt;/label&gt;
+-            &lt;/td&gt;
+-            &lt;td&gt;
+-                &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
++        &lt;label for=&quot;login_password&quot; accesskey=&quot;p&quot;&gt;&lt;b&gt;Password:&lt;/b&gt;&lt;/label&gt;
++        &lt;input type=&quot;password&quot; id=&quot;login_password&quot; name=&quot;password&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; /&gt;
+ 
+-        &lt;tr&gt;
+-            &lt;td&gt;
+-                &lt;label for=&quot;password&quot;&gt;&lt;b&gt;Password:&lt;/b&gt;&lt;/label&gt;
+-            &lt;/td&gt;
+-            &lt;td&gt;
+-                &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-
+-        &lt;tr&gt;
+-            &lt;td colspan=&quot;2&quot; style=&quot;text-align:center;&quot;&gt;
+-                &lt;input type=&quot;submit&quot; value=&quot;log in&quot; class=&quot;input_button&quot; /&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-
+-        &lt;tr&gt;
+-            &lt;td colspan=&quot;2&quot; style=&quot;text-align:right;&quot;&gt;
+-                Need an account? &lt;a href=&quot;user/signup&quot;&gt;Signup Now&lt;/a&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-    &lt;/table&gt;
+-    &lt;/div&gt;
++        &lt;br /&gt;
++        &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;log in&lt;/button&gt;
++    &lt;/fieldset&gt;
+ &lt;/form&gt;
+ 
+ &lt;!-- put focus into the username field on the form above --&gt;
+@@ -50,3 +24,4 @@
+     document.forms['login_form'].elements['username'].focus();
+ 	// End --&gt;
+ &lt;/script&gt;
++
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-05-11 19:51:06 UTC (rev 139)
++++ trunk/root/css/default.css	2006-05-11 19:51:10 UTC (rev 140)
+@@ -372,3 +372,71 @@
+     font-size:      0.8em;
+ }
+ 
++
++
++
++form {  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
++  font:100% verdana,arial,sans-serif;
++  margin: 0;
++  padding: 0;
++  min-width: 500px;
++  max-width: 600px;
++  width: 560px; 
++}
++
++form fieldset {
++  / * clear: both; note that this clear causes inputs to break to left in ie5.x mac, commented out */
++  border-color: #000;
++  border-width: 1px;
++  border-style: solid;
++  padding: 10px;        /* padding in fieldset support spotty in IE */
++  margin: 0;
++}
++
++form fieldset legend {
++	font-size:1.1em; /* bump up legend font size, not too large or it'll overwrite border on left */
++                       /* be careful with padding, it'll shift the nice offset on top of border  */
++}
++
++form label { 
++	display: block;  /* block float the labels to left column, set a width */
++	float: left; 
++	width: 150px; 
++	padding: 0; 
++	margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
++	text-align: right; 
++}
++
++form fieldset label:first-letter { /* use first-letter pseudo-class to underline accesskey, note that */
++	text-decoration:none;    /* Firefox 1.07 WIN and Explorer 5.2 Mac don't support first-letter */
++                                    /* pseudo-class on legend elements, but do support it on label elements */
++                                    /* we instead underline first letter on each label element and accesskey */
++                                    /* each input. doing only legends would  lessens cognitive load */
++                                   /* opera breaks after first letter underlined legends but not labels */
++}
++
++form input, form textarea {
++	/* display: inline; inline display must not be set or will hide submit buttons in IE 5x mac */
++	width:auto;      /* set width of form elements to auto-size, otherwise watch for wrap on resize */
++	margin:5px 0 0 10px; /* set margin on left of form elements rather than right of
++                              label aligns textarea better in IE */
++}
++
++form input#reset {
++	margin-left:0px; /* set margin-left back to zero on reset button (set above) */
++}
++
++textarea { overflow: auto; }
++
++form small {
++	display: block;
++	margin: 0 0 5px 160px; /* instructions/comments left margin set to align w/ right column inputs */
++	padding: 1px 3px;
++	font-size: 88%;
++}
++
++form .required{font-weight:bold;} /* uses class instead of div, more efficient */
++
++form br {
++	clear:left; /* setting clear on inputs didn't work consistently, so brs added for degrade */
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000043.html">[Parley-svn] r139 - / trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000042.html">[Parley-svn] r141 - / trunk trunk/root/base/menu trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#37">[ date ]</a>
+              <a href="thread.html#37">[ thread ]</a>
+              <a href="subject.html#37">[ subject ]</a>
+              <a href="author.html#37">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

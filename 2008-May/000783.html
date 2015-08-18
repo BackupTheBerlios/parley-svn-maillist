@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r895 - / trunk trunk/lib/Parley trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r895%20-%20/%20trunk%20trunk/lib/Parley%20trunk/t/schema&In-Reply-To=%3C200805281151.m4SBpFpx026967%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000782.html">
+   <LINK REL="Next"  HREF="000784.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r895 - / trunk trunk/lib/Parley trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r895%20-%20/%20trunk%20trunk/lib/Parley%20trunk/t/schema&In-Reply-To=%3C200805281151.m4SBpFpx026967%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r895 - / trunk trunk/lib/Parley trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed May 28 13:51:15 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000782.html">[Parley-svn] r894 - / trunk/lib/Parley/Schema
+</A></li>
+        <LI>Next message: <A HREF="000784.html">[Parley-svn] r896 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#783">[ date ]</a>
+              <a href="thread.html#783">[ thread ]</a>
+              <a href="subject.html#783">[ subject ]</a>
+              <a href="author.html#783">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-05-28 13:51:14 +0200 (Wed, 28 May 2008)
+New Revision: 895
+
+Modified:
+   /
+   trunk/Makefile.PL
+   trunk/lib/Parley/Version.pm
+   trunk/t/schema/authentication.t
+   trunk/t/schema/person.t
+   trunk/t/schema/user_role.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5486 at wiggin</A>:  chisel | 2008-05-28 09:02:54 +0100
+ - remove version_from (leaving only 'version')
+ / modify ::Version to be more like Zucchini's implementation
+ / update tests to match role changes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5485
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5486
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2008-05-28 11:51:06 UTC (rev 894)
++++ trunk/Makefile.PL	2008-05-28 11:51:14 UTC (rev 895)
+@@ -8,7 +8,6 @@
+ author          ('Chisel Wright&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt;');
+ abstract        ('Message board / forum application');
+ license         ('perl');
+-version_from    ('lib/Parley/Version.pm');
+ version         ('1.0.0');
+ 
+ requires(
+
+Modified: trunk/lib/Parley/Version.pm
+===================================================================
+--- trunk/lib/Parley/Version.pm	2008-05-28 11:51:06 UTC (rev 894)
++++ trunk/lib/Parley/Version.pm	2008-05-28 11:51:14 UTC (rev 895)
+@@ -4,8 +4,17 @@
+ use warnings;
+ 
+ # from mst on #catalyst
+-our $VERSION = '1.000000'; $VERSION = eval $VERSION;
++#our $VERSION = '1.000000'; $VERSION = eval $VERSION;
++use version; our $VERSION = qv(1.0.0)-&gt;numify;
+ 
++
++package Parley::Version;
++
++our $VERSION = $Parley::VERSION;
++
++1;
++
++
+ =head1 NAME
+ 
+ Parley::Version - The Parley project-wide version number
+
+Modified: trunk/t/schema/authentication.t
+===================================================================
+--- trunk/t/schema/authentication.t	2008-05-28 11:51:06 UTC (rev 894)
++++ trunk/t/schema/authentication.t	2008-05-28 11:51:14 UTC (rev 895)
+@@ -29,6 +29,8 @@
+         relations =&gt; [
+             qw[
+                 people
++                map_user_role
++                roles
+             ]
+         ],
+ 
+
+Modified: trunk/t/schema/person.t
+===================================================================
+--- trunk/t/schema/person.t	2008-05-28 11:51:06 UTC (rev 894)
++++ trunk/t/schema/person.t	2008-05-28 11:51:14 UTC (rev 895)
+@@ -42,7 +42,6 @@
+                 last_post
+                 authentication
+                 registration_authentications
+-                map_user_role
+             ]
+         ],
+ 
+
+Modified: trunk/t/schema/user_role.t
+===================================================================
+--- trunk/t/schema/user_role.t	2008-05-28 11:51:06 UTC (rev 894)
++++ trunk/t/schema/user_role.t	2008-05-28 11:51:14 UTC (rev 895)
+@@ -20,14 +20,14 @@
+         columns =&gt; [
+             qw[
+                 id
+-                person_id
++                authentication_id
+                 role_id
+             ]
+         ],
+ 
+         relations =&gt; [
+             qw[
+-                person
++                authentication
+                 role
+             ]
+         ],
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000782.html">[Parley-svn] r894 - / trunk/lib/Parley/Schema
+</A></li>
+	<LI>Next message: <A HREF="000784.html">[Parley-svn] r896 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#783">[ date ]</a>
+              <a href="thread.html#783">[ thread ]</a>
+              <a href="subject.html#783">[ subject ]</a>
+              <a href="author.html#783">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

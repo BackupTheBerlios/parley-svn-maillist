@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1068 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1068%20-%20/%20trunk&In-Reply-To=%3C200904222129.n3MLTiwo013127%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000949.html">
+   <LINK REL="Next"  HREF="000951.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1068 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1068%20-%20/%20trunk&In-Reply-To=%3C200904222129.n3MLTiwo013127%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1068 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Apr 22 23:29:44 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000949.html">[Parley-svn] r1067 - / trunk trunk/lib/Parley
+</A></li>
+        <LI>Next message: <A HREF="000951.html">[Parley-svn] r1069 - / trunk/todo.i18n
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#950">[ date ]</a>
+              <a href="thread.html#950">[ thread ]</a>
+              <a href="subject.html#950">[ subject ]</a>
+              <a href="author.html#950">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-04-22 23:29:44 +0200 (Wed, 22 Apr 2009)
+New Revision: 1068
+
+Modified:
+   /
+   trunk/Changes
+   trunk/MANIFEST
+   trunk/META.yml
+   trunk/SIGNATURE
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9364 at wiggin</A>:  chisel | 2009-04-22 22:29:34 +0100
+ / changes following on from module removal
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9345
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9364
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2009-04-22 21:25:20 UTC (rev 1067)
++++ trunk/Changes	2009-04-22 21:29:44 UTC (rev 1068)
+@@ -1,6 +1,7 @@
+ This file documents the revision history for Parley.
+ 
+ 1.2.0
++    - removed deprecated modules
+ 
+ 1.1.0   Wed Apr 22 21:53:52 BST 2009
+     - added Advanced Search page
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2009-04-22 21:25:20 UTC (rev 1067)
++++ trunk/MANIFEST	2009-04-22 21:29:44 UTC (rev 1068)
+@@ -41,7 +41,6 @@
+ inc/Module/Install/Win32.pm
+ inc/Module/Install/WriteAll.pm
+ lib/Catalyst/Controller/FormValidator.pm
+-lib/Catalyst/Plugin/Dumper.pm
+ lib/Parley.pm
+ lib/Parley/App/Communication/Email.pm
+ lib/Parley/App/DateTime.pm
+@@ -105,7 +104,6 @@
+ lib/Parley/View/JSON.pm
+ lib/Parley/View/Plain.pm
+ lib/Parley/View/TT.pm
+-lib/Template/Plugin/ForumCode.pm
+ lib/Text/Search/SQL.pm
+ Makefile.PL
+ MANIFEST			This list of files
+
+Modified: trunk/META.yml
+===================================================================
+--- trunk/META.yml	2009-04-22 21:25:20 UTC (rev 1067)
++++ trunk/META.yml	2009-04-22 21:29:44 UTC (rev 1068)
+@@ -65,4 +65,4 @@
+   Time::Piece: 1.11
+ resources:
+   license: <A HREF="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</A>
+-version: 1.1.0
++version: 1.2.0
+
+Modified: trunk/SIGNATURE
+===================================================================
+--- trunk/SIGNATURE	2009-04-22 21:25:20 UTC (rev 1067)
++++ trunk/SIGNATURE	2009-04-22 21:29:44 UTC (rev 1068)
+@@ -14,12 +14,12 @@
+ -----BEGIN PGP SIGNED MESSAGE-----
+ Hash: SHA1
+ 
+-SHA1 a40bcc8741c84f770960d48257589317216f2889 Changes
++SHA1 0aca93d88c458375fb81cea2ccb531248e7f91ec Changes
+ SHA1 7c8800f62bd6314327c9d79858802130dd8b9ade Changes.i18n
+-SHA1 9fad9417451c739ec56f9707edab2193085f37b2 MANIFEST
++SHA1 5052f9cf0521836039f4991ae27b3ffe299b15cf MANIFEST
+ SHA1 8bee674483b15605a91c4b68cd52555c4780d0f4 MANIFEST.SKIP
+-SHA1 34065e2d62d9516832a7b56766e9da738560138c META.yml
+-SHA1 338c08fa38a4846b80661d2251f66f8a1efcf430 Makefile.PL
++SHA1 b713f4586810b99fae7cbfbfcded04844feb1812 META.yml
++SHA1 3aaaf8d3d5130a9a339d20583343dc02ba9183f1 Makefile.PL
+ SHA1 8b3d60b51b7e484158325887297066031018c1c6 README
+ SHA1 2e29e8934226503e3d69ea1fd15178311670b289 ROADMAP
+ SHA1 49d9bc278e76000575d718ccf31211288ad64b25 TODO
+@@ -64,7 +64,6 @@
+ SHA1 d7529d795a1304c88253b26a9089913edf31ae5e inc/Module/Install/Win32.pm
+ SHA1 2a74aba5a78e7ab2776382e42106ebe941c2ac28 inc/Module/Install/WriteAll.pm
+ SHA1 795ab14291a44cee6270beda4e39e5b897bca1f0 lib/Catalyst/Controller/FormValidator.pm
+-SHA1 f921a88fca85c1f1712ccc6ebc6738020de751e7 lib/Catalyst/Plugin/Dumper.pm
+ SHA1 271757ea4a811dcbcfac603bdf6ff0071c3e9c84 lib/Parley.pm
+ SHA1 e05695959aa924d20d69f22e19a8dd1af8f551a9 lib/Parley/App/Communication/Email.pm
+ SHA1 12c6be4ed0db0a0e7c16a2d6b467918c85d27cb3 lib/Parley/App/DFV.pm
+@@ -124,11 +123,10 @@
+ SHA1 e968bb82525aba129a0cb036bcd3b041e21dad90 lib/Parley/Schema/Thread.pm
+ SHA1 fcd39f9fa31a5a46e8f7b351d437ab38b9096b59 lib/Parley/Schema/ThreadView.pm
+ SHA1 63c6894b32d68a306969c272e088c8dfe480d634 lib/Parley/Schema/UserRole.pm
+-SHA1 95f437c06ef6b98cf460d49e2780351e1f86ae76 lib/Parley/Version.pm
++SHA1 5aecd6bf54896a6471bfd0c471f00fb0f34bd2ae lib/Parley/Version.pm
+ SHA1 f5b53bf2af74654668a9142503a81a92ae70d854 lib/Parley/View/JSON.pm
+ SHA1 cc4488ce91ce68d62ee304f1de5f6019e118f08e lib/Parley/View/Plain.pm
+ SHA1 591770e1dcb5084454ba55d1d75c73101c0b0970 lib/Parley/View/TT.pm
+-SHA1 3f5b10e7a8d05c26a876315bf2d896b848c01430 lib/Template/Plugin/ForumCode.pm
+ SHA1 217ed919b71b9528b981c9b7b547b3c2d044443d lib/Text/Search/SQL.pm
+ SHA1 99cb56f6a17849186c807252486d2ab39edd8135 parley.conf
+ SHA1 0063e8a67acab399e4357b6898eda11f7c52f384 root/base/about/modules
+@@ -1032,7 +1030,7 @@
+ -----BEGIN PGP SIGNATURE-----
+ Version: GnuPG v1.4.9 (GNU/Linux)
+ 
+-iEYEARECAAYFAknvg/IACgkQh4j7xTiFuxHbAwCgw9ykIFNV3me2hd+PRtHGz5jU
+-nNwAoKh79AgK3ssFm85lhUrShQL2bWlB
+-=wcI4
++iEYEARECAAYFAknvjBAACgkQh4j7xTiFuxG0EwCeJqNmfALfZvD1BrCkC7PykSvM
++ah8AoKdl6eW4cJK2XUQpHyn6GEtHqusj
++=FJYp
+ -----END PGP SIGNATURE-----
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000949.html">[Parley-svn] r1067 - / trunk trunk/lib/Parley
+</A></li>
+	<LI>Next message: <A HREF="000951.html">[Parley-svn] r1069 - / trunk/todo.i18n
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#950">[ date ]</a>
+              <a href="thread.html#950">[ thread ]</a>
+              <a href="subject.html#950">[ subject ]</a>
+              <a href="author.html#950">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

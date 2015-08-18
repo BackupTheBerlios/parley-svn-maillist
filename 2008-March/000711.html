@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r823 - / trunk/db
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r823%20-%20/%20trunk/db&In-Reply-To=%3C200803062102.m26L23Tw000902%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000710.html">
+   <LINK REL="Next"  HREF="000712.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r823 - / trunk/db</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r823%20-%20/%20trunk/db&In-Reply-To=%3C200803062102.m26L23Tw000902%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r823 - / trunk/db">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Mar  6 22:02:03 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000710.html">[Parley-svn] r822 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/base trunk/root/base/user trunk/root/static/script	trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000712.html">[Parley-svn] r824 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/static/script trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#711">[ date ]</a>
+              <a href="thread.html#711">[ thread ]</a>
+              <a href="subject.html#711">[ subject ]</a>
+              <a href="author.html#711">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-06 22:02:03 +0100 (Thu, 06 Mar 2008)
+New Revision: 823
+
+Modified:
+   /
+   trunk/db/parley.psql
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4726 at wiggin</A>:  chisel | 2008-03-06 19:16:37 +0000
+ / push changes from patch_0.58_to_0.59.psql into the main schema
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4725
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4726
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2008-03-06 21:01:54 UTC (rev 822)
++++ trunk/db/parley.psql	2008-03-06 21:02:03 UTC (rev 823)
+@@ -1,4 +1,4 @@
+--- Phorum schema
++-- Parley schema
+ 
+ -- to get your user and database:
+ --  createuser -A -d parley
+@@ -66,6 +66,9 @@
+     authentication_id   integer
+                         references authentication(id),
+ 
++    suspended           boolean     not null
++                        default False,
++
+     UNIQUE(forum_name),
+     UNIQUE(email)
+ );
+@@ -130,8 +133,12 @@
+     creator_id      integer     not null
+                     references person(id),
+ 
+-    ip_addr         inet
++    ip_addr         inet,
+ 
++    admin_editor_id integer
++                    references person(id),
++    locked          boolean     not null
++                    default False
+ );
+ 
+ -- add ReplyTo information for post
+@@ -243,7 +250,43 @@
+     UNIQUE(person_id, terms_id)
+ );
+ 
++-- roles / authentication
++CREATE TABLE role (
++    id              serial      primary key,
++    idx             integer     not null default 9999,
++    name            varchar(30) not null unique,
++    description     text
++);
++CREATE INDEX idx_role_name ON role(name);
+ 
++CREATE TABLE user_roles (
++    id              serial      primary key,
++    person_id       integer     not null
++                                references person(id),
++    role_id         integer     not null
++                                references role(id),
++    UNIQUE (person_id, role_id)
++);
++CREATE INDEX idx_userroles_personid ON user_roles(person_id);
++CREATE INDEX idx_userroles_roleid   ON user_roles(role_id);
++
++-- admin action log actions/messages
++CREATE TABLE log_admin_action (
++    id              serial      primary key,
++    person_id       integer     not null
++                                references person(id),
++    admin_id        integer     not null
++                                references person(id),
++    created         timestamp   with time zone
++                                not null
++                                default CURRENT_TIMESTAMP,
++
++    message         text        not null
++                                default 'No Message Supplied'
++);
++CREATE INDEX idx_adminaction_personid ON admin_action(person_id);
++CREATE INDEX idx_adminaction_adminid  ON admin_action(admin_id);
++
+ --
+ -- some default stuff
+ --
+@@ -270,6 +313,41 @@
+ INSERT INTO forum (name, description) VALUES ('Suggestions', 'Things you think should be added');
+ INSERT INTO forum (name, description) VALUES ('Bugs', 'If you find anything broken, report it here');
+ 
++-- some roles
++INSERT INTO role (idx, name, description) VALUES (
++    0,
++    'site_moderator',
++    'Site Moderator'
++);
++INSERT INTO role (idx, name, description) VALUES (
++    50,
++    'suspend_account',
++    'Suspend Account'
++);
++INSERT INTO role (idx, name, description) VALUES (
++    100,
++    'ip_ban_posting',
++    'Restrict Posting by IP'
++);
++INSERT INTO role (idx, name, description) VALUES (
++    100,
++    'ip_ban_signup',
++    'Restrict Sign-Up by IP'
++);
++INSERT INTO role (idx, name, description) VALUES (
++    100,
++    'ip_ban_login',
++    'Restrict Login by IP'
++);
++
++-- make topdog a site_moderator
++INSERT INTO user_roles
++    (person_id, role_id)
++VALUES (
++    0,
++    (SELECT id FROM role WHERE name='site_moderator')
++);
++
+ -- commit our schema
+ COMMIT;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000710.html">[Parley-svn] r822 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/base trunk/root/base/user trunk/root/static/script	trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000712.html">[Parley-svn] r824 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/static/script trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#711">[ date ]</a>
+              <a href="thread.html#711">[ thread ]</a>
+              <a href="subject.html#711">[ subject ]</a>
+              <a href="author.html#711">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

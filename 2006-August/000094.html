@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r206 - / branches/schema_based	branches/schema_based/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r206%20-%20/%20branches/schema_based%0A%09branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200608161342.k7GDgd5P017206%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000093.html">
+   <LINK REL="Next"  HREF="000095.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r206 - / branches/schema_based	branches/schema_based/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r206%20-%20/%20branches/schema_based%0A%09branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200608161342.k7GDgd5P017206%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r206 - / branches/schema_based	branches/schema_based/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:42:39 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000093.html">[Parley-svn] r205 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/t
+</A></li>
+        <LI>Next message: <A HREF="000095.html">[Parley-svn] r207 - / branches/schema_based/lib	branches/schema_based/lib/Template	branches/schema_based/lib/Template/Plugin
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#94">[ date ]</a>
+              <a href="thread.html#94">[ thread ]</a>
+              <a href="subject.html#94">[ subject ]</a>
+              <a href="author.html#94">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:42:38 +0200 (Wed, 16 Aug 2006)
+New Revision: 206
+
+Modified:
+   /
+   branches/schema_based/Changes
+   branches/schema_based/lib/Parley/Controller/Forum.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5121 at ferrari</A>:  chisel | 2006-08-11 09:06:57 +0100
+ / copy Changes/ from trunk and add new information
+ / tweak generated Forum controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5120
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5121
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/Changes
+===================================================================
+--- branches/schema_based/Changes	2006-08-16 13:42:34 UTC (rev 205)
++++ branches/schema_based/Changes	2006-08-16 13:42:38 UTC (rev 206)
+@@ -1,4 +1,96 @@
+-This file documents the revision history for Perl extension Parley.
++This file documents the revision history for Parley.
+ 
+-0.01  2006-08-10 09:03:12
++    - re-implement, starting from a fresh call to catalyst.pl
++    - use Schema based model
++    - general tidy-up of existing methods
++
++    - thread/add: start work on new message notification
++    - thread/watch: set/remove a watch on a thread (in preparation for
++      notification emails)
++    - thread/next_post: continue reading a thread from where you last saw it
++    - thread/view: if logged in keep track of thread viewing progress
++    - started moving from Prototype to Dojo
++    - added thread_post_count(), thread_position() and page_containing_post()
++      to Post model class
++    - added /post/view action, used to redirect to a thread page containing the
++      specified post
++    - /thread/view now detach()es to /post/view if we have a current_post in
++      the stash
++
++0.09  Thu May 11 17:50:07 BST 2006
++    - make email column unique
++      ** this may cause problems if you already have a large amount of user data **
++    - added lost password functionality in Controller::User::LostPassword
++    - factored signup functionality out into Controller::User::SignUp
++    - start moving towards use of &lt;fieldset&gt; instead of &lt;table&gt; for form layout
++    - use a floating loginbox instead of a separate screen (as inspired by
++      calendarhub.com)
++    - added visual feedback when TZ preference is updated
++    - show time-formatting sample in my/preferences
++    - store the referer when visiting my/preferences making it easier to return
++      to where we were previously
++    - added about/modules, an easier way to obtain version information for
++      loaded modules
++    - modify log-in check in auto() to use Auth::DBIC calling style
++    - use ConfigLoader plugin to load application config
++    - add authed_user() function, and alter instances of
++      $c-&gt;session-&gt;{authed_user} accordingly
++    - added new function to Parley::App::Helper - application_email_address()
++    - update dependencies/versions in Makefile.PL
++    - added Template::Plugin::ForumCode (not all BBCode functionality is
++      complete yet)
++    - use ForumCode plugin to process various display elements
++    - email from-address for emails is now set in config file
++    - new helper function application_email_address()
++    - small layout fixes
++    - change name of session file
++    - ammend statusbar and post-edit templating to work correctly with new
++      storage location of authed_user object
++
++0.08  Tue Jan 31 08:54:32 GMT 2006
++    - move to using uri_for(...) in redirects
++    - hide per-post actions in a locked thread
++    - allow users to edit their own posts
++    - show if a post has been edited
++    - added paging for long threads (fixed to 10 posts/thread for the moment)
++    - if we have a post when viewing thread, go to last page in thread
++      [ideally we'd like to go to the page containing the post, but we don't
++      know how to work this out yet]
++
++0.07  Thu Jan 26 08:49:19 GMT 2006
++    - added preference table to main schema
++    - added patch file for moving from 0.06 to 0.07 db schema
++    - nicedate() sets timezone to value in user's preference
++    - added my/preferences page, to allow setting of timezone area
++    - fixed behaviour with login_if_required() in auto()
++    - store updated and valid timezone prefs
++    - update schema to include new columns (post.reply_to, person.last_post,
++      person.post_count)
++    - update person.count after a new post or reply
++    - alter thread view layout and include post count for person
++    - store user's last post (not sure why we might want this, it just feels
++      useful)
++    - make &quot;reply to post&quot; button work as expected
++    - allow users to quote a previous reply, and display quoted text with post
++      in thread view
++
++0.06  Sun Jan 22 23:14:31 GMT 2006
++    - added and updated module dependencies in Makefile.PL
++    - added application warning if using known 'bad version' of
++      DBIx::Class::Loader
++    - display thread's first post on reply screen
++    - re-copied end() feom DefaultEnd plugin, and applied local additions
++      This fixed an unexplained bug when logging out
++    - removed / from form actions in login and signup
++    - remove signup table width to avoid IE 100% bug
++    - warn if using buggy DBIx::Class::Loader
++    - fixed authed_user info fetch to use joins
++    - added sticky and locked columns to thread table
++    - order thread list to show sticky threads first
++    - don't show Reply row if a thread is locked
++    
++    There's no interface method for setting a thread sticky/locked yet
++
++
++0.01  Wed Jan  4 09:39:38 2006
+         - initial revision, generated by Catalyst
+
+Modified: branches/schema_based/lib/Parley/Controller/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:34 UTC (rev 205)
++++ branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:38 UTC (rev 206)
+@@ -4,6 +4,18 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c-&gt;response-&gt;body('Matched Parley::Controller::Forum in Forum.');
++}
++
++1;
++
++__END__
++
++=pod
++
+ =head1 NAME
+ 
+ Parley::Controller::Forum - Catalyst Controller
+@@ -14,23 +26,11 @@
+ 
+ =head1 METHODS
+ 
+-=cut
+-
+-
+ =head2 index 
+ 
+-=cut
+-
+-sub index : Private {
+-    my ( $self, $c ) = @_;
+-
+-    $c-&gt;response-&gt;body('Matched Parley::Controller::Forum in Forum.');
+-}
+-
+-
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+@@ -39,4 +39,4 @@
+ 
+ =cut
+ 
+-1;
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000093.html">[Parley-svn] r205 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/t
+</A></li>
+	<LI>Next message: <A HREF="000095.html">[Parley-svn] r207 - / branches/schema_based/lib	branches/schema_based/lib/Template	branches/schema_based/lib/Template/Plugin
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#94">[ date ]</a>
+              <a href="thread.html#94">[ thread ]</a>
+              <a href="subject.html#94">[ subject ]</a>
+              <a href="author.html#94">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

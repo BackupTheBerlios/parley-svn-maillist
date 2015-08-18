@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r223 - / branches/schema_based/root/base/shared
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r223%20-%20/%20branches/schema_based/root/base/shared&In-Reply-To=%3C200608161344.k7GDiMmB019885%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000110.html">
+   <LINK REL="Next"  HREF="000112.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r223 - / branches/schema_based/root/base/shared</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r223%20-%20/%20branches/schema_based/root/base/shared&In-Reply-To=%3C200608161344.k7GDiMmB019885%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r223 - / branches/schema_based/root/base/shared">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:44:22 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000110.html">[Parley-svn] r222 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000112.html">[Parley-svn] r224 - / branches/schema_based/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#111">[ date ]</a>
+              <a href="thread.html#111">[ thread ]</a>
+              <a href="subject.html#111">[ subject ]</a>
+              <a href="author.html#111">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:44:22 +0200 (Wed, 16 Aug 2006)
+New Revision: 223
+
+Modified:
+   /
+   branches/schema_based/root/base/shared/useful_tt_stuff
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5144 at ferrari</A>:  chisel | 2006-08-14 19:00:35 +0100
+ + if no timezone preference, use UTC (when displaying times)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5143
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5144
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/root/base/shared/useful_tt_stuff
+===================================================================
+--- branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:44:17 UTC (rev 222)
++++ branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:44:22 UTC (rev 223)
+@@ -7,6 +7,8 @@
+     %]
+     [% IF authed_user.preference.timezone %]
+     [% CALL d.set_time_zone(authed_user.preference.timezone) %]
++    [% ELSE %]
++    [% CALL d.set_time_zone('UTC') %]
+     [% END %]
+ 
+     [% d.strftime('%A %d %B %Y at %R') %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000110.html">[Parley-svn] r222 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000112.html">[Parley-svn] r224 - / branches/schema_based/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#111">[ date ]</a>
+              <a href="thread.html#111">[ thread ]</a>
+              <a href="subject.html#111">[ subject ]</a>
+              <a href="author.html#111">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

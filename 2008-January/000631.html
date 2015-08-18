@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r743 - / trunk trunk/root/base/user	trunk/root/static/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r743%20-%20/%20trunk%20trunk/root/base/user%0A%09trunk/root/static/css&In-Reply-To=%3C200801172154.m0HLspJG024013%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000630.html">
+   <LINK REL="Next"  HREF="000632.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r743 - / trunk trunk/root/base/user	trunk/root/static/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r743%20-%20/%20trunk%20trunk/root/base/user%0A%09trunk/root/static/css&In-Reply-To=%3C200801172154.m0HLspJG024013%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r743 - / trunk trunk/root/base/user	trunk/root/static/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 17 22:54:51 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000630.html">[Parley-svn] r742 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000632.html">[Parley-svn] r744 - / trunk/root/base/post
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#631">[ date ]</a>
+              <a href="thread.html#631">[ thread ]</a>
+              <a href="subject.html#631">[ subject ]</a>
+              <a href="author.html#631">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-17 22:54:50 +0100 (Thu, 17 Jan 2008)
+New Revision: 743
+
+Modified:
+   /
+   trunk/TODO
+   trunk/root/base/user/login
+   trunk/root/static/css/experiment.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4516 at wiggin</A>:  chisel | 2008-01-17 19:00:13 +0000
+ / styled user/login template
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4512
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4516
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-01-16 20:45:51 UTC (rev 742)
++++ trunk/TODO	2008-01-17 21:54:50 UTC (rev 743)
+@@ -1,7 +1,6 @@
+ TODO LIST
+ 
+   - investigate in-application language preference/choice
+-  - styling: user/login
+   - styling: post/edit
+   - styling: thread/reply
+   - styling: user prefs
+@@ -17,6 +16,7 @@
+      - post editing (other users)
+   - IP/user reporting
+   - voting?
++D - styling: user/login
+ D - styling: thread/add
+ D - post/edit: preview (message) code
+ D - [bug] fix error when trying to post new thread with no subject line
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2008-01-16 20:45:51 UTC (rev 742)
++++ trunk/root/base/user/login	2008-01-17 21:54:50 UTC (rev 743)
+@@ -1,33 +1,35 @@
+-&lt;form action=&quot;[%c.uri_for('/user/login')%]&quot; method=&quot;post&quot; name=&quot;login_form&quot;&gt;
+-    &lt;fieldset&gt;
+-        &lt;p&gt;
+-            [% IF login_message %]
+-            [% login_message %]&lt;br /&gt;
+-            [% ELSE %]
+-            [% message %]&lt;br /&gt;
+-            [% END %]
+-        &lt;/p&gt;
+-        &lt;label for=&quot;username&quot; accesskey=&quot;u&quot;&gt;&lt;b&gt;[%l('Username')%]:&lt;/b&gt;&lt;/label&gt;
+-        &lt;br /&gt;
+-        &lt;input type=&quot;text&quot; id=&quot;login_username&quot; name=&quot;username&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; /&gt;
+-        &lt;br /&gt;
+-        &lt;br /&gt;
++&lt;div class=&quot;user_login&quot;&gt;
++    &lt;form action=&quot;[%c.uri_for('/user/login')%]&quot; method=&quot;post&quot; name=&quot;login_form&quot;&gt;
++        &lt;fieldset&gt;
++            &lt;p&gt;
++                [% IF login_message %]
++                [% login_message %]&lt;br /&gt;
++                [% ELSE %]
++                [% message %]&lt;br /&gt;
++                [% END %]
++            &lt;/p&gt;
++            &lt;label for=&quot;username&quot; accesskey=&quot;u&quot;&gt;&lt;b&gt;[%l('Username')%]:&lt;/b&gt;&lt;/label&gt;
++            &lt;br /&gt;
++            &lt;input type=&quot;text&quot; id=&quot;login_username&quot; name=&quot;username&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; /&gt;
++            &lt;br /&gt;
++            &lt;br /&gt;
+ 
+-        &lt;label for=&quot;login_password&quot; accesskey=&quot;p&quot;&gt;&lt;b&gt;[%l('Password')%]:&lt;/b&gt;&lt;/label&gt;
+-        &lt;br /&gt;
+-        &lt;input type=&quot;password&quot; id=&quot;login_password&quot; name=&quot;password&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; /&gt;
+-        &lt;br /&gt;
++            &lt;label for=&quot;login_password&quot; accesskey=&quot;p&quot;&gt;&lt;b&gt;[%l('Password')%]:&lt;/b&gt;&lt;/label&gt;
++            &lt;br /&gt;
++            &lt;input type=&quot;password&quot; id=&quot;login_password&quot; name=&quot;password&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; /&gt;
++            &lt;br /&gt;
+ 
+-        &lt;br /&gt;
+-        &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;[%l('Login')%]&lt;/button&gt;
++            &lt;br /&gt;
++            &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;[%l('Login')%]&lt;/button&gt;
+ 
+-            &lt;p align=&quot;right&quot;&gt;
+-            &lt;a href=&quot;[%c.uri_for('user/password/forgotten')%]&quot;&gt;[%l('Forgotten Password')%]&lt;/a&gt;
+-            |
+-            &lt;a href=&quot;[%c.uri_for('user/signup')%]&quot;&gt;[%l('Register')%]&lt;/a&gt;
+-            &lt;/p&gt;
+-    &lt;/fieldset&gt;
+-&lt;/form&gt;
++                &lt;p align=&quot;right&quot;&gt;
++                &lt;a href=&quot;[%c.uri_for('user/password/forgotten')%]&quot;&gt;[%l('Forgotten Password')%]&lt;/a&gt;
++                |
++                &lt;a href=&quot;[%c.uri_for('user/signup')%]&quot;&gt;[%l('Register')%]&lt;/a&gt;
++                &lt;/p&gt;
++        &lt;/fieldset&gt;
++    &lt;/form&gt;
++&lt;/div&gt;
+ 
+ &lt;!-- put focus into the username field on the form above --&gt;
+ &lt;script language=&quot;JavaScript&quot;&gt;
+
+Modified: trunk/root/static/css/experiment.css
+===================================================================
+--- trunk/root/static/css/experiment.css	2008-01-16 20:45:51 UTC (rev 742)
++++ trunk/root/static/css/experiment.css	2008-01-17 21:54:50 UTC (rev 743)
+@@ -449,6 +449,18 @@
+     text-align:         right;
+ }
+ 
++.user_login form {
++    width:              350px;
++    margin-left:        auto;
++    margin-right:       auto;
++    margin-top:         20px;
++}
++
++.user_login p {
++    margin-top:         5px;
++    margin-bottom:      5px;
++}
++
+ .user_post_info {
+     background:         #ccc;
+     background:         transparent;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000630.html">[Parley-svn] r742 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000632.html">[Parley-svn] r744 - / trunk/root/base/post
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#631">[ date ]</a>
+              <a href="thread.html#631">[ thread ]</a>
+              <a href="subject.html#631">[ subject ]</a>
+              <a href="author.html#631">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,519 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r110 - in trunk: . lib lib/Template lib/Template/Plugin t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r110%20-%20in%20trunk%3A%20.%20lib%20lib/Template%20lib/Template/Plugin%20t&In-Reply-To=%3C200604051955.k35JteA5012007%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000001.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r110 - in trunk: . lib lib/Template lib/Template/Plugin t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r110%20-%20in%20trunk%3A%20.%20lib%20lib/Template%20lib/Template/Plugin%20t&In-Reply-To=%3C200604051955.k35JteA5012007%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r110 - in trunk: . lib lib/Template lib/Template/Plugin t">chiselwright at berlios.de
+       </A><BR>
+    <I>Wed Apr  5 21:55:40 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000001.html">[Parley-svn] r111 - in trunk: . root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-04-05 21:55:39 +0200 (Wed, 05 Apr 2006)
+New Revision: 110
+
+Added:
+   trunk/lib/Template/
+   trunk/lib/Template/Plugin/
+   trunk/lib/Template/Plugin/ForumCode.pm
+   trunk/t/04_forumcode.t
+Modified:
+   trunk/
+   trunk/Changes
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14374 at ferrari</A>:  chisel | 2006-04-05 20:55:27 +0100
+ + added Template::Plugin::ForumCode (not all BBCode functionality is complete yet)
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14374
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-01-31 13:52:46 UTC (rev 109)
++++ trunk/Changes	2006-04-05 19:55:39 UTC (rev 110)
+@@ -1,5 +1,10 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - added Template::Plugin::ForumCode (not all BBCode functionality is complete yet)
++    - from-address for emails is now set in config file
++    - new helper function application_email_address()
++    - small layout fixes
++
+ 0.08  Tue Jan 31 08:54:32 GMT 2006
+     - move to using uri_for(...) in redirects
+     - hide per-post actions in a locked thread
+
+Added: trunk/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- trunk/lib/Template/Plugin/ForumCode.pm	2006-01-31 13:52:46 UTC (rev 109)
++++ trunk/lib/Template/Plugin/ForumCode.pm	2006-04-05 19:55:39 UTC (rev 110)
+@@ -0,0 +1,219 @@
++package Template::Plugin::ForumCode;
++use strict;
++use warnings;
++
++use base qw{ Template::Plugin };
++use base qw{ Template::Plugin::HTML };
++
++our $VERSION = '0.01';
++
++sub new {
++    my ($class, $context, @args) = @_;
++
++    my $new_obj = bless {}, $class;
++
++    # simple [x][/x] --&gt; &lt;x&gt;&lt;/x&gt; tags
++    $new_obj-&gt;{simple_tags} = [qw{
++        b
++        u
++        i
++    }];
++    # replacements; e.g. __x__ --&gt; &lt;u&gt;x&lt;/u&gt;
++    $new_obj-&gt;{replacements} = [
++        {   from =&gt; '__',       to =&gt; 'u'   },
++        {   from =&gt; '\*\*',     to =&gt; 'b'   },
++        {   from =&gt; '\/\/',     to =&gt; 'i'   },
++    ];
++
++    return $new_obj;
++}
++
++sub forumcode {
++    my ($self, $text) = @_;
++
++    # first of all ESCAPE EVERYTHING!
++    $text = Template::Plugin::HTML-&gt;escape($text);
++
++    $self-&gt;_simple_tags     ( \$text );
++    $self-&gt;_replacements    ( \$text );
++    $self-&gt;_colouring       ( \$text );
++    $self-&gt;_lists           ( \$text );
++    $self-&gt;_url_links       ( \$text );
++    $self-&gt;_images          ( \$text );
++    
++    return $text;
++}
++
++sub _simple_tags {
++    my ($self, $textref) = @_;
++
++    # deal with acceptable [x]...[/x] markup
++    foreach my $tag (@{ $self-&gt;{simple_tags} }) {
++        # we should be able to combine these two into one
++        $$textref =~ s{\[$tag\]}{&lt;$tag&gt;}g;
++        $$textref =~ s{\[/$tag\]}{&lt;/$tag&gt;}g;
++    }
++}
++
++sub _replacements {
++    my ($self, $textref) = @_;
++
++    # now deal with replacements
++    foreach my $tag (@{ $self-&gt;{replacements} }) {
++        $$textref =~ s{
++            $tag-&gt;{from}
++            (.+?)
++            $tag-&gt;{from}
++        }
++        {&lt;$tag-&gt;{to}&gt;$1&lt;/$tag-&gt;{to}&gt;}gx;
++    }
++}
++
++sub _url_links {
++    my ($self, $textref) = @_;
++
++    # deal with links with no text-label
++    $$textref =~ s{\[url\](.+?)\[/url\]}
++        {&lt;a href=&quot;$1&quot;&gt;$1&lt;/a&gt;}xmsg;
++    # deal with links with a text-label
++    $$textref =~ s{
++        \[url           # start of url tag
++        \s+             # need some whitespace
++        name=&quot;     # name=&quot;
++        (.+?)           # the name
++        &quot;          # closing &quot;
++        \s*             # optional whitespace
++        \]              # close the opening tag
++        (.+?)           # the url
++        \[/url\]        # close the URL tag
++    }
++    {&lt;a href=&quot;$2&quot;&gt;$1&lt;/a&gt;}xmsg;
++}
++
++sub _images {
++    my ($self, $textref) = @_;
++
++    # deal with image tags
++    $$textref =~ s{
++        \[img
++        (.*?)
++        \]
++        (.+?)
++        \[/img\]
++    }
++    {&lt;img src=&quot;$2&quot;$1 /&gt;}xmsg;
++}
++
++sub _colouring {
++    my ($self, $textref) = @_;
++
++    # deal with colouring
++    $$textref =~ s{
++        \[color
++        =
++        (
++              red | orange | yellow | green | blue
++            | black | white
++            | \#[0-9a-fA-F]{3}
++            | \#[0-9a-fA-F]{6}
++        )
++        \]
++        (.+?)
++        \[/color\]
++    }
++    {&lt;span style=&quot;color: $1&quot;&gt;$2&lt;/span&gt;}ixmsg;
++}
++
++sub _lists {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{
++        \[list]
++        (.+?)
++        \[/list]
++    }
++    {&lt;li&gt;$1&lt;/li&gt;}xmsg;
++}
++
++sub _list_elements {
++    my ($textref);
++}
++
++1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
++
++=pod
++
++=head1 NAME
++
++Template::Plugin::ForumCode - class for &quot;ForumCode&quot; filter
++
++=head1 SYNOPSIS
++
++  # load the TT module
++  [% USE ForumCode %]
++
++  # ForumCodify some text
++  [% ForumCode.forumcode('[b]bold[/u] [u]underlined[/u] [i]italic[/i]') %]
++  [% ForumCode.forumcode('**bold** __underlined__') %]
++
++=head1 DESCRIPTION
++
++This module implements ForumCode, a simple markup language inspired by the
++likes of BBCode.
++
++ForumCode allows end-users (of a web-site) limited access to a set of HTML
++markup through a HTML-esque syntax.
++
++This module works by using L&lt;Template::Plugin::HTML&gt; to escape all HTML
++entities and markup. It then performs a series of transformations to convert
++ForumCode markup into the appropriate HTML markup.
++
++=head1 MARKUP
++
++The ForumCode plugin will perform the following transformations:
++
++=over 4
++
++=item B&lt;[b]&gt;...B&lt;[/b]&gt; or B&lt;**&gt;...B&lt;**&gt;
++
++Make the text between the markers I&lt;bold&gt;.
++
++=item B&lt;[u]&gt;...B&lt;[/u]&gt; or B&lt;__&gt;...B&lt;___&gt;
++
++Make the text between the markers I&lt;underlined&gt;.
++  
++=item B&lt;[i]&gt;...B&lt;[/i]&gt;
++
++Make the text between the markers I&lt;italicised&gt;.
++
++=item B&lt;[url]&gt;...B&lt;[/url]&gt;
++
++Make the text between the markers into a HTML link. If you
++would like to give the link a name, use the following format:
++
++S&lt;[url B&lt;name=&quot;...&quot;&gt;]...[/url]&gt;
++
++=back
++
++=head1 METHODS
++
++=head2 new
++
++Create a new instance of the plugin for TT usage
++
++=head2 forumcode
++
++The transformation function
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Added: trunk/t/04_forumcode.t
+===================================================================
+--- trunk/t/04_forumcode.t	2006-01-31 13:52:46 UTC (rev 109)
++++ trunk/t/04_forumcode.t	2006-04-05 19:55:39 UTC (rev 110)
+@@ -0,0 +1,188 @@
++#!/usr/bin/perl
++use strict;
++use warnings;
++
++my @forum_tests;
++
++BEGIN {
++    # a list of tests for forumcode()
++    @forum_tests = (
++        # escaped HTML stuff
++        {
++            in  =&gt; '&lt;b&gt;foo&lt;/b&gt; &amp;',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt; &amp;',
++        },
++        {
++            in  =&gt; '#FF0000',
++            out =&gt; '#FF0000',
++        },
++
++        ## BOLD
++        # [b] tag
++        {
++            in  =&gt; '[b]foo[/b]',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt;',
++        },
++        # **foo** bold magic
++        {
++            in  =&gt; '**foo**',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt;',
++        },
++        # replace all bold tags
++        {
++            in  =&gt; '[b]foo[/b][b]bar[/b]**baz****quux**',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt;&lt;b&gt;bar&lt;/b&gt;&lt;b&gt;baz&lt;/b&gt;&lt;b&gt;quux&lt;/b&gt;',
++        },
++
++        ## UNDERLINE
++        # [u] tag
++        {
++            in  =&gt; '[u]foo[/u]',
++            out =&gt; '&lt;u&gt;foo&lt;/u&gt;',
++        },
++        # __foo__ underline magic
++        {
++            in  =&gt; '__foo__',
++            out =&gt; '&lt;u&gt;foo&lt;/u&gt;',
++        },
++        # replace all underline tags
++        {
++            in  =&gt; '[u]foo[/u][u]bar[/u]__baz____quux__',
++            out =&gt; '&lt;u&gt;foo&lt;/u&gt;&lt;u&gt;bar&lt;/u&gt;&lt;u&gt;baz&lt;/u&gt;&lt;u&gt;quux&lt;/u&gt;',
++        },
++
++        ## ITALIC
++        # [i] tag
++        {
++            in  =&gt; '[i]foo[/i]',
++            out =&gt; '&lt;i&gt;foo&lt;/i&gt;',
++        },
++        # //foo// underline magic
++        {
++            in  =&gt; '//foo//',
++            out =&gt; '&lt;i&gt;foo&lt;/i&gt;',
++        },
++        # replace all italic tags
++        {
++            in  =&gt; '[i]foo[/i][i]bar[/i]//baz////quux//',
++            out =&gt; '&lt;i&gt;foo&lt;/i&gt;&lt;i&gt;bar&lt;/i&gt;&lt;i&gt;baz&lt;/i&gt;&lt;i&gt;quux&lt;/i&gt;',
++        },
++
++        # link testing
++        {
++            in  =&gt; '[url]<A HREF="http://www.google.com/[/url">http://www.google.com/[/url</A>]',
++            out =&gt; '&lt;a href=&quot;<A HREF="http://www.google.com/">http://www.google.com/</A>&quot;&gt;<A HREF="http://www.google.com/&lt;/a">http://www.google.com/&lt;/a</A>&gt;',
++        },
++        {
++            in  =&gt; '[url name=&quot;Google&quot;]<A HREF="http://www.google.com/[/url">http://www.google.com/[/url</A>]',
++            out =&gt; '&lt;a href=&quot;<A HREF="http://www.google.com/">http://www.google.com/</A>&quot;&gt;Google&lt;/a&gt;',
++        },
++        {
++            in  =&gt; '[url name=&quot;Google&quot; ]<A HREF="http://www.google.com/[/url">http://www.google.com/[/url</A>]',
++            out =&gt; '&lt;a href=&quot;<A HREF="http://www.google.com/">http://www.google.com/</A>&quot;&gt;Google&lt;/a&gt;',
++        },
++
++        # let people put odd stuff in the name if they really want
++        {
++            in  =&gt; '[url name=&quot;&quot;&quot;&quot;]X[/url]',
++            out =&gt; '&lt;a href=&quot;X&quot;&gt;&quot;&quot;&lt;/a&gt;',
++        },
++
++        # not proper URL tags
++        {
++            in  =&gt; '[url name=&quot;]X[/url]',
++            out =&gt; '[url name=&quot;]X[/url]',
++        },
++        {
++            in  =&gt; '[url name=]X[/url]',
++            out =&gt; '[url name=]X[/url]',
++        },
++        # nothing between opening and closing tags
++        {
++            in  =&gt; '[url][/url]',
++            out =&gt; '[url][/url]',
++        },
++
++        # bold in the URL name ..
++        {
++            in  =&gt; '[url name=&quot;[b]Bold[/b]&quot;]X[/url]',
++            out =&gt; '&lt;a href=&quot;X&quot;&gt;&lt;b&gt;Bold&lt;/b&gt;&lt;/a&gt;',
++        },
++
++        # url with query params ...
++        # surprisingly the escaped query-string seems to be dealt with
++        # correctly (in forefox at least)
++        {
++            in      =&gt; '[url name=&quot;X&quot;]<A HREF="http://google.com?q=Foo&amp;something=Bar[/url">http://google.com?q=Foo&amp;something=Bar[/url</A>]',
++            out     =&gt; '&lt;a href=&quot;<A HREF="http://google.com?q=Foo&amp;amp;something=Bar">http://google.com?q=Foo&amp;something=Bar</A>&quot;&gt;X&lt;/a&gt;',
++            diag    =&gt; 'Test this URL in browsers!',
++        },
++
++        # image tag
++        {
++            in  =&gt; '[img]<A HREF="http://somewhere.com/myImage.jpg[/img">http://somewhere.com/myImage.jpg[/img</A>]',
++            out =&gt; '&lt;img src=&quot;<A HREF="http://somewhere.com/myImage.jpg">http://somewhere.com/myImage.jpg</A>&quot; /&gt;',
++        },
++        {
++            in      =&gt; q{[img alt='Foo']<A HREF="http://somewhere.com/myImage.jpg[/img">http://somewhere.com/myImage.jpg[/img</A>]},
++            out     =&gt; q{&lt;img src=&quot;<A HREF="http://somewhere.com/myImage.jpg">http://somewhere.com/myImage.jpg</A>&quot; alt='Foo' /&gt;},
++            diag    =&gt; 'Test this URL in browsers!',
++        },
++        {
++            in      =&gt; q{[img alt=&quot;Foo&quot;]<A HREF="http://somewhere.com/myImage.jpg[/img">http://somewhere.com/myImage.jpg[/img</A>]},
++            out     =&gt; q{&lt;img src=&quot;<A HREF="http://somewhere.com/myImage.jpg">http://somewhere.com/myImage.jpg</A>&quot; alt=&quot;Foo&quot; /&gt;},
++            diag    =&gt; 'Test this URL in browsers!',
++        },
++
++
++        # colouring
++        {
++            in      =&gt; q{[color=red]Red Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: red&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[color=#FF0000]Red Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: #FF0000&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[color=#F00]Red Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: #F00&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[color=OrAnge]OrAnge Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: OrAnge&quot;&gt;OrAnge Text&lt;/span&gt;},
++        },
++
++
++        # lists
++        # unordered
++        {
++            in      =&gt; q{[list]
++            [*]Red
++            [*]Blue
++            [*]Yellow
++            [/list]},
++            out     =&gt; q{&lt;ul&gt;&lt;li&gt;Red&lt;/li&gt;&lt;li&gt;Blue&lt;/li&gt;&lt;li&gt;Yellow&lt;/li&gt;&lt;/ul&gt;},
++        },
++    );
++
++    # test count is a fixed number of tests + the length of the @tests array
++    use Test::More;
++    plan tests =&gt; ( 3 + scalar(@forum_tests) );
++
++    use_ok( 'Template::Plugin::ForumCode' );
++};
++
++# create a new thingy
++my $tt_forum = Template::Plugin::ForumCode-&gt;new();
++isnt(undef, $tt_forum, 'Plugin object is defined');
++isa_ok($tt_forum, 'Template::Plugin::ForumCode');
++
++# now some formatting tests for forumcode()
++foreach my $test (@forum_tests) {
++    my $text = $tt_forum-&gt;forumcode($test-&gt;{in});
++    if (defined $test-&gt;{diag}) {
++        diag(&quot;$test-&gt;{out} - $test-&gt;{diag}&quot;);
++    }
++    is($text, $test-&gt;{out}, qq{forumcode('$test-&gt;{in}')});
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000001.html">[Parley-svn] r111 - in trunk: . root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

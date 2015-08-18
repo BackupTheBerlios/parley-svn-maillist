@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r169 - / trunk/issues/search_deflate
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r169%20-%20/%20trunk/issues/search_deflate&In-Reply-To=%3C200606272050.k5RKojWk025316%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000057.html">
+   <LINK REL="Next"  HREF="000059.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r169 - / trunk/issues/search_deflate</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r169%20-%20/%20trunk/issues/search_deflate&In-Reply-To=%3C200606272050.k5RKojWk025316%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r169 - / trunk/issues/search_deflate">chiselwright at berlios.de
+       </A><BR>
+    <I>Tue Jun 27 22:50:45 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000057.html">[Parley-svn] r168 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000059.html">[Parley-svn] r170 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#58">[ date ]</a>
+              <a href="thread.html#58">[ thread ]</a>
+              <a href="subject.html#58">[ subject ]</a>
+              <a href="author.html#58">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-06-27 22:50:45 +0200 (Tue, 27 Jun 2006)
+New Revision: 169
+
+Added:
+   trunk/issues/search_deflate/RESULTS-0.06999_03
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r15756 at ferrari</A>:  chisel | 2006-06-27 21:50:27 +0100
+ Test results for deflate issue I'm having
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15501
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15756
+
+Added: trunk/issues/search_deflate/RESULTS-0.06999_03
+===================================================================
+--- trunk/issues/search_deflate/RESULTS-0.06999_03	2006-06-27 18:48:22 UTC (rev 168)
++++ trunk/issues/search_deflate/RESULTS-0.06999_03	2006-06-27 20:50:45 UTC (rev 169)
+@@ -0,0 +1,27 @@
++t/inflate....1..7
++ok 1 - use TimeDB;
++ok 2 - schema object is defined
++# first of all get an item into the database
++ok 3 - resultset for new Thingy is defined
++ok 4 - PK-id for new Thingy is defined
++# look up the thingy by pg_time - this should be fine
++ok 5 - correct number of thingies [=, $pg_time]
++# look up the thingy by -&gt;created() - this should be fine, but it isn't
++# search() doesn't appear to deflate as we might expect it to
++not ok 6 - correct number of thingies [=, $new_thingy-&gt;created()]
++
++#   Failed test 'correct number of thingies [=, $new_thingy-&gt;created()]'
++#   in t/inflate.t at line 69.
++#          got: '0'
++#     expected: '1'
++# look up the thingy by -&gt;created(), using an explicit 'deflate'
++ok 7 - correct number of thingies [=, DateTime::Format::Pg-&gt;format_datetime($new_thingy-&gt;created())]
++# Looks like you failed 1 test of 7.
++dubious
++	Test returned status 1 (wstat 256, 0x100)
++DIED. FAILED test 6
++	Failed 1/7 tests, 85.71% okay
++Failed Test Stat Wstat Total Fail  Failed  List of Failed
++-------------------------------------------------------------------------------
++t/inflate.t    1   256     7    1  14.29%  6
++Failed 1/1 test scripts, 0.00% okay. 1/7 subtests failed, 85.71% okay.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000057.html">[Parley-svn] r168 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000059.html">[Parley-svn] r170 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#58">[ date ]</a>
+              <a href="thread.html#58">[ thread ]</a>
+              <a href="subject.html#58">[ subject ]</a>
+              <a href="author.html#58">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

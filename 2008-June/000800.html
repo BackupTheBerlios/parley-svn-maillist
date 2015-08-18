@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r912 - / trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r912%20-%20/%20trunk/script&In-Reply-To=%3C200806242042.m5OKgqnG026253%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000799.html">
+   <LINK REL="Next"  HREF="000801.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r912 - / trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r912%20-%20/%20trunk/script&In-Reply-To=%3C200806242042.m5OKgqnG026253%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r912 - / trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jun 24 22:42:52 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000799.html">[Parley-svn] r911 - / trunk/script
+</A></li>
+        <LI>Next message: <A HREF="000801.html">[Parley-svn] r913 - / trunk/config
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#800">[ date ]</a>
+              <a href="thread.html#800">[ thread ]</a>
+              <a href="subject.html#800">[ subject ]</a>
+              <a href="author.html#800">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-06-24 22:42:52 +0200 (Tue, 24 Jun 2008)
+New Revision: 912
+
+Modified:
+   /
+   trunk/script/i18n_todo.pl
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5974 at wiggin</A>:  chisel | 2008-06-23 19:35:52 +0100
+ + list differences in template directory
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5973
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5974
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/script/i18n_todo.pl
+===================================================================
+--- trunk/script/i18n_todo.pl	2008-06-24 20:42:41 UTC (rev 911)
++++ trunk/script/i18n_todo.pl	2008-06-24 20:42:52 UTC (rev 912)
+@@ -4,11 +4,14 @@
+ 
+ use Data::Dump qw(pp);
+ use Getopt::Long;
++use File::Find;
+ use File::Slurp;
+ use FindBin qw($Bin);
+-# use List::Compare
+ use Path::Class;
+ 
++# evil global for wanted() function used with File::Find
++my %tpl_of;
++
+ # default options
+ my %cliopt = (
+     language    =&gt; 'it',
+@@ -18,6 +21,7 @@
+ 
+ # show the differences for the chosen language
+ token_diffs( $cliopt{language} );
++template_diffs( $cliopt{language} );
+ 
+ sub token_diffs {
+     my $target_lang = shift;
+@@ -40,6 +44,26 @@
+     return;
+ }
+ 
++sub template_diffs {
++    my $target_lang = shift;
++
++    # get the list of i_default email templates
++    my %idefault_tpls = template_list( q{i_default} );
++
++    # get the list of templates for the target language
++    my %targetlang_tpls = template_list( $target_lang );
++
++    # see what's missing from the target
++    print &quot;Missing templates in '$target_lang' translation:\n\n&quot;;
++    tpl_diffs(\%idefault_tpls, \%targetlang_tpls);
++
++    # see if we have anything extra in the target
++    print &quot;Additional templates in '$target_lang' translation:\n\n&quot;;
++    tpl_diffs(\%targetlang_tpls, \%idefault_tpls);
++    
++    return;
++}
++
+ # XXX sane people would probably have used List::Compare
+ # XXX unfortunately I didn't have it installed, and was working
+ # XXX without a 'net connection
+@@ -67,6 +91,30 @@
+     return;
+ }
+ 
++sub tpl_diffs {
++    my ($left, $right) = @_;
++
++    my %left_copy = %{ $left };
++
++    # see what's missing from the target
++    map (
++        delete $left_copy{$_},
++        keys %{$right}
++    );
++
++    my @keys = sort keys %left_copy;
++    if (@keys) {
++        foreach my $key (@keys) {
++            print &quot;  $key\n\n&quot;;
++        }
++    }
++    else {
++        print &quot; - NONE -\n\n&quot;;
++    }
++
++    return;
++}
++
+ # read in an i18n file
+ sub read_i18n {
+     my $filename = shift;
+@@ -89,6 +137,27 @@
+     return $filedata;
+ }
+ 
++sub wanted {
++    -f $_
++    &amp;&amp; $tpl_of{$_}++
++}
++
++sub template_list {
++    my $target_lang = shift;
++
++    my $dir = dir(
++        dir($Bin)-&gt;parent,
++        q{root},
++        q{email_templates},
++        $target_lang
++    );
++
++    %tpl_of = ();
++    find( \&amp;wanted, $dir );
++
++    return %tpl_of;
++}
++
+ # TODO - find a suitable &quot;gettext&quot; perl module to do this properly
+ # the regexp to match on .. it's easier to format outside the &quot;while&quot;
+ sub get_msgids {
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000799.html">[Parley-svn] r911 - / trunk/script
+</A></li>
+	<LI>Next message: <A HREF="000801.html">[Parley-svn] r913 - / trunk/config
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#800">[ date ]</a>
+              <a href="thread.html#800">[ thread ]</a>
+              <a href="subject.html#800">[ subject ]</a>
+              <a href="author.html#800">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

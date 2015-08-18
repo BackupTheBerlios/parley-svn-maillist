@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r572 - / trunk/lib/Parley/App	trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r572%20-%20/%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller&In-Reply-To=%3C200710222027.l9MKRn68001743%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000459.html">
+   <LINK REL="Next"  HREF="000461.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r572 - / trunk/lib/Parley/App	trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r572%20-%20/%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller&In-Reply-To=%3C200710222027.l9MKRn68001743%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r572 - / trunk/lib/Parley/App	trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct 22 22:27:49 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000459.html">[Parley-svn] r571 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000461.html">[Parley-svn] r573 - / trunk/lib/Parley/App
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#460">[ date ]</a>
+              <a href="thread.html#460">[ thread ]</a>
+              <a href="subject.html#460">[ subject ]</a>
+              <a href="author.html#460">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-22 22:27:49 +0200 (Mon, 22 Oct 2007)
+New Revision: 572
+
+Added:
+   trunk/lib/Parley/App/I18N.pm
+Modified:
+   /
+   trunk/lib/Parley/Controller/Help.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3999 at wiggin</A>:  chisel | 2007-10-22 19:15:30 +0100
+ + new module to help with finding i18n directories
+ / modify help to use first valid i18n'd directory for template (falling back to en)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3998
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3999
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/App/I18N.pm
+===================================================================
+--- trunk/lib/Parley/App/I18N.pm	2007-10-22 20:27:40 UTC (rev 571)
++++ trunk/lib/Parley/App/I18N.pm	2007-10-22 20:27:49 UTC (rev 572)
+@@ -0,0 +1,48 @@
++package Parley::App::I18N;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Perl6::Export::Attrs;
++
++sub first_valid_locale :Export( :locale ) {
++    my ($c) = @_;
++
++    foreach my $lang ( @{$c-&gt;languages} ) {
++        if (-d $c-&gt;path_to( 'root', 'base', 'help', $lang) ) {
++            return $lang;
++        }
++    }
++
++    # default to a generic english variant
++    return 'en';
++}
++
++1;
++
++__END__
++
++=head1 NAME
++
++Parley::App::I18N - i18n helper functions
++
++=head1 SYNOPSIS
++
++  use Parley::App::I18N qw( :locale );
++
++  first_valid_locale($c);
++
++=head1 SEE ALSO
++
++L&lt;Parley::Controller::Root&gt;, L&lt;Catalyst&gt;
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Modified: trunk/lib/Parley/Controller/Help.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Help.pm	2007-10-22 20:27:40 UTC (rev 571)
++++ trunk/lib/Parley/Controller/Help.pm	2007-10-22 20:27:49 UTC (rev 572)
+@@ -4,6 +4,8 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++use Parley::App::I18N qw( :locale );
++
+ sub index : Private {
+     my ( $self, $c ) = @_;
+     $c-&gt;stash-&gt;{template} = 'help/contents';
+@@ -17,16 +19,22 @@
+     $help_template = $c-&gt;request-&gt;arguments-&gt;[1];
+ 
+     # set the template to use based on the URI
+-    $c-&gt;stash-&gt;{template} = qq[help/${help_template}];
++    $c-&gt;stash-&gt;{template} =
++          q{help/}
++        . first_valid_locale($c)
++        . q{/}
++        . $help_template;
+     # send to the view
+     $c-&gt;forward('Parley::View::TT');
+ 
+     # deal with errors (i.e. missing templates)
+-    if ($c-&gt;error) {
++    if ($c-&gt;error and $c-&gt;error-&gt;[0]) {
+         # only show the &quot;unknown help section&quot; page if we couldn't find the
+         # page to show
+-        if ($c-&gt;error-&gt;[0] =~ m{file error - help/$help_template: not found}ms) {
++        my $template_name = $c-&gt;stash-&gt;{template};
++        if ($c-&gt;error-&gt;[0] =~ m{file error - $template_name: not found}ms) {
+             $c-&gt;clear_errors;
++            $c-&gt;stash-&gt;{template_name} = $template_name;
+             $c-&gt;forward( 'unknown' );
+         }
+     }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000459.html">[Parley-svn] r571 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000461.html">[Parley-svn] r573 - / trunk/lib/Parley/App
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#460">[ date ]</a>
+              <a href="thread.html#460">[ thread ]</a>
+              <a href="subject.html#460">[ subject ]</a>
+              <a href="author.html#460">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

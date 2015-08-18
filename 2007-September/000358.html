@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r470 - / trunk/root/base/menu trunk/root/base/shared
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r470%20-%20/%20trunk/root/base/menu%20trunk/root/base/shared&In-Reply-To=%3C200709131320.l8DDKQ1J012835%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000357.html">
+   <LINK REL="Next"  HREF="000359.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r470 - / trunk/root/base/menu trunk/root/base/shared</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r470%20-%20/%20trunk/root/base/menu%20trunk/root/base/shared&In-Reply-To=%3C200709131320.l8DDKQ1J012835%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r470 - / trunk/root/base/menu trunk/root/base/shared">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Sep 13 15:20:26 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000357.html">[Parley-svn] r469 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+        <LI>Next message: <A HREF="000359.html">[Parley-svn] r471 - / trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#358">[ date ]</a>
+              <a href="thread.html#358">[ thread ]</a>
+              <a href="subject.html#358">[ subject ]</a>
+              <a href="author.html#358">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-13 15:20:26 +0200 (Thu, 13 Sep 2007)
+New Revision: 470
+
+Modified:
+   /
+   trunk/root/base/menu/menubar
+   trunk/root/base/shared/search_dialog
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3790 at wiggin</A>:  chisel | 2007-09-06 08:40:04 +0100
+ + added Search to the menubar
+ / converted search dialog from Dojo to YUI
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3789
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3790
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-09-13 13:20:16 UTC (rev 469)
++++ trunk/root/base/menu/menubar	2007-09-13 13:20:26 UTC (rev 470)
+@@ -55,6 +55,10 @@
+                     &lt;/div&gt;
+                 &lt;/div&gt;                                        
+             &lt;/li&gt;
++
++            &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;javascript:YAHOO.parley.search.search_dialog.show();&quot;&gt;Search&lt;/a&gt;
++            &lt;/li&gt;
++
+             &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Me&lt;/a&gt;
+                 &lt;div id=&quot;menu_my&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
+@@ -96,7 +100,7 @@
+                 &lt;/div&gt;                                        
+             &lt;/li&gt;
+             [% END %]
+-            &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Help&lt;/a&gt;
++            &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;help&quot;&gt;Help&lt;/a&gt;
+                 &lt;div id=&quot;menu_help&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
+                         &lt;ul&gt;
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2007-09-13 13:20:16 UTC (rev 469)
++++ trunk/root/base/shared/search_dialog	2007-09-13 13:20:26 UTC (rev 470)
+@@ -1,18 +1,63 @@
+ &lt;!-- SEARCH DIALOG --&gt;
+-&lt;!-- dojo dialog-setup --&gt;
+ &lt;script type=&quot;text/javascript&quot;&gt;
+-    var search_dialog;
+-    function init_search_dialog(e) {
+-        search_dialog = dojo.widget.byId(&quot;search_dialog&quot;);
+-        var timer = document.getElementById(&quot;search_dialog_timer&quot;);
+-        search_dialog.setTimerNode(timer);
+-        var btn = document.getElementById(&quot;search_dialog_hider&quot;);
+-        search_dialog.setCloseControl(btn);
+-    }
+-    dojo.addOnLoad(init_search_dialog);
++YAHOO.namespace(&quot;parley.search&quot;);
++
++function init() {
++	// Define various event handlers for Dialog
++	var handleSubmit = function() {
++		this.submit();
++	};
++	var handleCancel = function() {
++		this.cancel();
++	};
++	var handleSuccess = function(o) {
++        console.log('Success');
++	};
++	var handleFailure = function(o) {
++		alert(&quot;Submission failed: &quot; + o.status);
++	};
++
++	// Instantiate the Dialog
++	YAHOO.parley.search.search_dialog = new YAHOO.widget.Dialog(
++        'search_dialog', 
++        {
++            postmethod : 'form',
++            fixedcenter : true,
++            visible : false, 
++            modal: false,
++            constraintoviewport : true,
++            buttons : [
++                { text:'Submit', handler:handleSubmit, isDefault:true },
++                { text:'Cancel', handler:handleCancel }
++            ]
++        }
++    );
++	
++	// Validate the entries in the form to require that both first and last name are entered
++	YAHOO.parley.search.search_dialog.validate = function() {
++		var data = this.getData();
++		if (data.search_terms == &quot;&quot;) {
++			alert(&quot;Please enter something to search for&quot;);
++			return false;
++		} else {
++			return true;
++		}
++	};
++
++	// Wire up the success and failure handlers
++	YAHOO.parley.search.search_dialog.callback = { success: handleSubmit,
++												 failure: handleFailure };
++	
++	// Render the Dialog
++	YAHOO.parley.search.search_dialog.render();
++}
++
++YAHOO.util.Event.onDOMReady(init);
+ &lt;/script&gt;
+ 
+-&lt;div dojoType=&quot;dialog&quot; id=&quot;search_dialog&quot; bgColor=&quot;#606060&quot; bgOpacity=&quot;0.4&quot; toggle=&quot;fade&quot; toggleDuration=&quot;250&quot;&gt;
++&lt;div id=&quot;search_dialog&quot;&gt;
++&lt;div class=&quot;hd&quot;&gt;Search&lt;/div&gt;
++&lt;div class=&quot;bd&quot;&gt;
+     &lt;form action=&quot;search/forum&quot; method=&quot;post&quot; name=&quot;search_form&quot; class=&quot;search_dialog_form&quot;&gt;
+         &lt;fieldset&gt;
+             &lt;label for=&quot;search_terms&quot;&gt;&lt;b&gt;Search For:&lt;/b&gt;&lt;/label&gt;
+@@ -38,12 +83,7 @@
+             &lt;/select&gt;
+             &lt;br /&gt;
+         &lt;/fieldset&gt;
+-
+-        &lt;input type=&quot;submit&quot; /&gt;
+-
+-        &lt;p align=&quot;right&quot;&gt;
+-            &lt;a id=&quot;search_dialog_hider&quot; href=&quot;javascript:;&quot;&gt;Close&lt;/a&gt;&lt;br /&gt;
+-        &lt;/p&gt;
+     &lt;/form&gt;
+ &lt;/div&gt;
++&lt;/div&gt;
+ &lt;!-- SEARCH DIALOG --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000357.html">[Parley-svn] r469 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+	<LI>Next message: <A HREF="000359.html">[Parley-svn] r471 - / trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#358">[ date ]</a>
+              <a href="thread.html#358">[ thread ]</a>
+              <a href="subject.html#358">[ subject ]</a>
+              <a href="author.html#358">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

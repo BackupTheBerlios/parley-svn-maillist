@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r954 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r954%20-%20/%20trunk&In-Reply-To=%3C200810091400.m99E0ESV031002%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000836.html">
+   <LINK REL="Next"  HREF="000838.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r954 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r954%20-%20/%20trunk&In-Reply-To=%3C200810091400.m99E0ESV031002%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r954 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Oct  9 16:00:14 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000836.html">[Parley-svn] r953 - / trunk/root/static trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000838.html">[Parley-svn] r955 - / trunk/lib/Parley/Controller/User
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#837">[ date ]</a>
+              <a href="thread.html#837">[ thread ]</a>
+              <a href="subject.html#837">[ subject ]</a>
+              <a href="author.html#837">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-10-09 16:00:13 +0200 (Thu, 09 Oct 2008)
+New Revision: 954
+
+Modified:
+   /
+   trunk/Makefile.PL
+   trunk/TODO
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8272 at wiggin</A>:  chisel | 2008-10-08 19:21:49 +0100
+ + added current version numbers to Makefile.PL dependencies
+ + updated ToDo list
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8271
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8272
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2008-10-09 13:59:58 UTC (rev 953)
++++ trunk/Makefile.PL	2008-10-09 14:00:13 UTC (rev 954)
+@@ -11,45 +11,45 @@
+ version         ('1.0.2');
+ 
+ requires(
+-    'Catalyst'                                                  =&gt; '5.008001',
+-    'Catalyst::Runtime'                                         =&gt; 0,
+-    'Catalyst::Action::RenderView'                              =&gt; 0,
++    'Catalyst'                                                  =&gt; '5.7014',
++    'Catalyst::Runtime'                                         =&gt; '5.7014',
++    'Catalyst::Action::RenderView'                              =&gt; '0.08',
+     'Catalyst::Authentication::Store::DBIx::Class'              =&gt; '0.10',
+-    'Catalyst::Model::DBIC::Schema'                             =&gt; 0,
+-    'Catalyst::Plugin::Authorization::ACL'                      =&gt; 0,
+-    'Catalyst::Plugin::Authorization::Roles'                    =&gt; 0,
+-    'Catalyst::Plugin::ConfigLoader'                            =&gt; 0,
+-    'Catalyst::Plugin::Email'                                   =&gt; 0,
+-    'Catalyst::Plugin::FillInForm'                              =&gt; 0,
+-    'Catalyst::Plugin::FormValidator'                           =&gt; 0,
+-    'Catalyst::Plugin::I18N'                                    =&gt; 0,
+-    'Catalyst::Plugin::Session'                                 =&gt; 0,
+-    'Catalyst::Plugin::Session::State::Cookie'                  =&gt; 0,
+-    'Cache::FastMmap'                                           =&gt; 0,
+-    'Catalyst::Plugin::Session::Store::FastMmap'                =&gt; 0,
+-    'Catalyst::Plugin::StackTrace'                              =&gt; 0,
+-    'Catalyst::Plugin::Static::Simple'                          =&gt; 0,
+-    'Catalyst::View::TT'                                        =&gt; 0,
+-    'Config::General'                                           =&gt; 2.37,
++    'Catalyst::Model::DBIC::Schema'                             =&gt; '0.20',
++    'Catalyst::Plugin::Authorization::ACL'                      =&gt; '0.08',
++    'Catalyst::Plugin::Authorization::Roles'                    =&gt; '0.05',
++    'Catalyst::Plugin::ConfigLoader'                            =&gt; '0.20',
++    'Catalyst::Plugin::Email'                                   =&gt; '0.08',
++    'Catalyst::Plugin::FillInForm'                              =&gt; '0.09',
++    'Catalyst::Plugin::FormValidator'                           =&gt; '0.02',
++    'Catalyst::Plugin::I18N'                                    =&gt; '0.07',
++    'Catalyst::Plugin::Session'                                 =&gt; '0.19',
++    'Catalyst::Plugin::Session::State::Cookie'                  =&gt; '0.09',
++    'Cache::FastMmap'                                           =&gt; '1.24',
++    'Catalyst::Plugin::Session::Store::FastMmap'                =&gt; '0.05',
++    'Catalyst::Plugin::StackTrace'                              =&gt; '0.08',
++    'Catalyst::Plugin::Static::Simple'                          =&gt; '0.20',
++    'Catalyst::View::TT'                                        =&gt; '0.27',
++    'Config::General'                                           =&gt; '2.37',
+     'Data::FormValidator'                                       =&gt; '4.50',
+-    'Data::SpreadPagination'                                    =&gt; 0,
+-    'DateTime'                                                  =&gt; 0,
+-    'DateTime::Format::Pg'                                      =&gt; 0,
+-    'DateTime::TimeZone'                                        =&gt; 0,
+-    'Email::Valid'                                              =&gt; 0,
++    'Data::SpreadPagination'                                    =&gt; '0.1.2',
++    'DateTime'                                                  =&gt; '0.41',
++    'DateTime::Format::Pg'                                      =&gt; '0.16001',
++    'DateTime::TimeZone'                                        =&gt; '0.70',
++    'Email::Valid'                                              =&gt; '0.179',
+     'Image::Magick'                                             =&gt; 0,
+     'HTML::FillInForm'                                          =&gt; '1.07',
+-    'Image::Size'                                               =&gt; 0,
++    'Image::Size'                                               =&gt; '3.1',
+     'JSON'                                                      =&gt; '2.04',
+-    'List::MoreUtils'                                           =&gt; 0,
+-    'MIME::Lite'                                                =&gt; 0,
+-    'Net::IP::Match::Regexp'                                    =&gt; 0,
+-    'Perl6::Export::Attrs'                                      =&gt; 0,
+-    'Proc::Daemon'                                              =&gt; 0,
+-    'Proc::PID::File'                                           =&gt; 0,
++    'List::MoreUtils'                                           =&gt; '0.21',
++    'MIME::Lite'                                                =&gt; '3.020',
++    'Net::IP::Match::Regexp'                                    =&gt; '1.00',
++    'Perl6::Export::Attrs'                                      =&gt; '0.0.3',
++    'Proc::Daemon'                                              =&gt; '0.03',
++    'Proc::PID::File'                                           =&gt; '1.2.4',
+     'Readonly'                                                  =&gt; 0,
+-    'Text::Context::EitherSide'                                 =&gt; 0,
+-    'Time::Piece'                                               =&gt; 0,
++    'Text::Context::EitherSide'                                 =&gt; '1.3',
++    'Time::Piece'                                               =&gt; '1.11',
+ );
+ 
+ build_requires (
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-10-09 13:59:58 UTC (rev 953)
++++ trunk/TODO	2008-10-09 14:00:13 UTC (rev 954)
+@@ -1,9 +1,12 @@
+ TODO LIST
+ 
++  - local file permissions (for avatar uploads)
++  - optional ReCAPTCHA during sign-up
++  - optional google ads
++  - optional google analytics
+   - 11:58 &lt;marcus&gt; btw did you consider packing the css and js to reduce the number of includes?
+     <A HREF="http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm">http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm</A>
+     <A HREF="http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm">http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm</A>
+-  - setup guide; add mailing list details
+   - Gravatar?
+   - OpenID?
+   - User Profile --&gt; User Roles (for admins)
+@@ -11,7 +14,6 @@
+   - forumcode &quot;quickhelp&quot; in posting screen(s)
+   - &quot;Cancel&quot; from post/edit
+   - &quot;Cancel&quot; from thread/reply
+-  - fix &lt;ul&gt;/&lt;ol&gt; CSS
+   - Quick Reply
+   - login form doesn't submit onEnter
+   - TESTS, TESTS, TESTS!
+@@ -35,6 +37,8 @@
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++D - fix &lt;ul&gt;/&lt;ol&gt; CSS
++D - setup guide; add mailing list details
+ D - get latest i18n from DJ
+ D - Parley::Version (a la SVK)
+ D - login form flickers on IE7 page load
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000836.html">[Parley-svn] r953 - / trunk/root/static trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000838.html">[Parley-svn] r955 - / trunk/lib/Parley/Controller/User
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#837">[ date ]</a>
+              <a href="thread.html#837">[ thread ]</a>
+              <a href="subject.html#837">[ subject ]</a>
+              <a href="author.html#837">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

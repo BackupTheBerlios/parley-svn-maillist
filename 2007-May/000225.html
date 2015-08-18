@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r336 - / trunk/root/base/shared
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r336%20-%20/%20trunk/root/base/shared&In-Reply-To=%3C200705140838.l4E8c52A016847%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000223.html">
+   <LINK REL="Next"  HREF="000224.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r336 - / trunk/root/base/shared</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r336%20-%20/%20trunk/root/base/shared&In-Reply-To=%3C200705140838.l4E8c52A016847%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r336 - / trunk/root/base/shared">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon May 14 10:38:05 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000223.html">[Parley-svn] r335 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000224.html">[Parley-svn] r337 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#225">[ date ]</a>
+              <a href="thread.html#225">[ thread ]</a>
+              <a href="subject.html#225">[ subject ]</a>
+              <a href="author.html#225">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-14 10:38:05 +0200 (Mon, 14 May 2007)
+New Revision: 336
+
+Modified:
+   /
+   trunk/root/base/shared/pager_advanced
+   trunk/root/base/shared/useful_tt_stuff
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3266 at wiggin</A>:  chisel | 2007-05-11 19:01:16 +0100
+ / put pager_advanced block inside pager_advanced CSS class div
+ + added &nbsp; to useful stuff [may no longer be needed, whitespace vanished when we went OTT with CHOMP options for TT]
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3265
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3266
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/shared/pager_advanced
+===================================================================
+--- trunk/root/base/shared/pager_advanced	2007-05-14 08:38:00 UTC (rev 335)
++++ trunk/root/base/shared/pager_advanced	2007-05-14 08:38:05 UTC (rev 336)
+@@ -1,46 +1,44 @@
+ [% IF page %]
+-
+-[% IF current_thread %]
+-[% url_extra_args = '&amp;thread=' _ current_thread.id %]
+-[% END %]
+-
+-Page [% page.current_page %] of [% page.last_page %]
+-[% IF page.last_page &gt; 1 %]
+-[
+-
+-    [% UNLESS page.current_page == page.first_page %]
+-    &lt;a href=&quot;[% c.req.path %]?page=[% page.first_page %][% url_extra_args %]&quot;&gt;First&lt;/a&gt; |
++&lt;div class=&quot;pager_advanced&quot;&gt;
++    [% IF current_thread %]
++    [% url_extra_args = '&amp;thread=' _ current_thread.id %]
+     [% END %]
+ 
+-    [% IF page.previous_page %]
+-    &lt;a href=&quot;[% c.req.path %]?page=[% page.previous_page %][% url_extra_args %]&quot;&gt;Previous&lt;/a&gt;
+-    |
+-    [% END %]
++    Page [% page.current_page %] of [% page.last_page %]
++    [% IF page.last_page &gt; 1 %]
++    [
++        [% UNLESS page.current_page == page.first_page %]
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.first_page %][% url_extra_args %]&quot;&gt;First&lt;/a&gt; |
++        [% END %]
+ 
+-    [%# pagination majick! %]
+-    [% FOREACH jiffy = page_range_spread %]
+-        [% IF jiffy %]
+-            [% IF page.current_page == jiffy %]
+-            &lt;b&gt;[% jiffy %]&lt;/b&gt;
++        [% IF page.previous_page %]
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.previous_page %][% url_extra_args %]&quot;&gt;Previous&lt;/a&gt;
++        |
++        [% END %]
++
++        [%# pagination majick! %]
++        [% FOREACH jiffy = page_range_spread %]
++            [% IF jiffy %]
++                [% IF page.current_page == jiffy %]
++                &lt;b&gt;[% jiffy %]&lt;/b&gt;
++                [% ELSE %]
++                &lt;a href=&quot;[% c.req.path %]?page=[% jiffy %][% url_extra_args %]&quot;&gt;[% jiffy %]&lt;/a&gt;
++                [% END %]
+             [% ELSE %]
+-            &lt;a href=&quot;[% c.req.path %]?page=[% jiffy %][% url_extra_args %]&quot;&gt;[% jiffy %]&lt;/a&gt;
++                ...
+             [% END %]
+-        [% ELSE %]
+-            ...
+         [% END %]
+-    [% END %]
+ 
+-    [% IF page.next_page %]
+-    |
+-    &lt;a href=&quot;[% c.req.path %]?page=[% page.next_page %][% url_extra_args %]&quot;&gt;Next&lt;/a&gt;
+-    [% END %]
++        [% IF page.next_page %]
++        |
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.next_page %][% url_extra_args %]&quot;&gt;Next&lt;/a&gt;
++        [% END %]
+ 
+-    [% UNLESS page.current_page == page.last_page %]
+-    |
+-    &lt;a href=&quot;[% c.req.path %]?page=[% page.last_page %][% url_extra_args %]&quot;&gt;Last&lt;/a&gt;
++        [% UNLESS page.current_page == page.last_page %]
++        |
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.last_page %][% url_extra_args %]&quot;&gt;Last&lt;/a&gt;
++        [% END %]
++    ]
+     [% END %]
+-
+-]
++&lt;/div&gt;
+ [% END %]
+-
+-[% END %]
+
+Modified: trunk/root/base/shared/useful_tt_stuff
+===================================================================
+--- trunk/root/base/shared/useful_tt_stuff	2007-05-14 08:38:00 UTC (rev 335)
++++ trunk/root/base/shared/useful_tt_stuff	2007-05-14 08:38:05 UTC (rev 336)
+@@ -14,11 +14,11 @@
+     [% IF authed_user.preference.time_format %]
+         [% d.strftime(authed_user.preference.time_format.time_string) %]
+         [% IF authed_user.preference.show_tz %]
+-            [% d.time_zone_short_name() %]
++            &nbsp;[% d.time_zone_short_name() %]
+         [% END %]
+     [% ELSE %]
+         [% d.strftime('%c') %]
+-        [% d.time_zone_short_name() %]
++        &nbsp;[% d.time_zone_short_name() %]
+     [% END %]
+ [% END %]
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000223.html">[Parley-svn] r335 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000224.html">[Parley-svn] r337 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#225">[ date ]</a>
+              <a href="thread.html#225">[ thread ]</a>
+              <a href="subject.html#225">[ subject ]</a>
+              <a href="author.html#225">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

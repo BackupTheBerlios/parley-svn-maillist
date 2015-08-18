@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r993 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/my	trunk/t_aggregate/schematests
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r993%20-%20/%20trunk%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/my%0A%09trunk/t_aggregate/schematests&In-Reply-To=%3C200812222201.mBMM1LSd022862%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000874.html">
+   <LINK REL="Next"  HREF="000876.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r993 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/my	trunk/t_aggregate/schematests</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r993%20-%20/%20trunk%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/my%0A%09trunk/t_aggregate/schematests&In-Reply-To=%3C200812222201.mBMM1LSd022862%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r993 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/my	trunk/t_aggregate/schematests">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Dec 22 23:01:21 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000874.html">[Parley-svn] r992 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000876.html">[Parley-svn] r994 - / trunk/db trunk/lib/Parley/Controller	trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#875">[ date ]</a>
+              <a href="thread.html#875">[ thread ]</a>
+              <a href="subject.html#875">[ subject ]</a>
+              <a href="author.html#875">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-22 23:01:20 +0100 (Mon, 22 Dec 2008)
+New Revision: 993
+
+Modified:
+   /
+   trunk/TODO
+   trunk/db/patch_1.0.0_to_1.0.3.psql
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Schema/Preference.pm
+   trunk/root/base/my/preferences
+   trunk/root/base/my/tab_avatar
+   trunk/t_aggregate/schematests/preference.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8657 at wiggin</A>:  chisel | 2008-12-22 19:10:41 +0000
+ + updated TODO
+ + added skin column to public.preference
+ / use session (instead of flash) for tab to view in user prefs
+ + added Skin tab to user pref screen (not functional yet)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8656
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8657
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-12-22 22:01:11 UTC (rev 992)
++++ trunk/TODO	2008-12-22 22:01:20 UTC (rev 993)
+@@ -32,13 +32,14 @@
+   - 'smileys'?
+   - realtime time-format example update (my/prefs - tab_time)
+   - timezone menu usability
+-  - skinning (user pref overrides CSS used?)
+   - posting page ForumCode help/tips
+   - database versioning
+   - ForumCode: thumbnail image, lightbox view?
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++  - skinning (user pref overrides CSS used?)
++D - skinning (config frile driven)
+ D - use HTML::ForumCode::Cookbook::Recipe1 for message preview(s)
+ D - fix &lt;ul&gt;/&lt;ol&gt; CSS
+ D - setup guide; add mailing list details
+
+Modified: trunk/db/patch_1.0.0_to_1.0.3.psql
+===================================================================
+--- trunk/db/patch_1.0.0_to_1.0.3.psql	2008-12-22 22:01:11 UTC (rev 992)
++++ trunk/db/patch_1.0.0_to_1.0.3.psql	2008-12-22 22:01:20 UTC (rev 993)
+@@ -5,6 +5,7 @@
+ -- Description:
+ --
+ --      add table for database based sessions
++--      add skin column in preferences
+ 
+ BEGIN;
+ 
+@@ -24,6 +25,13 @@
+     );
+     ALTER TABLE sessions OWNER TO parley;
+ 
++    ALTER TABLE public.preference
++        ADD COLUMN
++            skin        varchar(100)
++                NOT NULL
++                DEFAULT 'base'
++    ;
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2008-12-22 22:01:11 UTC (rev 992)
++++ trunk/lib/Parley/Controller/My.pm	2008-12-22 22:01:20 UTC (rev 993)
+@@ -133,7 +133,8 @@
+ 
+     # show a specific tab?
+     if (defined $c-&gt;request-&gt;param('tab')) {
+-        $c-&gt;flash-&gt;{show_pref_tab} ||= 'tab_' . $c-&gt;request-&gt;param('tab');
++        $c-&gt;session-&gt;{show_pref_tab} = 'tab_' . $c-&gt;request-&gt;param('tab');
++        $c-&gt;log-&gt;warn( $c-&gt;session-&gt;{show_pref_tab} );
+     }
+ 
+     # formfill/stash data
+@@ -168,6 +169,9 @@
+     );
+     $c-&gt;stash-&gt;{thread_watches} = $watches;
+ 
++    # skin
++    $c-&gt;stash-&gt;{formdata}{skin} = 'base';
++
+     return;
+ }
+ 
+@@ -205,7 +209,7 @@
+     if ('time_format' eq $form_name) {
+         # return to the right tab
+         # use session flash, or we lose the info with the redirect
+-        $c-&gt;flash-&gt;{show_pref_tab} = 'tab_time';
++        $c-&gt;session-&gt;{show_pref_tab} = 'tab_time';
+ 
+         $ok_update = $self-&gt;_process_form_time_format( $c );
+     }
+@@ -213,7 +217,7 @@
+     elsif ('notifications' eq $form_name) {
+         # return to the right tab
+         # use session flash, or we lose the info with the redirect
+-        $c-&gt;flash-&gt;{show_pref_tab} = 'tab_notifications';
++        $c-&gt;session-&gt;{show_pref_tab} = 'tab_notifications';
+ 
+         $ok_update = $self-&gt;_process_form_notifications( $c );
+     }
+@@ -221,11 +225,19 @@
+     elsif ('user_avatar' eq $form_name) {
+         # return to the right tab
+         # use session flash, or we lose the info with the redirect
+-        $c-&gt;flash-&gt;{show_pref_tab} = 'tab_avatar';
++        $c-&gt;session-&gt;{show_pref_tab} = 'tab_avatar';
+ 
+         $ok_update = $self-&gt;_process_form_avatar( $c );
+     }
++    # are we updating the avatar
++    elsif ('user_skin' eq $form_name) {
++        # return to the right tab
++        # use session flash, or we lose the info with the redirect
++        $c-&gt;session-&gt;{show_pref_tab} = 'tab_skin';
+ 
++        $ok_update = $self-&gt;_process_form_skin( $c );
++    }
++
+     # otherwise we haven't decided how to handle the specified form ...
+     else {
+         $c-&gt;stash-&gt;{error}{message} = &quot;don't know how to handle: $form_name&quot;;
+
+Modified: trunk/lib/Parley/Schema/Preference.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Preference.pm	2008-12-22 22:01:11 UTC (rev 992)
++++ trunk/lib/Parley/Schema/Preference.pm	2008-12-22 22:01:20 UTC (rev 993)
+@@ -48,6 +48,13 @@
+     default_value =&gt; 'false',
+     size =&gt; 1,
+   },
++
++  &quot;skin&quot; =&gt; {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; &quot;base&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 100,
++  },
+ );
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;has_many(
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2008-12-22 22:01:11 UTC (rev 992)
++++ trunk/root/base/my/preferences	2008-12-22 22:01:20 UTC (rev 993)
+@@ -17,9 +17,11 @@
+             { label =&gt; l('Time'),               tab_name =&gt; 'tab_time' },
+             { label =&gt; l('Notifications'),      tab_name =&gt; 'tab_notifications' },
+             { label =&gt; l('Avatar'),             tab_name =&gt; 'tab_avatar' },
++            { label =&gt; l('Skin'),               tab_name =&gt; 'tab_skin' },
+        ]
+     %]
+-    [% SET selected_tab = c.flash.show_pref_tab || 'tab_you' %]
++    [% SET selected_tab = c.session.show_pref_tab || 'tab_you' %]
++    &lt;!-- selected_tab = [%selected_tab%] --&gt;
+ 
+     &lt;ul class=&quot;yui-nav&quot;&gt;
+     [% FOR tab IN tab_info %]
+
+Modified: trunk/root/base/my/tab_avatar
+===================================================================
+--- trunk/root/base/my/tab_avatar	2008-12-22 22:01:11 UTC (rev 992)
++++ trunk/root/base/my/tab_avatar	2008-12-22 22:01:20 UTC (rev 993)
+@@ -1,4 +1,4 @@
+-&lt;!-- preferences : tab_you --&gt;
++&lt;!-- preferences : tab_avatar --&gt;
+ &lt;form action=&quot;my/preferences/update&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+     &lt;input type=&quot;hidden&quot; name=&quot;form_name&quot; value=&quot;user_avatar&quot;&gt;
+ 
+@@ -22,4 +22,4 @@
+         &lt;/div&gt;
+     &lt;/div&gt;
+ &lt;/form&gt;
+-&lt;!-- (end) preferences : tab_you --&gt;
++&lt;!-- (end) preferences : tab_avatar --&gt;
+
+Modified: trunk/t_aggregate/schematests/preference.t
+===================================================================
+--- trunk/t_aggregate/schematests/preference.t	2008-12-22 22:01:11 UTC (rev 992)
++++ trunk/t_aggregate/schematests/preference.t	2008-12-22 22:01:20 UTC (rev 993)
+@@ -25,6 +25,7 @@
+                 show_tz
+                 notify_thread_watch
+                 watch_on_post
++                skin
+             ]
+         ],
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000874.html">[Parley-svn] r992 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000876.html">[Parley-svn] r994 - / trunk/db trunk/lib/Parley/Controller	trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#875">[ date ]</a>
+              <a href="thread.html#875">[ thread ]</a>
+              <a href="subject.html#875">[ subject ]</a>
+              <a href="author.html#875">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

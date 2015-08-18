@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r245 - / branches/schema_based/db
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r245%20-%20/%20branches/schema_based/db&In-Reply-To=%3C200609121500.k8CF0EsA029162%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000132.html">
+   <LINK REL="Next"  HREF="000134.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r245 - / branches/schema_based/db</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r245%20-%20/%20branches/schema_based/db&In-Reply-To=%3C200609121500.k8CF0EsA029162%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r245 - / branches/schema_based/db">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Sep 12 17:00:14 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000132.html">[Parley-svn] r244 - / branches/schema_based/root/base/thread
+</A></li>
+        <LI>Next message: <A HREF="000134.html">[Parley-svn] r246 - / branches/schema_based
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#133">[ date ]</a>
+              <a href="thread.html#133">[ thread ]</a>
+              <a href="subject.html#133">[ subject ]</a>
+              <a href="author.html#133">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-12 17:00:14 +0200 (Tue, 12 Sep 2006)
+New Revision: 245
+
+Modified:
+   /
+   branches/schema_based/db/parley.psql
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r1182 at ferrari</A>:  chisel | 2006-09-12 09:53:09 +0100
+ + added missing table (password_reset); it's in a patch file, but not in the main schema
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:878
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1182
+
+Modified: branches/schema_based/db/parley.psql
+===================================================================
+--- branches/schema_based/db/parley.psql	2006-09-12 15:00:10 UTC (rev 244)
++++ branches/schema_based/db/parley.psql	2006-09-12 15:00:14 UTC (rev 245)
+@@ -71,6 +71,14 @@
+     expires         date
+ );
+ 
++-- new table used during forgotten password process
++CREATE TABLE password_reset (
++    password_reset_id       text        primary key,
++    recipient               integer     not null
++                            references person,
++    expires                 timestamp
++);
++
+ CREATE TABLE forum (
+     forum_id        SERIAL      primary key,
+     name            text        not null,
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000132.html">[Parley-svn] r244 - / branches/schema_based/root/base/thread
+</A></li>
+	<LI>Next message: <A HREF="000134.html">[Parley-svn] r246 - / branches/schema_based
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#133">[ date ]</a>
+              <a href="thread.html#133">[ thread ]</a>
+              <a href="subject.html#133">[ subject ]</a>
+              <a href="author.html#133">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

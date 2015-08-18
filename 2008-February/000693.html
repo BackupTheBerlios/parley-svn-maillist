@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r805 - / trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r805%20-%20/%20trunk/t&In-Reply-To=%3C200802191918.m1JJIuF7012354%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000692.html">
+   <LINK REL="Next"  HREF="000694.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r805 - / trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r805%20-%20/%20trunk/t&In-Reply-To=%3C200802191918.m1JJIuF7012354%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r805 - / trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Feb 19 20:18:56 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000692.html">[Parley-svn] r804 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/lib/Parley/Schema	trunk/root/base/menu trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000694.html">[Parley-svn] r806 - / trunk/lib/Parley/ResultSet
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#693">[ date ]</a>
+              <a href="thread.html#693">[ thread ]</a>
+              <a href="subject.html#693">[ subject ]</a>
+              <a href="author.html#693">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-19 20:18:56 +0100 (Tue, 19 Feb 2008)
+New Revision: 805
+
+Added:
+   trunk/t/05.userroles.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4680 at wiggin</A>:  chisel | 2008-02-19 18:18:42 +0000
+ + added user-role tests
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4679
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4680
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/t/05.userroles.t
+===================================================================
+--- trunk/t/05.userroles.t	2008-02-19 19:18:47 UTC (rev 804)
++++ trunk/t/05.userroles.t	2008-02-19 19:18:56 UTC (rev 805)
+@@ -0,0 +1,42 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 10;
++
++BEGIN { use_ok 'Parley::Schema' }
++
++my ($schema, $resultset, $rs, $user_0, $user_0_roles, $status_ok);
++
++# get a schema to query
++$schema = Parley::Schema-&gt;connect(
++    'dbi:Pg:dbname=parley'
++);
++isa_ok($schema, 'Parley::Schema');
++
++# grab the Person resultset
++$resultset = $schema-&gt;resultset('Person');
++isa_ok($resultset, 'Parley::ResultSet::Person');
++
++# we should be able to fetch user #0
++$user_0 = $resultset-&gt;find(0);
++isa_ok($user_0, 'Parley::Schema::Person');
++
++# XXX (incorrect assumption - only in $c?)
++# user_0 should have a &quot;roles&quot; method
++can_ok($user_0, qw(roles));
++
++# user_0 should have some roles
++$user_0_roles = $user_0-&gt;roles;
++isa_ok($user_0_roles, 'DBIx::Class::ResultSet');
++ok($user_0_roles &gt; 0, 'user 0 has at least one role');
++
++# user_0 should be a site-admin
++$status_ok = $user_0-&gt;check_user_roles('site_moderator');
++is($status_ok, 1, 'user 0 is site_moderator');
++
++# user 0 should NOT be a 'muppet'
++$status_ok = $user_0-&gt;check_user_roles('muppet');
++is($status_ok, 0, 'user 0 is NOT a muppet');
++
++# user 0 should NOT be a site_moderator AND a 'muppet'
++$status_ok = $user_0-&gt;check_user_roles('site_moderator', 'muppet');
++is($status_ok, 0, 'user 0 is site_moderator but NOT a muppet');
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000692.html">[Parley-svn] r804 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/lib/Parley/Schema	trunk/root/base/menu trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000694.html">[Parley-svn] r806 - / trunk/lib/Parley/ResultSet
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#693">[ date ]</a>
+              <a href="thread.html#693">[ thread ]</a>
+              <a href="subject.html#693">[ subject ]</a>
+              <a href="author.html#693">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

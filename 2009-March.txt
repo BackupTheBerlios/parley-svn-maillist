@@ -1,0 +1,2674 @@
+From chiselwright at mail.berlios.de  Sun Mar  1 21:50:14 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:50:14 +0100
+Subject: [Parley-svn] r1039 - / branches/parley-1.1 branches/parley-1.1/lib
+	branches/parley-1.1/lib/Catalyst
+	branches/parley-1.1/lib/Catalyst/Controller
+	branches/parley-1.1/lib/Catalyst/Plugin
+	branches/parley-1.1/lib/Parley
+	branches/parley-1.1/lib/Parley/Controller
+	branches/parley-1.1/lib/Parley/Controller/User
+	branches/parley-1.1/lib/Parley/ControllerBase
+	branches/parley-1.1/lib/Parley/I18N
+	branches/parley-1.1/root/base/dfv
+	branches/parley-1.1/root/base/user/signup
+Message-ID: <200903012050.n21KoE6H021942@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:50:13 +0100 (Sun, 01 Mar 2009)
+New Revision: 1039
+
+Added:
+   branches/parley-1.1/lib/Catalyst/Plugin/
+   branches/parley-1.1/lib/Catalyst/Plugin/Dumper.pm
+   branches/parley-1.1/lib/Parley/ControllerBase/
+   branches/parley-1.1/lib/Parley/ControllerBase/FormValidation.pm
+Modified:
+   /
+   branches/parley-1.1/Changes
+   branches/parley-1.1/Makefile.PL
+   branches/parley-1.1/lib/Catalyst/Controller/
+   branches/parley-1.1/lib/Parley.pm
+   branches/parley-1.1/lib/Parley/Controller/Root.pm
+   branches/parley-1.1/lib/Parley/Controller/User/SignUp.pm
+   branches/parley-1.1/lib/Parley/I18N/i_default.po
+   branches/parley-1.1/parley.conf
+   branches/parley-1.1/root/base/dfv/validation_messages_data
+   branches/parley-1.1/root/base/user/signup/signup
+Log:
+ r9193 at wiggin:  chisel | 2009-02-25 20:34:44 +0000
+ + switch to using Catalyst::Controller::Validation::DFV for form re-fill
+ / use mk_accessors instead of home-grown rubbish
+ + added reCaptcha to signup screen
+ + added check for unique username/forumname (signup)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9189
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9193
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/parley-1.1/Changes
+===================================================================
+--- branches/parley-1.1/Changes	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/Changes	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -8,6 +8,10 @@
+       can place this div inside it (instead of flushed to the RHS of the
+       page/window)
+     - added Google Analytics (configurable via parley.conf)
++    - switch to using Catalyst::Controller::Validation::DFV for form re-fill
++    - use mk_accessors instead of home-grown rubbish
++    - added reCaptcha to signup screen
++    - added check for unique username/forumname (signup)
+ 
+ 1.0.4   Wed Dec 24 18:54:24 GMT 2008
+     - fixed skin2
+
+Modified: branches/parley-1.1/Makefile.PL
+===================================================================
+--- branches/parley-1.1/Makefile.PL	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/Makefile.PL	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -15,6 +15,8 @@
+     'Catalyst::Runtime'                                         => '5.7014',
+     'Catalyst::Action::RenderView'                              => '0.08',
+     'Catalyst::Authentication::Store::DBIx::Class'              => '0.10',
++    'Catalyst::Controller::reCAPTCHA'                           => '0.30001',
++    'Catalyst::Controller::Validation::DFV'                     => '0.0.2',
+     'Catalyst::Model::DBIC::Schema'                             => '0.20',
+     'Catalyst::Plugin::Authorization::ACL'                      => '0.08',
+     'Catalyst::Plugin::Authorization::Roles'                    => '0.05',
+
+
+Property changes on: branches/parley-1.1/lib/Catalyst/Controller
+___________________________________________________________________
+Name: svn:ignore
+   + *\.sw?
+blib
+inc
+Makefile
+Makefile.old
+MANIFEST.bak
+
+Added: branches/parley-1.1/lib/Catalyst/Plugin/Dumper.pm
+===================================================================
+--- branches/parley-1.1/lib/Catalyst/Plugin/Dumper.pm	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/lib/Catalyst/Plugin/Dumper.pm	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -0,0 +1,14 @@
++package Catalyst::Plugin::Dumper;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use Moose; # gives us strict and warnings
++
++#extends 'Catalyst::Log';
++
++has 'headers'  => (
++      is      => 'rw',
++      isa     => 'Header',
++      default => sub { HTTP::Headers->new } 
++);
++
++1;
++__END__
+
+Modified: branches/parley-1.1/lib/Parley/Controller/Root.pm
+===================================================================
+--- branches/parley-1.1/lib/Parley/Controller/Root.pm	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/lib/Parley/Controller/Root.pm	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -5,6 +5,7 @@
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
++use base 'Catalyst::Controller::Validation::DFV';
+ 
+ use DateTime;
+ use List::MoreUtils qw(uniq);
+@@ -332,16 +333,10 @@
+ 
+ sub end : Private {
+     my ($self, $c) = @_;
++    # render the page
+     $c->forward('render');
+-
+     # fill in any forms
+-    $c->fillform(
+-        {
+-            # combine two hashrefs so we only make one method call
+-            %{ $c->request->parameters || {} },
+-            %{ $c->stash->{formdata}   || {} },
+-        }
+-    );
++    $c->forward('refill_form');
+ }
+ 
+ 
+
+Modified: branches/parley-1.1/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- branches/parley-1.1/lib/Parley/Controller/User/SignUp.pm	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/lib/Parley/Controller/User/SignUp.pm	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -5,6 +5,9 @@
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
++use base 'Catalyst::Controller::FormValidator';
++use base 'Catalyst::Controller::reCAPTCHA';
++use base 'Parley::ControllerBase::FormValidation';
+ 
+ use List::MoreUtils qw{ uniq };
+ use Digest::MD5 qw{ md5_hex };
+@@ -139,6 +142,11 @@
+     my ( $self, $c ) = @_;
+     my (@messages);
+ 
++    # get a reCAPTCHA to use in the form
++    if ($c->config->{recaptcha}{enabled}) {
++        $c->forward('captcha_get');
++    }
++
+     # logged-in? no need to signup again...
+     if ($c->is_logged_in()) {
+         $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
+@@ -285,32 +293,60 @@
+     my ($self, $c) = @_;
+     my ($results, @messages);
+ 
+-    # validate the form data
+-    $c->form(
+-        $dfv_profile_for{signup}
+-    );
++    # check the form for errors
++    $c->forward('form_check', [$dfv_profile_for{signup}]);
+ 
+-    # deal with missing/invalid fields
+-    if ($c->form->has_missing()) {
+-        $c->stash->{view}{error}{message}
+-            = $c->localize(q{DFV FILL REQUIRED});
+-        foreach my $f ( $c->form->missing ) {
+-            push @{ $c->stash->{view}{error}{messages} }, $f;
++    # if the captcha is enabled
++    if ($c->config->{recaptcha}{enabled}) {
++        # check the captcha
++        $c->forward('captcha_check');
++        # deal with any errors
++        if ($c->stash->{recaptcha_error}) {
++            # add to form validation failures
++            $c->forward(
++                'add_form_invalid',
++                [ 'recaptcha', $c->stash->{recaptcha_error} ]
++            );
+         }
+     }
+-    elsif ($c->form->has_invalid()) {
+-        $c->stash->{view}{error}{message}
+-            = $c->localize(q{DFV FIELDS INVALID});
+-        foreach my $f ( $c->form->invalid ) {
+-            push @{ $c->stash->{view}{error}{messages} }, $f;
+-        }
+-    }
+ 
+-    # otherwise the form data is ok...
+-    else {
++    # check to see if the username has already been used
++    $c->forward('check_unique_username', ['new_username']);
++
++    # check to see if the username has already been used
++    $c->forward('check_unique_forumname', ['forum_name']);
++
++    if ($c->stash->{validation}->success) {
+         @messages = $self->_add_new_user($c, $results);
+     }
+ 
++#
++#    # validate the form data
++#    $c->form(
++#        $dfv_profile_for{signup}
++#    );
++#
++#    # deal with missing/invalid fields
++#    if ($c->form->has_missing()) {
++#        $c->stash->{view}{error}{message}
++#            = $c->localize(q{DFV FILL REQUIRED});
++#        foreach my $f ( $c->form->missing ) {
++#            push @{ $c->stash->{view}{error}{messages} }, $f;
++#        }
++#    }
++#    elsif ($c->form->has_invalid()) {
++#        $c->stash->{view}{error}{message}
++#            = $c->localize(q{DFV FIELDS INVALID});
++#        foreach my $f ( $c->form->invalid ) {
++#            push @{ $c->stash->{view}{error}{messages} }, $f;
++#        }
++#    }
++#
++#    # otherwise the form data is ok...
++#    else {
++#        @messages = $self->_add_new_user($c, $results);
++#    }
++
+     return (uniq(sort @messages));
+ }
+ 
+@@ -337,13 +373,13 @@
+     my ($valid_results, $new_auth, $new_person, $new_preference, $status_ok);
+ 
+     # less typing
+-    $valid_results = $c->form->valid;
+-
++    $valid_results = $c->stash->{validation}->valid;
++use Data::Dump qw(pp); $c->log->debug( pp($valid_results) );
+     # add authentication record
+     $new_auth = $c->model('ParleyDB')->resultset('Authentication')->create(
+         {
+-            username => $c->form->valid->{new_username},
+-            password => md5_hex( $c->form->valid->{new_password} ),
++            username => $valid_results->{new_username},
++            password => md5_hex( $valid_results->{new_password} ),
+         }
+     );
+ 
+
+Added: branches/parley-1.1/lib/Parley/ControllerBase/FormValidation.pm
+===================================================================
+--- branches/parley-1.1/lib/Parley/ControllerBase/FormValidation.pm	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/lib/Parley/ControllerBase/FormValidation.pm	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -0,0 +1,69 @@
++package Parley::ControllerBase::FormValidation;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base 'Catalyst::Controller';
++
++sub check_unique_username :Private {
++    my ($self, $c, $username_field) = @_;
++    my ($count);
++
++    # if we haven't checked the form yet, we can't add to the results
++    if (not defined $c->stash->{validation}) {
++        carp('form must be validated first');
++        return;
++    }
++
++    # see how many matches we have for the value in the (supplied) username
++    # field
++    $count = $c->model('Authentication')->count(
++        { username => $c->stash->{validation}->valid($username_field) }
++    );
++
++    # set a validation error if we've already got one
++    if ($count > 0) {
++        $c->forward(
++            'add_form_invalid',
++            [ $username_field, q{username-not-unique} ]
++        );
++    }
++
++    return;
++}
++
++sub check_unique_forumname :Private {
++    my ($self, $c, $forumname_field) = @_;
++    my ($count);
++
++    $c->log->debug( $forumname_field );
++    $c->log->debug( $c->stash->{validation}->valid($forumname_field) );
++
++    # if we haven't checked the form yet, we can't add to the results
++    if (not defined $c->stash->{validation}) {
++        carp('form must be validated first');
++        return;
++    }
++
++    # see how many matches we have for the value in the (supplied) forumname
++    # field
++    $count = $c->model('Person')->count(
++        { forum_name => $c->stash->{validation}->valid($forumname_field) }
++    );
++
++    # set a validation error if we've already got one
++    if ($count > 0) {
++        $c->forward(
++            'add_form_invalid',
++            [ $forumname_field, q{forumname-not-unique} ]
++        );
++    }
++
++    return;
++}
++
++1;
++
++__END__
+
+Modified: branches/parley-1.1/lib/Parley/I18N/i_default.po
+===================================================================
+--- branches/parley-1.1/lib/Parley/I18N/i_default.po	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/lib/Parley/I18N/i_default.po	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -193,6 +193,9 @@
+ msgid "FILE TOO LARGE"
+ msgstr "File size too large. File must be no larger than 20K."
+ 
++msgid "FORUMNAME_NOT_UNIQUE"
++msgstr "The forum name you have chosen is already in use. Please try a different one."
++
+ msgid "First"
+ msgstr "First"
+ 
+@@ -333,6 +336,30 @@
+ msgid "Logout"
+ msgstr "Logout"
+ 
++msgid "MISSING_CONFIRM_EMAIL"
++msgstr "Please confirm your email address"
++
++msgid "MISSING_CONFIRM_PASSWORD"
++msgstr "Please confirm your password"
++
++msgid "MISSING_EMAIL"
++msgstr "Please provide an email address"
++
++msgid "MISSING_FIRST_NAME"
++msgstr "Please provide your first name"
++
++msgid "MISSING_FORUM_NAME"
++msgstr "Please provide a forumname"
++
++msgid "MISSING_LAST_NAME"
++msgstr "Please provide your last name"
++
++msgid "MISSING_NEW_PASSWORD"
++msgstr "Please provide a password"
++
++msgid "MISSING_NEW_USERNAME"
++msgstr "Please provide a username"
++
+ msgid "MISSING_SEARCH_MATCH_TYPE"
+ msgstr "Please specify the method you would like to match by"
+ 
+@@ -549,6 +576,9 @@
+ msgid "PROFILE NOT FOUND"
+ msgstr "Can't locate a profile for the requested user."
+ 
++msgid "PROVE YOU ARE HUMAN"
++msgstr "Prove you're human"
++
+ msgid "Post New Terms"
+ msgstr "Post New Terms"
+ 
+@@ -795,6 +825,9 @@
+ msgid "USERNAME IN USE"
+ msgstr "The username you have chosen is already in use. Please try a different one."
+ 
++msgid "USERNAME_NOT_UNIQUE"
++msgstr "The username you have chosen is already in use. Please try a different one."
++
+ msgid "USERNAME INCORRECT"
+ msgstr "Incorrect Username Supplied."
+ 
+
+Modified: branches/parley-1.1/lib/Parley.pm
+===================================================================
+--- branches/parley-1.1/lib/Parley.pm	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/lib/Parley.pm	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -114,42 +114,17 @@
+ 
+ # ---- END:   ACL RULES ----
+ 
++# useful places to Store Stuff
++# (less typing)
++__PACKAGE__->mk_accessors(
++    qw<
++        _authed_user
++        _current_post
++        _current_thread
++        _current_forum
++    >
++);
+ 
+-
+-# I'm sure there's a (better) way to do this by overriding set()/get() in Class::Accessor
+-{
+-    sub set_get {
+-        my $c = shift;
+-        my $key = shift;
+-
+-        if(@_ == 1) {
+-            $c->stash->{$key} = $_[0];
+-        }
+-        elsif(@_ > 1) {
+-            $c->stash->{$key} = [@_];
+-        }
+-
+-        $c->stash->{$key};
+-    }
+-
+-    sub _authed_user {
+-        my $c = shift;
+-        $c->set_get('authed_user', @_);
+-    }
+-    sub _current_post {
+-        my $c = shift;
+-        $c->set_get('current_post', @_);
+-    }
+-    sub _current_thread {
+-        my $c = shift;
+-        $c->set_get('current_thread', @_);
+-    }
+-    sub _current_forum {
+-        my $c = shift;
+-        $c->set_get('current_forum', @_);
+-    }
+-}
+-
+ ################################################################################
+ 
+ 
+
+Modified: branches/parley-1.1/parley.conf
+===================================================================
+--- branches/parley-1.1/parley.conf	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/parley.conf	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -26,6 +26,11 @@
+ # disable
+ google_analytics_id         UA-116361-5
+ 
++<recaptcha>
++    enabled         = 0
++    pub_key         = 6Lem9QIAAAAAANXlFW-lph_VKyKvkSmukwPtwv_W
++    priv_key        = 6Lem9QIAAAAAADDrLvTuD7dz5HIHlRxFfSRhOzsz
++</recaptcha>
+ 
+ # comment out any log levels you don't want to see in your logs
+ # 'info' and 'debug' are common choices for suppresing in a live environment
+
+Modified: branches/parley-1.1/root/base/dfv/validation_messages_data
+===================================================================
+--- branches/parley-1.1/root/base/dfv/validation_messages_data	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/root/base/dfv/validation_messages_data	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -5,11 +5,22 @@
+             match_type                  => 'MISSING_SEARCH_MATCH_TYPE',
+             search_terms                => 'MISSING_SEARCH_TERMS',
+ 
++            first_name                  => 'MISSING_FIRST_NAME',
++            last_name                   => 'MISSING_LAST_NAME',
++            forum_name                  => 'MISSING_FORUM_NAME',
++            email                       => 'MISSING_EMAIL',
++            confirm_email               => 'MISSING_CONFIRM_EMAIL',
++            new_username                => 'MISSING_NEW_USERNAME',
++            new_password                => 'MISSING_NEW_PASSWORD',
++            confirm_password            => 'MISSING_CONFIRM_PASSWORD',
++
+             moon_stick                  => 'I demand the MOON! On a STICK!',
+         },
+ 
+         # messages for invalid fields (failed constraints)
+         invalid => {
++            'username-not-unique'       => 'USERNAME_NOT_UNIQUE',
++            'forumname-not-unique'      => 'FORUMNAME_NOT_UNIQUE',
+             # reCAPTCHA messages (from: http://recaptcha.net/apidocs/captcha/)
+             'incorrect-captcha-sol'     => 'the CAPTCHA solution was incorrect',
+             'recaptcha-not-reachable'   => 'unable to contact the reCAPTCHA verify server',
+@@ -18,6 +29,8 @@
+         # mappings from field names to something we'd like to show the user
+         name => {
+             email_address               => 'Email Address',
++            new_username                => 'Username',
++            forum_name                  => 'Forum Name',
+         },
+     }
+ %]
+
+Modified: branches/parley-1.1/root/base/user/signup/signup
+===================================================================
+--- branches/parley-1.1/root/base/user/signup/signup	2009-02-24 22:58:59 UTC (rev 1038)
++++ branches/parley-1.1/root/base/user/signup/signup	2009-03-01 20:50:13 UTC (rev 1039)
+@@ -140,6 +140,21 @@
+         </div>
+     </div>
+ 
++    [% IF recaptcha %] [% # only show reCAPTCHA if we have one; it may not be enabled %]
++    <div class="yui-gb top-padded" id="recaptcha">
++        <div class="yui-u first align_right">
++            [%l('PROVE YOU ARE HUMAN')%]:
++        </div>
++        <div class="yui-u">
++            [% recaptcha %]
++        </div>
++        <div class="yui-u">
++            &nbsp;
++        </div>
++    </div>
++    [% END %]
++
++
+     <div class="yui-gb top_padded">
+         <div class="yui-u first align_right">
+             &nbsp;
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:50:27 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:50:27 +0100
+Subject: [Parley-svn] r1040 - / trunk trunk/contrib trunk/contrib/example
+	trunk/lib trunk/lib/Catalyst trunk/lib/Catalyst/Controller
+	trunk/lib/Catalyst/Plugin trunk/lib/Parley
+	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User
+	trunk/lib/Parley/ControllerBase trunk/lib/Parley/I18N
+	trunk/root trunk/root/base trunk/root/base/dfv
+	trunk/root/base/search trunk/root/base/shared
+	trunk/root/base/user trunk/root/base/user/signup trunk/root/skin2
+Message-ID: <200903012050.n21KoRIb022059@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:50:26 +0100 (Sun, 01 Mar 2009)
+New Revision: 1040
+
+Added:
+   trunk/contrib/example/
+   trunk/contrib/example/deploy.sh
+   trunk/lib/Catalyst/Plugin/
+   trunk/lib/Catalyst/Plugin/Dumper.pm
+   trunk/lib/Parley/ControllerBase/
+   trunk/lib/Parley/ControllerBase/FormValidation.pm
+   trunk/root/base/shared/google_analytics
+   trunk/root/skin2/
+Modified:
+   /
+   trunk/
+   trunk/Changes
+   trunk/MANIFEST
+   trunk/Makefile.PL
+   trunk/TODO
+   trunk/lib/Catalyst/Controller/
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/parley.conf
+   trunk/root/base/dfv/validation_messages_data
+   trunk/root/base/footer
+   trunk/root/base/header
+   trunk/root/base/search/
+   trunk/root/base/search/advanced
+   trunk/root/base/shared/add_this
+   trunk/root/base/user/profile
+   trunk/root/base/user/signup/signup
+   trunk/root/skin2/footer
+Log:
+ r9194 at wiggin:  chisel | 2009-02-25 20:36:40 +0000
+ Merging 1.1 changes back to trunk/
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9193
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9194
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/parley-1.1:8879
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/schema_based:562
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.3:8686
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.4:8698
+f74ee645-c3e3-0310-be06-c791151d01b6:/branches/schema_based:258
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/parley-1.1:9193
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/schema_based:562
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.3:8686
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.4:8698
+f74ee645-c3e3-0310-be06-c791151d01b6:/branches/schema_based:258
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/Changes	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -7,6 +7,11 @@
+     - modified CSS for "user information"; now the header is a fixed-width we
+       can place this div inside it (instead of flushed to the RHS of the
+       page/window)
++    - added Google Analytics (configurable via parley.conf)
++    - switch to using Catalyst::Controller::Validation::DFV for form re-fill
++    - use mk_accessors instead of home-grown rubbish
++    - added reCaptcha to signup screen
++    - added check for unique username/forumname (signup)
+ 
+ 1.0.4   Wed Dec 24 18:54:24 GMT 2008
+     - fixed skin2
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/MANIFEST	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -2,6 +2,7 @@
+ Changes.i18n
+ config/parley.fastcgi
+ config/parley.sites-available
++contrib/example/deploy.sh
+ contrib/patch/0.57_02_KAARE.patch
+ contrib/patch/0.59_001_TJC.patch
+ db/parley.psql
+@@ -39,6 +40,8 @@
+ inc/Module/Install/Metadata.pm
+ inc/Module/Install/Win32.pm
+ inc/Module/Install/WriteAll.pm
++lib/Catalyst/Controller/FormValidator.pm
++lib/Catalyst/Plugin/Dumper.pm
+ lib/Parley.pm
+ lib/Parley/App/Communication/Email.pm
+ lib/Parley/App/DateTime.pm
+@@ -111,6 +114,8 @@
+ README
+ ROADMAP
+ root/base/about/modules
++root/base/dfv/display_validation_messages
++root/base/dfv/validation_messages_data
+ root/base/error/simple
+ root/base/footer
+ root/base/forum/list
+@@ -119,6 +124,7 @@
+ root/base/help/i_default/contents
+ root/base/help/i_default/faq
+ root/base/help/i_default/formatting_posts
++root/base/help/i_default/wide
+ root/base/help/unknown
+ root/base/menu/left/main
+ root/base/menu/menubar
+@@ -132,10 +138,14 @@
+ root/base/my/tab_watch
+ root/base/my/tab_you
+ root/base/post/edit
++root/base/search/advanced
+ root/base/search/forum
++root/base/search/results
++root/base/shared/add_this
+ root/base/shared/ajax_dialog
+ root/base/shared/autocomplete_style
+ root/base/shared/focus_username_js
++root/base/shared/google_analytics
+ root/base/shared/language_dialog
+ root/base/shared/loading_please_wait
+ root/base/shared/login_dialog
+@@ -161,6 +171,7 @@
+ root/base/thread/add
+ root/base/thread/recent
+ root/base/thread/reply
++root/base/thread/reply-yuirte
+ root/base/thread/view
+ root/base/thread/watches
+ root/base/user/access_ip_banned
+@@ -194,6 +205,8 @@
+ root/email_templates/nl/username_reminder.eml
+ root/favicon.ico
+ root/skin2/about/modules
++root/skin2/dfv/display_validation_messages
++root/skin2/dfv/validation_messages_data
+ root/skin2/error/simple
+ root/skin2/footer
+ root/skin2/forum/list
+@@ -215,7 +228,10 @@
+ root/skin2/my/tab_watch
+ root/skin2/my/tab_you
+ root/skin2/post/edit
++root/skin2/search/advanced
+ root/skin2/search/forum
++root/skin2/search/results
++root/skin2/shared/add_this
+ root/skin2/shared/ajax_dialog
+ root/skin2/shared/autocomplete_style
+ root/skin2/shared/focus_username_js
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/Makefile.PL	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -15,6 +15,8 @@
+     'Catalyst::Runtime'                                         => '5.7014',
+     'Catalyst::Action::RenderView'                              => '0.08',
+     'Catalyst::Authentication::Store::DBIx::Class'              => '0.10',
++    'Catalyst::Controller::reCAPTCHA'                           => '0.30001',
++    'Catalyst::Controller::Validation::DFV'                     => '0.0.2',
+     'Catalyst::Model::DBIC::Schema'                             => '0.20',
+     'Catalyst::Plugin::Authorization::ACL'                      => '0.08',
+     'Catalyst::Plugin::Authorization::Roles'                    => '0.05',
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/TODO	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -1,13 +1,12 @@
+ TODO LIST
+ 
++  - refactor/tidy conf file(s)
+   - update i18n from Advanced Search additions
+   - move search_dialog inline styles into CSS file
+   - fix "oversized image" bug
+-  - fix "user information" CSS location
+   - local file permissions (for avatar uploads)
+   - optional ReCAPTCHA during sign-up
+   - optional google ads
+-  - optional google analytics
+   - 11:58 <marcus> btw did you consider packing the css and js to reduce the number of includes?
+     http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm
+     http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm
+@@ -24,7 +23,6 @@
+   - investigate in-application language preference/choice
+   - write some sensible T&Cs
+   - update avatar update response to force a No-Cache?
+-  - advanced search page
+   - proper moderator support/management
+      - forum creation
+      - abuse handling
+@@ -40,6 +38,9 @@
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++D - optional google analytics
++D - advanced search page
++D - fix "user information" CSS location
+ D - skinning (user pref overrides CSS used?)
+ D - skinning (config frile driven)
+ D - use HTML::ForumCode::Cookbook::Recipe1 for message preview(s)
+
+Added: trunk/contrib/example/deploy.sh
+===================================================================
+--- trunk/contrib/example/deploy.sh	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/contrib/example/deploy.sh	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -0,0 +1,56 @@
++#!/usr/bin/env sh
++
++VERSION=$1;
++MAJOR_VERSION=${VERSION%.*}
++MINOR_VERSION=${VERSION##*.}
++
++echo $VERSION
++echo $MAJOR_VERSION
++echo $MINOR_VERSION
++
++#TARBALL="Parley-v${VERSION}.tar.gz"
++TARBALL="Parley-${VERSION}.tar.gz"
++#DIR="Parley-v${VERSION}"
++DIR="Parley-${VERSION}"
++
++if [ -z "$VERSION" ]; then
++	echo "usage: $0 <version>";
++	exit;
++fi
++
++
++if [ ! -f $TARBALL ]; then
++	echo "tarball missing: $TARBALL";
++	exit;
++fi
++
++tar zxf $TARBALL
++
++PATCH_MATCH_COUNT=`ls ${DIR}/db/*_${MAJOR_VERSION}*sql 2>&1 |grep -c -`
++
++if [ $PATCH_MATCH_COUNT -gt 0 ]; then
++	echo "There are ${PATCH_MATCH_COUNT} patch(es) that match the requested version to deploy:"
++	ls ${DIR}/db/*${MAJOR_VERSION}*sql
++	echo ""
++	read -p "Use ctrl-z to return to the shell and apply any patches. fg then ENTER to continue." FOOBAR
++fi
++
++if [ ! -d $DIR ]; then
++	echo "directory missing: $DIR";
++	exit;
++fi
++
++cp -a ./parley/root/static/user_file ./$DIR/root/static/ 2>/dev/null
++sudo chown -R parley:www-data ./$DIR/root/static/user_file/
++ls ./$DIR/root/static/user_file/
++
++(cd $DIR && perl Makefile.PL)
++
++./parley/script/parley_email_engine.pl stop
++
++rm parley
++ln -s $DIR parley
++
++./parley/script/parley_email_engine.pl start
++
++sudo /etc/init.d/apache2 reload
+
+
+Property changes on: trunk/contrib/example/deploy.sh
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+
+Property changes on: trunk/lib/Catalyst/Controller
+___________________________________________________________________
+Name: svn:ignore
+   + *\.sw?
+blib
+inc
+Makefile
+Makefile.old
+MANIFEST.bak
+
+Added: trunk/lib/Catalyst/Plugin/Dumper.pm
+===================================================================
+--- trunk/lib/Catalyst/Plugin/Dumper.pm	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/lib/Catalyst/Plugin/Dumper.pm	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -0,0 +1,14 @@
++package Catalyst::Plugin::Dumper;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use Moose; # gives us strict and warnings
++
++#extends 'Catalyst::Log';
++
++has 'headers'  => (
++      is      => 'rw',
++      isa     => 'Header',
++      default => sub { HTTP::Headers->new } 
++);
++
++1;
++__END__
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/lib/Parley/Controller/Root.pm	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -5,6 +5,7 @@
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
++use base 'Catalyst::Controller::Validation::DFV';
+ 
+ use DateTime;
+ use List::MoreUtils qw(uniq);
+@@ -332,16 +333,10 @@
+ 
+ sub end : Private {
+     my ($self, $c) = @_;
++    # render the page
+     $c->forward('render');
+-
+     # fill in any forms
+-    $c->fillform(
+-        {
+-            # combine two hashrefs so we only make one method call
+-            %{ $c->request->parameters || {} },
+-            %{ $c->stash->{formdata}   || {} },
+-        }
+-    );
++    $c->forward('refill_form');
+ }
+ 
+ 
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/lib/Parley/Controller/Search.pm	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -85,7 +85,8 @@
+         # something didn't validate
+         else {
+             $c->log->debug(
+-                pp($c->stash->{validation})
++                q{Something didn't validate}
++                #pp($c->stash->{validation})
+             );
+         }
+     }
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -5,6 +5,9 @@
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
++use base 'Catalyst::Controller::FormValidator';
++use base 'Catalyst::Controller::reCAPTCHA';
++use base 'Parley::ControllerBase::FormValidation';
+ 
+ use List::MoreUtils qw{ uniq };
+ use Digest::MD5 qw{ md5_hex };
+@@ -139,6 +142,11 @@
+     my ( $self, $c ) = @_;
+     my (@messages);
+ 
++    # get a reCAPTCHA to use in the form
++    if ($c->config->{recaptcha}{enabled}) {
++        $c->forward('captcha_get');
++    }
++
+     # logged-in? no need to signup again...
+     if ($c->is_logged_in()) {
+         $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
+@@ -285,32 +293,60 @@
+     my ($self, $c) = @_;
+     my ($results, @messages);
+ 
+-    # validate the form data
+-    $c->form(
+-        $dfv_profile_for{signup}
+-    );
++    # check the form for errors
++    $c->forward('form_check', [$dfv_profile_for{signup}]);
+ 
+-    # deal with missing/invalid fields
+-    if ($c->form->has_missing()) {
+-        $c->stash->{view}{error}{message}
+-            = $c->localize(q{DFV FILL REQUIRED});
+-        foreach my $f ( $c->form->missing ) {
+-            push @{ $c->stash->{view}{error}{messages} }, $f;
++    # if the captcha is enabled
++    if ($c->config->{recaptcha}{enabled}) {
++        # check the captcha
++        $c->forward('captcha_check');
++        # deal with any errors
++        if ($c->stash->{recaptcha_error}) {
++            # add to form validation failures
++            $c->forward(
++                'add_form_invalid',
++                [ 'recaptcha', $c->stash->{recaptcha_error} ]
++            );
+         }
+     }
+-    elsif ($c->form->has_invalid()) {
+-        $c->stash->{view}{error}{message}
+-            = $c->localize(q{DFV FIELDS INVALID});
+-        foreach my $f ( $c->form->invalid ) {
+-            push @{ $c->stash->{view}{error}{messages} }, $f;
+-        }
+-    }
+ 
+-    # otherwise the form data is ok...
+-    else {
++    # check to see if the username has already been used
++    $c->forward('check_unique_username', ['new_username']);
++
++    # check to see if the username has already been used
++    $c->forward('check_unique_forumname', ['forum_name']);
++
++    if ($c->stash->{validation}->success) {
+         @messages = $self->_add_new_user($c, $results);
+     }
+ 
++#
++#    # validate the form data
++#    $c->form(
++#        $dfv_profile_for{signup}
++#    );
++#
++#    # deal with missing/invalid fields
++#    if ($c->form->has_missing()) {
++#        $c->stash->{view}{error}{message}
++#            = $c->localize(q{DFV FILL REQUIRED});
++#        foreach my $f ( $c->form->missing ) {
++#            push @{ $c->stash->{view}{error}{messages} }, $f;
++#        }
++#    }
++#    elsif ($c->form->has_invalid()) {
++#        $c->stash->{view}{error}{message}
++#            = $c->localize(q{DFV FIELDS INVALID});
++#        foreach my $f ( $c->form->invalid ) {
++#            push @{ $c->stash->{view}{error}{messages} }, $f;
++#        }
++#    }
++#
++#    # otherwise the form data is ok...
++#    else {
++#        @messages = $self->_add_new_user($c, $results);
++#    }
++
+     return (uniq(sort @messages));
+ }
+ 
+@@ -337,13 +373,13 @@
+     my ($valid_results, $new_auth, $new_person, $new_preference, $status_ok);
+ 
+     # less typing
+-    $valid_results = $c->form->valid;
+-
++    $valid_results = $c->stash->{validation}->valid;
++use Data::Dump qw(pp); $c->log->debug( pp($valid_results) );
+     # add authentication record
+     $new_auth = $c->model('ParleyDB')->resultset('Authentication')->create(
+         {
+-            username => $c->form->valid->{new_username},
+-            password => md5_hex( $c->form->valid->{new_password} ),
++            username => $valid_results->{new_username},
++            password => md5_hex( $valid_results->{new_password} ),
+         }
+     );
+ 
+
+Added: trunk/lib/Parley/ControllerBase/FormValidation.pm
+===================================================================
+--- trunk/lib/Parley/ControllerBase/FormValidation.pm	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/lib/Parley/ControllerBase/FormValidation.pm	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -0,0 +1,69 @@
++package Parley::ControllerBase::FormValidation;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base 'Catalyst::Controller';
++
++sub check_unique_username :Private {
++    my ($self, $c, $username_field) = @_;
++    my ($count);
++
++    # if we haven't checked the form yet, we can't add to the results
++    if (not defined $c->stash->{validation}) {
++        carp('form must be validated first');
++        return;
++    }
++
++    # see how many matches we have for the value in the (supplied) username
++    # field
++    $count = $c->model('Authentication')->count(
++        { username => $c->stash->{validation}->valid($username_field) }
++    );
++
++    # set a validation error if we've already got one
++    if ($count > 0) {
++        $c->forward(
++            'add_form_invalid',
++            [ $username_field, q{username-not-unique} ]
++        );
++    }
++
++    return;
++}
++
++sub check_unique_forumname :Private {
++    my ($self, $c, $forumname_field) = @_;
++    my ($count);
++
++    $c->log->debug( $forumname_field );
++    $c->log->debug( $c->stash->{validation}->valid($forumname_field) );
++
++    # if we haven't checked the form yet, we can't add to the results
++    if (not defined $c->stash->{validation}) {
++        carp('form must be validated first');
++        return;
++    }
++
++    # see how many matches we have for the value in the (supplied) forumname
++    # field
++    $count = $c->model('Person')->count(
++        { forum_name => $c->stash->{validation}->valid($forumname_field) }
++    );
++
++    # set a validation error if we've already got one
++    if ($count > 0) {
++        $c->forward(
++            'add_form_invalid',
++            [ $forumname_field, q{forumname-not-unique} ]
++        );
++    }
++
++    return;
++}
++
++1;
++
++__END__
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/lib/Parley/I18N/i_default.po	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -193,6 +193,9 @@
+ msgid "FILE TOO LARGE"
+ msgstr "File size too large. File must be no larger than 20K."
+ 
++msgid "FORUMNAME_NOT_UNIQUE"
++msgstr "The forum name you have chosen is already in use. Please try a different one."
++
+ msgid "First"
+ msgstr "First"
+ 
+@@ -333,6 +336,30 @@
+ msgid "Logout"
+ msgstr "Logout"
+ 
++msgid "MISSING_CONFIRM_EMAIL"
++msgstr "Please confirm your email address"
++
++msgid "MISSING_CONFIRM_PASSWORD"
++msgstr "Please confirm your password"
++
++msgid "MISSING_EMAIL"
++msgstr "Please provide an email address"
++
++msgid "MISSING_FIRST_NAME"
++msgstr "Please provide your first name"
++
++msgid "MISSING_FORUM_NAME"
++msgstr "Please provide a forumname"
++
++msgid "MISSING_LAST_NAME"
++msgstr "Please provide your last name"
++
++msgid "MISSING_NEW_PASSWORD"
++msgstr "Please provide a password"
++
++msgid "MISSING_NEW_USERNAME"
++msgstr "Please provide a username"
++
+ msgid "MISSING_SEARCH_MATCH_TYPE"
+ msgstr "Please specify the method you would like to match by"
+ 
+@@ -549,6 +576,9 @@
+ msgid "PROFILE NOT FOUND"
+ msgstr "Can't locate a profile for the requested user."
+ 
++msgid "PROVE YOU ARE HUMAN"
++msgstr "Prove you're human"
++
+ msgid "Post New Terms"
+ msgstr "Post New Terms"
+ 
+@@ -795,6 +825,9 @@
+ msgid "USERNAME IN USE"
+ msgstr "The username you have chosen is already in use. Please try a different one."
+ 
++msgid "USERNAME_NOT_UNIQUE"
++msgstr "The username you have chosen is already in use. Please try a different one."
++
+ msgid "USERNAME INCORRECT"
+ msgstr "Incorrect Username Supplied."
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/lib/Parley.pm	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -114,42 +114,17 @@
+ 
+ # ---- END:   ACL RULES ----
+ 
++# useful places to Store Stuff
++# (less typing)
++__PACKAGE__->mk_accessors(
++    qw<
++        _authed_user
++        _current_post
++        _current_thread
++        _current_forum
++    >
++);
+ 
+-
+-# I'm sure there's a (better) way to do this by overriding set()/get() in Class::Accessor
+-{
+-    sub set_get {
+-        my $c = shift;
+-        my $key = shift;
+-
+-        if(@_ == 1) {
+-            $c->stash->{$key} = $_[0];
+-        }
+-        elsif(@_ > 1) {
+-            $c->stash->{$key} = [@_];
+-        }
+-
+-        $c->stash->{$key};
+-    }
+-
+-    sub _authed_user {
+-        my $c = shift;
+-        $c->set_get('authed_user', @_);
+-    }
+-    sub _current_post {
+-        my $c = shift;
+-        $c->set_get('current_post', @_);
+-    }
+-    sub _current_thread {
+-        my $c = shift;
+-        $c->set_get('current_thread', @_);
+-    }
+-    sub _current_forum {
+-        my $c = shift;
+-        $c->set_get('current_forum', @_);
+-    }
+-}
+-
+ ################################################################################
+ 
+ 
+
+Modified: trunk/parley.conf
+===================================================================
+--- trunk/parley.conf	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/parley.conf	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -22,7 +22,16 @@
+ # "Add This"
+ add_this_account            chiselwright
+ 
++# Google Analytics - change this for your "Web Property ID", or comment out to
++# disable
++google_analytics_id         UA-116361-5
+ 
++<recaptcha>
++    enabled         = 0
++    pub_key         = 6Lem9QIAAAAAANXlFW-lph_VKyKvkSmukwPtwv_W
++    priv_key        = 6Lem9QIAAAAAADDrLvTuD7dz5HIHlRxFfSRhOzsz
++</recaptcha>
++
+ # comment out any log levels you don't want to see in your logs
+ # 'info' and 'debug' are common choices for suppresing in a live environment
+ log_levels                  info
+
+Modified: trunk/root/base/dfv/validation_messages_data
+===================================================================
+--- trunk/root/base/dfv/validation_messages_data	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/dfv/validation_messages_data	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -5,11 +5,22 @@
+             match_type                  => 'MISSING_SEARCH_MATCH_TYPE',
+             search_terms                => 'MISSING_SEARCH_TERMS',
+ 
++            first_name                  => 'MISSING_FIRST_NAME',
++            last_name                   => 'MISSING_LAST_NAME',
++            forum_name                  => 'MISSING_FORUM_NAME',
++            email                       => 'MISSING_EMAIL',
++            confirm_email               => 'MISSING_CONFIRM_EMAIL',
++            new_username                => 'MISSING_NEW_USERNAME',
++            new_password                => 'MISSING_NEW_PASSWORD',
++            confirm_password            => 'MISSING_CONFIRM_PASSWORD',
++
+             moon_stick                  => 'I demand the MOON! On a STICK!',
+         },
+ 
+         # messages for invalid fields (failed constraints)
+         invalid => {
++            'username-not-unique'       => 'USERNAME_NOT_UNIQUE',
++            'forumname-not-unique'      => 'FORUMNAME_NOT_UNIQUE',
+             # reCAPTCHA messages (from: http://recaptcha.net/apidocs/captcha/)
+             'incorrect-captcha-sol'     => 'the CAPTCHA solution was incorrect',
+             'recaptcha-not-reachable'   => 'unable to contact the reCAPTCHA verify server',
+@@ -18,6 +29,8 @@
+         # mappings from field names to something we'd like to show the user
+         name => {
+             email_address               => 'Email Address',
++            new_username                => 'Username',
++            forum_name                  => 'Forum Name',
+         },
+     }
+ %]
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/footer	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -23,6 +23,7 @@
+             [% PROCESS shared/login_dialog %]
+             [% PROCESS shared/language_dialog %]
+         </div><!-- id="doc3" -->
++        [% PROCESS shared/google_analytics %]
+     </body>
+ </html>
+ <!-- Footer : End -->
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/header	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -8,23 +8,18 @@
+     <head>
+         <base href="[% c.request.base %]" />
+         <title>
+-            [% c.config.name %]
+-
+-            [%# Show version if we're debugging %]
+-            [% IF c.debug %]
+-            ([% c.config.version %])
+-            [% END %]
+-
+             [%# Show custom page title if we have one %]
+             [% IF page_title %]
+-             : [% page_title %]
++             [% page_title %] :
+             [%# Show thread name if we have one %]
+             [% ELSIF current_thread %]
+-             : [% current_thread.subject %]
++             [% current_thread.subject %] :
+             [%# Show forum name if we have one %]
+             [% ELSIF current_forum %]
+-             : [% current_forum.name %]
++             [% current_forum.name %] :
+             [% END %]
++
++            [% c.config.name %]
+         </title>
+         <meta name="author" content="Chisel Wright" />
+         <link rel="shortcut icon" href="[% c.request.base %]/favicon.ico" type="image/x-icon" />
+
+
+Property changes on: trunk/root/base/search
+___________________________________________________________________
+Name: svn:ignore
+   + *\.sw?
+blib
+inc
+Makefile
+Makefile.old
+MANIFEST.bak
+
+Modified: trunk/root/base/search/advanced
+===================================================================
+--- trunk/root/base/search/advanced	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/search/advanced	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -37,6 +37,17 @@
+ </select>
+ <br />
+ 
++Forum:
++[% IF available_forums %]
++<select id="search_forum" name="search_forum" multiple="multiple">
++[% SET dummy=available_forums.reset %]
++<optgroup label="[%l('Forums')%]">
++[% WHILE (forum = available_forums.next) %]
++<option value="[% forum.id %]">[% forum.name %]</option>
++[% END %]
++</select>
++[% END %]
++
+ <input type="submit" value="Search" />
+ 
+ [% PROCESS search/results %]
+
+Modified: trunk/root/base/shared/add_this
+===================================================================
+--- trunk/root/base/shared/add_this	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/shared/add_this	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -6,7 +6,7 @@
+ addthis_logo_background = 'EFEFFF';
+ addthis_logo_color      = '666699';
+ addthis_brand           = '[%c.config.name%]';
+-addthis_options         = 'delicious, twitter, favorites, email, more';
++addthis_options         = 'delicious, favorites, facebook, twitter, email, more';
+ </script>
+ <a href="http://www.addthis.com/bookmark.php" onmouseover="return addthis_open(this, '', '[URL]', '[TITLE]')" onmouseout="addthis_close()" onclick="return addthis_sendto()"><img src="http://s7.addthis.com/static/btn/lg-share-en.gif" width="125" height="16" border="0" alt="Share" /></a>
+ <script type="text/javascript" src="http://s7.addthis.com/js/152/addthis_widget.js"></script>
+
+Added: trunk/root/base/shared/google_analytics
+===================================================================
+--- trunk/root/base/shared/google_analytics	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/shared/google_analytics	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -0,0 +1,13 @@
++[% IF c.config.google_analytics_id %]
++<script type="text/javascript">
++var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
++document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
++</script>
++<script type="text/javascript">
++try {
++var pageTracker = _gat._getTracker("[%c.config.google_analytics_id%]");
++pageTracker._trackPageview();
++} catch(err) {}</script>
++[% ELSE %]
++<!-- Google Analytics Not Enabled -->
++[% END %]
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/user/profile	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -86,8 +86,8 @@
+     [% END %]
+ 
+     [% IF authed_user.can_ip_ban %]
++        <h2>[%l('IP Addresses')%]</h2>
+         [% SET ips = profiled_user.ips_posted_from %]
+-        <h2>[%l('IP Addresses')%]</h2>
+         <div class="yui-gf top_padded">
+             <div class="yui-u first align_right">
+                 [% IF ips.size %]
+@@ -99,24 +99,34 @@
+             <div class="yui-u">
+                 [% IF ips.size %]
+                     [% FOR ip IN ips %]
+-                    <span id="ctx_[%ip%]">
+-                        <a href="[%c.uri_for('/site/ip_info',{'address'=>ip})%]">[% ip %]</a>
+-                    </span>[% UNLESS loop.last %], [% END %]
+-                    <script type="text/javascript">
+-                        YAHOO.namespace("example.container");
+-                        [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip("$ip") %]
+-                        [% SET ttTxt = '' %]
+-                        [% WHILE (post = people_posting.next) %]
+-                        [% ttTxt = "${ttTxt} <li>$post.creator.forum_name</li>" %]
++                        [% IF ip %]
++                        <span id="ctx_[%ip%]">
++                            <a href="[%c.uri_for('/site/ip_info',{'address'=>ip})%]">[% ip || 'No Address Recorded' %]</a>
++                        </span>
++                        [% ELSE %]
++                        No Address Recorded
++                        [% END %][% UNLESS loop.last %], [% END %]
++                        [% NEXT UNLESS ip %]
++                        [% TRY %]
++                        <script type="text/javascript">
++                            YAHOO.namespace("example.container");
++                                [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip("$ip") %]
++                                [% SET ttTxt = '' %]
++                                [% WHILE (post = people_posting.next) %]
++                                [% ttTxt = "${ttTxt} <li>$post.creator.forum_name</li>" %]
++                                [% END %]
++                                YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
++                                    "tt_[%ip%]",
++                                    {
++                                        context:"ctx_[%ip%]",
++                                        text:"Users posting from [%ip%]: <ul>[%ttTxt%]</ul>"
++                                    }
++                                );
++                        </script>
++                        [% CATCH %]
++                        </script>
++                        An error occurred!
+                         [% END %]
+-                        YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
+-                            "tt_[%ip%]",
+-                            {
+-                                context:"ctx_[%ip%]",
+-                                text:"Users posting from [%ip%]: <ul>[%ttTxt%]</ul>"
+-                            }
+-                        );
+-                    </script>
+                     [% END %]
+                 [% END %]
+             </div>
+
+Modified: trunk/root/base/user/signup/signup
+===================================================================
+--- trunk/root/base/user/signup/signup	2009-03-01 20:50:13 UTC (rev 1039)
++++ trunk/root/base/user/signup/signup	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -140,6 +140,21 @@
+         </div>
+     </div>
+ 
++    [% IF recaptcha %] [% # only show reCAPTCHA if we have one; it may not be enabled %]
++    <div class="yui-gb top-padded" id="recaptcha">
++        <div class="yui-u first align_right">
++            [%l('PROVE YOU ARE HUMAN')%]:
++        </div>
++        <div class="yui-u">
++            [% recaptcha %]
++        </div>
++        <div class="yui-u">
++            &nbsp;
++        </div>
++    </div>
++    [% END %]
++
++
+     <div class="yui-gb top_padded">
+         <div class="yui-u first align_right">
+             &nbsp;
+
+Copied: trunk/root/skin2 (from rev 1026, trunk/root/base)
+
+Modified: trunk/root/skin2/footer
+===================================================================
+--- trunk/root/base/footer	2008-12-30 02:27:30 UTC (rev 1026)
++++ trunk/root/skin2/footer	2009-03-01 20:50:26 UTC (rev 1040)
+@@ -3,6 +3,7 @@
+ 
+             <div id="ft">
+                 <p>
++This is skin2. Here's an annoying addition to the footer<br />
+                 <a href="http://developer.berlios.de/projects/parley">[%c.config.name%]</a>
+                 (version [%c.config.version%])
+                 &copy; Chisel Wright 2006-2008. [%l('All Rights Reserved')%].
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:50:43 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:50:43 +0100
+Subject: [Parley-svn] r1041 - / trunk/lib/Parley/Controller
+Message-ID: <200903012050.n21KohtL022162@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:50:43 +0100 (Sun, 01 Mar 2009)
+New Revision: 1041
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Search.pm
+Log:
+ r9195 at wiggin:  chisel | 2009-02-25 21:04:03 +0000
+ / process "search_forum" list [to restrict search to]
+ + extend search to limit to specified forums
+ - remove some debugging output
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9194
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9195
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2009-03-01 20:50:26 UTC (rev 1040)
++++ trunk/lib/Parley/Controller/Search.pm	2009-03-01 20:50:43 UTC (rev 1041)
+@@ -39,6 +39,7 @@
+             message_search_type
+             subject_search_type
+             search_post_date
++            search_forum
+         >],
+         filters     => [qw< trim >],
+     },
+@@ -176,7 +177,7 @@
+ sub do_advanced_search : Private {
+     my ($self, $c) = @_;
+     my $results = $c->stash->{validation};
+-    my ($where, $search_where, $resultset, @join, $order_by);
++    my ($where, $search_where, $resultset, @join, $order_by, @forum_ids);
+ 
+     # default ORDER BY
+     $order_by = [\'created DESC'];
+@@ -203,6 +204,20 @@
+         }
+     }
+ 
++    # are we limiting to a particular (list of) forum(s)
++    if (defined $results->valid('search_forum')) {
++        if (
++            defined(ref $results->valid('search_forum'))
++                and
++            (q{ARRAY} eq ref($results->valid('search_forum')))
++        ) {
++            @forum_ids = sort @{ $results->valid('search_forum') };
++        }
++        else {
++            @forum_ids = ( $results->valid('search_forum') );
++        }
++    }
++
+     # make sure we're searching for something
+     # if it turns out we're searching for nothingness, return an empty
+     # result set
+@@ -216,15 +231,24 @@
+             # we want to OR the items in $sql_where
+             -or => $search_where,
+         };
++        # ... AND in the list of forums to resrict to
++        if (@forum_ids) {
++            $where->{'-and'} =
++                [ 'thread.forum_id' => { 'IN', \@forum_ids } ];
++        }
+     }
+     elsif (q{all} eq $results->valid('match_type')) {
++        if (@forum_ids) {
++            push @{$search_where},
++                'thread.forum_id' => { 'IN', \@forum_ids };
++        }
+         $where = {
+             # we want to OR the items in $sql_where
+             -and => $search_where,
+         };
+     }
+ 
+-    $c->log->debug('SEARCH TERMS: ' . pp($where));
++    $c->log->debug('SEARCH TERMS: ' . pp($where)) if (0);
+ 
+     $resultset = $c->model('ParleyDB')->resultset('Post')->search(
+         $where,
+@@ -313,7 +337,6 @@
+ 
+     # if we don't have date "stuff", don't add any terms
+     if (not $terms) {
+-        $c->log->debug('no date crap');
+         return []; # add nothing at all
+     }
+ 
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:50:54 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:50:54 +0100
+Subject: [Parley-svn] r1042 - / trunk
+Message-ID: <200903012050.n21KosQs022256@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:50:51 +0100 (Sun, 01 Mar 2009)
+New Revision: 1042
+
+Modified:
+   /
+   trunk/ROADMAP
+Log:
+ r9196 at wiggin:  chisel | 2009-02-25 21:06:02 +0000
+ Updated roadmap
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9195
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9196
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2009-03-01 20:50:43 UTC (rev 1041)
++++ trunk/ROADMAP	2009-03-01 20:50:51 UTC (rev 1042)
+@@ -54,10 +54,14 @@
+ 
+ 1.2.0:
+ 
+-    - admin: add/edit/order forums
++    - move tables into 'parley.*' namespace
+ 
+ 1.3.0:
+ 
++    - admin: add/edit/order forums
++
++1.4.0:
++
+     - user prefs:
+         - language preference
+         - password management
+@@ -65,12 +69,12 @@
+         - realtime time-format example update
+         - gravatar support
+ 
+-1.4.0:
++1.5.0:
+ 
+     - quick reply
+     - quick help
+ 
+-1.5.0:
++1.6.0:
+ 
+     - internal messaging
+     - Report To Moderator
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:51:05 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:51:05 +0100
+Subject: [Parley-svn] r1043 - / trunk
+Message-ID: <200903012051.n21Kp5fZ022327@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:51:05 +0100 (Sun, 01 Mar 2009)
+New Revision: 1043
+
+Added:
+   trunk/META.yml
+Modified:
+   /
+   trunk/MANIFEST
+Log:
+ r9197 at wiggin:  chisel | 2009-02-25 21:08:54 +0000
+ updated admin-y files
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9196
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9197
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2009-03-01 20:50:51 UTC (rev 1042)
++++ trunk/MANIFEST	2009-03-01 20:51:05 UTC (rev 1043)
+@@ -65,6 +65,7 @@
+ lib/Parley/Controller/User.pm
+ lib/Parley/Controller/User/LostPassword.pm
+ lib/Parley/Controller/User/SignUp.pm
++lib/Parley/ControllerBase/FormValidation.pm
+ lib/Parley/I18N/i_default.po
+ lib/Parley/I18N/it.po
+ lib/Parley/I18N/nl.po
+
+Added: trunk/META.yml
+===================================================================
+--- trunk/META.yml	2009-03-01 20:50:51 UTC (rev 1042)
++++ trunk/META.yml	2009-03-01 20:51:05 UTC (rev 1043)
+@@ -0,0 +1,66 @@
++---
++abstract: 'Message board / forum application'
++author:
++  - 'Chisel Wright<chiselwright at users.berlios.de>'
++build_requires:
++  Test::Aggregate: 0.35
++  Test::DBIx::Class::Schema: 0.01004
++  Test::More: 0
++  Test::WWW::Mechanize::Catalyst: 0
++distribution_type: module
++generated_by: 'Module::Install version 0.75'
++license: perl
++meta-spec:
++  url: http://module-build.sourceforge.net/META-spec-v1.3.html
++  version: 1.3
++name: Parley
++no_index:
++  directory:
++    - inc
++    - t
++requires:
++  Cache::FastMmap: 1.24
++  Catalyst: 5.7014
++  Catalyst::Action::RenderView: 0.08
++  Catalyst::Authentication::Store::DBIx::Class: 0.10
++  Catalyst::Controller::Validation::DFV: 0.0.2
++  Catalyst::Controller::reCAPTCHA: 0.30001
++  Catalyst::Model::DBIC::Schema: 0.20
++  Catalyst::Plugin::Authorization::ACL: 0.08
++  Catalyst::Plugin::Authorization::Roles: 0.05
++  Catalyst::Plugin::ConfigLoader: 0.20
++  Catalyst::Plugin::Email: 0.08
++  Catalyst::Plugin::FillInForm: 0.09
++  Catalyst::Plugin::FormValidator: 0.02
++  Catalyst::Plugin::I18N: 0.07
++  Catalyst::Plugin::Session: 0.19
++  Catalyst::Plugin::Session::State::Cookie: 0.09
++  Catalyst::Plugin::Session::Store::DBIC: 0.06
++  Catalyst::Plugin::StackTrace: 0.08
++  Catalyst::Plugin::Static::Simple: 0.20
++  Catalyst::Runtime: 5.7014
++  Catalyst::View::JSON: 0.24
++  Catalyst::View::TT: 0.27
++  Config::General: 2.37
++  Data::FormValidator: 4.50
++  Data::SpreadPagination: 0.1.2
++  Date::Manip: 5.54
++  DateTime: 0.41
++  DateTime::Format::Pg: 0.16001
++  DateTime::TimeZone: 0.70
++  Email::Valid: 0.179
++  HTML::FillInForm: 1.07
++  Image::Magick: 0
++  Image::Size: 3.1
++  JSON: 2.04
++  List::MoreUtils: 0.21
++  MIME::Lite: 3.020
++  Net::IP::Match::Regexp: 1.00
++  Perl6::Export::Attrs: 0.0.3
++  Proc::Daemon: 0.03
++  Proc::PID::File: 1.2.4
++  Readonly: 0
++  Template::Plugin::ForumCode: 0.0.5
++  Text::Context::EitherSide: 1.3
++  Time::Piece: 1.11
++version: 1.1.0
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:51:12 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:51:12 +0100
+Subject: [Parley-svn] r1044 - / trunk
+Message-ID: <200903012051.n21KpCEF022407@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:51:12 +0100 (Sun, 01 Mar 2009)
+New Revision: 1044
+
+Modified:
+   /
+   trunk/TODO
+Log:
+ r9198 at wiggin:  chisel | 2009-02-25 21:11:01 +0000
+ Updated to do list
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9197
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9198
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2009-03-01 20:51:05 UTC (rev 1043)
++++ trunk/TODO	2009-03-01 20:51:12 UTC (rev 1044)
+@@ -5,7 +5,6 @@
+   - move search_dialog inline styles into CSS file
+   - fix "oversized image" bug
+   - local file permissions (for avatar uploads)
+-  - optional ReCAPTCHA during sign-up
+   - optional google ads
+   - 11:58 <marcus> btw did you consider packing the css and js to reduce the number of includes?
+     http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm
+@@ -38,6 +37,7 @@
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++D - optional ReCAPTCHA during sign-up
+ D - optional google analytics
+ D - advanced search page
+ D - fix "user information" CSS location
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:51:20 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:51:20 +0100
+Subject: [Parley-svn] r1045 - / trunk/root/static/css
+Message-ID: <200903012051.n21KpKqJ022481@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:51:19 +0100 (Sun, 01 Mar 2009)
+New Revision: 1045
+
+Modified:
+   /
+   trunk/root/static/css/parley-min.css
+   trunk/root/static/css/parley.css
+Log:
+ r9199 at wiggin:  chisel | 2009-02-27 07:09:41 +0000
+ + add some styling for adv.search
+ / compress CSS
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9198
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9199
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/static/css/parley-min.css
+===================================================================
+--- trunk/root/static/css/parley-min.css	2009-03-01 20:51:12 UTC (rev 1044)
++++ trunk/root/static/css/parley-min.css	2009-03-01 20:51:19 UTC (rev 1045)
+@@ -1 +1 @@
+-body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B color:#36C;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#Xuser_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information{background-color:transparent;color:#000;font-size:85%;height:70px;line-height:1em;margin-left:760px;padding-top:3px;right:8px;text-align:center;top:0;width:200px;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;marg!
+ in-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;color:#79B30B color:#36C;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}ol>li,ul>li{margin-left:8px;list-style-position:inside;}ol>li{list-style-type:decimal;}ul>li{list-style-type:disc;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog!
+  form p{font-size:85%;}.row{border-top:1px dotted #666;border-!
+ bottom:1
+px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.add_this{text-align:right;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:right;}.align_right{text-align:right;}.error_messages{margin-top:5px;display:block;line-height:1.7em;padding:5px;background-color:#930;color:#fff;text-transform:none;font-family:Arial,Avenir,"Lucida Grande",Verdana,"Bitstream Vera Sans",Helvetica,sans-serif;font-weight:bold;voice-family:"\"}\"";voice-family:inherit;font-size:1.0em;border:none;}.forum_description{font-size:93%;}.forum_lastpost{font-size:85%;text-align:right;}.forum_lastpost_subject a{color:#79B30B color:#36C;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:!
+ 10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#79B30B color:#36C;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-s!
+ ize:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5p!
+ x;vertic
+al-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padd!
+ ing-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px soli!
+ d #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margi!
+ n-top:10
+px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#79B30B color:#36C;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-align:right;}.user_login form{width:350px;margin-left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bott!
+ om:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#validation_errors{display:block;font-size:83%;border:1px dashed #89d;margin-top:10px;margin-bottom:10px;margin-left:25px;margin-right:25px;padding:3px;}#ysearch!
+ {text-align:center;}#ysearchinput{position:static;width:20em;}!
+ #ysearch
+container{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-!
+ navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
++body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B color:#36C;}#hd h1{font-size:200%;text-align:left;}#advanced_search input[type="text"]{width:30em;}#advanced_search select.multiple{width:20em;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#Xuser_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information{background-color:transparent;color:#000;font-size:85%;height:70px;line-height:1em;margin-left:760px;padding-top:3px;right:8px;text-align:center;top:0;width:200px;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:!
+ auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;color:#79B30B color:#36C;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}ol>li,ul>li{margin-left:8px;list-style-position:inside;}ol>li{list-style-type:decimal;}ul>li{list-style-type:disc;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-b!
+ ottom:0;}#login_dialog form input,form textarea{width:auto;mar!
+ gin:5px 
+0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.add_this{text-align:right;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:right;}.align_right{text-align:right;}.error_messages{margin-top:5px;display:block;line-height:1.7em;padding:5px;background-color:#930;color:#fff;text-transform:none;font-family:Arial,Avenir,"Lucida Grande",Verdana,"Bitstream Vera Sans",Helvetica,sans-serif;font-weight:bold;voice-family:"\"}\"";voice-family:inherit;font-size:1.0em;border:none;}.forum_description{font-size:93%;}.forum_lastpost{font-size:85%;text-align:right;}.forum_lastpost_subject a{color:#79B30B color:#36C;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-a!
+ lign:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#79B30B color:#36C;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator!
+ _list{font-size:77%;margin-bottom:5px;margin-top:5px;text-alig!
+ n:right;
+}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;!
+ border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;pad!
+ ding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thre!
+ ad_post_
+row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#79B30B color:#36C;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-align:right;}.user_login form{width:350px;margin-left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;b!
+ order:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#validation_errors{display:block;font-size:83%;border:1px dashed #89!
+ d;margin-top:10px;margin-bottom:10px;margin-left:25px;margin-r!
+ ight:25p
+x;padding:3px;}#ysearch{text-align:center;}#ysearchinput{position:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset !
+ .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2009-03-01 20:51:12 UTC (rev 1044)
++++ trunk/root/static/css/parley.css	2009-03-01 20:51:19 UTC (rev 1045)
+@@ -20,6 +20,14 @@
+     text-align: left;
+ }
+ 
++#advanced_search input[type="text"] {
++    width:      30em;
++}
++
++#advanced_search select.multiple {
++    width:      20em;
++}
++
+ div#ft   {background: #666;color: #FFF; font-size: 77%; margin-top: 20px;}
+ div#ft p {border:none;margin-top:30px;padding:5px 10px 5px 10px; text-align:right;display:block;}
+ div#ft a {color: #ccc;}
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:51:30 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:51:30 +0100
+Subject: [Parley-svn] r1046 - / trunk
+Message-ID: <200903012051.n21KpUgl022551@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:51:29 +0100 (Sun, 01 Mar 2009)
+New Revision: 1046
+
+Modified:
+   /
+   trunk/ROADMAP
+Log:
+ r9200 at wiggin:  chisel | 2009-02-27 07:10:45 +0000
+ / updated roadmap
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9199
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9200
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2009-03-01 20:51:19 UTC (rev 1045)
++++ trunk/ROADMAP	2009-03-01 20:51:29 UTC (rev 1046)
+@@ -50,11 +50,12 @@
+ 1.1.0:
+ 
+     - advanced search
+-    - reCaptcha during registration
++    - [D] reCaptcha during registration
+ 
+ 1.2.0:
+ 
+     - move tables into 'parley.*' namespace
++    - upgrade to YUI 2.7.x
+ 
+ 1.3.0:
+ 
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:51:37 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:51:37 +0100
+Subject: [Parley-svn] r1047 - / trunk/lib/Parley/Controller
+Message-ID: <200903012051.n21KpbvB022623@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:51:37 +0100 (Sun, 01 Mar 2009)
+New Revision: 1047
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Root.pm
+Log:
+ r9201 at wiggin:  chisel | 2009-02-27 07:12:14 +0000
+ / pass accessor values to the template
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9200
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9201
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2009-03-01 20:51:29 UTC (rev 1046)
++++ trunk/lib/Parley/Controller/Root.pm	2009-03-01 20:51:37 UTC (rev 1047)
+@@ -34,7 +34,6 @@
+     return 1;
+ }
+ 
+-
+ # pre-populate values in the stash if we're given "appropriate" information:
+ # - _authed_user
+ # - _current_post
+@@ -333,6 +332,13 @@
+ 
+ sub end : Private {
+     my ($self, $c) = @_;
++
++    # move some data into the stash
++    $c->stash->{authed_user}    = $c->_authed_user;
++    $c->stash->{current_post}   = $c->_current_post;
++    $c->stash->{current_thread} = $c->_current_thread;
++    $c->stash->{current_forum}  = $c->_current_forum;
++
+     # render the page
+     $c->forward('render');
+     # fill in any forms
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:51:56 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:51:56 +0100
+Subject: [Parley-svn] r1048 - / trunk/lib/Parley/I18N trunk/root/base/search
+Message-ID: <200903012051.n21KpubR022700@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:51:55 +0100 (Sun, 01 Mar 2009)
+New Revision: 1048
+
+Modified:
+   /
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/search/advanced
+Log:
+ r9202 at wiggin:  chisel | 2009-02-27 07:26:15 +0000
+ + add i18n phrases for adv.search
+ / make adv.search page look a bit better
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9201
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9202
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2009-03-01 20:51:37 UTC (rev 1047)
++++ trunk/lib/Parley/I18N/i_default.po	2009-03-01 20:51:55 UTC (rev 1048)
+@@ -19,6 +19,12 @@
+ msgid "%quant(%1,view)"
+ msgstr "%quant(%1,view,views)"
+ 
++msgid "SEARCH FOR MESSAGES MATCHING"
++msgstr "Search for messages matching"
++
++msgid "OF THE FOLLOWING CRITERIA"
++msgstr "of the following criteria"
++
+ msgid "404 Not Found"
+ msgstr "404 Not Found"
+ 
+@@ -76,9 +82,18 @@
+ msgid "An error has occurred"
+ msgstr "An error has occurred"
+ 
++msgid "ALL"
++msgstr "all"
++
++msgid "ANY"
++msgstr "any"
++
+ msgid "AUTHENTICATION FAILED"
+ msgstr "Unable to authenticate the supplied login credentials"
+ 
++msgid "AUTHORS_NAME"
++msgstr "Author's Name"
++
+ msgid "Avatar"
+ msgstr "Avatar"
+ 
+@@ -100,6 +115,9 @@
+ msgid "Confirm Password"
+ msgstr "Confirm Password"
+ 
++msgid "CONTAINS"
++msgstr "contains"
++
+ msgid "Contents"
+ msgstr "Contents"
+ 
+@@ -205,6 +223,9 @@
+ msgid "Forgotten Password"
+ msgstr "Forgotten Password"
+ 
++msgid "FORUM"
++msgstr "Forum"
++
+ msgid "Forum"
+ msgstr "Forum"
+ 
+@@ -267,6 +288,9 @@
+ msgid "IP Logged"
+ msgstr "IP Logged"
+ 
++msgid "IS"
++msgstr "is"
++
+ msgid "Last"
+ msgstr "Last"
+ 
+@@ -378,6 +402,9 @@
+ msgid "Main Page"
+ msgstr "Main Page"
+ 
++msgid "MESSAGE"
++msgstr "Message"
++
+ msgid "Message"
+ msgstr "Message"
+ 
+@@ -534,6 +561,9 @@
+ msgid "people"
+ msgstr "people"
+ 
++msgid "POSTED"
++msgstr "Posted"
++
+ msgid "posted by"
+ msgstr "posted by"
+ 
+@@ -720,6 +750,9 @@
+ msgid "Subject"
+ msgstr "Subject"
+ 
++msgid "SUBJECT"
++msgstr "Subject"
++
+ msgid "Summary of Changes"
+ msgstr "Summary of Changes"
+ 
+@@ -893,7 +926,27 @@
+ 
+ 
+ # UNITS OF TIME
++msgid "AT ANY TIME"
++msgstr "at any time"
+ 
++msgid "IN THE LAST HOUR"
++msgstr "in the last hour"
++
++msgid "IN THE LAST DAY"
++msgstr "in the last day"
++
++msgid "IN THE LAST MONTH"
++msgstr "in the last month"
++
++msgid "IN THE LAST SIX MONTHS"
++msgstr "in the last six months"
++
++msgid "IN THE LAST YEAR"
++msgstr "in the last year"
++
++msgid "OVER A YEAR AGO"
++msgstr "over a year ago"
++
+ msgid "second"
+ msgstr "second"
+ 
+
+Modified: trunk/root/base/search/advanced
+===================================================================
+--- trunk/root/base/search/advanced	2009-03-01 20:51:37 UTC (rev 1047)
++++ trunk/root/base/search/advanced	2009-03-01 20:51:55 UTC (rev 1048)
+@@ -1,62 +1,105 @@
+ <h1>Search Forums</h1>
+ 
+-<form method="get" action="[%c.uri_for('/search/advanced')%]">
++<form method="get" action="[%c.uri_for('/search/advanced')%]" id="advanced_search">
+ 
+-Search for messages matching
+-<select name="match_type">
+-    <option value="any">any</option>
+-    <option value="all">all</option>
++[% BLOCK search_type %]
++<select name="[%name%]">
++    <option value="contains">[%l('CONTAINS')%]</option>
++    <option value="exact">[%l('IS')%]</option>
+ </select>
+-of the following criteria:
+-<br />
++[% END %]
+ 
+-Subject
+-[% INCLUDE search_type name="subject_search_type" %]
+-<input type="text" name="subject_search_terms" />
+-<br />
++    [%l('SEARCH FOR MESSAGES MATCHING')%]
++    <select name="match_type">
++        <option value="any">[%l('ANY')%]</option>
++        <option value="all">[%l('ALL')%]</option>
++    </select>
++    [%l('OF THE FOLLOWING CRITERIA')%]:
+ 
+-Message
+-[% INCLUDE search_type name="message_search_type" %]
+-<input type="text" name="message_search_terms" />
+-<br />
++    <div class="yui-gf top_padded">
++        <div class="yui-u first align_right">
++            [%l('SUBJECT')%]
++        </div>
++        <div class="yui-u">
++            [% INCLUDE search_type name="subject_search_type" %]
++            <input type="text" name="subject_search_terms" />
++        </div>
++    </div>
+ 
+-Author's name
+-[% INCLUDE search_type name="author_search_type" %]
+-<input type="text" name="author_search_terms" />
+-<br />
++    <div class="yui-gf">
++        <div class="yui-u first align_right">
++            [%l('MESSAGE')%]
++        </div>
++        <div class="yui-u">
++            [% INCLUDE search_type name="message_search_type" %]
++            <input type="text" name="message_search_terms" />
++        </div>
++    </div>
+ 
+-Posted
+-<select name="search_post_date">
+-    <option value="">at any time</option>
+-    <option value="last_hour">in the last hour</option>
+-    <option value="last_day">in the last day</option>
+-    <option value="last_month">in the last month</option>
+-    <option value="last_six_months">in the last six months</option>
+-    <option value="last_year">in the last year</option>
+-    <option value="over_a_year">over a year ago</option>
+-</select>
+-<br />
++    <div class="yui-gf">
++        <div class="yui-u first align_right">
++            [%l('AUTHORS_NAME')%]
++        </div>
++        <div class="yui-u">
++            [% INCLUDE search_type name="author_search_type" %]
++            <input type="text" name="author_search_terms" />
++        </div>
++    </div>
+ 
+-Forum:
+-[% IF available_forums %]
+-<select id="search_forum" name="search_forum" multiple="multiple">
+-[% SET dummy=available_forums.reset %]
+-<optgroup label="[%l('Forums')%]">
+-[% WHILE (forum = available_forums.next) %]
+-<option value="[% forum.id %]">[% forum.name %]</option>
+-[% END %]
+-</select>
+-[% END %]
++    <div class="yui-gf">
++        <div class="yui-u first align_right">
++            [%l('POSTED')%]
++        </div>
++        <div class="yui-u">
++            <select name="search_post_date">
++                <option value="">[%l('AT ANY TIME')%]</option>
++                <option value="last_hour">[%l('IN THE LAST HOUR')%]</option>
++                <option value="last_day">[%l('IN THE LAST DAY')%]</option>
++                <option value="last_month">[%l('IN THE LAST MONTH')%]</option>
++                <option value="last_six_months">[%l('IN THE LAST SIX MONTHS')%]</option>
++                <option value="last_year">[%l('IN THE LAST YEAR')%]</option>
++                <option value="over_a_year">[%l('OVER A YEAR AGO')%]</option>
++            </select>
++        </div>
++    </div>
+ 
+-<input type="submit" value="Search" />
++    <div style="background-color:#ccc;margin-top:5px;margin-bottom:5px;">
++        &nbsp;
++    </div>
+ 
+-[% PROCESS search/results %]
++    <div class="yui-gf">
++        <div class="yui-u first align_right">
++            [%l('FORUM')%]
++        </div>
++        <div class="yui-u">
++            [% IF available_forums %]
++            <select id="search_forum" name="search_forum" multiple="multiple" class="multiple">
++                [% SET dummy=available_forums.reset %]
++                <optgroup label="[%l('Forums')%]">
++                [% WHILE (forum = available_forums.next) %]
++                <option value="[% forum.id %]">[% forum.name %]</option>
++                [% END %]
++            </select>
++            [% END %]
++        </div>
++    </div>
+ 
+-[% BLOCK search_type %]
+-<select name="[%name%]">
+-    <option value="contains">contains</option>
+-    <option value="exact">is</option>
+-</select>
+-[% END %]
++    <div style="background-color:#ccc;margin-top:5px;margin-bottom:5px;">
++        &nbsp;
++    </div>
+ 
++    <div class="yui-gf">
++        <div class="yui-u first align_right">
++            &nbsp;
++        </div>
++        <div class="yui-u">
++            <input type="submit" value="[%l('Search')%]" />
++        </div>
++    </div>
++
++    <div style="background-color:#ccc;margin-top:5px;margin-bottom:5px;">
++        &nbsp;
++    </div>
+ </form>
++
++[% PROCESS search/results %]
+
+
+
+From chiselwright at mail.berlios.de  Sun Mar  1 21:52:04 2009
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Sun, 1 Mar 2009 21:52:04 +0100
+Subject: [Parley-svn] r1049 - / trunk/todo.i18n
+Message-ID: <200903012052.n21Kq4KM022779@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2009-03-01 21:52:04 +0100 (Sun, 01 Mar 2009)
+New Revision: 1049
+
+Modified:
+   /
+   trunk/todo.i18n/it
+   trunk/todo.i18n/nl
+Log:
+ r9203 at wiggin:  chisel | 2009-02-27 07:28:23 +0000
+ / regenerated files (after adding adv.search) terms
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9202
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9203
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/todo.i18n/it
+===================================================================
+--- trunk/todo.i18n/it	2009-03-01 20:51:55 UTC (rev 1048)
++++ trunk/todo.i18n/it	2009-03-01 20:52:04 UTC (rev 1049)
+@@ -1,7 +1,98 @@
+ Missing phrases in 'it' translation:
+ 
+- - NONE -
++  ALL
++    all
+ 
++  ANY
++    any
++
++  AT ANY TIME
++    at any time
++
++  AUTHORS_NAME
++    Author's Name
++
++  CONTAINS
++    contains
++
++  FORUM
++    Forum
++
++  FORUMNAME_NOT_UNIQUE
++    The forum name you have chosen is already in use. Please try a different one.
++
++  IN THE LAST DAY
++    in the last day
++
++  IN THE LAST HOUR
++    in the last hour
++
++  IN THE LAST MONTH
++    in the last month
++
++  IN THE LAST SIX MONTHS
++    in the last six months
++
++  IN THE LAST YEAR
++    in the last year
++
++  IS
++    is
++
++  MESSAGE
++    Message
++
++  MISSING_CONFIRM_EMAIL
++    Please confirm your email address
++
++  MISSING_CONFIRM_PASSWORD
++    Please confirm your password
++
++  MISSING_EMAIL
++    Please provide an email address
++
++  MISSING_FIRST_NAME
++    Please provide your first name
++
++  MISSING_FORUM_NAME
++    Please provide a forumname
++
++  MISSING_LAST_NAME
++    Please provide your last name
++
++  MISSING_NEW_PASSWORD
++    Please provide a password
++
++  MISSING_NEW_USERNAME
++    Please provide a username
++
++  MISSING_SEARCH_MATCH_TYPE
++    Please specify the method you would like to match by
++
++  MISSING_SEARCH_TERMS
++    Please provide something to search for
++
++  OF THE FOLLOWING CRITERIA
++    of the following criteria
++
++  OVER A YEAR AGO
++    over a year ago
++
++  POSTED
++    Posted
++
++  PROVE YOU ARE HUMAN
++    Prove you're human
++
++  SEARCH FOR MESSAGES MATCHING
++    Search for messages matching
++
++  SUBJECT
++    Subject
++
++  USERNAME_NOT_UNIQUE
++    The username you have chosen is already in use. Please try a different one.
++
+ Additional phrases in 'it' translation:
+ 
+   Locked Topic
+
+Modified: trunk/todo.i18n/nl
+===================================================================
+--- trunk/todo.i18n/nl	2009-03-01 20:51:55 UTC (rev 1048)
++++ trunk/todo.i18n/nl	2009-03-01 20:52:04 UTC (rev 1049)
+@@ -1,7 +1,98 @@
+ Missing phrases in 'nl' translation:
+ 
+- - NONE -
++  ALL
++    all
+ 
++  ANY
++    any
++
++  AT ANY TIME
++    at any time
++
++  AUTHORS_NAME
++    Author's Name
++
++  CONTAINS
++    contains
++
++  FORUM
++    Forum
++
++  FORUMNAME_NOT_UNIQUE
++    The forum name you have chosen is already in use. Please try a different one.
++
++  IN THE LAST DAY
++    in the last day
++
++  IN THE LAST HOUR
++    in the last hour
++
++  IN THE LAST MONTH
++    in the last month
++
++  IN THE LAST SIX MONTHS
++    in the last six months
++
++  IN THE LAST YEAR
++    in the last year
++
++  IS
++    is
++
++  MESSAGE
++    Message
++
++  MISSING_CONFIRM_EMAIL
++    Please confirm your email address
++
++  MISSING_CONFIRM_PASSWORD
++    Please confirm your password
++
++  MISSING_EMAIL
++    Please provide an email address
++
++  MISSING_FIRST_NAME
++    Please provide your first name
++
++  MISSING_FORUM_NAME
++    Please provide a forumname
++
++  MISSING_LAST_NAME
++    Please provide your last name
++
++  MISSING_NEW_PASSWORD
++    Please provide a password
++
++  MISSING_NEW_USERNAME
++    Please provide a username
++
++  MISSING_SEARCH_MATCH_TYPE
++    Please specify the method you would like to match by
++
++  MISSING_SEARCH_TERMS
++    Please provide something to search for
++
++  OF THE FOLLOWING CRITERIA
++    of the following criteria
++
++  OVER A YEAR AGO
++    over a year ago
++
++  POSTED
++    Posted
++
++  PROVE YOU ARE HUMAN
++    Prove you're human
++
++  SEARCH FOR MESSAGES MATCHING
++    Search for messages matching
++
++  SUBJECT
++    Subject
++
++  USERNAME_NOT_UNIQUE
++    The username you have chosen is already in use. Please try a different one.
++
+ Additional phrases in 'nl' translation:
+ 
+  - NONE -
+
+
+

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r184 - / trunk/lib/Parley/Model/ParleyDB
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r184%20-%20/%20trunk/lib/Parley/Model/ParleyDB&In-Reply-To=%3C200607191621.k6JGLmpw018793%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000071.html">
+   <LINK REL="Next"  HREF="000073.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r184 - / trunk/lib/Parley/Model/ParleyDB</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r184%20-%20/%20trunk/lib/Parley/Model/ParleyDB&In-Reply-To=%3C200607191621.k6JGLmpw018793%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r184 - / trunk/lib/Parley/Model/ParleyDB">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 19 18:21:48 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000071.html">[Parley-svn] r183 - / trunk/lib/Parley/Model/ParleyDB
+</A></li>
+        <LI>Next message: <A HREF="000073.html">[Parley-svn] r185 - / trunk/lib/Parley/Model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#72">[ date ]</a>
+              <a href="thread.html#72">[ thread ]</a>
+              <a href="subject.html#72">[ subject ]</a>
+              <a href="author.html#72">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-07-19 18:21:48 +0200 (Wed, 19 Jul 2006)
+New Revision: 184
+
+Added:
+   trunk/lib/Parley/Model/ParleyDB/ThreadView.pm
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4891 at ferrari</A>:  chisel | 2006-07-19 09:57:09 +0100
+ + added model class for new thread_view table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4890
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4891
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: trunk/lib/Parley/Model/ParleyDB/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/Model/ParleyDB/ThreadView.pm	2006-07-19 16:21:35 UTC (rev 183)
++++ trunk/lib/Parley/Model/ParleyDB/ThreadView.pm	2006-07-19 16:21:48 UTC (rev 184)
+@@ -0,0 +1,28 @@
++package Parley::Model::ParleyDB::ThreadView;
++use strict;
++use warnings;
++
++use base 'DBIx::Class::Core';
++
++__PACKAGE__-&gt;load_components(qw/PK::Auto Core/);
++__PACKAGE__-&gt;table('thread_view');
++__PACKAGE__-&gt;add_columns(qw/
++    thread_view_id
++    person
++    thread
++    timestamp
++/);
++__PACKAGE__-&gt;set_primary_key('thread_view_id');
++__PACKAGE__-&gt;add_unique_constraint(
++    constraint_name =&gt; [ qw/person thread/ ],
++);
++
++foreach my $datecol (qw/timestamp/) {
++    __PACKAGE__-&gt;inflate_column($datecol, {
++        inflate =&gt; sub { my $ts = shift; warn $ts; DateTime::Format::Pg-&gt;parse_datetime($ts); },
++        deflate =&gt; sub { DateTime::Format::Pg-&gt;format_datetime(shift); },
++    });
++}
++
++
++1;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000071.html">[Parley-svn] r183 - / trunk/lib/Parley/Model/ParleyDB
+</A></li>
+	<LI>Next message: <A HREF="000073.html">[Parley-svn] r185 - / trunk/lib/Parley/Model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#72">[ date ]</a>
+              <a href="thread.html#72">[ thread ]</a>
+              <a href="subject.html#72">[ subject ]</a>
+              <a href="author.html#72">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

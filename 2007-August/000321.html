@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r432 - / trunk/lib/Parley/App	trunk/lib/Parley/Controller/User
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r432%20-%20/%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller/User&In-Reply-To=%3C200708101952.l7AJqdQe016990%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000319.html">
+   <LINK REL="Next"  HREF="000320.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r432 - / trunk/lib/Parley/App	trunk/lib/Parley/Controller/User</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r432%20-%20/%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller/User&In-Reply-To=%3C200708101952.l7AJqdQe016990%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r432 - / trunk/lib/Parley/App	trunk/lib/Parley/Controller/User">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Aug 10 21:52:39 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000319.html">[Parley-svn] r431 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000320.html">[Parley-svn] r433 - / trunk/lib/Parley/App trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#321">[ date ]</a>
+              <a href="thread.html#321">[ thread ]</a>
+              <a href="subject.html#321">[ subject ]</a>
+              <a href="author.html#321">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-10 21:52:39 +0200 (Fri, 10 Aug 2007)
+New Revision: 432
+
+Added:
+   trunk/lib/Parley/App/DFV.pm
+Modified:
+   /
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3701 at wiggin</A>:  chisel | 2007-08-09 08:44:26 +0100
+ + added Parley::App::DFV with a couple of factored out dfv_constraint_...() functions
+ / factored functions out of existing controllers
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3646
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3701
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/App/DFV.pm
+===================================================================
+--- trunk/lib/Parley/App/DFV.pm	2007-08-08 20:08:22 UTC (rev 431)
++++ trunk/lib/Parley/App/DFV.pm	2007-08-10 19:52:39 UTC (rev 432)
+@@ -0,0 +1,73 @@
++package Parley::App::DFV;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Email::Valid;
++use Perl6::Export::Attrs;
++
++sub dfv_constraint_confirm_equal :Export( :constraints ) {
++    my ($attrs)  = @_;
++
++    my ($first, $second) = @{ $attrs-&gt;{fields} } if $attrs-&gt;{fields};
++
++    return sub {
++        my $dfv = shift;
++        my $data = $dfv-&gt;get_filtered_data();
++
++        warn $data-&gt;{ $first };
++        warn $data-&gt;{ $second };
++
++        return ( $data-&gt;{$first} eq $data-&gt;{$second} );
++    }
++}
++
++sub dfv_constraint_valid_email :Export( :constraints ) {
++    my $attrs = @_;
++
++    return sub {
++        my $dfv = shift;
++        my $data = $dfv-&gt;get_filtered_data();
++
++        return Email::Valid-&gt;address($data-&gt;{email});
++    }
++}
++
++1;
++
++__END__
++
++=pod
++
++=head1 NAME
++
++Parley::App::DFV - Functions used with Data::FormValidator
++
++=head1 SYNOPSIS
++
++  use Parley::App::DFV qw( :constraints );
++
++  my %dfv_profile_for = (
++    'some_form' =&gt; {
++
++        # ...
++
++        constraint_methods =&gt; {
++            confirm_email =&gt;
++                dfv_constraint_confirm_equal(
++                    {
++                        fields =&gt; [qw/email confirm_email/],
++                    }
++                ),
++        },
++
++        # ...
++
++    },
++  );
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
++
++=cut
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2007-08-08 20:08:22 UTC (rev 431)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2007-08-10 19:52:39 UTC (rev 432)
+@@ -10,34 +10,8 @@
+ use Time::Piece;
+ use Time::Seconds;
+ 
+-# used by DFV
+-sub _dfv_constraint_confirm_equal {
+-    my ($attrs)  = @_;
++use Parley::App::DFV qw( :constraints );
+ 
+-    my ($first, $second) = @{ $attrs-&gt;{fields} } if $attrs-&gt;{fields};
+-
+-    return sub {
+-        my $dfv = shift;
+-        my $data = $dfv-&gt;get_filtered_data();
+-
+-        warn $data-&gt;{ $first };
+-        warn $data-&gt;{ $second };
+-
+-        return ( $data-&gt;{$first} eq $data-&gt;{$second} );
+-    }
+-}
+-
+-sub _dfv_constraint_valid_email {
+-    my $attrs = @_;
+-
+-    return sub {
+-        my $dfv = shift;
+-        my $data = $dfv-&gt;get_filtered_data();
+-
+-        return Email::Valid-&gt;address($data-&gt;{email});
+-    }
+-}
+-
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Global class data
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -57,7 +31,7 @@
+ 
+         constraint_methods =&gt; {
+             confirm_email =&gt;
+-                _dfv_constraint_confirm_equal(
++                dfv_constraint_confirm_equal(
+                     {
+                         fields =&gt; [qw/email confirm_email/],
+                     }
+@@ -86,7 +60,7 @@
+ 
+         constraint_methods =&gt; {
+             confirm_password =&gt;
+-                _dfv_constraint_confirm_equal(
++                dfv_constraint_confirm_equal(
+                     {
+                         fields =&gt; [qw/new_password confirm_password/],
+                     }
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2007-08-08 20:08:22 UTC (rev 431)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2007-08-10 19:52:39 UTC (rev 432)
+@@ -11,37 +11,8 @@
+ use Time::Piece;
+ use Time::Seconds;
+ 
+-#use Data::FormValidator 4.02;
+-#use Data::FormValidator::Constraints qw(:closures);
++use Parley::App::DFV qw( :constraints );
+ 
+-# used by DFV
+-sub _dfv_constraint_confirm_equal {
+-    my ($attrs)  = @_;
+-
+-    my ($first, $second) = @{ $attrs-&gt;{fields} } if $attrs-&gt;{fields};
+-
+-    return sub {
+-        my $dfv = shift;
+-        my $data = $dfv-&gt;get_filtered_data();
+-
+-        warn $data-&gt;{ $first };
+-        warn $data-&gt;{ $second };
+-
+-        return ( $data-&gt;{$first} eq $data-&gt;{$second} );
+-    }
+-}
+-
+-sub _dfv_constraint_valid_email {
+-    my $attrs = @_;
+-
+-    return sub {
+-        my $dfv = shift;
+-        my $data = $dfv-&gt;get_filtered_data();
+-
+-        return Email::Valid-&gt;address($data-&gt;{email});
+-    }
+-}
+-
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Global class data
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -59,21 +30,21 @@
+ 
+         constraint_methods =&gt; {
+             confirm_password =&gt;
+-                _dfv_constraint_confirm_equal(
++                dfv_constraint_confirm_equal(
+                     {
+                         fields =&gt; [qw/new_password confirm_password/],
+                     }
+                 ),
+ 
+             email =&gt;
+-                _dfv_constraint_valid_email(
++                dfv_constraint_valid_email(
+                     {
+                         fields =&gt; [qw/email/],
+                     }
+                 ),
+ 
+             confirm_email =&gt;
+-                _dfv_constraint_confirm_equal(
++                dfv_constraint_confirm_equal(
+                     {
+                         fields =&gt; [qw/email confirm_email/],
+                     }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000319.html">[Parley-svn] r431 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000320.html">[Parley-svn] r433 - / trunk/lib/Parley/App trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#321">[ date ]</a>
+              <a href="thread.html#321">[ thread ]</a>
+              <a href="subject.html#321">[ subject ]</a>
+              <a href="author.html#321">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

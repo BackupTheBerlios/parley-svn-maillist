@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r271 - / trunk/root/base/menu
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r271%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200704031947.l33Jlc8u009879%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000158.html">
+   <LINK REL="Next"  HREF="000160.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r271 - / trunk/root/base/menu</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r271%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200704031947.l33Jlc8u009879%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r271 - / trunk/root/base/menu">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Apr  3 21:47:39 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000158.html">[Parley-svn] r270 - / trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000160.html">[Parley-svn] r272 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#159">[ date ]</a>
+              <a href="thread.html#159">[ thread ]</a>
+              <a href="subject.html#159">[ subject ]</a>
+              <a href="author.html#159">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-03 21:47:38 +0200 (Tue, 03 Apr 2007)
+New Revision: 271
+
+Modified:
+   /
+   trunk/root/base/menu/statusbar
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3026 at wiggin</A>:  chisel | 2007-04-03 19:04:26 +0100
+ - removed empty &lt;style&gt; block
+ + added login-dialog setup
+ - removed old login popup
+ / updated login link to use new dialog
+ + added include directive for new login dialog src
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3025
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3026
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2007-04-03 19:47:28 UTC (rev 270)
++++ trunk/root/base/menu/statusbar	2007-04-03 19:47:38 UTC (rev 271)
+@@ -1,8 +1,5 @@
+ &lt;!-- status bar : start --&gt;
+ 
+-&lt;style type=&quot;text/css&quot;&gt;
+-&lt;/style&gt;
+-
+ &lt;script type=&quot;text/javascript&quot;&gt;
+ 	function showLoginBox(start){
+         var popUp = dojo.lfx.explode(start, 'loginbox', 250, function(n) {
+@@ -14,6 +11,19 @@
+ 	}
+ &lt;/script&gt;
+ 
++&lt;!-- dojo dialog-setup --&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++    var login_dialog;
++    function init(e) {
++        login_dialog = dojo.widget.byId(&quot;login_dialog&quot;);
++        var timer = document.getElementById(&quot;login_dialog_timer&quot;);
++        login_dialog.setTimerNode(timer);
++        var btn = document.getElementById(&quot;login_dialog_hider&quot;);
++        login_dialog.setCloseControl(btn);
++    }
++    dojo.addOnLoad(init);
++&lt;/script&gt;
++
+ &lt;table width=&quot;100%&quot;&gt;
+         &lt;tr&gt;
+                 &lt;td width=&quot;60%&quot; class=&quot;left&quot;&gt;
+@@ -39,27 +49,7 @@
+                         ]&lt;/i&gt;
+                         [% ELSE %]
+             &lt;i&gt;[
+-
+-            &lt;!-- loginbox --&gt;
+-            &lt;div id=&quot;loginbox&quot;&gt;
+-                &lt;form action=&quot;user/login&quot; method=&quot;post&quot; name=&quot;login_form&quot; class=&quot;loginbox&quot;&gt;
+-                    &lt;fieldset&gt;
+-                        &lt;label for=&quot;username&quot;&gt;&lt;b&gt;Username:&lt;/b&gt;&lt;/label&gt;
+-                        &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
+-                        &lt;br /&gt;
+-                        &lt;label for=&quot;password&quot;&gt;&lt;b&gt;Password:&lt;/b&gt;&lt;/label&gt;
+-                        &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
+-                        &lt;br /&gt;
+-                        &lt;button type=&quot;submit&quot; value=&quot;log in&quot; class=&quot;input_button&quot; style=&quot;margin-left: 170px;&quot;/&gt;log in&lt;/button&gt;
+-
+-                        &lt;p&gt;
+-                        &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt;
+-                        &lt;/p&gt;
+-                    &lt;/fieldset&gt;
+-                &lt;/form&gt;
+-            &lt;/div&gt;
+-            &lt;a href=&quot;javascript:;&quot; onclick=&quot;showLoginBox(this)&quot;&gt;Login&lt;/a&gt;
+-            &lt;!-- loginbox --&gt;
++            &lt;a href=&quot;javascript:;&quot; onclick=&quot;login_dialog.show(); return false;&quot;&gt;Login&lt;/a&gt;
+             |
+             &lt;a href=&quot;user/signup&quot;&gt;Signup&lt;/a&gt;
+             ]&lt;/i&gt;
+@@ -73,22 +63,6 @@
+         &lt;/tr&gt;
+ &lt;/table&gt;
+ 
+-&lt;!-- status bar : end --&gt;
++[% INCLUDE shared/login_dialog %]
+ 
+-&lt;!--
+-&lt;script type=&quot;text/javascript&quot;&gt;
+-var dlg0, dlg1, dlg2, dlg3;
+-function init(e) {
+-	dlg1 = dojo.widget.byId(&quot;dialog1&quot;);
+-	var timer = document.getElementById(&quot;timer1&quot;);
+-	dlg1.setTimerNode(timer);
+-	var btn = document.getElementById(&quot;hider1&quot;);
+-	dlg1.setCloseControl(btn);
+-}
+-dojo.addOnLoad(init);
+-&lt;/script&gt;
+-
+-&lt;div dojoType=&quot;dialog&quot; id=&quot;dialog1&quot; bgColor=&quot;red&quot; bgOpacity=&quot;0.1&quot; toggle=&quot;fade&quot; toggleDuration=&quot;250&quot; lifetime=&quot;5000&quot;&gt;
+-	Disappearing in &lt;span id=&quot;timer1&quot;&gt;3&lt;/span&gt;... &lt;a id=&quot;hider1&quot; href=&quot;#&quot;&gt;[X]&lt;/a&gt;
+-&lt;/div&gt;
+---&gt;
++&lt;!-- status bar : end --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000158.html">[Parley-svn] r270 - / trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000160.html">[Parley-svn] r272 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#159">[ date ]</a>
+              <a href="thread.html#159">[ thread ]</a>
+              <a href="subject.html#159">[ subject ]</a>
+              <a href="author.html#159">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

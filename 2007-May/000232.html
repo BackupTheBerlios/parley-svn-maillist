@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r344 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/root/base	trunk/root/base/my trunk/root/base/search	trunk/root/base/thread trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r344%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User%20trunk/root/base%0A%09trunk/root/base/my%20trunk/root/base/search%0A%09trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200705180909.l4I99lUu006523%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000231.html">
+   <LINK REL="Next"  HREF="000233.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r344 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/root/base	trunk/root/base/my trunk/root/base/search	trunk/root/base/thread trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r344%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User%20trunk/root/base%0A%09trunk/root/base/my%20trunk/root/base/search%0A%09trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200705180909.l4I99lUu006523%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r344 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/root/base	trunk/root/base/my trunk/root/base/search	trunk/root/base/thread trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri May 18 11:09:47 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000231.html">[Parley-svn] r343 - / trunk/root/base/thread
+</A></li>
+        <LI>Next message: <A HREF="000233.html">[Parley-svn] r345 - / trunk/db trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/script
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#232">[ date ]</a>
+              <a href="thread.html#232">[ thread ]</a>
+              <a href="subject.html#232">[ subject ]</a>
+              <a href="author.html#232">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-18 11:09:46 +0200 (Fri, 18 May 2007)
+New Revision: 344
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+   trunk/root/base/footer
+   trunk/root/base/my/preferences
+   trunk/root/base/search/forum
+   trunk/root/base/thread/view
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3288 at wiggin</A>:  chisel | 2007-05-17 18:40:42 +0100
+ + improved/fixed TZ setting functionality in preferences
+ + formfill from stash-&gt;{formdata} [as well as params]
+ + create person preference when they sign-up
+ + add user/profile page
+ + added some navigation links (in base/footer)
+ + tidied up layout for search/forum results page
+ + html-escape thread subject in thread/view
+ + add profile link for user in thread/view
+ + css improvements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3284
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3288
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/My.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -76,6 +76,16 @@
+         $c-&gt;session-&gt;{my_pref_came_from} = $c-&gt;request-&gt;referer();
+     }
+ 
++    # formfill/stash data
++    if ('UTC' eq $c-&gt;_authed_user()-&gt;preference()-&gt;timezone()) {
++        $c-&gt;stash-&gt;{formdata}{use_utc} = 1;
++    }
++    else {
++        $c-&gt;stash-&gt;{formdata}{selectZone}
++            = $c-&gt;_authed_user()-&gt;preference()-&gt;timezone();
++        $c-&gt;log-&gt;dumper( $c-&gt;stash-&gt;{formdata} );
++    }
++
+     return;
+ }
+ 
+@@ -108,6 +118,19 @@
+         $c-&gt;log-&gt;debug(
+             ref($c-&gt;_authed_user()-&gt;preference())
+         );
++
++        # store preference values
++        if ($c-&gt;form-&gt;valid('use_utc')) {
++            $c-&gt;_authed_user()-&gt;preference()-&gt;timezone('UTC');
++        }
++        else {
++            $c-&gt;_authed_user()-&gt;preference()-&gt;timezone(
++                $c-&gt;form-&gt;valid('selectZone')
++            );
++        }
++        # store changes
++        $c-&gt;_authed_user()-&gt;preference()-&gt;update();
++
+         $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/Root.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -199,6 +199,7 @@
+ 
+     # fill in any forms
+     $c-&gt;fillform( );
++    $c-&gt;fillform( $c-&gt;stash-&gt;{formdata} );
+ }
+ 
+ 
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -338,7 +338,7 @@
+ 
+ sub _txn_add_new_user {
+     my ($self, $c) = @_;
+-    my ($valid_results, $new_auth, $new_person, $status_ok);
++    my ($valid_results, $new_auth, $new_person, $new_preference, $status_ok);
+ 
+     # less typing
+     $valid_results = $c-&gt;form-&gt;valid;
+@@ -362,6 +362,17 @@
+         }
+     );
+ 
++    # add (default) prefs for new person
++    $new_preference = $c-&gt;model('ParleyDB')-&gt;resultset('Preference')-&gt;create(
++        {
++            # default everything
++            show_tz =&gt; 1,
++        }
++    );
++    # and link to the new person
++    $new_person-&gt;preference( $new_preference-&gt;id() );
++
++
+     # send an authentication email
+     $status_ok = $self-&gt;_new_user_authentication_email( $c, $new_person );
+ 
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/User.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -87,8 +87,29 @@
+     }
+ }
+ 
++sub profile :Local {
++    my ($self, $c) = @_;
++    my ($user_id, $person);
+ 
++    $user_id = $c-&gt;request-&gt;param('user');
++    if (defined $user_id) {
++        # make sure we got a sane looking user-id
++        if (not $user_id =~ m{\A\d+\z}) {
++            $c-&gt;stash-&gt;{error}{message} = 'non-integer user passed';
++            return;
++        }
+ 
++        # fetch the matching user
++        $c-&gt;stash-&gt;{profiled_user}
++            = $c-&gt;model('ParleyDB::Person')-&gt;find( $user_id );
++    }
++    else {
++        $c-&gt;stash-&gt;{error}{message} = 'No user specified';
++        return;
++    }
++}
++
++
+ 1;
+ 
+ __END__
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/footer	2007-05-18 09:09:46 UTC (rev 344)
+@@ -6,6 +6,20 @@
+             &lt;div id=&quot;navigation&quot;&gt;
+                 &lt;p&gt;Navigation&lt;/p&gt;
+                 [% PROCESS shared/navigation %]
++
++                &lt;p&gt;
++                &lt;a href=&quot;javascript:;&quot; onclick=&quot;search_dialog.show(); return false;&quot;&gt;Search&lt;/a&gt;
++                &lt;/p&gt;
++
++                &lt;p&gt;
++                &lt;a href=&quot;thread/recent&quot;&gt;Recently Updated Threads&lt;/a&gt;
++                &lt;/p&gt;
++
++                [% IF authed_user %]
++                &lt;p&gt;
++                &lt;a href=&quot;my/preferences&quot;&gt;Preferences&lt;/a&gt;
++                &lt;/p&gt;
++                [% END %]
+             &lt;/div&gt;&lt;!-- navigation div --&gt;
+ 
+             &lt;div id=&quot;extra&quot;&gt;
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/my/preferences	2007-05-18 09:09:46 UTC (rev 344)
+@@ -40,7 +40,7 @@
+             &lt;/td&gt;
+         &lt;/tr&gt;
+ 
+-        &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt;
++        &lt;!-- &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt; --&gt;
+ 
+         &lt;tr&gt;
+             &lt;td&gt;Time formatting example:&lt;/td&gt;
+
+Modified: trunk/root/base/search/forum
+===================================================================
+--- trunk/root/base/search/forum	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/search/forum	2007-05-18 09:09:46 UTC (rev 344)
+@@ -3,10 +3,11 @@
+ &lt;h2&gt;Searching for &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% search_forum.name || 'all forums' %]&lt;/em&gt;&lt;/h2&gt;
+ 
+ [% IF search_results %]
+-    &lt;table&gt;
++
++    &lt;table class=&quot;search_results&quot;&gt;
+     &lt;tr&gt;
+-        &lt;td&gt;Subject&lt;/td&gt;
+-        &lt;td&gt;Snippet&lt;/td&gt;
++        &lt;th&gt;Subject&lt;/th&gt;
++        &lt;th&gt;Snippet&lt;/th&gt;
+     &lt;/tr&gt;
+ 
+     [% WHILE (result = search_results.next) %]
+@@ -30,7 +31,7 @@
+     [% END %]
+ 
+     &lt;tr&gt;
+-        &lt;td class=&quot;right_align&quot; valign=&quot;top&quot;&gt;
++        &lt;td class=&quot;right_align&quot; valign=&quot;top&quot; colspan=&quot;2&quot;&gt;
+         &lt;small&gt;
+         [% INCLUDE shared/pager_advanced %]
+         &lt;/small&gt;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/thread/view	2007-05-18 09:09:46 UTC (rev 344)
+@@ -8,7 +8,7 @@
+ 
+         &lt;tr&gt;
+             &lt;td colspan=&quot;2&quot; class=&quot;thread_header&quot;&gt;
+-                [% current_thread.subject %]
++                [% ForumCode.escape(current_thread.subject) %]
+             &lt;/td&gt;
+         &lt;/tr&gt;
+ 
+@@ -65,9 +65,9 @@
+                 [% END %]
+                 &lt;!-- end : user avatar --&gt;
+ 
+-                [% post.creator.forum_name %]
++                &lt;a href=&quot;user/profile?user=[% post.creator.id %]&quot;&gt;[% post.creator.forum_name %]&lt;/a&gt;
++
+                 &lt;br /&gt;
+-                    Posts: 
+                     [% post.creator.post_count %]
+                     post[% IF (post.creator.post_count != 1) %]s[% END %]
+                 
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/css/common.css	2007-05-18 09:09:46 UTC (rev 344)
+@@ -202,6 +202,34 @@
+     padding:            4px;
+ }
+ 
++.search_results {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
++.user_profile {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
++.user_profile_key {
++    font-weight:        bold;
++    text-align:         right;
++    vertical-align:     top;
++}
++
++td.user_profile_key {
++    width:              120px;
++}
++
++.user_profile_value {
++    font-weight:        none;
++    text-align:         left;
++    vertical-align:     top;
++}
++
+ .thread_posts {
+     margin-left:        50px;
+     margin-right:       50px;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000231.html">[Parley-svn] r343 - / trunk/root/base/thread
+</A></li>
+	<LI>Next message: <A HREF="000233.html">[Parley-svn] r345 - / trunk/db trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/script
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#232">[ date ]</a>
+              <a href="thread.html#232">[ thread ]</a>
+              <a href="subject.html#232">[ subject ]</a>
+              <a href="author.html#232">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

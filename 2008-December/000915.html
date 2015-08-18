@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1033 - / branches/parley-1.1/contrib	branches/parley-1.1/contrib/example
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1033%20-%20/%20branches/parley-1.1/contrib%0A%09branches/parley-1.1/contrib/example&In-Reply-To=%3C200812310134.mBV1Y9oU030287%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000914.html">
+   <LINK REL="Next"  HREF="000916.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1033 - / branches/parley-1.1/contrib	branches/parley-1.1/contrib/example</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1033%20-%20/%20branches/parley-1.1/contrib%0A%09branches/parley-1.1/contrib/example&In-Reply-To=%3C200812310134.mBV1Y9oU030287%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1033 - / branches/parley-1.1/contrib	branches/parley-1.1/contrib/example">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Dec 31 02:34:09 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000914.html">[Parley-svn] r1032 - / branches/parley-1.1/root/skin2
+</A></li>
+        <LI>Next message: <A HREF="000916.html">[Parley-svn] r1034 - / branches/parley-1.1	branches/parley-1.1/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#915">[ date ]</a>
+              <a href="thread.html#915">[ thread ]</a>
+              <a href="subject.html#915">[ subject ]</a>
+              <a href="author.html#915">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-31 02:34:08 +0100 (Wed, 31 Dec 2008)
+New Revision: 1033
+
+Added:
+   branches/parley-1.1/contrib/example/
+   branches/parley-1.1/contrib/example/deploy.sh
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8897 at wiggin</A>:  chisel | 2008-12-31 01:25:50 +0000
+ / keep a copy of the script used to deploy on zombie.herlpacker.co.uk
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8891
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8897
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: branches/parley-1.1/contrib/example/deploy.sh
+===================================================================
+--- branches/parley-1.1/contrib/example/deploy.sh	2008-12-30 02:49:19 UTC (rev 1032)
++++ branches/parley-1.1/contrib/example/deploy.sh	2008-12-31 01:34:08 UTC (rev 1033)
+@@ -0,0 +1,56 @@
++#!/usr/bin/env sh
++
++VERSION=$1;
++MAJOR_VERSION=${VERSION%.*}
++MINOR_VERSION=${VERSION##*.}
++
++echo $VERSION
++echo $MAJOR_VERSION
++echo $MINOR_VERSION
++
++#TARBALL=&quot;Parley-v${VERSION}.tar.gz&quot;
++TARBALL=&quot;Parley-${VERSION}.tar.gz&quot;
++#DIR=&quot;Parley-v${VERSION}&quot;
++DIR=&quot;Parley-${VERSION}&quot;
++
++if [ -z &quot;$VERSION&quot; ]; then
++	echo &quot;usage: $0 &lt;version&gt;&quot;;
++	exit;
++fi
++
++
++if [ ! -f $TARBALL ]; then
++	echo &quot;tarball missing: $TARBALL&quot;;
++	exit;
++fi
++
++tar zxf $TARBALL
++
++PATCH_MATCH_COUNT=`ls ${DIR}/db/*_${MAJOR_VERSION}*sql 2&gt;&amp;1 |grep -c -`
++
++if [ $PATCH_MATCH_COUNT -gt 0 ]; then
++	echo &quot;There are ${PATCH_MATCH_COUNT} patch(es) that match the requested version to deploy:&quot;
++	ls ${DIR}/db/*${MAJOR_VERSION}*sql
++	echo &quot;&quot;
++	read -p &quot;Use ctrl-z to return to the shell and apply any patches. fg then ENTER to continue.&quot; FOOBAR
++fi
++
++if [ ! -d $DIR ]; then
++	echo &quot;directory missing: $DIR&quot;;
++	exit;
++fi
++
++cp -a ./parley/root/static/user_file ./$DIR/root/static/ 2&gt;/dev/null
++sudo chown -R parley:www-data ./$DIR/root/static/user_file/
++ls ./$DIR/root/static/user_file/
++
++(cd $DIR &amp;&amp; perl Makefile.PL)
++
++./parley/script/parley_email_engine.pl stop
++
++rm parley
++ln -s $DIR parley
++
++./parley/script/parley_email_engine.pl start
++
++sudo /etc/init.d/apache2 reload
+
+
+Property changes on: branches/parley-1.1/contrib/example/deploy.sh
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000914.html">[Parley-svn] r1032 - / branches/parley-1.1/root/skin2
+</A></li>
+	<LI>Next message: <A HREF="000916.html">[Parley-svn] r1034 - / branches/parley-1.1	branches/parley-1.1/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#915">[ date ]</a>
+              <a href="thread.html#915">[ thread ]</a>
+              <a href="subject.html#915">[ subject ]</a>
+              <a href="author.html#915">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

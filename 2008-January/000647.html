@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r759 - / trunk/root/base/user/lostpassword	trunk/root/static/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r759%20-%20/%20trunk/root/base/user/lostpassword%0A%09trunk/root/static/css&In-Reply-To=%3C200801282332.m0SNWnai000432%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000646.html">
+   <LINK REL="Next"  HREF="000648.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r759 - / trunk/root/base/user/lostpassword	trunk/root/static/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r759%20-%20/%20trunk/root/base/user/lostpassword%0A%09trunk/root/static/css&In-Reply-To=%3C200801282332.m0SNWnai000432%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r759 - / trunk/root/base/user/lostpassword	trunk/root/static/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jan 29 00:32:49 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000646.html">[Parley-svn] r758 - / trunk/lib
+</A></li>
+        <LI>Next message: <A HREF="000648.html">[Parley-svn] r760 - / trunk/root/base/user/lostpassword
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#647">[ date ]</a>
+              <a href="thread.html#647">[ thread ]</a>
+              <a href="subject.html#647">[ subject ]</a>
+              <a href="author.html#647">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-29 00:32:48 +0100 (Tue, 29 Jan 2008)
+New Revision: 759
+
+Modified:
+   /
+   trunk/root/base/user/lostpassword/lost_password
+   trunk/root/static/css/parley.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4552 at wiggin</A>:  chisel | 2008-01-24 19:19:30 +0000
+ / tidied up layout for first lost password screen
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4547
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4552
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/user/lostpassword/lost_password
+===================================================================
+--- trunk/root/base/user/lostpassword/lost_password	2008-01-24 07:06:00 UTC (rev 758)
++++ trunk/root/base/user/lostpassword/lost_password	2008-01-28 23:32:48 UTC (rev 759)
+@@ -1,16 +1,33 @@
+ &lt;h1&gt;Password Reset&lt;/h1&gt;
+-&lt;p&gt;
+-[% name %] [%l('PASSWORD STORES')%]
+-[%l('PASSWORD IMPOSSIBLE')%]
+-&lt;/p&gt;
+ 
+-&lt;p&gt;
+-[%l('PASSWORD GAIN')%]
+-[%l('PASSWORD PROCEED')%]
+-&lt;/p&gt;
++&lt;div class=&quot;yui-gb top_padded&quot;&gt;
++    &lt;div class=&quot;yui-u first align_right&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
++    &lt;div class=&quot;yui-u&quot; style=&quot;text-align:justify;&quot;&gt;
++        [% name %] [%l('PASSWORD STORES')%]
++        &nbsp;
++        [%l('PASSWORD IMPOSSIBLE')%]
++    &lt;/div&gt;
++    &lt;div class=&quot;yui-u&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
++&lt;/div&gt;
+ 
+-&lt;form method=&quot;post&quot; action=&quot;user/password/forgotten&quot; name=&quot;password_reset_form&quot;&gt;
+-    &lt;fieldset&gt;
++&lt;div class=&quot;yui-gb top_padded&quot;&gt;
++    &lt;div class=&quot;yui-u first align_right&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
++    &lt;div class=&quot;yui-u&quot; style=&quot;text-align:justify;&quot;&gt;
++        [%l('PASSWORD GAIN')%]
++        &nbsp;
++        [%l('PASSWORD PROCEED')%]
++    &lt;/div&gt;
++    &lt;div class=&quot;yui-u&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
++&lt;/div&gt;
++
+         [%- IF view.error.messages %]
+         &lt;p&gt;
+             &lt;ul&gt;
+@@ -21,12 +38,40 @@
+         &lt;/p&gt;
+         [% END %]
+ 
+-        &lt;label for=&quot;pwd_reset_username&quot;&gt;[%l('Username')%]:&lt;/a&gt;&lt;/label&gt;
+-        &lt;input type=&quot;text&quot; id=&quot;pwd_reset_username&quot; name=&quot;username&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; size=&quot;40&quot; /&gt;
+-
+-        &lt;label for=&quot;pwd_reset_email&quot;&gt;[%l('Email Address')%]:&lt;/a&gt;&lt;/label&gt;
+-        &lt;input type=&quot;text&quot; id=&quot;pwd_reset_email&quot; name=&quot;email&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; size=&quot;40&quot; /&gt;
+-
+-        &lt;button name=&quot;pwd_reset_submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;[%l('Reset My Password')%]&lt;/button&gt;
++&lt;form method=&quot;post&quot; action=&quot;user/password/forgotten&quot; name=&quot;password_reset_form&quot;&gt;
++    &lt;fieldset&gt;
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                &lt;label for=&quot;pwd_reset_username&quot;&gt;[%l('Username')%]:&lt;/a&gt;&lt;/label&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;input type=&quot;text&quot; id=&quot;pwd_reset_username&quot; name=&quot;username&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; size=&quot;40&quot; /&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                &lt;label for=&quot;pwd_reset_email&quot;&gt;[%l('Email Address')%]:&lt;/a&gt;&lt;/label&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;input type=&quot;text&quot; id=&quot;pwd_reset_email&quot; name=&quot;email&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; size=&quot;40&quot; /&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;button name=&quot;pwd_reset_submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;[%l('Reset My Password')%]&lt;/button&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
+     &lt;/fieldset&gt;
+ &lt;/form&gt;
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2008-01-24 07:06:00 UTC (rev 758)
++++ trunk/root/static/css/parley.css	2008-01-28 23:32:48 UTC (rev 759)
+@@ -131,6 +131,10 @@
+ }
+ 
+ /* style classes */
++.align_right {
++    text-align:         right;
++}
++
+ .forum_description {
+     font-size:          93%;
+ }
+@@ -441,6 +445,10 @@
+     text-align:         left;
+ }
+ 
++.top_padded {
++    margin-top:         10px;
++}
++
+ .topic_creator {
+     display:            block;
+     font-size:          85%;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000646.html">[Parley-svn] r758 - / trunk/lib
+</A></li>
+	<LI>Next message: <A HREF="000648.html">[Parley-svn] r760 - / trunk/root/base/user/lostpassword
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#647">[ date ]</a>
+              <a href="thread.html#647">[ thread ]</a>
+              <a href="subject.html#647">[ subject ]</a>
+              <a href="author.html#647">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

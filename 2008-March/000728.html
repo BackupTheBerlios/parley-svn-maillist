@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r840 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r840%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N&In-Reply-To=%3C200803140823.m2E8Nwpf023329%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000727.html">
+   <LINK REL="Next"  HREF="000729.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r840 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r840%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N&In-Reply-To=%3C200803140823.m2E8Nwpf023329%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r840 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Mar 14 09:23:58 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000727.html">[Parley-svn] r839 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000729.html">[Parley-svn] r841 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#728">[ date ]</a>
+              <a href="thread.html#728">[ thread ]</a>
+              <a href="subject.html#728">[ subject ]</a>
+              <a href="author.html#728">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-14 09:23:58 +0100 (Fri, 14 Mar 2008)
+New Revision: 840
+
+Modified:
+   /
+   trunk/Changes
+   trunk/Changes.i18n
+   trunk/ROADMAP
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/I18N/i_default.po
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4760 at wiggin</A>:  chisel | 2008-03-14 07:43:53 +0000
+ + Prevent All Access By IP
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4759
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4760
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-03-14 08:23:34 UTC (rev 839)
++++ trunk/Changes	2008-03-14 08:23:58 UTC (rev 840)
+@@ -3,6 +3,7 @@
+ 0.59 (UNDER DEVELOPMENT)
+     - user roles can now be assigned and removed
+     - users can have their &quot;suspended&quot; flag set and removed
++    - application can now prevent login/signup/posting/access by IP
+ 
+ 0.58    Fri Feb  8 07:47:31 GMT 2008
+     - re-work the UI design to be cleaner
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-03-14 08:23:34 UTC (rev 839)
++++ trunk/Changes.i18n	2008-03-14 08:23:58 UTC (rev 840)
+@@ -32,6 +32,8 @@
+             - &quot;Registration Not Allowed&quot;
+             - &quot;Posting is not permitted from %1&quot;
+             - &quot;Posting Not Allowed&quot;
++            - &quot;Access Denied&quot;
++            - &quot;Access to this application is not permitted from %1&quot;
+ 
+     it.po:
+         - added:
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-03-14 08:23:34 UTC (rev 839)
++++ trunk/ROADMAP	2008-03-14 08:23:58 UTC (rev 840)
+@@ -22,7 +22,7 @@
+           - [D] prevent login from IP
+           - [D] prevent signup from IP
+           - [D] prevent posting/editing from IP
+-          - prevent total access from IP
++          - [D] prevent total access from IP
+         - UI for IP bans
+           - prevent login from IP
+           - prevent signup from IP
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-03-14 08:23:34 UTC (rev 839)
++++ trunk/lib/Parley/Controller/Root.pm	2008-03-14 08:23:58 UTC (rev 840)
+@@ -18,6 +18,22 @@
+ #
+ __PACKAGE__-&gt;config-&gt;{namespace} = '';
+ 
++sub begin :Private {
++    my ($self, $c) = @_;
++
++    # deal with access banned by IP
++    my $ip = $c-&gt;request-&gt;address;
++    my $access_banned =
++        $c-&gt;model('ParleyDB::IpBan')-&gt;is_access_banned($ip);
++    if ($access_banned) {
++        $c-&gt;stash-&gt;{template} = 'user/access_ip_banned';
++        return;
++    }
++
++    return 1;
++}
++
++
+ # pre-populate values in the stash if we're given &quot;appropriate&quot; information:
+ # - _authed_user
+ # - _current_post
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-03-14 08:23:34 UTC (rev 839)
++++ trunk/lib/Parley/I18N/i_default.po	2008-03-14 08:23:58 UTC (rev 840)
+@@ -25,6 +25,12 @@
+ msgid &quot;ACCEPT TERMS&quot;
+ msgstr &quot;You need to accept the Terms and Conditions below to continue using the site&quot;
+ 
++msgid &quot;Access Denied&quot;
++msgstr &quot;Access Denied&quot;
++
++msgid &quot;Access to this application is not permitted from %1&quot;
++msgstr &quot;Access to this application is not permitted from %1&quot;
++
+ msgid &quot;Activate Your %s Registration&quot;
+ msgstr &quot;Activate Your %s Registration&quot;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000727.html">[Parley-svn] r839 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000729.html">[Parley-svn] r841 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#728">[ date ]</a>
+              <a href="thread.html#728">[ thread ]</a>
+              <a href="subject.html#728">[ subject ]</a>
+              <a href="author.html#728">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

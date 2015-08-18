@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r360 - / trunk/root/base/my
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r360%20-%20/%20trunk/root/base/my&In-Reply-To=%3C200706252209.l5PM9kiI025033%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000247.html">
+   <LINK REL="Next"  HREF="000249.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r360 - / trunk/root/base/my</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r360%20-%20/%20trunk/root/base/my&In-Reply-To=%3C200706252209.l5PM9kiI025033%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r360 - / trunk/root/base/my">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jun 26 00:09:46 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000247.html">[Parley-svn] r359 - / trunk/lib
+</A></li>
+        <LI>Next message: <A HREF="000249.html">[Parley-svn] r361 - / trunk/lib/Parley/App
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#248">[ date ]</a>
+              <a href="thread.html#248">[ thread ]</a>
+              <a href="subject.html#248">[ subject ]</a>
+              <a href="author.html#248">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-06-26 00:09:46 +0200 (Tue, 26 Jun 2007)
+New Revision: 360
+
+Modified:
+   /
+   trunk/root/base/my/tab_notifications
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3407 at wiggin</A>:  chisel | 2007-06-20 18:49:17 +0100
+ / disable checkboxes as we're not saving any changes made to them yet
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3406
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3407
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/my/tab_notifications
+===================================================================
+--- trunk/root/base/my/tab_notifications	2007-06-25 22:09:32 UTC (rev 359)
++++ trunk/root/base/my/tab_notifications	2007-06-25 22:09:46 UTC (rev 360)
+@@ -4,10 +4,16 @@
+     &lt;tbody&gt;
+         &lt;tr&gt;
+             &lt;td&gt;
+-                &lt;input type=&quot;checkbox&quot; name=&quot;notify_thread_watch&quot; /&gt;
+-                Email notification for watched threads
++                &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %] disabled=&quot;true&quot; /&gt;
++                Automatically add watches for new posts
+             &lt;/td&gt;
+         &lt;/tr&gt;
++        &lt;tr&gt;
++            &lt;td&gt;
++                &lt;input type=&quot;checkbox&quot; name=&quot;notify_thread_watch&quot; value=&quot;1&quot; [% IF authed_user.preference.notify_thread_watch %]checked=&quot;checked&quot; [% END %] disabled=&quot;true&quot; /&gt;
++                Recieve email notification for watched threads
++            &lt;/td&gt;
++        &lt;/tr&gt;
+     &lt;/tbody&gt;
+ &lt;/table&gt;
+ &lt;!-- (end) preferences : notification tab --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000247.html">[Parley-svn] r359 - / trunk/lib
+</A></li>
+	<LI>Next message: <A HREF="000249.html">[Parley-svn] r361 - / trunk/lib/Parley/App
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#248">[ date ]</a>
+              <a href="thread.html#248">[ thread ]</a>
+              <a href="subject.html#248">[ subject ]</a>
+              <a href="author.html#248">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

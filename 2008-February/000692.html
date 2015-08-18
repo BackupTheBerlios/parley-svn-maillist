@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r804 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/lib/Parley/Schema	trunk/root/base/menu trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r804%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/lib/Parley/Schema%0A%09trunk/root/base/menu%20trunk/t/schema&In-Reply-To=%3C200802191918.m1JJImME012282%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000691.html">
+   <LINK REL="Next"  HREF="000693.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r804 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/lib/Parley/Schema	trunk/root/base/menu trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r804%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/lib/Parley/Schema%0A%09trunk/root/base/menu%20trunk/t/schema&In-Reply-To=%3C200802191918.m1JJImME012282%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r804 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/lib/Parley/Schema	trunk/root/base/menu trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Feb 19 20:18:48 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000691.html">[Parley-svn] r803 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000693.html">[Parley-svn] r805 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#692">[ date ]</a>
+              <a href="thread.html#692">[ thread ]</a>
+              <a href="subject.html#692">[ subject ]</a>
+              <a href="author.html#692">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-19 20:18:47 +0100 (Tue, 19 Feb 2008)
+New Revision: 804
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/TODO
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/root/base/menu/menubar
+   trunk/t/schema/person.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4679 at wiggin</A>:  chisel | 2008-02-19 18:18:19 +0000
+ + added a couple if i_default i18n phrases
+ + added to TODO
+ + added site/users URI
+ + added ResultSet::Person
+ + added record level Role functions to Schema::Person
+ / tweaked Site menu, including adding Manage/Users
+ / extended test for Person table/model
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4667
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4679
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-02-15 16:05:11 UTC (rev 803)
++++ trunk/Changes.i18n	2008-02-19 19:18:47 UTC (rev 804)
+@@ -13,6 +13,8 @@
+             - &quot;ADMIN LOCK POST&quot;
+             - &quot;Locked Post&quot;
+             - &quot;Post Edited By&quot;
++            - &quot;Manage&quot;
++            - &quot;Users&quot;
+ 
+     it.po:
+         - added:
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-02-15 16:05:11 UTC (rev 803)
++++ trunk/TODO	2008-02-19 19:18:47 UTC (rev 804)
+@@ -2,6 +2,7 @@
+ 
+   - &quot;Cancel&quot; from post/edit
+   - &quot;Cancel&quot; from thread/reply
++  - fix &lt;ul&gt;/&lt;ol&gt; CSS
+   - Quick Reply
+   - login form doesn't submit onEnter
+   - TESTS, TESTS, TESTS!
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-02-15 16:05:11 UTC (rev 803)
++++ trunk/lib/Parley/Controller/Site.pm	2008-02-19 19:18:47 UTC (rev 804)
+@@ -45,7 +45,18 @@
+     $c-&gt;stash-&gt;{email_engine}{pid} = $pid;
+ }
+ 
++sub users : Local {
++    my ($self, $c) = @_;
+ 
++    $c-&gt;stash-&gt;{users_with_roles} =
++        $c-&gt;model('ParleyDB::Person')-&gt;users_with_roles()
++    ;
++
++    $c-&gt;log-&gt;debug(
++        ref($c-&gt;stash-&gt;{users_with_roles})
++    );
++}
++
+ =head1 NAME
+ 
+ Parley::Controller::Site - Catalyst Controller
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-02-15 16:05:11 UTC (rev 803)
++++ trunk/lib/Parley/I18N/i_default.po	2008-02-19 19:18:47 UTC (rev 804)
+@@ -305,6 +305,9 @@
+ msgid &quot;Logout&quot;
+ msgstr &quot;Logout&quot;
+ 
++msgid &quot;Manage&quot;
++msgstr &quot;Manage&quot;
++
+ msgid &quot;Me&quot;
+ msgstr &quot;Me&quot;
+ 
+@@ -728,6 +731,9 @@
+ msgid &quot;Username&quot;
+ msgstr &quot;Username&quot;
+ 
++msgid &quot;Users&quot;
++msgstr &quot;Users&quot;
++
+ msgid &quot;View&quot;
+ msgstr &quot;View&quot;
+ 
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-02-15 16:05:11 UTC (rev 803)
++++ trunk/lib/Parley/Schema/Person.pm	2008-02-19 19:18:47 UTC (rev 804)
+@@ -65,7 +65,11 @@
+     size =&gt; undef,
+   },
+ );
++
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Person');
++
+ __PACKAGE__-&gt;add_unique_constraint(
+     &quot;person_forum_name_key&quot;,
+     [&quot;forum_name&quot;]
+@@ -107,7 +111,55 @@
+   { &quot;foreign.recipient&quot; =&gt; &quot;self.id&quot; },
+ );
+ 
+-__PACKAGE__-&gt;has_many(map_user_role =&gt; 'Parley::Schema::UserRole', 'person_id');
++__PACKAGE__-&gt;has_many(
++    map_user_role =&gt; 'Parley::Schema::UserRole',
++    'person_id',
++    { join_type =&gt; 'right' }
++);
+ 
++sub roles {
++    my $record = shift;
++    my ($schema, $rs);
+ 
++    $schema = $record-&gt;result_source()-&gt;schema();
++
++    $rs = $schema-&gt;resultset('Role')-&gt;search(
++        {
++            'person.id'  =&gt; $record-&gt;id(),
++        },
++        {
++            prefetch =&gt; [
++                { 'map_user_role' =&gt; 'person' },
++            ],
++        }
++    );
++
++    return $rs;
++}
++
++sub check_user_roles {
++    my $record = shift;
++    my @roles  = @_;
++
++    my ($schema, $rs);
++
++    $schema = $record-&gt;result_source()-&gt;schema();
++
++    $rs = $schema-&gt;resultset('Role')-&gt;search(
++        {
++            'map_user_role.person_id'   =&gt; $record-&gt;id(),
++            'me.name' =&gt; {
++                -in =&gt; \@roles,
++            },
++        },
++        {
++            prefetch =&gt; [
++                { 'map_user_role' =&gt; 'person' },
++            ],
++        },
++    );
++
++    return ($rs-&gt;count == scalar(@roles) || 0);
++}
++
+ 1;
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2008-02-15 16:05:11 UTC (rev 803)
++++ trunk/root/base/menu/menubar	2008-02-19 19:18:47 UTC (rev 804)
+@@ -116,11 +116,12 @@
+                     &lt;div class=&quot;bd&quot;&gt;                                        
+                         &lt;ul&gt;
+                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;terms/add&quot;&gt;[%l('Add T-and-Cs')%]&lt;/a&gt;&lt;/li&gt;
+-                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;#&quot;&gt;[%l('Site')%]&lt;/a&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;#&quot;&gt;[%l('Manage')%]&lt;/a&gt;
+                                 &lt;div id=&quot;site&quot; class=&quot;yuimenu&quot;&gt;
+                                     &lt;div class=&quot;bd&quot;&gt;
+                                         &lt;ul class=&quot;first-of-type&quot;&gt;
+                                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;site/services&quot;&gt;[%l('Services')%]&lt;/a&gt;&lt;/li&gt;
++                                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;site/users&quot;&gt;[%l('Users')%]&lt;/a&gt;&lt;/li&gt;
+                                         &lt;/ul&gt;            
+                                     &lt;/div&gt;
+                                 &lt;/div&gt;                    
+
+Modified: trunk/t/schema/person.t
+===================================================================
+--- trunk/t/schema/person.t	2008-02-15 16:05:11 UTC (rev 803)
++++ trunk/t/schema/person.t	2008-02-19 19:18:47 UTC (rev 804)
+@@ -51,6 +51,7 @@
+ 
+         resultsets =&gt; [
+             qw[
++                users_with_roles
+             ]
+         ],
+     }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000691.html">[Parley-svn] r803 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000693.html">[Parley-svn] r805 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#692">[ date ]</a>
+              <a href="thread.html#692">[ thread ]</a>
+              <a href="subject.html#692">[ subject ]</a>
+              <a href="author.html#692">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

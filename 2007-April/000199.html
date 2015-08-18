@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r311 - / trunk/lib/Parley/Controller	trunk/root/base/search
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r311%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/search&In-Reply-To=%3C200704191651.l3JGp1XM011296%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000198.html">
+   <LINK REL="Next"  HREF="000200.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r311 - / trunk/lib/Parley/Controller	trunk/root/base/search</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r311%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/search&In-Reply-To=%3C200704191651.l3JGp1XM011296%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r311 - / trunk/lib/Parley/Controller	trunk/root/base/search">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Apr 19 18:51:01 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000198.html">[Parley-svn] r310 - / trunk/lib/Text/Search trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000200.html">[Parley-svn] r312 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#199">[ date ]</a>
+              <a href="thread.html#199">[ thread ]</a>
+              <a href="subject.html#199">[ subject ]</a>
+              <a href="author.html#199">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-19 18:51:01 +0200 (Thu, 19 Apr 2007)
+New Revision: 311
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/root/base/search/forum
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3178 at wiggin</A>:  chisel | 2007-04-19 09:17:40 +0100
+ / tweaks and improvements for searching
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3177
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3178
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2007-04-19 16:50:39 UTC (rev 310)
++++ trunk/lib/Parley/Controller/Search.pm	2007-04-19 16:51:01 UTC (rev 311)
+@@ -4,6 +4,8 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++use Text::Search::SQL;
++
+ sub index : Private {
+     my ( $self, $c ) = @_;
+ 
+@@ -12,7 +14,7 @@
+ 
+ sub forum :Local {
+     my ($self, $c) = @_;
+-    my ($search_terms, $resultset);
++    my ($search_terms, $resultset, $tss, $search_where, $where);
+ 
+     # the search terms
+     $search_terms = $c-&gt;request-&gt;param('search_terms');
+@@ -20,12 +22,30 @@
+     # save the search terms for the template to display
+     $c-&gt;stash-&gt;{search_terms}{raw} = $search_terms;
+ 
++    # get a suitable where-clause to use based on the search terms
++    $tss = Text::Search::SQL-&gt;new(
++        {
++            search_term     =&gt; $search_terms,
++            search_type     =&gt; q{ilike},
++            search_fields   =&gt; [ qw(subject message) ],
++        }
++    );
++    $tss-&gt;parse();
++    $search_where = $tss-&gt;get_sql_where();
++    $c-&gt;log-&gt;dumper( $search_where );
++
++    # build the where clause to pass to our search
++    $where = {
++        thread  =&gt; { '&gt;', 0 },
++        # we want to OR the items in $sql_where
++        -or =&gt; $search_where,
++    };
++    $c-&gt;log-&gt;dumper( $where );
++
+     # search for any posts in the forum with the search_terms (phrase) in the
+     # subject or body
+     $resultset = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
+-        {
+-            subject     =&gt; { 'ilike' =&gt; &quot;%$search_terms%&quot; },
+-        }
++        $where,
+     );
+ 
+     if ($resultset-&gt;count() &gt; 0) {
+
+Modified: trunk/root/base/search/forum
+===================================================================
+--- trunk/root/base/search/forum	2007-04-19 16:50:39 UTC (rev 310)
++++ trunk/root/base/search/forum	2007-04-19 16:51:01 UTC (rev 311)
+@@ -3,8 +3,9 @@
+ &lt;h2&gt;Searching for &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% current_forum.name %]&lt;/em&gt;&lt;/h2&gt;
+ 
+ [% IF search_results %]
++[% search_results.count %]&lt;br /&gt;
+     [% WHILE (result = search_results.next) %]
+-    [% result.subject %]&lt;br /&gt;
++    [% ForumCode.escape(result.subject) || ForumCode.escape(result.thread.subject) %]&lt;br /&gt;
+     [% END %]
+ [% ELSE %]
+ No results found matching specified terms.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000198.html">[Parley-svn] r310 - / trunk/lib/Text/Search trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000200.html">[Parley-svn] r312 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#199">[ date ]</a>
+              <a href="thread.html#199">[ thread ]</a>
+              <a href="subject.html#199">[ subject ]</a>
+              <a href="author.html#199">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

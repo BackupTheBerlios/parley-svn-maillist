@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r662 - / trunk/lib trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r662%20-%20/%20trunk/lib%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200711121949.lACJnRMe022206%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000549.html">
+   <LINK REL="Next"  HREF="000551.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r662 - / trunk/lib trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r662%20-%20/%20trunk/lib%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200711121949.lACJnRMe022206%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r662 - / trunk/lib trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Nov 12 20:49:27 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000549.html">[Parley-svn] r661 - / trunk trunk/db_script	trunk/lib/Parley/Controller trunk/script
+</A></li>
+        <LI>Next message: <A HREF="000551.html">[Parley-svn] r663 - / trunk/lib trunk/root/base trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#550">[ date ]</a>
+              <a href="thread.html#550">[ thread ]</a>
+              <a href="subject.html#550">[ subject ]</a>
+              <a href="author.html#550">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-12 20:49:27 +0100 (Mon, 12 Nov 2007)
+New Revision: 662
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/ResultSet/Thread.pm
+   trunk/lib/Parley/Schema/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4183 at wiggin</A>:  chisel | 2007-11-12 08:55:43 +0000
+ + bumped version to _02
+ / moved last_post_viewed_in_thread() into ::ResultSet thread; it seems that as
+   soon as we've declared -&gt;resultset_class() we can no longer have
+   :ResultSetManager funtions in the main class, they need to be moved to the
+   newley declared ::ResultSet class
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4182
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4183
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/ResultSet/Thread.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Thread.pm	2007-11-12 19:49:14 UTC (rev 661)
++++ trunk/lib/Parley/ResultSet/Thread.pm	2007-11-12 19:49:27 UTC (rev 662)
+@@ -5,6 +5,88 @@
+ 
+ use base 'DBIx::Class::ResultSet';
+ 
++# This is slightly complicated; the way we find the last post a user has seen
++# in a thread is:
++#
++# - If there is a thread_view entry for person-thread then find the last post
++#    made on or before that time
++# - If there is no thread_view entry, then the user has never seen the thread
++#   before, in which case the last post viewed is considered to be the
++#   first post in the thread
++sub last_post_viewed_in_thread {
++    my ($self, $person, $thread) = @_;
++    my ($last_viewed, $last_post) = @_;
++
++    my $schema = $self-&gt;result_source()-&gt;schema();
++
++    # we need to be careful that we haven't deleted/hidden the post that
++    # matches the exact timestamp of last_viewed for a thread - this is why we
++    # use &lt;= and not ==, since we can just return the latest undeleted post
++
++    # get the entry (if any) for person-thread from the thread_view table
++    $last_viewed = $schema-&gt;resultset('ThreadView')-&gt;find(
++        {
++            person_id  =&gt; $person-&gt;id(),
++            thread_id  =&gt; $thread-&gt;id(),
++        }
++    );
++
++    # if we don't have a $last_viewed, then return the thread's first post
++    if (not defined $last_viewed) {
++        warn &quot;thread has never been viewed - returning first post in thread&quot;;
++
++        # get all the posts in the thread, oldest first
++        my $posts_in_thread = $schema-&gt;resultset('Post')-&gt;search(
++            {
++                thread_id  =&gt; $thread-&gt;id(),
++            },
++            {
++                rows        =&gt; 1,
++                order_by    =&gt; 'created ASC',
++            }
++        );
++
++        # set the first post
++        $last_post = $posts_in_thread-&gt;first();
++    }
++
++    # otherwise, find the most recent post made on or before the timestamp in
++    # $last_viewed
++    else {
++        warn q{looking for a post on or before } . $last_viewed-&gt;timestamp();
++
++        # get a list of posts created on or before our last-post time, newest
++        # first
++        my $list_of_posts = $schema-&gt;resultset('Post')-&gt;search(
++            {
++                created =&gt; {
++                    '&lt;=',
++                    DateTime::Format::Pg-&gt;format_datetime(
++                        $last_viewed-&gt;timestamp()
++                    )
++                },
++                thread_id  =&gt; $thread-&gt;id(),
++            },
++            {
++                rows        =&gt; 1,
++                order_by    =&gt; 'created DESC',
++            }
++        );
++
++        # the most recent post is the first (and only) post in our list
++        $last_post = $list_of_posts-&gt;first();
++    }
++
++    # we should now have a Post object in $last_post
++    if (not defined $last_post) {
++        warn q{$last_post is undefined in last_post_viewed_in_thread()};
++        return;
++    }
++
++    # return the last post ..
++    return $last_post;
++}
++
+ sub recent {
+     my ($resultset, $c) = @_;
+     my ($thread_list, $where, @join);
+
+Modified: trunk/lib/Parley/Schema/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Thread.pm	2007-11-12 19:49:14 UTC (rev 661)
++++ trunk/lib/Parley/Schema/Thread.pm	2007-11-12 19:49:27 UTC (rev 662)
+@@ -7,7 +7,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__-&gt;load_components('ResultSetManager', &quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;thread&quot;);
+ __PACKAGE__-&gt;add_columns(
+   &quot;id&quot; =&gt; {
+@@ -116,89 +116,8 @@
+     });
+ }
+ 
+-# This is slightly complicated; the way we find the last post a user has seen
+-# in a thread is:
+-#
+-# - If there is a thread_view entry for person-thread then find the last post
+-#    made on or before that time
+-# - If there is no thread_view entry, then the user has never seen the thread
+-#   before, in which case the last post viewed is considered to be the
+-#   first post in the thread
+-sub last_post_viewed_in_thread :ResultSet {
+-    my ($self, $person, $thread) = @_;
+-    my ($last_viewed, $last_post) = @_;
+ 
+-    my $schema = $self-&gt;result_source()-&gt;schema();
+-
+-    # we need to be careful that we haven't deleted/hidden the post that
+-    # matches the exact timestamp of last_viewed for a thread - this is why we
+-    # use &lt;= and not ==, since we can just return the latest undeleted post
+-
+-    # get the entry (if any) for person-thread from the thread_view table
+-    $last_viewed = $schema-&gt;resultset('ThreadView')-&gt;find(
+-        {
+-            person_id  =&gt; $person-&gt;id(),
+-            thread_id  =&gt; $thread-&gt;id(),
+-        }
+-    );
+-
+-    # if we don't have a $last_viewed, then return the thread's first post
+-    if (not defined $last_viewed) {
+-        warn &quot;thread has never been viewed - returning first post in thread&quot;;
+-
+-        # get all the posts in the thread, oldest first
+-        my $posts_in_thread = $schema-&gt;resultset('Post')-&gt;search(
+-            {
+-                thread_id  =&gt; $thread-&gt;id(),
+-            },
+-            {
+-                rows        =&gt; 1,
+-                order_by    =&gt; 'created ASC',
+-            }
+-        );
+-
+-        # set the first post
+-        $last_post = $posts_in_thread-&gt;first();
+-    }
+-
+-    # otherwise, find the most recent post made on or before the timestamp in
+-    # $last_viewed
+-    else {
+-        warn q{looking for a post on or before } . $last_viewed-&gt;timestamp();
+-
+-        # get a list of posts created on or before our last-post time, newest
+-        # first
+-        my $list_of_posts = $schema-&gt;resultset('Post')-&gt;search(
+-            {
+-                created =&gt; {
+-                    '&lt;=',
+-                    DateTime::Format::Pg-&gt;format_datetime(
+-                        $last_viewed-&gt;timestamp()
+-                    )
+-                },
+-                thread_id  =&gt; $thread-&gt;id(),
+-            },
+-            {
+-                rows        =&gt; 1,
+-                order_by    =&gt; 'created DESC',
+-            }
+-        );
+-
+-        # the most recent post is the first (and only) post in our list
+-        $last_post = $list_of_posts-&gt;first();
+-    }
+-
+-    # we should now have a Post object in $last_post
+-    if (not defined $last_post) {
+-        warn q{$last_post is undefined in last_post_viewed_in_thread()};
+-        return;
+-    }
+-
+-    # return the last post ..
+-    return $last_post;
+-}
+-
+-sub _last_post_viewed_in_thread :ResultSet {
++sub PROBABLY_DEAD_last_post_viewed_in_thread :ResultSet {
+     my ($self, $person, $thread) = @_;
+     my ($last_viewed, $last_post);
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-11-12 19:49:14 UTC (rev 661)
++++ trunk/lib/Parley.pm	2007-11-12 19:49:27 UTC (rev 662)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.58_01';
++our $VERSION = '0.58_02';
+ 
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000549.html">[Parley-svn] r661 - / trunk trunk/db_script	trunk/lib/Parley/Controller trunk/script
+</A></li>
+	<LI>Next message: <A HREF="000551.html">[Parley-svn] r663 - / trunk/lib trunk/root/base trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#550">[ date ]</a>
+              <a href="thread.html#550">[ thread ]</a>
+              <a href="subject.html#550">[ subject ]</a>
+              <a href="author.html#550">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

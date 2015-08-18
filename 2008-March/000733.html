@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r845 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r845%20-%20/%20trunk&In-Reply-To=%3C200803182011.m2IKBIlp023606%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000732.html">
+   <LINK REL="Next"  HREF="000734.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r845 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r845%20-%20/%20trunk&In-Reply-To=%3C200803182011.m2IKBIlp023606%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r845 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Mar 18 21:11:18 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000732.html">[Parley-svn] r844 - / trunk/root/email_templates	trunk/root/email_templates/nl
+</A></li>
+        <LI>Next message: <A HREF="000734.html">[Parley-svn] r846 - / trunk/lib/Parley
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#733">[ date ]</a>
+              <a href="thread.html#733">[ thread ]</a>
+              <a href="subject.html#733">[ subject ]</a>
+              <a href="author.html#733">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-18 21:11:18 +0100 (Tue, 18 Mar 2008)
+New Revision: 845
+
+Modified:
+   /
+   trunk/MANIFEST
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4769 at wiggin</A>:  chisel | 2008-03-18 19:07:22 +0000
+ $ rm MANIFEST; make manifest
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4768
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4769
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-03-18 20:11:08 UTC (rev 844)
++++ trunk/MANIFEST	2008-03-18 20:11:18 UTC (rev 845)
+@@ -59,6 +59,7 @@
+ lib/Parley/Controller/User/SignUp.pm
+ lib/Parley/I18N/i_default.po
+ lib/Parley/I18N/it.po
++lib/Parley/I18N/nl.po
+ lib/Parley/Model/ParleyDB.pm
+ lib/Parley/ResultSet/Forum.pm
+ lib/Parley/ResultSet/IpBan.pm
+@@ -179,6 +180,11 @@
+ root/email_templates/it/thread_update_notify.eml
+ root/email_templates/it/thread_update_notify.html
+ root/email_templates/it/username_reminder.eml
++root/email_templates/nl/authentication_email.eml
++root/email_templates/nl/password_reset.eml
++root/email_templates/nl/thread_update_notify.eml
++root/email_templates/nl/thread_update_notify.html
++root/email_templates/nl/username_reminder.eml
+ root/favicon.ico
+ root/static/css/common.css
+ root/static/css/default.css
+@@ -465,6 +471,7 @@
+ root/static/MessagePreview.js
+ root/static/script/ajax_error_dlg.js
+ root/static/script/prototype.js
++root/static/script/user_forum_moderate.js
+ root/static/script/user_suspend.js
+ root/static/yui/animation/animation-debug.js
+ root/static/yui/animation/animation-min.js
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000732.html">[Parley-svn] r844 - / trunk/root/email_templates	trunk/root/email_templates/nl
+</A></li>
+	<LI>Next message: <A HREF="000734.html">[Parley-svn] r846 - / trunk/lib/Parley
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#733">[ date ]</a>
+              <a href="thread.html#733">[ thread ]</a>
+              <a href="subject.html#733">[ subject ]</a>
+              <a href="author.html#733">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

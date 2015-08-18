@@ -1,0 +1,547 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r729 - / trunk trunk/root/base/thread trunk/root/static
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r729%20-%20/%20trunk%20trunk/root/base/thread%20trunk/root/static&In-Reply-To=%3C200801101950.m0AJohxN021863%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000616.html">
+   <LINK REL="Next"  HREF="000618.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r729 - / trunk trunk/root/base/thread trunk/root/static</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r729%20-%20/%20trunk%20trunk/root/base/thread%20trunk/root/static&In-Reply-To=%3C200801101950.m0AJohxN021863%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r729 - / trunk trunk/root/base/thread trunk/root/static">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 10 20:50:43 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000616.html">[Parley-svn] r728 - / trunk/lib/Parley/ResultSet trunk/root/base	trunk/root/base/thread trunk/root/static/css
+</A></li>
+        <LI>Next message: <A HREF="000618.html">[Parley-svn] r730 - / trunk/root/base/post trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#617">[ date ]</a>
+              <a href="thread.html#617">[ thread ]</a>
+              <a href="subject.html#617">[ subject ]</a>
+              <a href="author.html#617">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-10 20:50:43 +0100 (Thu, 10 Jan 2008)
+New Revision: 729
+
+Added:
+   trunk/root/static/MessagePreview.js
+Modified:
+   /
+   trunk/Changes
+   trunk/root/base/thread/add
+   trunk/root/base/thread/reply
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4467 at wiggin</A>:  chisel | 2008-01-10 19:16:35 +0000
+ / factored out MessagePreview javascript into single included file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4466
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4467
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-01-10 19:50:29 UTC (rev 728)
++++ trunk/Changes	2008-01-10 19:50:43 UTC (rev 729)
+@@ -10,6 +10,8 @@
+     - limit thread subject length on user profile page
+     - rename DB columns to be more sensible
+     - upgraded to YUI 2.4.1
++    - factored out MessagePreview javascript into single included file
++    - [bug] fix error when trying to post new thread with no subject line
+ 
+ 0.57    Wed Oct 31 19:15:06 GMT 2007
+     - added T&amp;Cs to application
+
+Modified: trunk/root/base/thread/add
+===================================================================
+--- trunk/root/base/thread/add	2008-01-10 19:50:29 UTC (rev 728)
++++ trunk/root/base/thread/add	2008-01-10 19:50:43 UTC (rev 729)
+@@ -46,157 +46,19 @@
+     &lt;/table&gt;
+ &lt;/form&gt;
+ 
+-[% IF 0 %]
+-&lt;form action=&quot;thread/add?forum=[% current_forum.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
+-    &lt;table border=&quot;1&quot;&gt;
+-    &lt;tr&gt;
+-        &lt;td&gt; [%l('Topic')%] &lt;/td&gt;
+-        &lt;td&gt;
+-        &lt;input type=&quot;text&quot; name=&quot;thread_subject&quot; size=&quot;60&quot; class=&quot;input_text&quot; /&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-
+-    &lt;tr&gt;
+-        &lt;td&gt; [%l('Message')%] &lt;/td&gt;
+-        &lt;td&gt;
+-            &lt;textarea name=&quot;thread_message&quot; id=&quot;old_thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-
+-    &lt;tr&gt;
+-        &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-        &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
+-        &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Topic')%]&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-
+-    &lt;tr&gt;
+-        &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
+-            &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %]/&gt;
+-            [%l('ADD THREAD WATCH')%] 
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-    &lt;/table&gt;
+-&lt;/form&gt;
+-[% END %]
+-
+ &lt;style type=&quot;text/css&quot;&gt;
+ 	.yui-overlay { position:absolute;background:transparent;border:none;padding:none;margin:none; }
+ &lt;/style&gt;
+ 
+ &lt;!-- message preview majick --&gt;
++&lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/MessagePreview.js')%]&quot;&gt;&lt;/script&gt;
+ &lt;script type=&quot;text/javascript&quot;&gt;
+-    (function () {
+-        ParleyMessagePreview = function() {
+-            var Dom         = YAHOO.util.Dom,
+-                YU          = YAHOO.util;
++    var MessagePreview = new ParleyMessagePreview();
+ 
+-            this.config = {
+-                trigger     : 'message_preview',
+-                user_input  : 'thread_message',
+-                container   : 'message_container',
+-                trigger_evt : 'click'
+-            };
+-            this.message_source  = false;
+-            this.message_preview = false;
++    MessagePreview.config.label_preview = '[%l('Preview')%]';
++    MessagePreview.config.label_edit    = '[%l('Edit')%]';
++    MessagePreview.config.post_url      = &quot;[%c.uri_for('/post/preview')%]&quot;;
+ 
+-            this.handleSuccess = function(o) {
+-                var data = eval('(' + o.responseText + ')');
+-                var obj = o.argument.obj;
+-
+-                if (data.formatted) {
+-                    obj.previewElId = YU.Dom.generateId();
+-
+-                    obj.user_input.style.visibility     = 'hidden';
+-
+-                    /* create a panel to show the preview in */
+-                    var pWidth          = obj.user_input.clientWidth,
+-                        pHeight         = obj.user_input.clientHeight,
+-                        pLeft           = obj.user_input.offsetLeft,
+-                        pTop            = obj.user_input.offsetTop;
+-
+-                    obj.preview_overlay = new YAHOO.widget.Overlay(
+-                        &quot;preview_overlay&quot;,
+-                        {
+-                            context:        [obj.config.user_input, 'tl', 'tl'],
+-                            visible:        true,
+-                            width:          obj.user_input.clientWidth  + 'px',
+-                            height:         obj.user_input.clientHeight + 'px'
+-                        }
+-                    );
+-
+-                    obj.preview_overlay.setBody(data.formatted);
+-                    obj.preview_overlay.render(document.body);
+-                    Dom.get('preview_overlay').style.overflow = 'auto';
+-
+-
+-                    // update the button
+-                    obj.trigger.value = '[%l('Edit')%]';
+-
+-                    YU.Event.removeListener( obj.trigger, 'click' );
+-                    YU.Event.addListener(
+-                        obj.trigger,
+-                        obj.config.trigger_evt,
+-                        obj.edit,
+-                        obj,
+-                        true
+-                    );
+-
+-                }
+-            };
+-            this.handleFailure = function(o) {
+-                console.log('failure');
+-            };
+-
+-            this.edit = function() {
+-                // update the button
+-                this.trigger.value = '[%l('Preview')%]';
+-
+-                this.user_input.style.visibility     = 'visible';
+-                this.preview_overlay.destroy();
+-
+-                YU.Event.removeListener( this.trigger, 'click' );
+-                YU.Event.addListener(
+-                    this.trigger,
+-                    this.config.trigger_evt,
+-                    this.preview,
+-                    this,
+-                    true
+-                );
+-            };
+-
+-            this.preview = function() {
+-                var request = YU.Connect.asyncRequest(
+-                    'POST',
+-                    '[%base%]post/preview',
+-                    {
+-                        success: this.handleSuccess,
+-                        failure: this.handleFailure,
+-                        argument: {
+-                            obj: this
+-                        }
+-                    },
+-                    'msg_source=' + escape(this.user_input.value)
+-                );
+-            };
+-
+-            this.init = function() {
+-                this.container  = Dom.get( this.config.container );
+-                this.user_input = Dom.get( this.config.user_input );
+-                this.trigger    = Dom.get( this.config.trigger );
+-
+-                YU.Event.addListener(
+-                    this.trigger,
+-                    this.config.trigger_evt,
+-                    this.preview,
+-                    this,
+-                    true
+-                );
+-            };
+-        };
+-    })();
+-
+-    var MessagePreview = new ParleyMessagePreview();
+     MessagePreview.init();
+ &lt;/script&gt;
+ &lt;!-- (end) message preview majick --&gt;
+
+Modified: trunk/root/base/thread/reply
+===================================================================
+--- trunk/root/base/thread/reply	2008-01-10 19:50:29 UTC (rev 728)
++++ trunk/root/base/thread/reply	2008-01-10 19:50:43 UTC (rev 729)
+@@ -117,121 +117,14 @@
+ &lt;/style&gt;
+ 
+ &lt;!-- message preview majick --&gt;
++&lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/MessagePreview.js')%]&quot;&gt;&lt;/script&gt;
+ &lt;script type=&quot;text/javascript&quot;&gt;
+-    (function () {
+-        ParleyMessagePreview = function() {
+-            var Dom         = YAHOO.util.Dom,
+-                YU          = YAHOO.util;
++    var MessagePreview = new ParleyMessagePreview();
+ 
+-            this.config = {
+-                trigger     : 'message_preview',
+-                user_input  : 'thread_message',
+-                container   : 'message_container',
+-                trigger_evt : 'click'
+-            };
+-            this.message_source  = false;
+-            this.message_preview = false;
++    MessagePreview.config.label_preview = '[%l('Preview')%]';
++    MessagePreview.config.label_edit    = '[%l('Edit')%]';
++    MessagePreview.config.post_url      = &quot;[%c.uri_for('/post/preview')%]&quot;;
+ 
+-            this.handleSuccess = function(o) {
+-                var data = eval('(' + o.responseText + ')');
+-                var obj = o.argument.obj;
+-
+-                YAHOO.parley.loading.wait.hide();
+-
+-                if (data.formatted) {
+-                    obj.previewElId = YU.Dom.generateId();
+-
+-                    obj.user_input.style.visibility     = 'hidden';
+-
+-                    /* create a panel to show the preview in */
+-                    var pWidth          = obj.user_input.clientWidth,
+-                        pHeight         = obj.user_input.clientHeight,
+-                        pLeft           = obj.user_input.offsetLeft,
+-                        pTop            = obj.user_input.offsetTop;
+-
+-                    obj.preview_overlay = new YAHOO.widget.Overlay(
+-                        &quot;preview_overlay&quot;,
+-                        {
+-                            context:        [obj.config.user_input, 'tl', 'tl'],
+-                            visible:        true,
+-                            width:          obj.user_input.clientWidth  + 'px',
+-                            height:         obj.user_input.clientHeight + 'px'
+-                        }
+-                    );
+-
+-                    obj.preview_overlay.setBody(data.formatted);
+-                    obj.preview_overlay.render(document.body);
+-                    Dom.get('preview_overlay').style.overflow = 'auto';
+-
+-
+-                    // update the button
+-                    obj.trigger.value = '[%l('Edit')%]';
+-
+-                    YU.Event.removeListener( obj.trigger, 'click' );
+-                    YU.Event.addListener(
+-                        obj.trigger,
+-                        obj.config.trigger_evt,
+-                        obj.edit,
+-                        obj,
+-                        true
+-                    );
+-
+-                }
+-            };
+-            this.handleFailure = function(o) {
+-                console.log('failure');
+-            };
+-
+-            this.edit = function() {
+-                // update the button
+-                this.trigger.value = '[%l('Preview')%]';
+-
+-                this.user_input.style.visibility     = 'visible';
+-                this.preview_overlay.destroy();
+-
+-                YU.Event.removeListener( this.trigger, 'click' );
+-                YU.Event.addListener(
+-                    this.trigger,
+-                    this.config.trigger_evt,
+-                    this.preview,
+-                    this,
+-                    true
+-                );
+-            };
+-
+-            this.preview = function() {
+-                YAHOO.parley.loading.wait.show();
+-                var request = YU.Connect.asyncRequest(
+-                    'POST',
+-                    '[%base%]post/preview',
+-                    {
+-                        success: this.handleSuccess,
+-                        failure: this.handleFailure,
+-                        argument: {
+-                            obj: this
+-                        }
+-                    },
+-                    'msg_source=' + escape(this.user_input.value)
+-                );
+-            };
+-
+-            this.init = function() {
+-                this.container  = Dom.get( this.config.container );
+-                this.user_input = Dom.get( this.config.user_input );
+-                this.trigger    = Dom.get( this.config.trigger );
+-
+-                YU.Event.addListener(
+-                    this.trigger,
+-                    this.config.trigger_evt,
+-                    this.preview,
+-                    this,
+-                    true
+-                );
+-            };
+-        };
+-    })();
+-
+-    var MessagePreview = new ParleyMessagePreview();
+     MessagePreview.init();
+ &lt;/script&gt;
+ &lt;!-- (end) message preview majick --&gt;
+
+Added: trunk/root/static/MessagePreview.js
+===================================================================
+--- trunk/root/static/MessagePreview.js	2008-01-10 19:50:29 UTC (rev 728)
++++ trunk/root/static/MessagePreview.js	2008-01-10 19:50:43 UTC (rev 729)
+@@ -0,0 +1,137 @@
++/*
++ * MessagePreview - show a preview of the message to be posted
++ * with all ForumCode being rendered (replacing the input area)
++ *
++ * - Chisel Wright &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt;
++ *
++ */
++
++/*
++    Usage Example:
++
++    &lt;!-- message preview majick --&gt;
++    &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/MessagePreview.js')%]&quot;&gt;&lt;/script&gt;
++    &lt;script type=&quot;text/javascript&quot;&gt;
++        var MessagePreview = new ParleyMessagePreview();
++
++        MessagePreview.config.label_preview = '[%l('Preview')%]';
++        MessagePreview.config.label_edit    = '[%l('Edit')%]';
++        MessagePreview.config.post_url      = &quot;[%c.uri_for('/post/preview')%]&quot;;
++
++        MessagePreview.init();
++    &lt;/script&gt;
++    &lt;!-- (end) message preview majick --&gt;
++*/
++
++(function () {
++    ParleyMessagePreview = function() {
++        var Dom         = YAHOO.util.Dom,
++            YU          = YAHOO.util;
++
++        this.config = {
++            trigger       : 'message_preview',
++            user_input    : 'thread_message',
++            container     : 'message_container',
++            trigger_evt   : 'click',
++            post_url      : 'post/preview',
++            label_edit    : 'Edit',
++            label_preview : 'Preview'
++        };
++        this.message_source  = false;
++        this.message_preview = false;
++
++        this.handleSuccess = function(o) {
++            var data = eval('(' + o.responseText + ')');
++            var obj = o.argument.obj;
++
++            if (data.formatted) {
++                obj.previewElId = YU.Dom.generateId();
++
++                obj.user_input.style.visibility     = 'hidden';
++
++                /* create a panel to show the preview in */
++                var pWidth          = obj.user_input.clientWidth,
++                    pHeight         = obj.user_input.clientHeight,
++                    pLeft           = obj.user_input.offsetLeft,
++                    pTop            = obj.user_input.offsetTop;
++
++                obj.preview_overlay = new YAHOO.widget.Overlay(
++                    &quot;preview_overlay&quot;,
++                    {
++                        context:        [obj.config.user_input, 'tl', 'tl'],
++                        visible:        true,
++                        width:          obj.user_input.clientWidth  + 'px',
++                        height:         obj.user_input.clientHeight + 'px'
++                    }
++                );
++
++                obj.preview_overlay.setBody(data.formatted);
++                obj.preview_overlay.render(document.body);
++                Dom.get('preview_overlay').style.overflow = 'auto';
++
++
++                // update the button
++                obj.trigger.value = obj.config.label_edit; //&quot;'[%l('Edit')%]'&quot;;
++
++                YU.Event.removeListener( obj.trigger, 'click' );
++                YU.Event.addListener(
++                    obj.trigger,
++                    obj.config.trigger_evt,
++                    obj.edit,
++                    obj,
++                    true
++                );
++
++            }
++        };
++        this.handleFailure = function(o) {
++            console.log('failure');
++        };
++
++        this.edit = function() {
++            // update the button
++            this.trigger.value = this.config.label_preview; //&quot;'[%l('Preview')%]'&quot;;
++
++            this.user_input.style.visibility     = 'visible';
++            this.preview_overlay.destroy();
++
++            YU.Event.removeListener( this.trigger, 'click' );
++            YU.Event.addListener(
++                this.trigger,
++                this.config.trigger_evt,
++                this.preview,
++                this,
++                true
++            );
++        };
++
++        this.preview = function() {
++            var request = YU.Connect.asyncRequest(
++                'POST',
++                this.config.post_url, //'post/preview',
++                {
++                    success: this.handleSuccess,
++                    failure: this.handleFailure,
++                    argument: {
++                        obj: this
++                    }
++                },
++                'msg_source=' + escape(this.user_input.value)
++            );
++        };
++
++        this.init = function() {
++            this.container  = Dom.get( this.config.container );
++            this.user_input = Dom.get( this.config.user_input );
++            this.trigger    = Dom.get( this.config.trigger );
++
++            YU.Event.addListener(
++                this.trigger,
++                this.config.trigger_evt,
++                this.preview,
++                this,
++                true
++            );
++        };
++    };
++})();
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000616.html">[Parley-svn] r728 - / trunk/lib/Parley/ResultSet trunk/root/base	trunk/root/base/thread trunk/root/static/css
+</A></li>
+	<LI>Next message: <A HREF="000618.html">[Parley-svn] r730 - / trunk/root/base/post trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#617">[ date ]</a>
+              <a href="thread.html#617">[ thread ]</a>
+              <a href="subject.html#617">[ subject ]</a>
+              <a href="author.html#617">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,300 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r963 - / trunk trunk/t trunk/t_aggregate_controllers
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r963%20-%20/%20trunk%20trunk/t%20trunk/t_aggregate_controllers&In-Reply-To=%3C200812102334.mBANYGUL032266%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000846.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r963 - / trunk trunk/t trunk/t_aggregate_controllers</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r963%20-%20/%20trunk%20trunk/t%20trunk/t_aggregate_controllers&In-Reply-To=%3C200812102334.mBANYGUL032266%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r963 - / trunk trunk/t trunk/t_aggregate_controllers">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Dec 11 00:34:16 CET 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000846.html">[Parley-svn] r964 - / trunk trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#845">[ date ]</a>
+              <a href="thread.html#845">[ thread ]</a>
+              <a href="subject.html#845">[ subject ]</a>
+              <a href="author.html#845">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-11 00:34:15 +0100 (Thu, 11 Dec 2008)
+New Revision: 963
+
+Added:
+   trunk/t/06.aggregate.controller.t
+   trunk/t_aggregate_controllers/
+   trunk/t_aggregate_controllers/controller_Admin.t
+   trunk/t_aggregate_controllers/controller_Forum.t
+   trunk/t_aggregate_controllers/controller_Help.t
+   trunk/t_aggregate_controllers/controller_My.t
+   trunk/t_aggregate_controllers/controller_Post.t
+   trunk/t_aggregate_controllers/controller_Search.t
+   trunk/t_aggregate_controllers/controller_Site.t
+   trunk/t_aggregate_controllers/controller_Terms.t
+   trunk/t_aggregate_controllers/controller_Thread.t
+   trunk/t_aggregate_controllers/controller_User.t
+Removed:
+   trunk/t/controller_Admin.t
+   trunk/t/controller_Forum.t
+   trunk/t/controller_Help.t
+   trunk/t/controller_My.t
+   trunk/t/controller_Post.t
+   trunk/t/controller_Search.t
+   trunk/t/controller_Site.t
+   trunk/t/controller_Terms.t
+   trunk/t/controller_Thread.t
+   trunk/t/controller_User.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8593 at wiggin</A>:  chisel | 2008-12-10 20:40:52 +0000
+ / aggregate controller tests
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8332
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8593
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/t/06.aggregate.controller.t
+===================================================================
+--- trunk/t/06.aggregate.controller.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/06.aggregate.controller.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -0,0 +1,9 @@
++#!/usr/bin/env perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++
++use Test::Aggregate;
++my $other_test_dir = 't_aggregate_controllers';
++my $tests = Test::Aggregate-&gt;new( {
++    dirs =&gt; $other_test_dir
++});
++$tests-&gt;run;
+
+Deleted: trunk/t/controller_Admin.t
+===================================================================
+--- trunk/t/controller_Admin.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Admin.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,8 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 2;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Admin' }
+-
+-#ok( request('/admin/')-&gt;is_success, 'Request should succeed' );
+
+Deleted: trunk/t/controller_Forum.t
+===================================================================
+--- trunk/t/controller_Forum.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Forum.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,9 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 4;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Forum' }
+-
+-ok( request('/forum/list')-&gt;is_success, 'forum/list exists' );
+-ok( request('/forum/view')-&gt;is_success, 'forum/view exists' );
+
+Deleted: trunk/t/controller_Help.t
+===================================================================
+--- trunk/t/controller_Help.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Help.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,12 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 4;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Help' }
+-
+-# this should show the help contents
+-ok( request('/help')-&gt;is_success, 'Help contents found' );
+-
+-# this should show the help contents
+-ok( request('/help/faq')-&gt;is_success, 'FAQ page found' );
+
+Deleted: trunk/t/controller_My.t
+===================================================================
+--- trunk/t/controller_My.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_My.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,8 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 3;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::My' }
+-
+-ok( request('/my')-&gt;is_success, 'Request should succeed' );
+
+Deleted: trunk/t/controller_Post.t
+===================================================================
+--- trunk/t/controller_Post.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Post.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,10 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 5;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Post' }
+-
+-ok( request('/post/edit')-&gt;is_success, 'post/edit exists' );
+-ok( request('/post/view')-&gt;is_success, 'post/view exists' );
+-ok( request('/post/preview')-&gt;is_success, 'post/preview exists' );
+
+Deleted: trunk/t/controller_Search.t
+===================================================================
+--- trunk/t/controller_Search.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Search.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,9 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 4;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Search' }
+-
+-ok( request('/search')-&gt;is_success, '/search exists' );
+-ok( request('/search/forum')-&gt;is_success, '/search/forum exists' );
+
+Deleted: trunk/t/controller_Site.t
+===================================================================
+--- trunk/t/controller_Site.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Site.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,8 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 2;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Site' }
+-
+-#ok( request('/site')-&gt;is_success, 'Request should succeed' );
+
+Deleted: trunk/t/controller_Terms.t
+===================================================================
+--- trunk/t/controller_Terms.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Terms.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,10 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 5;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Terms' }
+-
+-ok( request('/terms')-&gt;is_success, 'Terms are viewable' );
+-ok( request('/terms/accept')-&gt;is_success, 'terms/accept exists' );
+-ok( request('/terms/add')-&gt;is_success, 'terms/add exists' );
+
+Deleted: trunk/t/controller_Thread.t
+===================================================================
+--- trunk/t/controller_Thread.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_Thread.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,14 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 9;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::Thread' }
+-
+-ok( request('/thread/add')      -&gt;is_success,   'thread/add exists'         );
+-ok( request('/thread/next_post')-&gt;is_success,   'thread/next_post exists'   );
+-ok( request('/thread/recent')   -&gt;is_success,   'thread/recent exists'      );
+-ok( request('/thread/reply')    -&gt;is_success,   'thread/reply exists'       );
+-ok( request('/thread/view')     -&gt;is_success,   'thread/view exists'        );
+-ok( request('/thread/watch')    -&gt;is_success,   'thread/watch exists'       );
+-ok( request('/thread/watches')  -&gt;is_success,   'thread/watches exists'     );
+
+Deleted: trunk/t/controller_User.t
+===================================================================
+--- trunk/t/controller_User.t	2008-10-21 22:44:21 UTC (rev 962)
++++ trunk/t/controller_User.t	2008-12-10 23:34:15 UTC (rev 963)
+@@ -1,10 +0,0 @@
+-use strict;
+-use warnings;
+-use Test::More tests =&gt; 4;
+-
+-BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+-BEGIN { use_ok 'Parley::Controller::User' }
+-
+-ok( request('/user/login')      -&gt;is_success,   'user/login exists'     );
+-#ok( request('/user/logout')     -&gt;is_success,   'user/logout exists'    );
+-ok( request('/user/profile')    -&gt;is_success,   'user/profile exists'   );
+
+Copied: trunk/t_aggregate_controllers/controller_Admin.t (from rev 763, trunk/t/controller_Admin.t)
+
+Copied: trunk/t_aggregate_controllers/controller_Forum.t (from rev 763, trunk/t/controller_Forum.t)
+
+Copied: trunk/t_aggregate_controllers/controller_Help.t (from rev 763, trunk/t/controller_Help.t)
+
+Copied: trunk/t_aggregate_controllers/controller_My.t (from rev 763, trunk/t/controller_My.t)
+
+Copied: trunk/t_aggregate_controllers/controller_Post.t (from rev 763, trunk/t/controller_Post.t)
+
+Copied: trunk/t_aggregate_controllers/controller_Search.t (from rev 763, trunk/t/controller_Search.t)
+
+Copied: trunk/t_aggregate_controllers/controller_Site.t (from rev 763, trunk/t/controller_Site.t)
+
+Copied: trunk/t_aggregate_controllers/controller_Terms.t (from rev 763, trunk/t/controller_Terms.t)
+
+Copied: trunk/t_aggregate_controllers/controller_Thread.t (from rev 635, trunk/t/controller_Thread.t)
+
+Copied: trunk/t_aggregate_controllers/controller_User.t (from rev 763, trunk/t/controller_User.t)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000846.html">[Parley-svn] r964 - / trunk trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#845">[ date ]</a>
+              <a href="thread.html#845">[ thread ]</a>
+              <a href="subject.html#845">[ subject ]</a>
+              <a href="author.html#845">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

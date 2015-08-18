@@ -1,0 +1,1151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1025 - / trunk trunk/root trunk/root/skin2	trunk/root/static trunk/root/static/yui trunk/t.output
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1025%20-%20/%20trunk%20trunk/root%20trunk/root/skin2%0A%09trunk/root/static%20trunk/root/static/yui%20trunk/t.output&In-Reply-To=%3C200812300223.mBU2NFFw022471%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000906.html">
+   <LINK REL="Next"  HREF="000908.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1025 - / trunk trunk/root trunk/root/skin2	trunk/root/static trunk/root/static/yui trunk/t.output</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1025%20-%20/%20trunk%20trunk/root%20trunk/root/skin2%0A%09trunk/root/static%20trunk/root/static/yui%20trunk/t.output&In-Reply-To=%3C200812300223.mBU2NFFw022471%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1025 - / trunk trunk/root trunk/root/skin2	trunk/root/static trunk/root/static/yui trunk/t.output">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Dec 30 03:23:15 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000906.html">[Parley-svn] r1024 - / branches/parley-1.1	branches/parley-1.1/root/static/css
+</A></li>
+        <LI>Next message: <A HREF="000908.html">[Parley-svn] r1026 - / trunk trunk/lib trunk/lib/Catalyst	trunk/lib/Catalyst/Controller trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/root/base trunk/root/base/dfv trunk/root/base/search	trunk/root/base/shared trunk/root/base/thread trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#907">[ date ]</a>
+              <a href="thread.html#907">[ thread ]</a>
+              <a href="subject.html#907">[ subject ]</a>
+              <a href="author.html#907">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-30 03:23:07 +0100 (Tue, 30 Dec 2008)
+New Revision: 1025
+
+Added:
+   trunk/root/skin2/
+   trunk/root/static/yui/
+   trunk/root/static/yui/animation/
+   trunk/root/static/yui/assets/
+   trunk/root/static/yui/autocomplete/
+   trunk/root/static/yui/base/
+   trunk/root/static/yui/button/
+   trunk/root/static/yui/calendar/
+   trunk/root/static/yui/carousel/
+   trunk/root/static/yui/charts/
+   trunk/root/static/yui/colorpicker/
+   trunk/root/static/yui/connection/
+   trunk/root/static/yui/container/
+   trunk/root/static/yui/cookie/
+   trunk/root/static/yui/datasource/
+   trunk/root/static/yui/datatable/
+   trunk/root/static/yui/dom/
+   trunk/root/static/yui/dragdrop/
+   trunk/root/static/yui/editor/
+   trunk/root/static/yui/element/
+   trunk/root/static/yui/event/
+   trunk/root/static/yui/fonts/
+   trunk/root/static/yui/get/
+   trunk/root/static/yui/grids/
+   trunk/root/static/yui/history/
+   trunk/root/static/yui/imagecropper/
+   trunk/root/static/yui/imageloader/
+   trunk/root/static/yui/json/
+   trunk/root/static/yui/layout/
+   trunk/root/static/yui/logger/
+   trunk/root/static/yui/menu/
+   trunk/root/static/yui/paginator/
+   trunk/root/static/yui/profiler/
+   trunk/root/static/yui/profilerviewer/
+   trunk/root/static/yui/reset-fonts-grids/
+   trunk/root/static/yui/reset-fonts/
+   trunk/root/static/yui/reset/
+   trunk/root/static/yui/resize/
+   trunk/root/static/yui/selector/
+   trunk/root/static/yui/slider/
+   trunk/root/static/yui/tabview/
+   trunk/root/static/yui/treeview/
+   trunk/root/static/yui/uploader/
+   trunk/root/static/yui/utilities/
+   trunk/root/static/yui/yahoo-dom-event/
+   trunk/root/static/yui/yahoo/
+   trunk/root/static/yui/yuiloader-dom-event/
+   trunk/root/static/yui/yuiloader/
+   trunk/root/static/yui/yuitest/
+   trunk/t.output/1.0.4
+Removed:
+   trunk/root/skin2/
+   trunk/root/static/yui
+   trunk/root/static/yui_2.6.0/
+Modified:
+   /
+   trunk/
+   trunk/Changes
+   trunk/MANIFEST
+   trunk/Makefile.PL
+   trunk/root/skin2/footer
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8881 at wiggin</A>:  chisel | 2008-12-30 02:19:03 +0000
+ Merging 1.0.4 changes back into trunk
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8879
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8881
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/schema_based:562
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.3:8686
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.4:8698
+f74ee645-c3e3-0310-be06-c791151d01b6:/branches/schema_based:258
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-12-29 00:32:16 UTC (rev 1024)
++++ trunk/Changes	2008-12-30 02:23:07 UTC (rev 1025)
+@@ -1,5 +1,10 @@
+ This file documents the revision history for Parley.
+ 
++1.0.4   Wed Dec 24 18:54:24 GMT 2008
++    - fixed skin2
++    - remove yui/ softlink
++    - made yui_2.6.0/ into yui/
++
+ 1.0.3   Tue Dec 23 09:34:32 GMT 2008
+     - switch to database store for sessions
+     - upgrade to YUI 2.6.0
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-12-29 00:32:16 UTC (rev 1024)
++++ trunk/MANIFEST	2008-12-30 02:23:07 UTC (rev 1025)
+@@ -39,7 +39,6 @@
+ inc/Module/Install/Metadata.pm
+ inc/Module/Install/Win32.pm
+ inc/Module/Install/WriteAll.pm
+-lib/Catalyst/Plugin/Dumper.pm
+ lib/Parley.pm
+ lib/Parley/App/Communication/Email.pm
+ lib/Parley/App/DateTime.pm
+@@ -120,7 +119,6 @@
+ root/base/help/i_default/contents
+ root/base/help/i_default/faq
+ root/base/help/i_default/formatting_posts
+-root/base/help/i_default/wide
+ root/base/help/unknown
+ root/base/menu/left/main
+ root/base/menu/menubar
+@@ -163,7 +161,6 @@
+ root/base/thread/add
+ root/base/thread/recent
+ root/base/thread/reply
+-root/base/thread/reply-yuirte
+ root/base/thread/view
+ root/base/thread/watches
+ root/base/user/access_ip_banned
+@@ -205,7 +202,6 @@
+ root/skin2/help/i_default/contents
+ root/skin2/help/i_default/faq
+ root/skin2/help/i_default/formatting_posts
+-root/skin2/help/i_default/wide
+ root/skin2/help/unknown
+ root/skin2/menu/left/main
+ root/skin2/menu/menubar
+@@ -214,6 +210,7 @@
+ root/skin2/my/selectplace_ajaxresult
+ root/skin2/my/tab_avatar
+ root/skin2/my/tab_notifications
++root/skin2/my/tab_skin
+ root/skin2/my/tab_time
+ root/skin2/my/tab_watch
+ root/skin2/my/tab_you
+@@ -247,7 +244,6 @@
+ root/skin2/thread/add
+ root/skin2/thread/recent
+ root/skin2/thread/reply
+-root/skin2/thread/reply-yuirte
+ root/skin2/thread/view
+ root/skin2/thread/watches
+ root/skin2/user/access_ip_banned
+@@ -554,383 +550,383 @@
+ root/static/script/prototype.js
+ root/static/script/user_forum_moderate.js
+ root/static/script/user_suspend.js
+-root/static/yui_2.6.0/animation/animation-debug.js
+-root/static/yui_2.6.0/animation/animation-min.js
+-root/static/yui_2.6.0/animation/animation.js
+-root/static/yui_2.6.0/animation/README
+-root/static/yui_2.6.0/assets/skins/sam/asc.gif
+-root/static/yui_2.6.0/assets/skins/sam/autocomplete.css
+-root/static/yui_2.6.0/assets/skins/sam/blankimage.png
+-root/static/yui_2.6.0/assets/skins/sam/button.css
+-root/static/yui_2.6.0/assets/skins/sam/calendar.css
+-root/static/yui_2.6.0/assets/skins/sam/carousel.css
+-root/static/yui_2.6.0/assets/skins/sam/colorpicker.css
+-root/static/yui_2.6.0/assets/skins/sam/container.css
+-root/static/yui_2.6.0/assets/skins/sam/datatable.css
+-root/static/yui_2.6.0/assets/skins/sam/desc.gif
+-root/static/yui_2.6.0/assets/skins/sam/dt-arrow-dn.png
+-root/static/yui_2.6.0/assets/skins/sam/dt-arrow-up.png
+-root/static/yui_2.6.0/assets/skins/sam/editor-knob.gif
+-root/static/yui_2.6.0/assets/skins/sam/editor-sprite-active.gif
+-root/static/yui_2.6.0/assets/skins/sam/editor-sprite.gif
+-root/static/yui_2.6.0/assets/skins/sam/editor.css
+-root/static/yui_2.6.0/assets/skins/sam/header_background.png
+-root/static/yui_2.6.0/assets/skins/sam/hue_bg.png
+-root/static/yui_2.6.0/assets/skins/sam/imagecropper.css
+-root/static/yui_2.6.0/assets/skins/sam/layout.css
+-root/static/yui_2.6.0/assets/skins/sam/layout_sprite.png
+-root/static/yui_2.6.0/assets/skins/sam/loading.gif
+-root/static/yui_2.6.0/assets/skins/sam/logger.css
+-root/static/yui_2.6.0/assets/skins/sam/menu-button-arrow-disabled.png
+-root/static/yui_2.6.0/assets/skins/sam/menu-button-arrow.png
+-root/static/yui_2.6.0/assets/skins/sam/menu.css
+-root/static/yui_2.6.0/assets/skins/sam/menubaritem_submenuindicator.png
+-root/static/yui_2.6.0/assets/skins/sam/menubaritem_submenuindicator_disabled.png
+-root/static/yui_2.6.0/assets/skins/sam/menuitem_checkbox.png
+-root/static/yui_2.6.0/assets/skins/sam/menuitem_checkbox_disabled.png
+-root/static/yui_2.6.0/assets/skins/sam/menuitem_submenuindicator.png
+-root/static/yui_2.6.0/assets/skins/sam/menuitem_submenuindicator_disabled.png
+-root/static/yui_2.6.0/assets/skins/sam/paginator.css
+-root/static/yui_2.6.0/assets/skins/sam/picker_mask.png
+-root/static/yui_2.6.0/assets/skins/sam/profilerviewer.css
+-root/static/yui_2.6.0/assets/skins/sam/resize.css
+-root/static/yui_2.6.0/assets/skins/sam/simpleeditor.css
+-root/static/yui_2.6.0/assets/skins/sam/skin.css
+-root/static/yui_2.6.0/assets/skins/sam/slider.css
+-root/static/yui_2.6.0/assets/skins/sam/split-button-arrow-active.png
+-root/static/yui_2.6.0/assets/skins/sam/split-button-arrow-disabled.png
+-root/static/yui_2.6.0/assets/skins/sam/split-button-arrow-focus.png
+-root/static/yui_2.6.0/assets/skins/sam/split-button-arrow-hover.png
+-root/static/yui_2.6.0/assets/skins/sam/split-button-arrow.png
+-root/static/yui_2.6.0/assets/skins/sam/sprite.png
+-root/static/yui_2.6.0/assets/skins/sam/sprite.psd
+-root/static/yui_2.6.0/assets/skins/sam/tabview.css
+-root/static/yui_2.6.0/assets/skins/sam/treeview-loading.gif
+-root/static/yui_2.6.0/assets/skins/sam/treeview-sprite.gif
+-root/static/yui_2.6.0/assets/skins/sam/treeview.css
+-root/static/yui_2.6.0/assets/skins/sam/wait.gif
+-root/static/yui_2.6.0/assets/skins/sam/yuitest.css
+-root/static/yui_2.6.0/autocomplete/assets/autocomplete-core.css
+-root/static/yui_2.6.0/autocomplete/assets/skins/sam/autocomplete-skin.css
+-root/static/yui_2.6.0/autocomplete/assets/skins/sam/autocomplete.css
+-root/static/yui_2.6.0/autocomplete/autocomplete-debug.js
+-root/static/yui_2.6.0/autocomplete/autocomplete-min.js
+-root/static/yui_2.6.0/autocomplete/autocomplete.js
+-root/static/yui_2.6.0/autocomplete/README
+-root/static/yui_2.6.0/base/base-min.css
+-root/static/yui_2.6.0/base/base.css
+-root/static/yui_2.6.0/base/README
+-root/static/yui_2.6.0/button/assets/button-core.css
+-root/static/yui_2.6.0/button/assets/skins/sam/button-skin.css
+-root/static/yui_2.6.0/button/assets/skins/sam/button.css
+-root/static/yui_2.6.0/button/assets/skins/sam/menu-button-arrow-disabled.png
+-root/static/yui_2.6.0/button/assets/skins/sam/menu-button-arrow.png
+-root/static/yui_2.6.0/button/assets/skins/sam/split-button-arrow-active.png
+-root/static/yui_2.6.0/button/assets/skins/sam/split-button-arrow-disabled.png
+-root/static/yui_2.6.0/button/assets/skins/sam/split-button-arrow-focus.png
+-root/static/yui_2.6.0/button/assets/skins/sam/split-button-arrow-hover.png
+-root/static/yui_2.6.0/button/assets/skins/sam/split-button-arrow.png
+-root/static/yui_2.6.0/button/button-debug.js
+-root/static/yui_2.6.0/button/button-min.js
+-root/static/yui_2.6.0/button/button.js
+-root/static/yui_2.6.0/button/README
+-root/static/yui_2.6.0/calendar/assets/calendar-core.css
+-root/static/yui_2.6.0/calendar/assets/calendar.css
+-root/static/yui_2.6.0/calendar/assets/calgrad.png
+-root/static/yui_2.6.0/calendar/assets/callt.gif
+-root/static/yui_2.6.0/calendar/assets/calrt.gif
+-root/static/yui_2.6.0/calendar/assets/calx.gif
+-root/static/yui_2.6.0/calendar/assets/skins/sam/calendar-skin.css
+-root/static/yui_2.6.0/calendar/assets/skins/sam/calendar.css
+-root/static/yui_2.6.0/calendar/calendar-debug.js
+-root/static/yui_2.6.0/calendar/calendar-min.js
+-root/static/yui_2.6.0/calendar/calendar.js
+-root/static/yui_2.6.0/calendar/README
+-root/static/yui_2.6.0/carousel/assets/ajax-loader.gif
+-root/static/yui_2.6.0/carousel/assets/carousel-core.css
+-root/static/yui_2.6.0/carousel/assets/skins/sam/carousel-skin.css
+-root/static/yui_2.6.0/carousel/assets/skins/sam/carousel.css
+-root/static/yui_2.6.0/carousel/carousel-beta-debug.js
+-root/static/yui_2.6.0/carousel/carousel-beta-min.js
+-root/static/yui_2.6.0/carousel/carousel-beta.js
+-root/static/yui_2.6.0/carousel/README
+-root/static/yui_2.6.0/charts/assets/charts.swf
+-root/static/yui_2.6.0/charts/charts-experimental-debug.js
+-root/static/yui_2.6.0/charts/charts-experimental-min.js
+-root/static/yui_2.6.0/charts/charts-experimental.js
+-root/static/yui_2.6.0/charts/README
+-root/static/yui_2.6.0/colorpicker/assets/colorpicker-core.css
+-root/static/yui_2.6.0/colorpicker/assets/hue_thumb.png
+-root/static/yui_2.6.0/colorpicker/assets/picker_mask.png
+-root/static/yui_2.6.0/colorpicker/assets/picker_thumb.png
+-root/static/yui_2.6.0/colorpicker/assets/skins/sam/colorpicker-skin.css
+-root/static/yui_2.6.0/colorpicker/assets/skins/sam/colorpicker.css
+-root/static/yui_2.6.0/colorpicker/assets/skins/sam/hue_bg.png
+-root/static/yui_2.6.0/colorpicker/assets/skins/sam/picker_mask.png
+-root/static/yui_2.6.0/colorpicker/colorpicker-debug.js
+-root/static/yui_2.6.0/colorpicker/colorpicker-min.js
+-root/static/yui_2.6.0/colorpicker/colorpicker.js
+-root/static/yui_2.6.0/colorpicker/README
+-root/static/yui_2.6.0/connection/connection-debug.js
+-root/static/yui_2.6.0/connection/connection-min.js
+-root/static/yui_2.6.0/connection/connection.js
+-root/static/yui_2.6.0/connection/README
+-root/static/yui_2.6.0/container/assets/alrt16_1.gif
+-root/static/yui_2.6.0/container/assets/blck16_1.gif
+-root/static/yui_2.6.0/container/assets/close12_1.gif
+-root/static/yui_2.6.0/container/assets/container-core.css
+-root/static/yui_2.6.0/container/assets/container.css
+-root/static/yui_2.6.0/container/assets/hlp16_1.gif
+-root/static/yui_2.6.0/container/assets/info16_1.gif
+-root/static/yui_2.6.0/container/assets/skins/sam/container-skin.css
+-root/static/yui_2.6.0/container/assets/skins/sam/container.css
+-root/static/yui_2.6.0/container/assets/tip16_1.gif
+-root/static/yui_2.6.0/container/assets/warn16_1.gif
+-root/static/yui_2.6.0/container/container-debug.js
+-root/static/yui_2.6.0/container/container-min.js
+-root/static/yui_2.6.0/container/container.js
+-root/static/yui_2.6.0/container/container_core-debug.js
+-root/static/yui_2.6.0/container/container_core-min.js
+-root/static/yui_2.6.0/container/container_core.js
+-root/static/yui_2.6.0/container/README
+-root/static/yui_2.6.0/cookie/cookie-debug.js
+-root/static/yui_2.6.0/cookie/cookie-min.js
+-root/static/yui_2.6.0/cookie/cookie.js
+-root/static/yui_2.6.0/cookie/README
+-root/static/yui_2.6.0/datasource/datasource-debug.js
+-root/static/yui_2.6.0/datasource/datasource-min.js
+-root/static/yui_2.6.0/datasource/datasource.js
+-root/static/yui_2.6.0/datasource/README
+-root/static/yui_2.6.0/datatable/assets/datatable-core.css
+-root/static/yui_2.6.0/datatable/assets/datatable.css
+-root/static/yui_2.6.0/datatable/assets/skins/sam/datatable-skin.css
+-root/static/yui_2.6.0/datatable/assets/skins/sam/datatable.css
+-root/static/yui_2.6.0/datatable/assets/skins/sam/dt-arrow-dn.png
+-root/static/yui_2.6.0/datatable/assets/skins/sam/dt-arrow-up.png
+-root/static/yui_2.6.0/datatable/datatable-debug.js
+-root/static/yui_2.6.0/datatable/datatable-min.js
+-root/static/yui_2.6.0/datatable/datatable.js
+-root/static/yui_2.6.0/datatable/README
+-root/static/yui_2.6.0/dom/dom-debug.js
+-root/static/yui_2.6.0/dom/dom-min.js
+-root/static/yui_2.6.0/dom/dom.js
+-root/static/yui_2.6.0/dom/README
+-root/static/yui_2.6.0/dragdrop/dragdrop-debug.js
+-root/static/yui_2.6.0/dragdrop/dragdrop-min.js
+-root/static/yui_2.6.0/dragdrop/dragdrop.js
+-root/static/yui_2.6.0/dragdrop/README
+-root/static/yui_2.6.0/editor/assets/editor-core.css
+-root/static/yui_2.6.0/editor/assets/simpleeditor-core.css
+-root/static/yui_2.6.0/editor/assets/skins/sam/blankimage.png
+-root/static/yui_2.6.0/editor/assets/skins/sam/editor-knob.gif
+-root/static/yui_2.6.0/editor/assets/skins/sam/editor-skin.css
+-root/static/yui_2.6.0/editor/assets/skins/sam/editor-sprite-active.gif
+-root/static/yui_2.6.0/editor/assets/skins/sam/editor-sprite.gif
+-root/static/yui_2.6.0/editor/assets/skins/sam/editor.css
+-root/static/yui_2.6.0/editor/assets/skins/sam/simpleeditor-skin.css
+-root/static/yui_2.6.0/editor/assets/skins/sam/simpleeditor.css
+-root/static/yui_2.6.0/editor/editor-debug.js
+-root/static/yui_2.6.0/editor/editor-min.js
+-root/static/yui_2.6.0/editor/editor.js
+-root/static/yui_2.6.0/editor/README
+-root/static/yui_2.6.0/editor/simpleeditor-debug.js
+-root/static/yui_2.6.0/editor/simpleeditor-min.js
+-root/static/yui_2.6.0/editor/simpleeditor.js
+-root/static/yui_2.6.0/element/element-beta-debug.js
+-root/static/yui_2.6.0/element/element-beta-min.js
+-root/static/yui_2.6.0/element/element-beta.js
+-root/static/yui_2.6.0/element/README
+-root/static/yui_2.6.0/event/event-debug.js
+-root/static/yui_2.6.0/event/event-min.js
+-root/static/yui_2.6.0/event/event.js
+-root/static/yui_2.6.0/event/README
+-root/static/yui_2.6.0/fonts/fonts-min.css
+-root/static/yui_2.6.0/fonts/fonts.css
+-root/static/yui_2.6.0/fonts/README
+-root/static/yui_2.6.0/get/get-debug.js
+-root/static/yui_2.6.0/get/get-min.js
+-root/static/yui_2.6.0/get/get.js
+-root/static/yui_2.6.0/get/README
+-root/static/yui_2.6.0/grids/grids-min.css
+-root/static/yui_2.6.0/grids/grids.css
+-root/static/yui_2.6.0/grids/README
+-root/static/yui_2.6.0/history/assets/blank.html
+-root/static/yui_2.6.0/history/history-debug.js
+-root/static/yui_2.6.0/history/history-min.js
+-root/static/yui_2.6.0/history/history.js
+-root/static/yui_2.6.0/history/README
+-root/static/yui_2.6.0/imagecropper/assets/imagecropper-core.css
+-root/static/yui_2.6.0/imagecropper/assets/skins/sam/imagecropper-skin.css
+-root/static/yui_2.6.0/imagecropper/assets/skins/sam/imagecropper.css
+-root/static/yui_2.6.0/imagecropper/imagecropper-beta-debug.js
+-root/static/yui_2.6.0/imagecropper/imagecropper-beta-min.js
+-root/static/yui_2.6.0/imagecropper/imagecropper-beta.js
+-root/static/yui_2.6.0/imagecropper/README
+-root/static/yui_2.6.0/imageloader/imageloader-debug.js
+-root/static/yui_2.6.0/imageloader/imageloader-min.js
+-root/static/yui_2.6.0/imageloader/imageloader.js
+-root/static/yui_2.6.0/imageloader/README
+-root/static/yui_2.6.0/json/json-debug.js
+-root/static/yui_2.6.0/json/json-min.js
+-root/static/yui_2.6.0/json/json.js
+-root/static/yui_2.6.0/json/README
+-root/static/yui_2.6.0/layout/assets/layout-core.css
+-root/static/yui_2.6.0/layout/assets/skins/sam/layout-skin.css
+-root/static/yui_2.6.0/layout/assets/skins/sam/layout.css
+-root/static/yui_2.6.0/layout/assets/skins/sam/layout_sprite.png
+-root/static/yui_2.6.0/layout/layout-debug.js
+-root/static/yui_2.6.0/layout/layout-min.js
+-root/static/yui_2.6.0/layout/layout.js
+-root/static/yui_2.6.0/layout/README
+-root/static/yui_2.6.0/logger/assets/logger-core.css
+-root/static/yui_2.6.0/logger/assets/logger.css
+-root/static/yui_2.6.0/logger/assets/skins/sam/logger-skin.css
+-root/static/yui_2.6.0/logger/assets/skins/sam/logger.css
+-root/static/yui_2.6.0/logger/logger-debug.js
+-root/static/yui_2.6.0/logger/logger-min.js
+-root/static/yui_2.6.0/logger/logger.js
+-root/static/yui_2.6.0/logger/README
+-root/static/yui_2.6.0/menu/assets/menu-core.css
+-root/static/yui_2.6.0/menu/assets/menu.css
+-root/static/yui_2.6.0/menu/assets/menu_down_arrow.png
+-root/static/yui_2.6.0/menu/assets/menu_down_arrow_disabled.png
+-root/static/yui_2.6.0/menu/assets/menu_up_arrow.png
+-root/static/yui_2.6.0/menu/assets/menu_up_arrow_disabled.png
+-root/static/yui_2.6.0/menu/assets/menubaritem_submenuindicator.png
+-root/static/yui_2.6.0/menu/assets/menubaritem_submenuindicator_disabled.png
+-root/static/yui_2.6.0/menu/assets/menubaritem_submenuindicator_selected.png
+-root/static/yui_2.6.0/menu/assets/menuitem_checkbox.png
+-root/static/yui_2.6.0/menu/assets/menuitem_checkbox_disabled.png
+-root/static/yui_2.6.0/menu/assets/menuitem_checkbox_selected.png
+-root/static/yui_2.6.0/menu/assets/menuitem_submenuindicator.png
+-root/static/yui_2.6.0/menu/assets/menuitem_submenuindicator_disabled.png
+-root/static/yui_2.6.0/menu/assets/menuitem_submenuindicator_selected.png
+-root/static/yui_2.6.0/menu/assets/skins/sam/menu-skin.css
+-root/static/yui_2.6.0/menu/assets/skins/sam/menu.css
+-root/static/yui_2.6.0/menu/assets/skins/sam/menubaritem_submenuindicator.png
+-root/static/yui_2.6.0/menu/assets/skins/sam/menubaritem_submenuindicator_disabled.png
+-root/static/yui_2.6.0/menu/assets/skins/sam/menuitem_checkbox.png
+-root/static/yui_2.6.0/menu/assets/skins/sam/menuitem_checkbox_disabled.png
+-root/static/yui_2.6.0/menu/assets/skins/sam/menuitem_submenuindicator.png
+-root/static/yui_2.6.0/menu/assets/skins/sam/menuitem_submenuindicator_disabled.png
+-root/static/yui_2.6.0/menu/menu-debug.js
+-root/static/yui_2.6.0/menu/menu-min.js
+-root/static/yui_2.6.0/menu/menu.js
+-root/static/yui_2.6.0/menu/README
+-root/static/yui_2.6.0/paginator/assets/paginator-core.css
+-root/static/yui_2.6.0/paginator/assets/skins/sam/paginator-skin.css
+-root/static/yui_2.6.0/paginator/assets/skins/sam/paginator.css
+-root/static/yui_2.6.0/paginator/paginator-debug.js
+-root/static/yui_2.6.0/paginator/paginator-min.js
+-root/static/yui_2.6.0/paginator/paginator.js
+-root/static/yui_2.6.0/paginator/README
+-root/static/yui_2.6.0/profiler/profiler-debug.js
+-root/static/yui_2.6.0/profiler/profiler-min.js
+-root/static/yui_2.6.0/profiler/profiler.js
+-root/static/yui_2.6.0/profiler/README
+-root/static/yui_2.6.0/profilerviewer/assets/skins/sam/asc.gif
+-root/static/yui_2.6.0/profilerviewer/assets/skins/sam/desc.gif
+-root/static/yui_2.6.0/profilerviewer/assets/skins/sam/header_background.png
+-root/static/yui_2.6.0/profilerviewer/assets/skins/sam/profilerviewer.css
+-root/static/yui_2.6.0/profilerviewer/assets/skins/sam/wait.gif
+-root/static/yui_2.6.0/profilerviewer/profilerviewer-beta-debug.js
+-root/static/yui_2.6.0/profilerviewer/profilerviewer-beta-min.js
+-root/static/yui_2.6.0/profilerviewer/profilerviewer-beta.js
+-root/static/yui_2.6.0/profilerviewer/README
+-root/static/yui_2.6.0/reset-fonts-grids/README
+-root/static/yui_2.6.0/reset-fonts-grids/reset-fonts-grids.css
+-root/static/yui_2.6.0/reset-fonts/README
+-root/static/yui_2.6.0/reset-fonts/reset-fonts.css
+-root/static/yui_2.6.0/reset/README
+-root/static/yui_2.6.0/reset/reset-min.css
+-root/static/yui_2.6.0/reset/reset.css
+-root/static/yui_2.6.0/resize/assets/resize-core.css
+-root/static/yui_2.6.0/resize/assets/skins/sam/layout_sprite.png
+-root/static/yui_2.6.0/resize/assets/skins/sam/resize-skin.css
+-root/static/yui_2.6.0/resize/assets/skins/sam/resize.css
+-root/static/yui_2.6.0/resize/README
+-root/static/yui_2.6.0/resize/resize-debug.js
+-root/static/yui_2.6.0/resize/resize-min.js
+-root/static/yui_2.6.0/resize/resize.js
+-root/static/yui_2.6.0/selector/README
+-root/static/yui_2.6.0/selector/selector-beta-debug.js
+-root/static/yui_2.6.0/selector/selector-beta-min.js
+-root/static/yui_2.6.0/selector/selector-beta.js
+-root/static/yui_2.6.0/slider/assets/bg-fader.gif
+-root/static/yui_2.6.0/slider/assets/bg-h.gif
+-root/static/yui_2.6.0/slider/assets/bg-v-e.gif
+-root/static/yui_2.6.0/slider/assets/bg-v.gif
+-root/static/yui_2.6.0/slider/assets/left-thumb.png
+-root/static/yui_2.6.0/slider/assets/right-thumb.png
+-root/static/yui_2.6.0/slider/assets/skins/sam/slider-skin.css
+-root/static/yui_2.6.0/slider/assets/skins/sam/slider.css
+-root/static/yui_2.6.0/slider/assets/slider-core.css
+-root/static/yui_2.6.0/slider/assets/thumb-bar.gif
+-root/static/yui_2.6.0/slider/assets/thumb-e.gif
+-root/static/yui_2.6.0/slider/assets/thumb-fader.gif
+-root/static/yui_2.6.0/slider/assets/thumb-n.gif
+-root/static/yui_2.6.0/slider/assets/thumb-s.gif
+-root/static/yui_2.6.0/slider/assets/thumb-w.gif
+-root/static/yui_2.6.0/slider/README
+-root/static/yui_2.6.0/slider/slider-debug.js
+-root/static/yui_2.6.0/slider/slider-min.js
+-root/static/yui_2.6.0/slider/slider.js
+-root/static/yui_2.6.0/tabview/assets/border_tabs.css
+-root/static/yui_2.6.0/tabview/assets/loading.gif
+-root/static/yui_2.6.0/tabview/assets/skin-sam.css
+-root/static/yui_2.6.0/tabview/assets/skins/sam/tabview-skin.css
+-root/static/yui_2.6.0/tabview/assets/skins/sam/tabview.css
+-root/static/yui_2.6.0/tabview/assets/tabview-core.css
+-root/static/yui_2.6.0/tabview/assets/tabview.css
+-root/static/yui_2.6.0/tabview/README
+-root/static/yui_2.6.0/tabview/tabview-debug.js
+-root/static/yui_2.6.0/tabview/tabview-min.js
+-root/static/yui_2.6.0/tabview/tabview.js
+-root/static/yui_2.6.0/treeview/assets/skins/sam/loading.gif
+-root/static/yui_2.6.0/treeview/assets/skins/sam/treeview-loading.gif
+-root/static/yui_2.6.0/treeview/assets/skins/sam/treeview-skin.css
+-root/static/yui_2.6.0/treeview/assets/skins/sam/treeview-sprite.gif
+-root/static/yui_2.6.0/treeview/assets/skins/sam/treeview.css
+-root/static/yui_2.6.0/treeview/assets/sprite-menu.gif
+-root/static/yui_2.6.0/treeview/assets/sprite-orig.gif
+-root/static/yui_2.6.0/treeview/assets/treeview-core.css
+-root/static/yui_2.6.0/treeview/assets/treeview-loading.gif
+-root/static/yui_2.6.0/treeview/assets/treeview-menu.css
+-root/static/yui_2.6.0/treeview/assets/treeview.css
+-root/static/yui_2.6.0/treeview/README
+-root/static/yui_2.6.0/treeview/treeview-debug.js
+-root/static/yui_2.6.0/treeview/treeview-min.js
+-root/static/yui_2.6.0/treeview/treeview.js
+-root/static/yui_2.6.0/uploader/assets/uploader.swf
+-root/static/yui_2.6.0/uploader/README
+-root/static/yui_2.6.0/uploader/uploader-experimental-debug.js
+-root/static/yui_2.6.0/uploader/uploader-experimental-min.js
+-root/static/yui_2.6.0/uploader/uploader-experimental.js
+-root/static/yui_2.6.0/utilities/README
+-root/static/yui_2.6.0/utilities/utilities.js
+-root/static/yui_2.6.0/yahoo-dom-event/README
+-root/static/yui_2.6.0/yahoo-dom-event/yahoo-dom-event.js
+-root/static/yui_2.6.0/yahoo/README
+-root/static/yui_2.6.0/yahoo/yahoo-debug.js
+-root/static/yui_2.6.0/yahoo/yahoo-min.js
+-root/static/yui_2.6.0/yahoo/yahoo.js
+-root/static/yui_2.6.0/yuiloader-dom-event/README
+-root/static/yui_2.6.0/yuiloader-dom-event/yuiloader-dom-event.js
+-root/static/yui_2.6.0/yuiloader/README
+-root/static/yui_2.6.0/yuiloader/yuiloader-debug.js
+-root/static/yui_2.6.0/yuiloader/yuiloader-min.js
+-root/static/yui_2.6.0/yuiloader/yuiloader.js
+-root/static/yui_2.6.0/yuitest/assets/skins/sam/yuitest-skin.css
+-root/static/yui_2.6.0/yuitest/assets/skins/sam/yuitest.css
+-root/static/yui_2.6.0/yuitest/assets/testlogger.css
+-root/static/yui_2.6.0/yuitest/assets/yuitest-core.css
+-root/static/yui_2.6.0/yuitest/README
+-root/static/yui_2.6.0/yuitest/yuitest-debug.js
+-root/static/yui_2.6.0/yuitest/yuitest-min.js
+-root/static/yui_2.6.0/yuitest/yuitest.js
+-root/static/yui_2.6.0/yuitest/yuitest_core-debug.js
+-root/static/yui_2.6.0/yuitest/yuitest_core-min.js
+-root/static/yui_2.6.0/yuitest/yuitest_core.js
++root/static/yui/animation/animation-debug.js
++root/static/yui/animation/animation-min.js
++root/static/yui/animation/animation.js
++root/static/yui/animation/README
++root/static/yui/assets/skins/sam/asc.gif
++root/static/yui/assets/skins/sam/autocomplete.css
++root/static/yui/assets/skins/sam/blankimage.png
++root/static/yui/assets/skins/sam/button.css
++root/static/yui/assets/skins/sam/calendar.css
++root/static/yui/assets/skins/sam/carousel.css
++root/static/yui/assets/skins/sam/colorpicker.css
++root/static/yui/assets/skins/sam/container.css
++root/static/yui/assets/skins/sam/datatable.css
++root/static/yui/assets/skins/sam/desc.gif
++root/static/yui/assets/skins/sam/dt-arrow-dn.png
++root/static/yui/assets/skins/sam/dt-arrow-up.png
++root/static/yui/assets/skins/sam/editor-knob.gif
++root/static/yui/assets/skins/sam/editor-sprite-active.gif
++root/static/yui/assets/skins/sam/editor-sprite.gif
++root/static/yui/assets/skins/sam/editor.css
++root/static/yui/assets/skins/sam/header_background.png
++root/static/yui/assets/skins/sam/hue_bg.png
++root/static/yui/assets/skins/sam/imagecropper.css
++root/static/yui/assets/skins/sam/layout.css
++root/static/yui/assets/skins/sam/layout_sprite.png
++root/static/yui/assets/skins/sam/loading.gif
++root/static/yui/assets/skins/sam/logger.css
++root/static/yui/assets/skins/sam/menu-button-arrow-disabled.png
++root/static/yui/assets/skins/sam/menu-button-arrow.png
++root/static/yui/assets/skins/sam/menu.css
++root/static/yui/assets/skins/sam/menubaritem_submenuindicator.png
++root/static/yui/assets/skins/sam/menubaritem_submenuindicator_disabled.png
++root/static/yui/assets/skins/sam/menuitem_checkbox.png
++root/static/yui/assets/skins/sam/menuitem_checkbox_disabled.png
++root/static/yui/assets/skins/sam/menuitem_submenuindicator.png
++root/static/yui/assets/skins/sam/menuitem_submenuindicator_disabled.png
++root/static/yui/assets/skins/sam/paginator.css
++root/static/yui/assets/skins/sam/picker_mask.png
++root/static/yui/assets/skins/sam/profilerviewer.css
++root/static/yui/assets/skins/sam/resize.css
++root/static/yui/assets/skins/sam/simpleeditor.css
++root/static/yui/assets/skins/sam/skin.css
++root/static/yui/assets/skins/sam/slider.css
++root/static/yui/assets/skins/sam/split-button-arrow-active.png
++root/static/yui/assets/skins/sam/split-button-arrow-disabled.png
++root/static/yui/assets/skins/sam/split-button-arrow-focus.png
++root/static/yui/assets/skins/sam/split-button-arrow-hover.png
++root/static/yui/assets/skins/sam/split-button-arrow.png
++root/static/yui/assets/skins/sam/sprite.png
++root/static/yui/assets/skins/sam/sprite.psd
++root/static/yui/assets/skins/sam/tabview.css
++root/static/yui/assets/skins/sam/treeview-loading.gif
++root/static/yui/assets/skins/sam/treeview-sprite.gif
++root/static/yui/assets/skins/sam/treeview.css
++root/static/yui/assets/skins/sam/wait.gif
++root/static/yui/assets/skins/sam/yuitest.css
++root/static/yui/autocomplete/assets/autocomplete-core.css
++root/static/yui/autocomplete/assets/skins/sam/autocomplete-skin.css
++root/static/yui/autocomplete/assets/skins/sam/autocomplete.css
++root/static/yui/autocomplete/autocomplete-debug.js
++root/static/yui/autocomplete/autocomplete-min.js
++root/static/yui/autocomplete/autocomplete.js
++root/static/yui/autocomplete/README
++root/static/yui/base/base-min.css
++root/static/yui/base/base.css
++root/static/yui/base/README
++root/static/yui/button/assets/button-core.css
++root/static/yui/button/assets/skins/sam/button-skin.css
++root/static/yui/button/assets/skins/sam/button.css
++root/static/yui/button/assets/skins/sam/menu-button-arrow-disabled.png
++root/static/yui/button/assets/skins/sam/menu-button-arrow.png
++root/static/yui/button/assets/skins/sam/split-button-arrow-active.png
++root/static/yui/button/assets/skins/sam/split-button-arrow-disabled.png
++root/static/yui/button/assets/skins/sam/split-button-arrow-focus.png
++root/static/yui/button/assets/skins/sam/split-button-arrow-hover.png
++root/static/yui/button/assets/skins/sam/split-button-arrow.png
++root/static/yui/button/button-debug.js
++root/static/yui/button/button-min.js
++root/static/yui/button/button.js
++root/static/yui/button/README
++root/static/yui/calendar/assets/calendar-core.css
++root/static/yui/calendar/assets/calendar.css
++root/static/yui/calendar/assets/calgrad.png
++root/static/yui/calendar/assets/callt.gif
++root/static/yui/calendar/assets/calrt.gif
++root/static/yui/calendar/assets/calx.gif
++root/static/yui/calendar/assets/skins/sam/calendar-skin.css
++root/static/yui/calendar/assets/skins/sam/calendar.css
++root/static/yui/calendar/calendar-debug.js
++root/static/yui/calendar/calendar-min.js
++root/static/yui/calendar/calendar.js
++root/static/yui/calendar/README
++root/static/yui/carousel/assets/ajax-loader.gif
++root/static/yui/carousel/assets/carousel-core.css
++root/static/yui/carousel/assets/skins/sam/carousel-skin.css
++root/static/yui/carousel/assets/skins/sam/carousel.css
++root/static/yui/carousel/carousel-beta-debug.js
++root/static/yui/carousel/carousel-beta-min.js
++root/static/yui/carousel/carousel-beta.js
++root/static/yui/carousel/README
++root/static/yui/charts/assets/charts.swf
++root/static/yui/charts/charts-experimental-debug.js
++root/static/yui/charts/charts-experimental-min.js
++root/static/yui/charts/charts-experimental.js
++root/static/yui/charts/README
++root/static/yui/colorpicker/assets/colorpicker-core.css
++root/static/yui/colorpicker/assets/hue_thumb.png
++root/static/yui/colorpicker/assets/picker_mask.png
++root/static/yui/colorpicker/assets/picker_thumb.png
++root/static/yui/colorpicker/assets/skins/sam/colorpicker-skin.css
++root/static/yui/colorpicker/assets/skins/sam/colorpicker.css
++root/static/yui/colorpicker/assets/skins/sam/hue_bg.png
++root/static/yui/colorpicker/assets/skins/sam/picker_mask.png
++root/static/yui/colorpicker/colorpicker-debug.js
++root/static/yui/colorpicker/colorpicker-min.js
++root/static/yui/colorpicker/colorpicker.js
++root/static/yui/colorpicker/README
++root/static/yui/connection/connection-debug.js
++root/static/yui/connection/connection-min.js
++root/static/yui/connection/connection.js
++root/static/yui/connection/README
++root/static/yui/container/assets/alrt16_1.gif
++root/static/yui/container/assets/blck16_1.gif
++root/static/yui/container/assets/close12_1.gif
++root/static/yui/container/assets/container-core.css
++root/static/yui/container/assets/container.css
++root/static/yui/container/assets/hlp16_1.gif
++root/static/yui/container/assets/info16_1.gif
++root/static/yui/container/assets/skins/sam/container-skin.css
++root/static/yui/container/assets/skins/sam/container.css
++root/static/yui/container/assets/tip16_1.gif
++root/static/yui/container/assets/warn16_1.gif
++root/static/yui/container/container-debug.js
++root/static/yui/container/container-min.js
++root/static/yui/container/container.js
++root/static/yui/container/container_core-debug.js
++root/static/yui/container/container_core-min.js
++root/static/yui/container/container_core.js
++root/static/yui/container/README
++root/static/yui/cookie/cookie-debug.js
++root/static/yui/cookie/cookie-min.js
++root/static/yui/cookie/cookie.js
++root/static/yui/cookie/README
++root/static/yui/datasource/datasource-debug.js
++root/static/yui/datasource/datasource-min.js
++root/static/yui/datasource/datasource.js
++root/static/yui/datasource/README
++root/static/yui/datatable/assets/datatable-core.css
++root/static/yui/datatable/assets/datatable.css
++root/static/yui/datatable/assets/skins/sam/datatable-skin.css
++root/static/yui/datatable/assets/skins/sam/datatable.css
++root/static/yui/datatable/assets/skins/sam/dt-arrow-dn.png
++root/static/yui/datatable/assets/skins/sam/dt-arrow-up.png
++root/static/yui/datatable/datatable-debug.js
++root/static/yui/datatable/datatable-min.js
++root/static/yui/datatable/datatable.js
++root/static/yui/datatable/README
++root/static/yui/dom/dom-debug.js
++root/static/yui/dom/dom-min.js
++root/static/yui/dom/dom.js
++root/static/yui/dom/README
++root/static/yui/dragdrop/dragdrop-debug.js
++root/static/yui/dragdrop/dragdrop-min.js
++root/static/yui/dragdrop/dragdrop.js
++root/static/yui/dragdrop/README
++root/static/yui/editor/assets/editor-core.css
++root/static/yui/editor/assets/simpleeditor-core.css
++root/static/yui/editor/assets/skins/sam/blankimage.png
++root/static/yui/editor/assets/skins/sam/editor-knob.gif
++root/static/yui/editor/assets/skins/sam/editor-skin.css
++root/static/yui/editor/assets/skins/sam/editor-sprite-active.gif
++root/static/yui/editor/assets/skins/sam/editor-sprite.gif
++root/static/yui/editor/assets/skins/sam/editor.css
++root/static/yui/editor/assets/skins/sam/simpleeditor-skin.css
++root/static/yui/editor/assets/skins/sam/simpleeditor.css
++root/static/yui/editor/editor-debug.js
++root/static/yui/editor/editor-min.js
++root/static/yui/editor/editor.js
++root/static/yui/editor/README
++root/static/yui/editor/simpleeditor-debug.js
++root/static/yui/editor/simpleeditor-min.js
++root/static/yui/editor/simpleeditor.js
++root/static/yui/element/element-beta-debug.js
++root/static/yui/element/element-beta-min.js
++root/static/yui/element/element-beta.js
++root/static/yui/element/README
++root/static/yui/event/event-debug.js
++root/static/yui/event/event-min.js
++root/static/yui/event/event.js
++root/static/yui/event/README
++root/static/yui/fonts/fonts-min.css
++root/static/yui/fonts/fonts.css
++root/static/yui/fonts/README
++root/static/yui/get/get-debug.js
++root/static/yui/get/get-min.js
++root/static/yui/get/get.js
++root/static/yui/get/README
++root/static/yui/grids/grids-min.css
++root/static/yui/grids/grids.css
++root/static/yui/grids/README
++root/static/yui/history/assets/blank.html
++root/static/yui/history/history-debug.js
++root/static/yui/history/history-min.js
++root/static/yui/history/history.js
++root/static/yui/history/README
++root/static/yui/imagecropper/assets/imagecropper-core.css
++root/static/yui/imagecropper/assets/skins/sam/imagecropper-skin.css
++root/static/yui/imagecropper/assets/skins/sam/imagecropper.css
++root/static/yui/imagecropper/imagecropper-beta-debug.js
++root/static/yui/imagecropper/imagecropper-beta-min.js
++root/static/yui/imagecropper/imagecropper-beta.js
++root/static/yui/imagecropper/README
++root/static/yui/imageloader/imageloader-debug.js
++root/static/yui/imageloader/imageloader-min.js
++root/static/yui/imageloader/imageloader.js
++root/static/yui/imageloader/README
++root/static/yui/json/json-debug.js
++root/static/yui/json/json-min.js
++root/static/yui/json/json.js
++root/static/yui/json/README
++root/static/yui/layout/assets/layout-core.css
++root/static/yui/layout/assets/skins/sam/layout-skin.css
++root/static/yui/layout/assets/skins/sam/layout.css
++root/static/yui/layout/assets/skins/sam/layout_sprite.png
++root/static/yui/layout/layout-debug.js
++root/static/yui/layout/layout-min.js
++root/static/yui/layout/layout.js
++root/static/yui/layout/README
++root/static/yui/logger/assets/logger-core.css
++root/static/yui/logger/assets/logger.css
++root/static/yui/logger/assets/skins/sam/logger-skin.css
++root/static/yui/logger/assets/skins/sam/logger.css
++root/static/yui/logger/logger-debug.js
++root/static/yui/logger/logger-min.js
++root/static/yui/logger/logger.js
++root/static/yui/logger/README
++root/static/yui/menu/assets/menu-core.css
++root/static/yui/menu/assets/menu.css
++root/static/yui/menu/assets/menu_down_arrow.png
++root/static/yui/menu/assets/menu_down_arrow_disabled.png
++root/static/yui/menu/assets/menu_up_arrow.png
++root/static/yui/menu/assets/menu_up_arrow_disabled.png
++root/static/yui/menu/assets/menubaritem_submenuindicator.png
++root/static/yui/menu/assets/menubaritem_submenuindicator_disabled.png
++root/static/yui/menu/assets/menubaritem_submenuindicator_selected.png
++root/static/yui/menu/assets/menuitem_checkbox.png
++root/static/yui/menu/assets/menuitem_checkbox_disabled.png
++root/static/yui/menu/assets/menuitem_checkbox_selected.png
++root/static/yui/menu/assets/menuitem_submenuindicator.png
++root/static/yui/menu/assets/menuitem_submenuindicator_disabled.png
++root/static/yui/menu/assets/menuitem_submenuindicator_selected.png
++root/static/yui/menu/assets/skins/sam/menu-skin.css
++root/static/yui/menu/assets/skins/sam/menu.css
++root/static/yui/menu/assets/skins/sam/menubaritem_submenuindicator.png
++root/static/yui/menu/assets/skins/sam/menubaritem_submenuindicator_disabled.png
++root/static/yui/menu/assets/skins/sam/menuitem_checkbox.png
++root/static/yui/menu/assets/skins/sam/menuitem_checkbox_disabled.png
++root/static/yui/menu/assets/skins/sam/menuitem_submenuindicator.png
++root/static/yui/menu/assets/skins/sam/menuitem_submenuindicator_disabled.png
++root/static/yui/menu/menu-debug.js
++root/static/yui/menu/menu-min.js
++root/static/yui/menu/menu.js
++root/static/yui/menu/README
++root/static/yui/paginator/assets/paginator-core.css
++root/static/yui/paginator/assets/skins/sam/paginator-skin.css
++root/static/yui/paginator/assets/skins/sam/paginator.css
++root/static/yui/paginator/paginator-debug.js
++root/static/yui/paginator/paginator-min.js
++root/static/yui/paginator/paginator.js
++root/static/yui/paginator/README
++root/static/yui/profiler/profiler-debug.js
++root/static/yui/profiler/profiler-min.js
++root/static/yui/profiler/profiler.js
++root/static/yui/profiler/README
++root/static/yui/profilerviewer/assets/skins/sam/asc.gif
++root/static/yui/profilerviewer/assets/skins/sam/desc.gif
++root/static/yui/profilerviewer/assets/skins/sam/header_background.png
++root/static/yui/profilerviewer/assets/skins/sam/profilerviewer.css
++root/static/yui/profilerviewer/assets/skins/sam/wait.gif
++root/static/yui/profilerviewer/profilerviewer-beta-debug.js
++root/static/yui/profilerviewer/profilerviewer-beta-min.js
++root/static/yui/profilerviewer/profilerviewer-beta.js
++root/static/yui/profilerviewer/README
++root/static/yui/reset-fonts-grids/README
++root/static/yui/reset-fonts-grids/reset-fonts-grids.css
++root/static/yui/reset-fonts/README
++root/static/yui/reset-fonts/reset-fonts.css
++root/static/yui/reset/README
++root/static/yui/reset/reset-min.css
++root/static/yui/reset/reset.css
++root/static/yui/resize/assets/resize-core.css
++root/static/yui/resize/assets/skins/sam/layout_sprite.png
++root/static/yui/resize/assets/skins/sam/resize-skin.css
++root/static/yui/resize/assets/skins/sam/resize.css
++root/static/yui/resize/README
++root/static/yui/resize/resize-debug.js
++root/static/yui/resize/resize-min.js
++root/static/yui/resize/resize.js
++root/static/yui/selector/README
++root/static/yui/selector/selector-beta-debug.js
++root/static/yui/selector/selector-beta-min.js
++root/static/yui/selector/selector-beta.js
++root/static/yui/slider/assets/bg-fader.gif
++root/static/yui/slider/assets/bg-h.gif
++root/static/yui/slider/assets/bg-v-e.gif
++root/static/yui/slider/assets/bg-v.gif
++root/static/yui/slider/assets/left-thumb.png
++root/static/yui/slider/assets/right-thumb.png
++root/static/yui/slider/assets/skins/sam/slider-skin.css
++root/static/yui/slider/assets/skins/sam/slider.css
++root/static/yui/slider/assets/slider-core.css
++root/static/yui/slider/assets/thumb-bar.gif
++root/static/yui/slider/assets/thumb-e.gif
++root/static/yui/slider/assets/thumb-fader.gif
++root/static/yui/slider/assets/thumb-n.gif
++root/static/yui/slider/assets/thumb-s.gif
++root/static/yui/slider/assets/thumb-w.gif
++root/static/yui/slider/README
++root/static/yui/slider/slider-debug.js
++root/static/yui/slider/slider-min.js
++root/static/yui/slider/slider.js
++root/static/yui/tabview/assets/border_tabs.css
++root/static/yui/tabview/assets/loading.gif
++root/static/yui/tabview/assets/skin-sam.css
++root/static/yui/tabview/assets/skins/sam/tabview-skin.css
++root/static/yui/tabview/assets/skins/sam/tabview.css
++root/static/yui/tabview/assets/tabview-core.css
++root/static/yui/tabview/assets/tabview.css
++root/static/yui/tabview/README
++root/static/yui/tabview/tabview-debug.js
++root/static/yui/tabview/tabview-min.js
++root/static/yui/tabview/tabview.js
++root/static/yui/treeview/assets/skins/sam/loading.gif
++root/static/yui/treeview/assets/skins/sam/treeview-loading.gif
++root/static/yui/treeview/assets/skins/sam/treeview-skin.css
++root/static/yui/treeview/assets/skins/sam/treeview-sprite.gif
++root/static/yui/treeview/assets/skins/sam/treeview.css
++root/static/yui/treeview/assets/sprite-menu.gif
++root/static/yui/treeview/assets/sprite-orig.gif
++root/static/yui/treeview/assets/treeview-core.css
++root/static/yui/treeview/assets/treeview-loading.gif
++root/static/yui/treeview/assets/treeview-menu.css
++root/static/yui/treeview/assets/treeview.css
++root/static/yui/treeview/README
++root/static/yui/treeview/treeview-debug.js
++root/static/yui/treeview/treeview-min.js
++root/static/yui/treeview/treeview.js
++root/static/yui/uploader/assets/uploader.swf
++root/static/yui/uploader/README
++root/static/yui/uploader/uploader-experimental-debug.js
++root/static/yui/uploader/uploader-experimental-min.js
++root/static/yui/uploader/uploader-experimental.js
++root/static/yui/utilities/README
++root/static/yui/utilities/utilities.js
++root/static/yui/yahoo-dom-event/README
++root/static/yui/yahoo-dom-event/yahoo-dom-event.js
++root/static/yui/yahoo/README
++root/static/yui/yahoo/yahoo-debug.js
++root/static/yui/yahoo/yahoo-min.js
++root/static/yui/yahoo/yahoo.js
++root/static/yui/yuiloader-dom-event/README
++root/static/yui/yuiloader-dom-event/yuiloader-dom-event.js
++root/static/yui/yuiloader/README
++root/static/yui/yuiloader/yuiloader-debug.js
++root/static/yui/yuiloader/yuiloader-min.js
++root/static/yui/yuiloader/yuiloader.js
++root/static/yui/yuitest/assets/skins/sam/yuitest-skin.css
++root/static/yui/yuitest/assets/skins/sam/yuitest.css
++root/static/yui/yuitest/assets/testlogger.css
++root/static/yui/yuitest/assets/yuitest-core.css
++root/static/yui/yuitest/README
++root/static/yui/yuitest/yuitest-debug.js
++root/static/yui/yuitest/yuitest-min.js
++root/static/yui/yuitest/yuitest.js
++root/static/yui/yuitest/yuitest_core-debug.js
++root/static/yui/yuitest/yuitest_core-min.js
++root/static/yui/yuitest/yuitest_core.js
+ script/deploy.sh
+ script/i18n_todo.pl
+ script/parley_cgi.pl
+@@ -948,6 +944,7 @@
+ t.output/0.59.03
+ t.output/1.0.0
+ t.output/1.0.3
++t.output/1.0.4
+ t/01app.t
+ t/02pod.t
+ t/03podcoverage.t
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2008-12-29 00:32:16 UTC (rev 1024)
++++ trunk/Makefile.PL	2008-12-30 02:23:07 UTC (rev 1025)
+@@ -49,6 +49,7 @@
+     'Proc::Daemon'                                              =&gt; '0.03',
+     'Proc::PID::File'                                           =&gt; '1.2.4',
+     'Readonly'                                                  =&gt; 0,
++    'Template::Plugin::ForumCode'                               =&gt; '0.0.5',
+     'Text::Context::EitherSide'                                 =&gt; '1.3',
+     'Time::Piece'                                               =&gt; '1.11',
+ );
+
+Copied: trunk/root/skin2 (from rev 995, trunk/root/base)
+
+Modified: trunk/root/skin2/footer
+===================================================================
+--- trunk/root/base/footer	2008-12-22 22:01:37 UTC (rev 995)
++++ trunk/root/skin2/footer	2008-12-30 02:23:07 UTC (rev 1025)
+@@ -3,6 +3,9 @@
+ 
+             &lt;div id=&quot;ft&quot;&gt;
+                 &lt;p&gt;
++This is a copy of the default skin, with the addition of this annoying message
++int the footer.
++&lt;br /&gt;
+                 &lt;a href=&quot;<A HREF="http://developer.berlios.de/projects/parley">http://developer.berlios.de/projects/parley</A>&quot;&gt;[%c.config.name%]&lt;/a&gt;
+                 (version [%c.config.version%])
+                 &copy; Chisel Wright 2006-2008. [%l('All Rights Reserved')%].
+
+Deleted: trunk/root/static/yui
+===================================================================
+--- trunk/root/static/yui	2008-12-29 00:32:16 UTC (rev 1024)
++++ trunk/root/static/yui	2008-12-30 02:23:07 UTC (rev 1025)
+@@ -1 +0,0 @@
+-link yui_2.6.0
+\ No newline at end of file
+
+Copied: trunk/root/static/yui/animation (from rev 961, trunk/root/static/yui_2.6.0/animation)
+
+Copied: trunk/root/static/yui/assets (from rev 961, trunk/root/static/yui_2.6.0/assets)
+
+Copied: trunk/root/static/yui/autocomplete (from rev 961, trunk/root/static/yui_2.6.0/autocomplete)
+
+Copied: trunk/root/static/yui/base (from rev 961, trunk/root/static/yui_2.6.0/base)
+
+Copied: trunk/root/static/yui/button (from rev 961, trunk/root/static/yui_2.6.0/button)
+
+Copied: trunk/root/static/yui/calendar (from rev 961, trunk/root/static/yui_2.6.0/calendar)
+
+Copied: trunk/root/static/yui/carousel (from rev 961, trunk/root/static/yui_2.6.0/carousel)
+
+Copied: trunk/root/static/yui/charts (from rev 961, trunk/root/static/yui_2.6.0/charts)
+
+Copied: trunk/root/static/yui/colorpicker (from rev 961, trunk/root/static/yui_2.6.0/colorpicker)
+
+Copied: trunk/root/static/yui/connection (from rev 961, trunk/root/static/yui_2.6.0/connection)
+
+Copied: trunk/root/static/yui/container (from rev 961, trunk/root/static/yui_2.6.0/container)
+
+Copied: trunk/root/static/yui/cookie (from rev 961, trunk/root/static/yui_2.6.0/cookie)
+
+Copied: trunk/root/static/yui/datasource (from rev 961, trunk/root/static/yui_2.6.0/datasource)
+
+Copied: trunk/root/static/yui/datatable (from rev 961, trunk/root/static/yui_2.6.0/datatable)
+
+Copied: trunk/root/static/yui/dom (from rev 961, trunk/root/static/yui_2.6.0/dom)
+
+Copied: trunk/root/static/yui/dragdrop (from rev 961, trunk/root/static/yui_2.6.0/dragdrop)
+
+Copied: trunk/root/static/yui/editor (from rev 961, trunk/root/static/yui_2.6.0/editor)
+
+Copied: trunk/root/static/yui/element (from rev 961, trunk/root/static/yui_2.6.0/element)
+
+Copied: trunk/root/static/yui/event (from rev 961, trunk/root/static/yui_2.6.0/event)
+
+Copied: trunk/root/static/yui/fonts (from rev 961, trunk/root/static/yui_2.6.0/fonts)
+
+Copied: trunk/root/static/yui/get (from rev 961, trunk/root/static/yui_2.6.0/get)
+
+Copied: trunk/root/static/yui/grids (from rev 961, trunk/root/static/yui_2.6.0/grids)
+
+Copied: trunk/root/static/yui/history (from rev 961, trunk/root/static/yui_2.6.0/history)
+
+Copied: trunk/root/static/yui/imagecropper (from rev 961, trunk/root/static/yui_2.6.0/imagecropper)
+
+Copied: trunk/root/static/yui/imageloader (from rev 961, trunk/root/static/yui_2.6.0/imageloader)
+
+Copied: trunk/root/static/yui/json (from rev 961, trunk/root/static/yui_2.6.0/json)
+
+Copied: trunk/root/static/yui/layout (from rev 961, trunk/root/static/yui_2.6.0/layout)
+
+Copied: trunk/root/static/yui/logger (from rev 961, trunk/root/static/yui_2.6.0/logger)
+
+Copied: trunk/root/static/yui/menu (from rev 961, trunk/root/static/yui_2.6.0/menu)
+
+Copied: trunk/root/static/yui/paginator (from rev 961, trunk/root/static/yui_2.6.0/paginator)
+
+Copied: trunk/root/static/yui/profiler (from rev 961, trunk/root/static/yui_2.6.0/profiler)
+
+Copied: trunk/root/static/yui/profilerviewer (from rev 961, trunk/root/static/yui_2.6.0/profilerviewer)
+
+Copied: trunk/root/static/yui/reset (from rev 961, trunk/root/static/yui_2.6.0/reset)
+
+Copied: trunk/root/static/yui/reset-fonts (from rev 961, trunk/root/static/yui_2.6.0/reset-fonts)
+
+Copied: trunk/root/static/yui/reset-fonts-grids (from rev 961, trunk/root/static/yui_2.6.0/reset-fonts-grids)
+
+Copied: trunk/root/static/yui/resize (from rev 961, trunk/root/static/yui_2.6.0/resize)
+
+Copied: trunk/root/static/yui/selector (from rev 961, trunk/root/static/yui_2.6.0/selector)
+
+Copied: trunk/root/static/yui/slider (from rev 961, trunk/root/static/yui_2.6.0/slider)
+
+Copied: trunk/root/static/yui/tabview (from rev 961, trunk/root/static/yui_2.6.0/tabview)
+
+Copied: trunk/root/static/yui/treeview (from rev 961, trunk/root/static/yui_2.6.0/treeview)
+
+Copied: trunk/root/static/yui/uploader (from rev 961, trunk/root/static/yui_2.6.0/uploader)
+
+Copied: trunk/root/static/yui/utilities (from rev 961, trunk/root/static/yui_2.6.0/utilities)
+
+Copied: trunk/root/static/yui/yahoo (from rev 961, trunk/root/static/yui_2.6.0/yahoo)
+
+Copied: trunk/root/static/yui/yahoo-dom-event (from rev 961, trunk/root/static/yui_2.6.0/yahoo-dom-event)
+
+Copied: trunk/root/static/yui/yuiloader (from rev 961, trunk/root/static/yui_2.6.0/yuiloader)
+
+Copied: trunk/root/static/yui/yuiloader-dom-event (from rev 961, trunk/root/static/yui_2.6.0/yuiloader-dom-event)
+
+Copied: trunk/root/static/yui/yuitest (from rev 961, trunk/root/static/yui_2.6.0/yuitest)
+
+Added: trunk/t.output/1.0.4
+===================================================================
+--- trunk/t.output/1.0.4	2008-12-29 00:32:16 UTC (rev 1024)
++++ trunk/t.output/1.0.4	2008-12-30 02:23:07 UTC (rev 1025)
+@@ -0,0 +1,21 @@
++PERL_DL_NONLAZY=1 /usr/bin/perl &quot;-MExtUtils::Command::MM&quot; &quot;-e&quot; &quot;test_harness(0, 'inc', 'blib/lib', 'blib/arch')&quot; t/*.t t/bug/*.t t/mechanize/*.t
++t/01app.........................ok
++t/02pod.........................skipped: set TEST_POD to enable this test
++t/03podcoverage.................skipped: set TEST_POD to enable this test
++t/04_forumcode..................ok
++t/05.userroles..................ok
++t/06.aggregate.controller.......ok
++t/07.aggregate.schematests......ok
++t/50.text_search.sql............ok
++t/bug/01.forum_list_no_posts....ok
++t/mechanize/00.login............ok
++t/mechanize/01.main_page........ok
++t/mechanize/02.forum............ok
++t/model_ParleyDB................ok
++t/model_Post....................ok
++t/view_JSON.....................ok
++t/view_Plain....................ok
++t/view_TT.......................ok
++All tests successful.
++Files=17, Tests=464, 17 wallclock secs ( 0.20 usr  0.03 sys + 13.47 cusr  0.96 csys = 14.66 CPU)
++Result: PASS
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000906.html">[Parley-svn] r1024 - / branches/parley-1.1	branches/parley-1.1/root/static/css
+</A></li>
+	<LI>Next message: <A HREF="000908.html">[Parley-svn] r1026 - / trunk trunk/lib trunk/lib/Catalyst	trunk/lib/Catalyst/Controller trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/root/base trunk/root/base/dfv trunk/root/base/search	trunk/root/base/shared trunk/root/base/thread trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#907">[ date ]</a>
+              <a href="thread.html#907">[ thread ]</a>
+              <a href="subject.html#907">[ subject ]</a>
+              <a href="author.html#907">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

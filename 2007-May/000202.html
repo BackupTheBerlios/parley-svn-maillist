@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r314 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r314%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200705040918.l449ICf4023611%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000203.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r314 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r314%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200705040918.l449ICf4023611%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r314 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri May  4 11:18:12 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000203.html">[Parley-svn] r315 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#202">[ date ]</a>
+              <a href="thread.html#202">[ thread ]</a>
+              <a href="subject.html#202">[ subject ]</a>
+              <a href="author.html#202">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-04 11:18:12 +0200 (Fri, 04 May 2007)
+New Revision: 314
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3193 at wiggin</A>:  chisel | 2007-05-04 08:20:21 +0100
+ / increase post_count for forum
+ + moderators can post &amp; lock thread
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3187
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3193
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-04-25 08:31:28 UTC (rev 313)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-05-04 09:18:12 UTC (rev 314)
+@@ -25,7 +25,7 @@
+     # DFV validation profile for adding a reply to an existing topic
+     new_reply =&gt; {
+         required    =&gt; [qw( thread_message )],
+-        optional    =&gt; [qw( thread_subject )],
++        optional    =&gt; [qw( thread_subject lock_thread )],
+         filters     =&gt; [qw( trim )],
+     },
+ );
+@@ -479,6 +479,12 @@
+             $post_count + 1
+         );
+         $thread-&gt;update();
++
++        # increase the number of posts for the forum
++        $thread-&gt;forum-&gt;post_count(
++            ($thread-&gt;forum-&gt;post_count() || 0) + 1
++        );
++        $thread-&gt;forum-&gt;update;
+     };
+     # deal with any transaction errors
+     if ($@) {                                   # Transaction failed
+@@ -713,6 +719,13 @@
+     # update information about the poster (count, etc)
+     $self-&gt;_update_person_post_info($c, $new_post);
+ 
++    # would we like to lock the thread?
++    if ($c-&gt;form-&gt;valid-&gt;{lock_thread} and $c-&gt;stash-&gt;{moderator}) {
++        $c-&gt;log-&gt;debug( q{locking thread after replying} );
++        $new_post-&gt;thread-&gt;locked(1);
++        $new_post-&gt;thread-&gt;update;
++    }
++
+     # update the records
+     $new_post-&gt;update;
+ 
+@@ -750,7 +763,11 @@
+ 
+     # we've got one post in our new thread
+     $new_thread-&gt;post_count( 1 );
++    $new_thread-&gt;forum-&gt;post_count(
++        ($new_thread-&gt;forum-&gt;post_count() || 0) + 1
++    );
+ 
++
+     # update information about the most recent forum/thread post
+     $self-&gt;_update_last_post($c, $new_post);
+ 
+@@ -759,6 +776,7 @@
+ 
+     # update the records
+     $new_thread-&gt;update;
++    $new_thread-&gt;forum-&gt;update;
+     $new_post-&gt;update;
+ 
+     # return the new topic/thread
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000203.html">[Parley-svn] r315 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#202">[ date ]</a>
+              <a href="thread.html#202">[ thread ]</a>
+              <a href="subject.html#202">[ subject ]</a>
+              <a href="author.html#202">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

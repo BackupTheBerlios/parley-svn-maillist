@@ -1,0 +1,289 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r538 - / trunk trunk/lib trunk/root/base/help
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r538%20-%20/%20trunk%20trunk/lib%20trunk/root/base/help&In-Reply-To=%3C200710092150.l99LoJ7G031852%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000425.html">
+   <LINK REL="Next"  HREF="000427.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r538 - / trunk trunk/lib trunk/root/base/help</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r538%20-%20/%20trunk%20trunk/lib%20trunk/root/base/help&In-Reply-To=%3C200710092150.l99LoJ7G031852%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r538 - / trunk trunk/lib trunk/root/base/help">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Oct  9 23:50:19 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000425.html">[Parley-svn] r537 - / trunk trunk/config
+</A></li>
+        <LI>Next message: <A HREF="000427.html">[Parley-svn] r539 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#426">[ date ]</a>
+              <a href="thread.html#426">[ thread ]</a>
+              <a href="subject.html#426">[ subject ]</a>
+              <a href="author.html#426">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-09 23:50:15 +0200 (Tue, 09 Oct 2007)
+New Revision: 538
+
+Modified:
+   /
+   trunk/Changes
+   trunk/TODO
+   trunk/lib/Parley.pm
+   trunk/root/base/help/faq
+   trunk/root/base/help/formatting_posts
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3926 at wiggin</A>:  chisel | 2007-10-09 22:48:01 +0100
+ / documentation additions, fixes and tweaks
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3925
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3926
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-10-09 21:50:01 UTC (rev 537)
++++ trunk/Changes	2007-10-09 21:50:15 UTC (rev 538)
+@@ -2,6 +2,7 @@
+ 
+ 0.57
+     - added T&amp;Cs to application
++    - added T&amp;C editor/updater (site_moderator only)
+     - added &quot;Accept T&amp;C&quot; functionality (for logged in users)
+     - after accepting T&amp;Cs you should be taken to your original destination
+     - fixed error handling for unknown user in pwd reset
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-10-09 21:50:01 UTC (rev 537)
++++ trunk/TODO	2007-10-09 21:50:15 UTC (rev 538)
+@@ -1,15 +1,16 @@
+ TODO LIST
+ 
+   - write some sensible T&amp;Cs
+-  - add missing link to &lt;img&gt; tag to help/formatting_posts
+-  - add missing link to BBCode to help/formatting_posts
+-  - add license link to help/faq
++  - setup/use ttcache
+   - update avatar update response to force a No-Cache?
+   - application logo
+   - advanced search page
+   - proper moderator support/management
+   - IP/user reporting
+ ? - fix CSS for &lt;fieldset&gt;s
++D - add missing link to &lt;img&gt; tag to help/formatting_posts
++D - add missing link to BBCode to help/formatting_posts
++D - add license link to help/faq
+ D - add T&amp;C editor/updater
+ D - add historic T&amp;C view (for all users)
+ D - Minimising clicks - After password reset
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-10-09 21:50:01 UTC (rev 537)
++++ trunk/lib/Parley.pm	2007-10-09 21:50:15 UTC (rev 538)
+@@ -121,16 +121,93 @@
+ 
+ =head1 NAME
+ 
+-Parley - Catalyst based application
++Parley - Message board / forum application
+ 
+ =head1 SYNOPSIS
+ 
+-    script/parley_server.pl
++To run a B&lt;test/development&gt; server:
+ 
++  script/parley_server.pl
++
++To run under FastCGI:
++
++  cp config/parley /etc/apache2/sites-available
++  a2ensite parley
++  /etc/init.d/apache2 restart
++
++Also see: L&lt;Catalyst::Manual::Cookbook/Deployment&gt;
++
++Start the email engine:
++
++  script/parley_email_engine.pl
++
+ =head1 DESCRIPTION
+ 
+-Catalyst driven forum application
++Parley is a forum/message-board application. It's raison d'etre is to try
++to fill a void in the perl application space.
+ 
++=head1 FEATURES
++
++=over 4
++
++=item Multiple forums
++
++Have numerous forums to separate areas of discussion.
++
++=item Paging for long threads
++
++Save the scroll-wheel on your mouse.
++
++=item Sign-Up with email/URL based authentication
++
++Sign-Up and Authentication runs without moderator intervention.
++
++=item User preferences
++
++Time-zone; time format; user avatar; notifications
++
++=item Non-plaintext passwords stored in database
++
++There's nothing worse than letting someone with database
++access read your favourite password.
++
++=item Password reset / Lost password
++
++People forget. This way they can reset their password without
++needing human help.
++
++=item L&lt;ForumCode|Template::Plugin::ForumCode&gt;
++
++BBCode-esque markup in posts.
++
++=item Terms &amp; Conditions
++
++If you add new T&amp;Cs, all users will be required to agree to them
++next time they log-in. No more hidden, unnoticed T&amp;C updates.
++
++Users can view historical T&amp;Cs.
++
++=back
++
++=head1 SEE ALSO
++
++L&lt;Catalyst&gt;,
++L&lt;<A HREF="http://developer.berlios.de/projects/parley/">http://developer.berlios.de/projects/parley/</A>&gt;
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=head1 TECHNICAL STUFF
++
++General users don't need to read beyond this point. The following information
++describes the top-level interface for the C&lt;Parley&gt; module.
++
+ =head1 METHODS
+ 
+ =head2 application_email_address($c)
+@@ -238,19 +315,6 @@
+ 
+ =back
+ 
+-=head1 SEE ALSO
+-
+-L&lt;Parley::Controller::Root&gt;, L&lt;Catalyst::Plugin::Email&gt;, L&lt;Catalyst&gt;
+-
+-=head1 AUTHOR
+-
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+-
+-=head1 LICENSE
+-
+-This library is free software, you can redistribute it and/or modify
+-it under the same terms as Perl itself.
+-
+ =cut
+ 
+ vim: ts=8 sts=4 et sw=4 sr sta
+
+Modified: trunk/root/base/help/faq
+===================================================================
+--- trunk/root/base/help/faq	2007-10-09 21:50:01 UTC (rev 537)
++++ trunk/root/base/help/faq	2007-10-09 21:50:15 UTC (rev 538)
+@@ -64,7 +64,7 @@
+     &lt;em&gt;
+     Other than your time and effort, it's &lt;i&gt;free&lt;/i&gt;. The project has been
+     written an released under the
+-    &lt;a href=&quot;&quot;&gt;??? License&lt;/a&gt;.
++    &lt;a href=&quot;<A HREF="http://www.opensource.org/licenses/artistic-license.php">http://www.opensource.org/licenses/artistic-license.php</A>&quot;&gt;Artistic License&lt;/a&gt;.
+     &lt;/em&gt;
+     &lt;/li&gt;
+ &lt;/ol&gt;
+
+Modified: trunk/root/base/help/formatting_posts
+===================================================================
+--- trunk/root/base/help/formatting_posts	2007-10-09 21:50:01 UTC (rev 537)
++++ trunk/root/base/help/formatting_posts	2007-10-09 21:50:15 UTC (rev 538)
+@@ -2,7 +2,8 @@
+ 
+ &lt;p&gt;Allowing raw HTML markup in posts leads to a very special
+ world of pain. With that in mind a form of markup inspired by
+-BBCode [&lt;b&gt;link?&lt;/b&gt;] was developed for this project. As it's
++&lt;a href=&quot;<A HREF="http://www.phpbb.com/community/faq.php?mode=bbcode">http://www.phpbb.com/community/faq.php?mode=bbcode</A>&quot;&gt;BBCode&lt;/a&gt;
++was developed for this project. As it's
+ not an identical implementation of BBCode it has it's own name
+ - &lt;i&gt;ForumCode&lt;/i&gt;&lt;/p&gt;
+ 
+@@ -188,7 +189,8 @@
+     &lt;li&gt;
+         You may also include extra attributes such as
+         &lt;code&gt;title=&lt;/code&gt;, &lt;code&gt;alt=&lt;/code&gt;, etc.
+-        Research the HTML &lt;img&gt; tag [&lt;b&gt;link?&lt;/b&gt;]
++        Research the HTML
++        &lt;a href=&quot;<A HREF="http://www.w3schools.com/tags/tag_img.asp">http://www.w3schools.com/tags/tag_img.asp</A>&quot;&gt;&lt;img&gt; tag&lt;/a&gt;
+         for the full list of attributes.
+         &lt;br /&gt;
+         &lt;q&gt;&lt;code&gt;[img title='Powered by Catalyst' width='50'][%c.request.base%]static/images/btn_88x31_powered.png[/img]&lt;/code&gt;&lt;/q&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000425.html">[Parley-svn] r537 - / trunk trunk/config
+</A></li>
+	<LI>Next message: <A HREF="000427.html">[Parley-svn] r539 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#426">[ date ]</a>
+              <a href="thread.html#426">[ thread ]</a>
+              <a href="subject.html#426">[ subject ]</a>
+              <a href="author.html#426">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

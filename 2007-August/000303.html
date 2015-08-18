@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r415 - / trunk/lib/Parley/Schema trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r415%20-%20/%20trunk/lib/Parley/Schema%20trunk/root/base/thread&In-Reply-To=%3C200708082006.l78K60po014794%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000304.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r415 - / trunk/lib/Parley/Schema trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r415%20-%20/%20trunk/lib/Parley/Schema%20trunk/root/base/thread&In-Reply-To=%3C200708082006.l78K60po014794%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r415 - / trunk/lib/Parley/Schema trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug  8 22:06:00 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000304.html">[Parley-svn] r416 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#303">[ date ]</a>
+              <a href="thread.html#303">[ thread ]</a>
+              <a href="subject.html#303">[ subject ]</a>
+              <a href="author.html#303">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-08 22:06:00 +0200 (Wed, 08 Aug 2007)
+New Revision: 415
+
+Modified:
+   /
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3630 at wiggin</A>:  chisel | 2007-08-02 10:14:06 +0100
+ + added interval_ago() method on post records
+ + added &quot;&lt;interval&gt; ago&quot; to post information displayed in thread/view
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3623
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3630
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-07-31 20:41:19 UTC (rev 414)
++++ trunk/lib/Parley/Schema/Post.pm	2007-08-08 20:06:00 UTC (rev 415)
+@@ -6,6 +6,7 @@
+ use warnings;
+ use Data::Dump qw(pp);
+ 
++use DateTime;
+ use DateTime::Format::Pg;
+ use Text::Context::EitherSide;
+ use Text::Search::SQL;
+@@ -204,6 +205,40 @@
+     return $context-&gt;as_string( @{ $terms } );
+ }
+ 
++sub interval_ago {
++    my $self = shift;
++    my ($now, $duration, $longest_duration);
++
++    # get now as a DT object
++    $now = DateTime-&gt;now();
++
++    # the difference between now and the post time
++    $duration = $now - $self-&gt;created();
++
++    # we use the largest unit to give an idea of how long ago the post was made
++    foreach my $unit (qw[years months days hours minutes seconds]) {
++        if ($longest_duration = $duration-&gt;in_units($unit)) {
++            return _time_string($longest_duration, $unit);
++        }
++    };
++
++    # we should get *something* in the loop above, but just in case
++    return '0 seconds';
++}
++
++
++sub _time_string {
++    my ($duration, $unit) = @_;
++
++    # DateTime::Duration uses plural names for units
++    # so if we have ONE we need to return the singular
++    if (1 == $duration) {
++        $unit =~ s{s\z}{};
++    }
++
++    return &quot;$duration $unit&quot;;
++}
++
+ 1;
+ __END__
+ vim: ts=8 sts=4 et sw=4 sr sta
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-07-31 20:41:19 UTC (rev 414)
++++ trunk/root/base/thread/view	2007-08-08 20:06:00 UTC (rev 415)
+@@ -89,6 +89,7 @@
+ 
+                 &lt;div class=&quot;post_info&quot;&gt;
+                     [% nicedate(post.created) %]
++                    &lt;br /&gt;[% post.interval_ago %] ago
+                     [% IF post.edited %]
+                     &lt;br /&gt;&lt;span class=&quot;post_edited_alert&quot;&gt;Edited: [% nicedate(post.edited) %]&lt;/span&gt;
+                     [% END %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000304.html">[Parley-svn] r416 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#303">[ date ]</a>
+              <a href="thread.html#303">[ thread ]</a>
+              <a href="subject.html#303">[ subject ]</a>
+              <a href="author.html#303">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

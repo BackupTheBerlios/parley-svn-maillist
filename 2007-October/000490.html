@@ -1,0 +1,809 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r602 - / trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r602%20-%20/%20trunk/t/schema&In-Reply-To=%3C200710252012.l9PKC664027373%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000489.html">
+   <LINK REL="Next"  HREF="000491.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r602 - / trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r602%20-%20/%20trunk/t/schema&In-Reply-To=%3C200710252012.l9PKC664027373%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r602 - / trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Oct 25 22:12:06 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000489.html">[Parley-svn] r601 - / trunk/lib/Parley/Schema
+</A></li>
+        <LI>Next message: <A HREF="000491.html">[Parley-svn] r603 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#490">[ date ]</a>
+              <a href="thread.html#490">[ thread ]</a>
+              <a href="subject.html#490">[ subject ]</a>
+              <a href="author.html#490">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-25 22:12:05 +0200 (Thu, 25 Oct 2007)
+New Revision: 602
+
+Added:
+   trunk/t/schema/forum_moderator.t
+   trunk/t/schema/password_reset.t
+   trunk/t/schema/person.t
+   trunk/t/schema/post.t
+   trunk/t/schema/preference.t
+   trunk/t/schema/preference_time_string.t
+   trunk/t/schema/registration_authentication.t
+   trunk/t/schema/terms.t
+   trunk/t/schema/terms_agreed.t
+   trunk/t/schema/thread.t
+   trunk/t/schema/thread_view.t
+Modified:
+   /
+   trunk/t/schema/SchemaTest.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4061 at wiggin</A>:  chisel | 2007-10-25 20:12:41 +0100
+ + added tests for all schema classes
+ / tweaked the test name when calling methods [to include ()]
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4060
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4061
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/t/schema/SchemaTest.pm
+===================================================================
+--- trunk/t/schema/SchemaTest.pm	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/SchemaTest.pm	2007-10-25 20:12:05 UTC (rev 602)
+@@ -75,7 +75,7 @@
+                 # try calling each method
+                 foreach my $method ( @{ $self-&gt;{methods}-&gt;{$method_type} } ) {
+                     eval { $record-&gt;$method };
+-                    is($@, q{}, qq{calling $method didn't barf});
++                    is($@, q{}, qq{calling $method() didn't barf});
+                 }
+             }
+         }
+
+Added: trunk/t/schema/forum_moderator.t
+===================================================================
+--- trunk/t/schema/forum_moderator.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/forum_moderator.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,47 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'ForumModerator',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                forum
++                person
++                can_moderate
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                person
++                forum
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/forum_moderator.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/password_reset.t
+===================================================================
+--- trunk/t/schema/password_reset.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/password_reset.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,46 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'PasswordReset',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                password_reset_id
++                recipient
++                expires
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                recipient
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/password_reset.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/person.t
+===================================================================
+--- trunk/t/schema/person.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/person.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,58 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'Person',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                person_id
++                authentication
++                first_name
++                last_name
++                email
++                forum_name
++                preference
++                last_post
++                post_count
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                threads
++                email_queues
++                thread_views
++                preference
++                last_post
++                authentication
++                registration_authentications
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/person.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/post.t
+===================================================================
+--- trunk/t/schema/post.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/post.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,68 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'Post',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                post_id
++                creator
++                subject
++                quoted_post
++                message
++                quoted_text
++                created
++                thread
++                reply_to
++                edited
++                ip_addr
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                threads
++                forums
++                creator
++                reply_to
++                post_reply_toes
++                thread
++                quoted_post
++                post_quoted_posts
++                people
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++                match_context
++                interval_ago
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++                last_post_in_list
++                next_post
++                page_containing_post
++                thread_position
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/post.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/preference.t
+===================================================================
+--- trunk/t/schema/preference.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/preference.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,49 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'Preference',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                preference_id
++                timezone
++                time_format
++                show_tz
++                notify_thread_watch
++                watch_on_post
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                time_format
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/preference.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/preference_time_string.t
+===================================================================
+--- trunk/t/schema/preference_time_string.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/preference_time_string.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,46 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'PreferenceTimeString',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                preference_time_string_id
++                time_string
++                sample
++                comment
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/preference_time_string.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/registration_authentication.t
+===================================================================
+--- trunk/t/schema/registration_authentication.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/registration_authentication.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,46 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'RegistrationAuthentication',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                registration_authentication_id
++                recipient
++                expires
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                recipient
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/registration_authentication.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/terms.t
+===================================================================
+--- trunk/t/schema/terms.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/terms.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,46 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'Terms',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                created
++                content
++                change_summary
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/terms.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/terms_agreed.t
+===================================================================
+--- trunk/t/schema/terms_agreed.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/terms_agreed.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,48 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'TermsAgreed',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                person_id
++                terms_id
++                accepted_on
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                person
++                terms
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/terms_agreed.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/thread.t
+===================================================================
+--- trunk/t/schema/thread.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/thread.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,57 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'Thread',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                thread_id
++                forum
++                subject
++                created
++                creator
++                post_count
++                view_count
++                active
++                sticky
++                locked
++                last_post
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                last_post
++                posts
++                thread_views
++                forum_moderators
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/thread.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/thread_view.t
+===================================================================
+--- trunk/t/schema/thread_view.t	2007-10-25 20:11:51 UTC (rev 601)
++++ trunk/t/schema/thread_view.t	2007-10-25 20:12:05 UTC (rev 602)
+@@ -0,0 +1,53 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'ThreadView',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                thread_view_id
++                person
++                thread
++                timestamp
++                watched
++                last_notified
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                thread
++                person
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++                interval_ago
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++                watching_thread
++                notification_list
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/thread_view.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000489.html">[Parley-svn] r601 - / trunk/lib/Parley/Schema
+</A></li>
+	<LI>Next message: <A HREF="000491.html">[Parley-svn] r603 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#490">[ date ]</a>
+              <a href="thread.html#490">[ thread ]</a>
+              <a href="subject.html#490">[ subject ]</a>
+              <a href="author.html#490">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

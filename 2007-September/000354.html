@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r466 - / trunk/root/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r466%20-%20/%20trunk/root/base&In-Reply-To=%3C200709051925.l85JPewu009881%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000353.html">
+   <LINK REL="Next"  HREF="000355.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r466 - / trunk/root/base</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r466%20-%20/%20trunk/root/base&In-Reply-To=%3C200709051925.l85JPewu009881%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r466 - / trunk/root/base">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Sep  5 21:25:40 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000353.html">[Parley-svn] r465 - /	trunk/root/static/yui/container/assets/skins/sam
+</A></li>
+        <LI>Next message: <A HREF="000355.html">[Parley-svn] r467 - / trunk/root/base/menu
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#354">[ date ]</a>
+              <a href="thread.html#354">[ thread ]</a>
+              <a href="subject.html#354">[ subject ]</a>
+              <a href="author.html#354">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-05 21:25:40 +0200 (Wed, 05 Sep 2007)
+New Revision: 466
+
+Modified:
+   /
+   trunk/root/base/header
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3781 at wiggin</A>:  chisel | 2007-09-05 19:11:19 +0100
+ + tidied up YUI css/js include statements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3780
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3781
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-09-05 19:25:26 UTC (rev 465)
++++ trunk/root/base/header	2007-09-05 19:25:40 UTC (rev 466)
+@@ -54,32 +54,22 @@
+         &lt;/script&gt;
+ 
+         &lt;!-- YUI ajax magick --&gt;
++
++        &lt;!-- CSS --&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/fonts/fonts-min.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/button/assets/skins/sam/button.css&quot; /&gt;
+         &lt;!--
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/container/assets/skins/sam/container.css&quot; /&gt;
+         --&gt;
+-        &lt;!--
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/reset-fonts-grids/reset-fonts-grids.css&quot; /&gt;
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/reset-fonts-grids/reset-fonts-grids.css&quot;&gt;
+-        --&gt;
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css&quot; /&gt;
++        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/container/assets/skins/sam/container.css&quot; /&gt;
++        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css&quot; /&gt; 
+ 
+-
+-        &lt;!-- CSS for Menu --&gt;
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css&quot;&gt; 
+-
+         &lt;!-- Dependency source files --&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/yahoo-dom-event/yahoo-dom-event.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container_core.js&quot;&gt;&lt;/script&gt;
+-
+-        &lt;!-- Menu source file --&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/menu/menu.js&quot;&gt;&lt;/script&gt;
+-
+-
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/utilities/utilities.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/button/button-beta.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/menu/menu.js&quot;&gt;&lt;/script&gt;
+     &lt;/head&gt;
+ 
+     &lt;body class=&quot;yui-skin-sam&quot;&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000353.html">[Parley-svn] r465 - /	trunk/root/static/yui/container/assets/skins/sam
+</A></li>
+	<LI>Next message: <A HREF="000355.html">[Parley-svn] r467 - / trunk/root/base/menu
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#354">[ date ]</a>
+              <a href="thread.html#354">[ thread ]</a>
+              <a href="subject.html#354">[ subject ]</a>
+              <a href="author.html#354">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

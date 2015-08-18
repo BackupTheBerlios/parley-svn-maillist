@@ -1,0 +1,933 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r247 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/lib/Parley/Controller/User
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r247%20-%20/%20branches/schema_based/lib/Parley/Controller%0A%09branches/schema_based/lib/Parley/Controller/User&In-Reply-To=%3C200609121500.k8CF0M9L029297%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000134.html">
+   <LINK REL="Next"  HREF="000136.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r247 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/lib/Parley/Controller/User</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r247%20-%20/%20branches/schema_based/lib/Parley/Controller%0A%09branches/schema_based/lib/Parley/Controller/User&In-Reply-To=%3C200609121500.k8CF0M9L029297%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r247 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/lib/Parley/Controller/User">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Sep 12 17:00:22 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000134.html">[Parley-svn] r246 - / branches/schema_based
+</A></li>
+        <LI>Next message: <A HREF="000136.html">[Parley-svn] r248 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#135">[ date ]</a>
+              <a href="thread.html#135">[ thread ]</a>
+              <a href="subject.html#135">[ subject ]</a>
+              <a href="author.html#135">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-12 17:00:21 +0200 (Tue, 12 Sep 2006)
+New Revision: 247
+
+Added:
+   branches/schema_based/lib/Parley/Controller/User/
+   branches/schema_based/lib/Parley/Controller/User/LostPassword.pm
+   branches/schema_based/lib/Parley/Controller/User/SignUp.pm
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r1184 at ferrari</A>:  chisel | 2006-09-12 09:55:18 +0100
+ + re-implemented Lost Password and Sign-Up functionality
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1183
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1184
+
+Added: branches/schema_based/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User/LostPassword.pm	2006-09-12 15:00:18 UTC (rev 246)
++++ branches/schema_based/lib/Parley/Controller/User/LostPassword.pm	2006-09-12 15:00:21 UTC (rev 247)
+@@ -0,0 +1,464 @@
++package Parley::Controller::User::LostPassword;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use List::MoreUtils qw{ uniq };
++use Digest::MD5 qw{ md5_hex };
++use Readonly;
++use Time::Piece;
++use Time::Seconds;
++
++# used by DFV
++sub _dfv_constraint_confirm_equal {
++    my $dfv  = shift;
++    my $val1 = shift;
++    my $val2 = shift;
++
++    return ( $val1 eq $val2 );
++}
++
++sub _dfv_constraint_valid_email {
++    my $dfv   = shift;
++    my $email = shift;
++
++    return Email::Valid-&gt;address($email);
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Readonly my $LIFETIME =&gt; Time::Seconds::ONE_HOUR;
++
++my %dfv_profile_for = (
++    'password_reset' =&gt; {
++        require_some =&gt; {
++            user_details =&gt; [
++                1,
++                qw/ username email /
++            ],
++        },
++
++        filters =&gt; [qw(trim)],
++
++        constraint_methods =&gt; {
++            email =&gt; {
++                name =&gt; 'email',
++                constraint_method =&gt; \&amp;_dfv_constraint_valid_email,
++                params      =&gt; [qw( email )],
++            },
++        },
++
++        msgs =&gt; {
++            constraints =&gt; {
++                email =&gt; q{You must enter a valid email address},
++            },
++            missing =&gt; q{One or more required fields are missing},
++            format =&gt; '%s',
++        },
++    },
++
++    'set_new_password' =&gt; {
++        required =&gt; [
++            qw/
++                reset_username
++                new_password
++                confirm_password
++            /
++        ],
++
++        filters =&gt; [qw(trim)],
++
++        constraint_methods =&gt; {
++            confirm_password =&gt; {
++                name =&gt; 'confirm_password',
++                constraint  =&gt; \&amp;_dfv_constraint_confirm_equal,
++                params      =&gt; [qw( new_password confirm_password )],
++            },
++        },
++
++        msgs =&gt; {
++            constraints =&gt; {
++                confirm_password =&gt; q{The passwords do not match},
++            },
++            missing =&gt; q{One or more required fields are missing},
++            format =&gt; '%s',
++        },
++    }
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++
++# nice and easy - catch the url to display the lost password page
++# if we have a form submit, deal with it
++sub lost_password : Path('/user/password/forgotten') {
++    my ($self, $c) = @_;
++    my ($results, @messages);
++
++    if (defined $c-&gt;request-&gt;method()
++            and $c-&gt;request-&gt;method() eq 'POST'
++            and defined $c-&gt;request-&gt;param('pwd_reset_submit')
++    ) {
++        @messages = $self-&gt;_user_reset($c);
++
++        # if we have any validation errors ...
++        if (scalar @messages) {
++            $c-&gt;stash-&gt;{messages} = \@messages;
++        }
++
++        # no messages, means that all should be well, so head off to the
++        # &quot;details in the post&quot; page
++        else {
++            $c-&gt;stash-&gt;{template} = 'user/lostpassword/lost_password_details_sent';
++        }
++    }
++}
++
++
++# this action uses the uid in the URL to work out who's password we are
++# resetting, after a little validation, we can use the new choice of password
++# for the user
++sub reset : Path('/user/password/reset') {
++    my ($self, $c, $reset_uid) = @_;
++    my ($results, @messages);
++
++
++    # we should have the reset UID in the URL
++    if (not defined $reset_uid) {
++        $c-&gt;stash-&gt;{error}{message} = q{Incomplete password reset URL};
++        return;
++    }
++
++    # fetch the info from the database
++    my $pwd_reset = $c-&gt;model('ParleyDB')-&gt;resultset('PasswordReset')-&gt;find(
++        {
++            password_reset_id =&gt; $reset_uid,
++        }
++    );
++
++    # if we don't have any matches then the id was bogus
++    if (not defined $pwd_reset) {
++        $c-&gt;stash-&gt;{error}{message} = q{Bogus password reset ID};
++        return;
++    }
++
++    # put the reset_uid into the stash
++    $c-&gt;stash-&gt;{reset_uid} = $reset_uid;
++
++    # make user available to template
++    $c-&gt;stash-&gt;{reset_user} = $pwd_reset-&gt;recipient();
++
++    # deal with a form submission
++    if (defined $c-&gt;request-&gt;method()
++            and $c-&gt;request-&gt;method() eq 'POST'
++            and defined $c-&gt;request-&gt;param('reset_password')
++    ) {
++        @messages = $self-&gt;_reset_password($c, $pwd_reset);
++
++        # if we have any validation errors ...
++        if (scalar @messages) {
++            $c-&gt;stash-&gt;{messages} = \@messages;
++        }
++
++        # no messages, means that all should be well, so head off to the
++        # &quot;details in the post&quot; page
++        else {
++            $c-&gt;stash-&gt;{template} = 'user/lostpassword/reset_success';
++        }
++    }
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller (Private/Helper) Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _reset_password {
++    my ($self, $c, $pwd_reset) = @_;
++    my (@messages);
++
++    # validate form data
++    $c-&gt;form(
++        $dfv_profile_for{set_new_password}
++    );
++
++    # deal with missing/invalid fields
++    if ($c-&gt;form-&gt;has_missing()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c-&gt;form-&gt;missing ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c-&gt;form-&gt;has_invalid()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise the form data is ok...
++    else {
++        # less typing ..
++        my $reset_username = $pwd_reset-&gt;recipient()-&gt;authentication()-&gt;username;
++
++        # make sure the username matches
++        if ($reset_username eq $c-&gt;form-&gt;valid-&gt;{reset_username}) {
++            # perform everything in a transaction
++            eval {
++                $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                    sub { return $self-&gt;_txn_user_password_update($c, $pwd_reset); }
++                );
++            };
++            # deal with any transaction errors
++            if ($@) {                                   # Transaction failed
++                die &quot;something terrible has happened!&quot;  #
++                    if ($@ =~ /Rollback failed/);       # Rollback failed
++
++                $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++                $c-&gt;log-&gt;error( $@ );
++                return;
++            }
++        }
++        else {
++            # incorrect username
++            push @messages, 'Incorrect username supplied';
++        }
++    }
++
++    return uniq(sort @messages);
++}
++
++sub _send_username_reminder {
++    my ($self, $c, $person) = @_;
++    my ($send_status);
++    
++    # send the email
++    $send_status = $c-&gt;send_email(
++        {
++            template    =&gt; q{username_reminder.eml},
++            person      =&gt; $person,
++            headers =&gt; {
++                from    =&gt; $c-&gt;application_email_address(),
++                subject =&gt; qq{Your @{[$c-&gt;config-&gt;{name}]} username},
++            },
++        }
++    );
++}
++
++sub _user_password_reset {
++    my ($self, $c, $person) = @_;
++    my ($pwd_reset, $send_status);
++
++    # make the update in a transaction
++    eval {
++        $pwd_reset = $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++            sub { return $self-&gt;_txn_password_reset($c, $person) }
++        );
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die &quot;something terrible has happened!&quot;  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++        $c-&gt;log-&gt;error( $@ );
++        return;
++    }
++
++    # getting here means that we've created a new password_reset entry,
++    # zapped the current password, and set authenticated=f for the person
++
++    # now send the user an email
++    # send an email off to the (new) user
++    $send_status = $c-&gt;send_email(
++        {
++            template    =&gt; q{password_reset.eml},
++            person      =&gt; $person,
++            headers =&gt; {
++                from    =&gt; $c-&gt;application_email_address(),
++                subject =&gt; qq{Reset your @{[$c-&gt;config-&gt;{name}]} password},
++            },
++            template_data =&gt; {
++                pwd_reset =&gt; $pwd_reset,
++            },
++        }
++    );
++
++    return $send_status;
++}
++
++sub _user_reset {
++    my ($self, $c) = @_;
++    my ($results, @messages, $email_send_status, $send_username_reminder);
++
++    # validate the form data
++    $c-&gt;form(
++        $dfv_profile_for{password_reset}
++    );
++
++    # deal with missing/invalid fields
++    if ($c-&gt;form-&gt;has_missing()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c-&gt;form-&gt;missing ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c-&gt;form-&gt;has_invalid()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise the form data is ok...
++    else {
++        my ($criteria, $matches, $person);
++
++        # make sure we can match user/email supplied
++        if (defined $c-&gt;form-&gt;valid-&gt;{username}) {
++            $criteria-&gt;{'authentication.username'}
++                = $c-&gt;form-&gt;valid-&gt;{username};
++
++            # make sure we don't send a username reminder
++            $send_username_reminder = 0;
++        }
++        elsif (defined $c-&gt;form-&gt;valid-&gt;{email}) {
++            $criteria-&gt;{'email'}
++                = $c-&gt;form-&gt;valid-&gt;{email};
++
++            # assume the user used their email address because they couldn't
++            # remember their username, and send them a username reminder email
++            $send_username_reminder = 1;
++        }
++        else {
++            push @messages, q{Missing criteria in the database lookup};
++            $c-&gt;log-&gt;error(q{Lookup criteria missing in _user_reset()});
++            return uniq(sort @messages);
++        }
++        $matches = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;search(
++            $criteria,
++            {
++                join =&gt; 'authentication',
++            }
++        );
++
++        # make sure we don't have too many matches
++        if ($matches-&gt;count &gt; 1) {
++            push @messages, q{Database lookup returned too many records};
++            $c-&gt;log-&gt;error(q{Looks like the SQL for password reset is a bit borked});
++            $c-&gt;log-&gt;error(
++                  q{Lookup returned }
++                . $matches-&gt;count
++                . q{ record(s)}
++            );
++            $c-&gt;log-&gt;dumper($criteria);
++            return uniq(sort @messages);
++        }
++
++        # make sure we don't have too few matches
++        elsif ($matches-&gt;count &lt; 1) {
++            push @messages, q{There are no users matching that information};
++            $c-&gt;log-&gt;debug(' NO MATCHES ');
++        }
++
++        # otherwise, do the work
++        else {
++            # get the first (and should be only) match
++            $person = $matches-&gt;first();
++            $c-&gt;log-&gt;dumper( $person-&gt;{_column_data}, 'COLUMN_DATA' );
++
++            # if required, send a username reminder
++            if ($send_username_reminder) {
++                $self-&gt;_send_username_reminder($c, $person);
++            }
++
++            # do the actual password reset
++            $email_send_status = $self-&gt;_user_password_reset($c, $person);
++            if (not $email_send_status) {
++                push @messages, q{Failed to send password reset email};
++            }
++        }
++    }
++
++    return uniq(sort @messages);
++}
++
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Functions for database transactions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _txn_password_reset {
++    my ($self, $c, $person) = @_;
++    my ($random, $pwd_reset);
++
++    $c-&gt;log-&gt;dumper( ref $self,     'REF_SELF' );
++    $c-&gt;log-&gt;dumper( ref $c,        'REF_C' );
++    $c-&gt;log-&gt;dumper( ref $person,   'REF_PERSON' );
++
++    # if it's good enough for Cozens, it's good enough for me :-)
++    $random = md5_hex(time.(0+{}).$$.rand);
++
++    # create an invitation
++    $pwd_reset = $c-&gt;model('ParleyDB')-&gt;resultset('PasswordReset')-&gt;create(
++        {
++            'password_reset_id' =&gt; $random,
++            'recipient'		=&gt; $person-&gt;person_id,
++            'expires'		=&gt; Time::Piece-&gt;new(time + $LIFETIME)-&gt;datetime,
++        }
++    );
++
++    # as far as I know, no md5_hex value is 'X', so set the hexed password to X
++    # to prevent anyone logging in after a reset request
++    $person-&gt;authentication-&gt;password('X');
++    # the person is no longer authenticated
++    $person-&gt;authentication-&gt;authenticated(0);
++    # update the person's record
++    $person-&gt;authentication-&gt;update();
++
++    # return the new entry in password_reset so it ca be used back up the
++    # chain, e.g. in the email to the user
++    return $pwd_reset;
++}
++
++sub _txn_user_password_update {
++    my ($self, $c, $pwd_reset) = @_;
++
++    # less typing
++    my $authentication = $pwd_reset-&gt;recipient()-&gt;authentication();
++
++    # update the user's password
++    $authentication-&gt;password(
++        md5_hex( $c-&gt;form-&gt;valid-&gt;{new_password} )
++    );
++
++    # set the user as authenticated
++    $authentication-&gt;authenticated( 1 );
++
++    # update authentication information
++    $authentication-&gt;update();
++
++    # delete all outstanding reset URLs for the user
++    $c-&gt;model('ParleyDB')-&gt;resultset('PasswordReset')-&gt;search(
++        {
++            recipient =&gt; $pwd_reset-&gt;recipient()-&gt;id()
++        }
++    ) -&gt;delete;
++}
++
++1;
++__END__
++
++=pod
++
++=head1 NAME
++
++Parley::Controller::User::LostPassword
++
++=cut
++
++vim: ts=8 sts=4 et sw=4 sr sta
+
+Added: branches/schema_based/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User/SignUp.pm	2006-09-12 15:00:18 UTC (rev 246)
++++ branches/schema_based/lib/Parley/Controller/User/SignUp.pm	2006-09-12 15:00:21 UTC (rev 247)
+@@ -0,0 +1,370 @@
++package Parley::Controller::User::SignUp;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use List::MoreUtils qw{ uniq };
++use Digest::MD5 qw{ md5_hex };
++use Email::Valid;
++use Readonly;
++use Time::Piece;
++use Time::Seconds;
++
++#use Data::FormValidator 4.02;
++#use Data::FormValidator::Constraints qw(:closures);
++
++# used by DFV
++sub _dfv_constraint_confirm_equal {
++    my $dfv  = shift;
++    my $val1 = shift;
++    my $val2 = shift;
++
++    return ( $val1 eq $val2 );
++}
++
++sub _dfv_constraint_valid_email {
++    my $dfv   = shift;
++    my $email = shift;
++
++    return Email::Valid-&gt;address($email);
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Readonly my $LIFETIME =&gt; Time::Seconds::ONE_WEEK;
++
++my %dfv_profile_for = (
++    'signup' =&gt; {
++        required =&gt; [ qw(
++                username password confirm_password email confirm_email
++                first_name last_name forum_name
++        ) ],
++
++        filters =&gt; [qw(trim)],
++
++        constraint_methods =&gt; {
++            confirm_password =&gt; {
++                name =&gt; 'confirm_password',
++                constraint  =&gt; \&amp;_dfv_constraint_confirm_equal,
++                params      =&gt; [qw( password confirm_password )],
++            },
++            email =&gt; {
++                name =&gt; 'email',
++                constraint_method =&gt; \&amp;_dfv_constraint_valid_email,
++                params      =&gt; [qw( email )],
++            },
++            Xconfirm_email =&gt; {
++                name =&gt; 'Xconfirm_email',
++                constraint  =&gt; \&amp;_dfv_constraint_confirm_equal,
++                params      =&gt; [qw( email confirm_email )],
++            },
++
++            confirm_email =&gt; {
++                name        =&gt; q{confirm_email},
++                constraint  =&gt; \&amp;_dfv_constraint_confirm_equal,
++                params      =&gt; [qw( email confirm_email )],
++            },
++
++        },
++
++        msgs =&gt; {
++            constraints =&gt; {
++                confirm_password =&gt; q{The passwords do not match},
++                confirm_email =&gt; q{The email addresses do not match},
++                email =&gt; q{You must enter a valid email address},
++            },
++            missing =&gt; q{One or more required fields are missing},
++            format =&gt; '%s',
++        },
++    },
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub authenticate : Path('/user/authenticate') {
++    my ($self, $c, $auth_id) = @_;
++
++    # we should have an auth-id in the url
++    if (not defined $auth_id) {
++        $c-&gt;stash-&gt;{error}{message} = q{Incomplete authentication URL};
++        return;
++    }
++
++    # fetch the info from the database
++    my $regauth = $c-&gt;model('ParleyDB')-&gt;resultset('RegistrationAuthentication')-&gt;find(
++        {
++            registration_authentication_id =&gt; $auth_id,
++        }
++    );
++
++    # if we don't have any matches then the id was bogus
++    if (not defined $regauth) {
++        $c-&gt;stash-&gt;{error}{message} = q{Bogus authentication ID};
++        return;
++    }
++
++    # TODO
++    # if we get this far, we've got a valid ID, so we can yank out their details,
++    # and to be safe we'll finish the process by asking them for their password
++    #
++    # for now, we assume the link clicking is good enough, and we mark them
++    # as authenticated
++
++    # get the person matching the ID
++    $c-&gt;stash-&gt;{signup_user} = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;find(
++        {
++            person_id =&gt; $regauth-&gt;recipient-&gt;person_id(),
++        }
++    );
++
++    # get the first (and should be only) match
++    $c-&gt;log-&gt;dumper($c-&gt;stash-&gt;{signup_user}-&gt;{_column_data});
++
++    # mark the person as authenticated
++    $c-&gt;stash-&gt;{signup_user}-&gt;authentication-&gt;authenticated(1);
++    $c-&gt;stash-&gt;{signup_user}-&gt;authentication-&gt;update();
++
++    # delete registration_authentication record
++    $regauth-&gt;delete;
++
++    # set a suitable success template
++    $c-&gt;stash-&gt;{template} = 'user/auth_success';
++}
++
++
++sub signup : Path('/user/signup') {
++    my ( $self, $c ) = @_;
++    my (@messages);
++
++    # deal with form submissions
++    if (defined $c-&gt;request-&gt;method()
++            and $c-&gt;request-&gt;method() eq 'POST'
++            and defined $c-&gt;request-&gt;param('form_submit')
++    ) {
++        @messages = $self-&gt;_user_signup($c);
++    }
++
++    if (scalar @messages) {
++        $c-&gt;stash-&gt;{messages} = \@messages;
++    }
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller (Private/Helper) Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _add_new_user {
++    my ($self, $c) = @_;
++    my ($valid_results, @messages, $new_user);
++
++    # less typing
++    $valid_results = $c-&gt;form-&gt;valid;
++
++    # is the requested username already in use?
++    if ($self-&gt;_username_exists($c, $valid_results-&gt;{username})) {
++        push @messages, q{The username you have chosen is already in use. Please try a different one.};
++    }
++    # is the requested email address already in use?
++    if ($self-&gt;_email_exists($c, $valid_results-&gt;{email})) {
++        push @messages, q{The email address you have chosen is already in use.&lt;br /&gt;Please try a different one, or use the &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt; page.};
++    }
++    # is the requested forum name already in use?
++    if ($self-&gt;_forumname_exists($c, $valid_results-&gt;{forum_name})) {
++        push @messages, q{The forum name you have chosen is already in use. Please try a different one.};
++    }
++
++    # if we DON'T have any messages, then there were no errors, so we can try
++    # to add the new user
++    if (not scalar @messages) {
++        # make the new user inside a transaction
++        eval {
++            $new_user = $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                sub { return $self-&gt;_txn_add_new_user($c) }
++            );
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die &quot;something terrible has happened!&quot;  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++            $c-&gt;log-&gt;error( $@ );
++            return;
++        }
++    }
++
++
++    # return our error messages (if any)
++    return sort(@messages);
++}
++
++sub _create_regauth {
++    my ($self, $c, $person) = @_;
++    my ($random, $invitation);
++
++    # if it's good enough for Cozens, it's good enough for me
++    $random = md5_hex(time.(0+{}).$$.rand);
++
++    # create an invitation
++    $invitation = $c-&gt;model('ParleyDB')-&gt;resultset('RegistrationAuthentication')-&gt;create(
++        {
++            'registration_authentication_id'	=&gt; $random,
++            'recipient'				=&gt; $person-&gt;person_id,
++            'expires'				=&gt; Time::Piece-&gt;new(time + $LIFETIME)-&gt;datetime,
++        }
++    );
++
++    return $invitation;
++}
++
++sub _email_exists {
++    my ($self, $c, $email) = @_;
++    # look for the specified email
++    $c-&gt;log-&gt;info(&quot;Looking for: $email&quot;);
++    my $match_count = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;count(
++        email =&gt; $email,
++    );
++    # return the number of matches
++    return $match_count;
++}
++
++sub _forumname_exists {
++    my ($self, $c, $forum_name) = @_;
++    # look for the specified forum_name
++    $c-&gt;log-&gt;info(&quot;Looking for: $forum_name&quot;);
++    my $match_count = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;count(
++        forum_name =&gt; $forum_name,
++    );
++    # return the number of matches
++    return $match_count;
++}
++
++sub _new_user_authentication_email {
++    my ($self, $c, $person) = @_;
++    my ($invitation, $send_status);
++
++    # create a new reg-auth entry
++    $invitation = $self-&gt;_create_regauth($c, $person);
++
++    # send an email off to the (new) user
++    $send_status = $c-&gt;send_email(
++        {
++            template    =&gt; q{authentication_email.eml},
++            person      =&gt; $person,
++            headers =&gt; {
++                from    =&gt; $c-&gt;application_email_address(),
++                subject =&gt; qq{Activate your @{[$c-&gt;config-&gt;{name}]} registration},
++            },
++            template_data =&gt; {
++                regauth =&gt; $invitation,
++            },
++        }
++    );
++
++    return $send_status;
++}
++
++sub _user_signup {
++    my ($self, $c) = @_;
++    my ($results, @messages);
++
++    # validate the form data
++    $c-&gt;form(
++        $dfv_profile_for{signup}
++    );
++
++    # deal with missing/invalid fields
++    if ($c-&gt;form-&gt;has_missing()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c-&gt;form-&gt;missing ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c-&gt;form-&gt;has_invalid()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise the form data is ok...
++    else {
++        @messages = $self-&gt;_add_new_user($c, $results);
++    }
++
++    return (uniq(sort @messages));
++}
++
++sub _username_exists {
++    my ($self, $c, $username) = @_;
++    # look for the specified username
++    $c-&gt;log-&gt;info(&quot;Looking for: $username&quot;);
++    my $match_count = $c-&gt;model('ParleyDB')-&gt;resultset('Authentication')-&gt;count(
++        username =&gt; $username,
++    );
++    # return the number of matches
++    return $match_count;
++}
++
++
++# send notification email
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Functions for database transactions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _txn_add_new_user {
++    my ($self, $c) = @_;
++    my ($valid_results, $new_auth, $new_person, $status_ok);
++
++    # less typing
++    $valid_results = $c-&gt;form-&gt;valid;
++
++    # add authentication record
++    $new_auth = $c-&gt;model('ParleyDB')-&gt;resultset('Authentication')-&gt;create(
++        {
++            username =&gt; $c-&gt;form-&gt;valid-&gt;{username},
++            password =&gt; md5_hex( $c-&gt;form-&gt;valid-&gt;{password} ),
++        }
++    );
++
++    # add new person
++    $new_person = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;create(
++        {
++            first_name      =&gt; $valid_results-&gt;{first_name},
++            last_name       =&gt; $valid_results-&gt;{last_name},
++            forum_name      =&gt; $valid_results-&gt;{forum_name},
++            email           =&gt; $valid_results-&gt;{email},
++            authentication  =&gt; $new_auth-&gt;id(),
++        }
++    );
++
++    # send an authentication email
++    $status_ok = $self-&gt;_new_user_authentication_email( $c, $new_person );
++
++    # if we sent the email OK take them off to a &quot;it worked&quot; type screen
++    if ($status_ok) {
++        $c-&gt;stash-&gt;{newdata}  = $new_person;
++        $c-&gt;stash-&gt;{template} = q{user/auth_emailed};
++    }
++}
++
++
++
++1;
++__END__
++
++=pod
++
++=head1 NAME
++
++Parley::Controller::User::SignUp
++
++=cut
++
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000134.html">[Parley-svn] r246 - / branches/schema_based
+</A></li>
+	<LI>Next message: <A HREF="000136.html">[Parley-svn] r248 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#135">[ date ]</a>
+              <a href="thread.html#135">[ thread ]</a>
+              <a href="subject.html#135">[ subject ]</a>
+              <a href="author.html#135">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

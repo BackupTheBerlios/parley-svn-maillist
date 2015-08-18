@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r277 - / trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r277%20-%20/%20trunk/script&In-Reply-To=%3C200704042108.l34L8QJZ028893%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000164.html">
+   <LINK REL="Next"  HREF="000166.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r277 - / trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r277%20-%20/%20trunk/script&In-Reply-To=%3C200704042108.l34L8QJZ028893%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r277 - / trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Apr  4 23:08:26 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000164.html">[Parley-svn] r276 - / trunk/lib/Parley/App
+</A></li>
+        <LI>Next message: <A HREF="000166.html">[Parley-svn] r278 - / trunk/lib/Parley/App/Communication
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#165">[ date ]</a>
+              <a href="thread.html#165">[ thread ]</a>
+              <a href="subject.html#165">[ subject ]</a>
+              <a href="author.html#165">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-04 23:08:26 +0200 (Wed, 04 Apr 2007)
+New Revision: 277
+
+Added:
+   trunk/script/parley_email_engine.pl
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3042 at wiggin</A>:  chisel | 2007-04-04 22:07:54 +0100
+ + email sending daemon/engine [first attempt]
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3031
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3042
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/script/parley_email_engine.pl
+===================================================================
+--- trunk/script/parley_email_engine.pl	2007-04-03 19:48:38 UTC (rev 276)
++++ trunk/script/parley_email_engine.pl	2007-04-04 21:08:26 UTC (rev 277)
+@@ -0,0 +1,253 @@
++#!/usr/bin/env perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++BEGIN {
++}
++
++# use the lib directory relative to ourself
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++
++# for building email(s)
++use MIME::Lite;
++
++# since we're going to be a daemon ...
++use Proc::Daemon;
++use Proc::PID::File;
++
++# somewhere to send stuff
++use Sys::Syslog qw( :DEFAULT :standard :macros );
++
++# our in to the database ...
++use Parley::Schema;
++
++# whether we should be exiting
++our $exit = 0;
++
++# prepare syslog for use
++openlog(
++    q{parley_email_engine},
++    q{ndelay,pid},
++    LOG_USER
++)
++    or die $!;
++syslog( LOG_INFO, q{script started} )
++    or die $!;
++
++# have we been asked to stop running?
++if (@ARGV &amp;&amp; $ARGV[0] eq q{stop}) {
++    # we need to quit!
++
++    # get the pid file ...
++    my $pid = Proc::PID::File-&gt;running(
++        debug   =&gt; 0,
++        name    =&gt; q{parley_email_engine},
++        dir     =&gt; q{/tmp},
++    );
++    if (not $pid) {
++        syslog( LOG_INFO, qq{daemon not running!} );
++        exit;
++    }
++
++    # send a kill signal
++    kill( 2, $pid );
++    syslog( LOG_INFO, qq{STOP signal sent!\n} );
++    exit;
++}
++
++# connect to the schema
++my $schema = schema_connect();
++
++# daemon
++my $pid;
++if ($pid = Proc::Daemon::Fork) { # parent
++    # nothing here
++}
++else { # child
++    Proc::Daemon::Init;
++
++    openlog(
++        q{parley_email_engine},
++        q{ndelay,pid},
++        LOG_USER
++    )
++        or die $!;
++    syslog( LOG_INFO, q{child process created} );
++
++    # how to deal with given signals
++    $SIG{TERM}  = sub { $exit = 1 };
++    $SIG{INT}   = sub { $exit = 1 };
++    $SIG{CHLD}  = q{IGNORE};
++    $SIG{HUP}   = q{IGNORE};
++
++    my $status_ok;
++    $status_ok = open(STDOUT, '&gt;&gt;', '/tmp/parley_email_engine.log');
++    if (not $status_ok) {
++        syslog( LOG_ERR, &quot;failed to reopen STDOUT: $!&quot; );
++        exit;
++    }
++    $status_ok = open(STDERR, '&gt;&amp;STDOUT');
++    if (not $status_ok) {
++        syslog( LOG_ERR, &quot;failed to re-open STDERR to STDOUT: $!&quot; );
++        exit;
++    }
++
++    # make sure we aren't already running
++    if (Proc::PID::File-&gt;running(
++            debug   =&gt; 0,
++            name    =&gt; q{parley_email_engine},
++            dir     =&gt; q{/tmp},
++        )
++    ) {
++        syslog( LOG_INFO, qq{Already Running!} );
++        exit;
++    }
++
++    while (1) {
++        child_process($schema);
++        sleep(1);
++    }
++}
++
++sub child_process {
++    my $schema = shift;
++
++    # get the oldest unsent email in the queue
++    my $rs = $schema-&gt;resultset('EmailQueue')-&gt;search(
++        {
++            attempted_delivery =&gt; 0,
++        },
++        {
++            # oldest first
++            order_by    =&gt; 'queued ASC',
++            # one result
++            rows        =&gt; 1,
++        }
++    );
++
++    # if we have anything waiting to be sent ...
++    if ($rs-&gt;count()) {
++        my $queue_item = $rs-&gt;first();
++        send_email( $queue_item );
++    }
++
++    # have we been asked to stop?
++    if ($exit) {
++        syslog(
++            LOG_INFO,
++            q{STOP signal recieved}
++        );
++        exit;
++    }
++}
++
++sub schema_connect {
++    my $schema;
++    eval {
++        $schema = Parley::Schema-&gt;connect(
++            q{dbi:Pg:dbname=parley},
++            q{parley},
++            undef,
++            { RaiseError =&gt; 0, PrintError =&gt; 0 },
++        );
++    };
++    if ($@) {
++        syslog( LOG_INFO, $@ );
++        exit;
++    }
++    if (not defined $schema) {
++        syslog( LOG_INFO, $! );
++        exit;
++    }
++
++    return $schema;
++}
++
++sub send_email {
++    my $queue_item = shift;
++    my ($email);
++
++    # are we text/plain or multipart/alternative?
++    if (defined $queue_item-&gt;html_content()) {
++        $email = build_multipart_email( $queue_item );
++    }
++    else {
++        $email = build_text_email( $queue_item );
++    }
++
++    # print the email out for now, no need to send anything
++    $email-&gt;send();
++    # update the table to say we've attempted delivery
++    $queue_item-&gt;attempted_delivery(1);
++    $queue_item-&gt;update();
++
++    return;
++}
++
++sub build_text_email {
++    my $queue_item = shift;
++    my ($msg);
++
++    # create a straight-forward text email
++    $msg = MIME::Lite-&gt;new(
++        From            =&gt; $queue_item-&gt;sender(),
++        To              =&gt; nice_to_header( $queue_item-&gt;recipient() ),
++        Subject         =&gt; $queue_item-&gt;subject(),
++        'X-Application' =&gt; 'parley_email_engine',
++        Encoding        =&gt; 'quoted-printable',
++
++        Type        =&gt; 'TEXT',
++        Data        =&gt; $queue_item-&gt;text_content(),
++    )
++        or die $!;
++
++    return $msg;
++}
++
++sub build_multipart_email {
++    my $queue_item = shift;
++    my ($msg);
++
++    # create the multipart container
++    $msg = MIME::Lite-&gt;new(
++        From            =&gt; $queue_item-&gt;sender(),
++        To              =&gt; nice_to_header( $queue_item-&gt;recipient() ),
++        Subject         =&gt; $queue_item-&gt;subject(),
++        'X-Application' =&gt; 'parley_email_engine',
++
++        Type    =&gt; 'multipart/alternative',
++    )
++        or die $!;
++
++    # add the text part
++    $msg-&gt;attach(
++        Type    =&gt; 'text/plain',
++        Data    =&gt; $queue_item-&gt;text_content(),
++    );
++    # add the html part
++    $msg-&gt;attach(
++        Type    =&gt; 'text/html',
++        Data    =&gt; $queue_item-&gt;html_content(),
++    );
++
++    return $msg;
++}
++
++
++
++sub nice_to_header {
++    my $recipient = shift;
++
++    my $string =
++          $recipient-&gt;first_name()
++        . q{ }
++        . $recipient-&gt;last_name()
++        . q{ &lt;}
++        . $recipient-&gt;email()
++        . q{&gt;}
++    ;
++
++    return $string;
++}
+
+
+Property changes on: trunk/script/parley_email_engine.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000164.html">[Parley-svn] r276 - / trunk/lib/Parley/App
+</A></li>
+	<LI>Next message: <A HREF="000166.html">[Parley-svn] r278 - / trunk/lib/Parley/App/Communication
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#165">[ date ]</a>
+              <a href="thread.html#165">[ thread ]</a>
+              <a href="subject.html#165">[ subject ]</a>
+              <a href="author.html#165">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

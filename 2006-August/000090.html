@@ -1,0 +1,753 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r201 - / branches/schema_based/lib/Parley	branches/schema_based/lib/Parley/Model	branches/schema_based/lib/Parley/Schema branches/schema_based/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r201%20-%20/%20branches/schema_based/lib/Parley%0A%09branches/schema_based/lib/Parley/Model%0A%09branches/schema_based/lib/Parley/Schema%20branches/schema_based/t&In-Reply-To=%3C200608161341.k7GDft6S016361%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000089.html">
+   <LINK REL="Next"  HREF="000091.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r201 - / branches/schema_based/lib/Parley	branches/schema_based/lib/Parley/Model	branches/schema_based/lib/Parley/Schema branches/schema_based/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r201%20-%20/%20branches/schema_based/lib/Parley%0A%09branches/schema_based/lib/Parley/Model%0A%09branches/schema_based/lib/Parley/Schema%20branches/schema_based/t&In-Reply-To=%3C200608161341.k7GDft6S016361%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r201 - / branches/schema_based/lib/Parley	branches/schema_based/lib/Parley/Model	branches/schema_based/lib/Parley/Schema branches/schema_based/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:41:55 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000089.html">[Parley-svn] r200 - / branches/schema_based/lib/Parley/View	branches/schema_based/t
+</A></li>
+        <LI>Next message: <A HREF="000091.html">[Parley-svn] r203 - / branches/schema_based/lib	branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#90">[ date ]</a>
+              <a href="thread.html#90">[ thread ]</a>
+              <a href="subject.html#90">[ subject ]</a>
+              <a href="author.html#90">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:41:45 +0200 (Wed, 16 Aug 2006)
+New Revision: 201
+
+Added:
+   branches/schema_based/lib/Parley/Model/ParleyDB.pm
+   branches/schema_based/lib/Parley/Schema.pm
+   branches/schema_based/lib/Parley/Schema/
+   branches/schema_based/lib/Parley/Schema/Authentication.pm
+   branches/schema_based/lib/Parley/Schema/EmailQueue.pm
+   branches/schema_based/lib/Parley/Schema/Forum.pm
+   branches/schema_based/lib/Parley/Schema/Person.pm
+   branches/schema_based/lib/Parley/Schema/Post.pm
+   branches/schema_based/lib/Parley/Schema/Preference.pm
+   branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm
+   branches/schema_based/lib/Parley/Schema/Thread.pm
+   branches/schema_based/lib/Parley/Schema/ThreadView.pm
+   branches/schema_based/t/model_ParleyDB.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5116 at ferrari</A>:  chisel | 2006-08-10 09:13:38 +0100
+ run:  ./script/parley_create.pl model ParleyDB DBIC::Schema Parley::Schema create=static dbi:Pg:dbname=parley parley
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5115
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5116
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Parley/Model/ParleyDB.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Model/ParleyDB.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Model/ParleyDB.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,37 @@
++package Parley::Model::ParleyDB;
++
++use strict;
++use base 'Catalyst::Model::DBIC::Schema';
++
++__PACKAGE__-&gt;config(
++    schema_class =&gt; 'Parley::Schema',
++    connect_info =&gt; [
++        'dbi:Pg:dbname=parley',
++        'parley',
++        
++    ],
++);
++
++=head1 NAME
++
++Parley::Model::ParleyDB - Catalyst DBIC Schema Model
++=head1 SYNOPSIS
++
++See L&lt;Parley&gt;
++
++=head1 DESCRIPTION
++
++L&lt;Catalyst::Model::DBIC::Schema&gt; Model using schema L&lt;Parley::Schema&gt;
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/lib/Parley/Schema/Authentication.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Authentication.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Authentication.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,51 @@
++package Parley::Schema::Authentication;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;authentication&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;authentication_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('authentication_authentication_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;password&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;authenticated&quot;,
++  {
++    data_type =&gt; &quot;boolean&quot;,
++    default_value =&gt; &quot;false&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 1,
++  },
++  &quot;username&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;authentication_id&quot;);
++__PACKAGE__-&gt;add_unique_constraint(&quot;authentication_username_key&quot;, [&quot;username&quot;]);
++__PACKAGE__-&gt;has_many(
++  &quot;people&quot;,
++  &quot;Person&quot;,
++  { &quot;foreign.authentication&quot; =&gt; &quot;self.authentication_id&quot; },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/EmailQueue.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/EmailQueue.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/EmailQueue.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,62 @@
++package Parley::Schema::EmailQueue;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;email_queue&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;recipient&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;subject&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;html_content&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; undef,
++  },
++  &quot;email_queue_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('email_queue_email_queue_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;attempted_delivery&quot;,
++  {
++    data_type =&gt; &quot;boolean&quot;,
++    default_value =&gt; &quot;false&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 1,
++  },
++  &quot;text_content&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;queued&quot;,
++  {
++    data_type =&gt; &quot;timestamp with time zone&quot;,
++    default_value =&gt; &quot;now()&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 8,
++  },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;email_queue_id&quot;);
++__PACKAGE__-&gt;belongs_to(&quot;recipient&quot;, &quot;Person&quot;, { person_id =&gt; &quot;recipient&quot; });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Forum.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Forum.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,52 @@
++package Parley::Schema::Forum;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;forum&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;last_post&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;post_count&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;forum_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('forum_forum_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;active&quot;,
++  {
++    data_type =&gt; &quot;boolean&quot;,
++    default_value =&gt; &quot;true&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 1,
++  },
++  &quot;name&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;description&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; undef,
++  },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;forum_id&quot;);
++__PACKAGE__-&gt;add_unique_constraint(&quot;forum_name_key&quot;, [&quot;name&quot;]);
++__PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.forum&quot; =&gt; &quot;self.forum_id&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;last_post&quot; });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Person.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Person.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Person.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,86 @@
++package Parley::Schema::Person;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;person&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;person_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('person_person_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;authentication&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;last_name&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;email&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;forum_name&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;preference&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;last_post&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;post_count&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;first_name&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;person_id&quot;);
++__PACKAGE__-&gt;add_unique_constraint(&quot;person_forum_name_key&quot;, [&quot;forum_name&quot;]);
++__PACKAGE__-&gt;add_unique_constraint(&quot;person_email_key&quot;, [&quot;email&quot;]);
++__PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.creator&quot; =&gt; &quot;self.person_id&quot; });
++__PACKAGE__-&gt;has_many(
++  &quot;email_queues&quot;,
++  &quot;EmailQueue&quot;,
++  { &quot;foreign.recipient&quot; =&gt; &quot;self.person_id&quot; },
++);
++__PACKAGE__-&gt;has_many(&quot;posts&quot;, &quot;Post&quot;, { &quot;foreign.creator&quot; =&gt; &quot;self.person_id&quot; });
++__PACKAGE__-&gt;has_many(
++  &quot;thread_views&quot;,
++  &quot;ThreadView&quot;,
++  { &quot;foreign.person&quot; =&gt; &quot;self.person_id&quot; },
++);
++__PACKAGE__-&gt;belongs_to(&quot;preference&quot;, &quot;Preference&quot;, { preference_id =&gt; &quot;preference&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;last_post&quot; });
++__PACKAGE__-&gt;belongs_to(
++  &quot;authentication&quot;,
++  &quot;Authentication&quot;,
++  { authentication_id =&gt; &quot;authentication&quot; },
++);
++__PACKAGE__-&gt;has_many(
++  &quot;registration_authentications&quot;,
++  &quot;RegistrationAuthentication&quot;,
++  { &quot;foreign.recipient&quot; =&gt; &quot;self.person_id&quot; },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Post.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,84 @@
++package Parley::Schema::Post;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;post&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;creator&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;subject&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; undef,
++  },
++  &quot;quoted_post&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;message&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;quoted_text&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; undef,
++  },
++  &quot;created&quot;,
++  {
++    data_type =&gt; &quot;timestamp with time zone&quot;,
++    default_value =&gt; &quot;now()&quot;,
++    is_nullable =&gt; 1,
++    size =&gt; 8,
++  },
++  &quot;thread&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;reply_to&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;post_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('post_post_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;edited&quot;,
++  {
++    data_type =&gt; &quot;timestamp with time zone&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 8,
++  },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;post_id&quot;);
++__PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.last_post&quot; =&gt; &quot;self.post_id&quot; });
++__PACKAGE__-&gt;has_many(&quot;forums&quot;, &quot;Forum&quot;, { &quot;foreign.last_post&quot; =&gt; &quot;self.post_id&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;creator&quot;, &quot;Person&quot;, { person_id =&gt; &quot;creator&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;reply_to&quot;, &quot;Post&quot;, { post_id =&gt; &quot;reply_to&quot; });
++__PACKAGE__-&gt;has_many(
++  &quot;post_reply_toes&quot;,
++  &quot;Post&quot;,
++  { &quot;foreign.reply_to&quot; =&gt; &quot;self.post_id&quot; },
++);
++__PACKAGE__-&gt;belongs_to(&quot;thread&quot;, &quot;Thread&quot;, { thread_id =&gt; &quot;thread&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;quoted_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;quoted_post&quot; });
++__PACKAGE__-&gt;has_many(
++  &quot;post_quoted_posts&quot;,
++  &quot;Post&quot;,
++  { &quot;foreign.quoted_post&quot; =&gt; &quot;self.post_id&quot; },
++);
++__PACKAGE__-&gt;has_many(&quot;people&quot;, &quot;Person&quot;, { &quot;foreign.last_post&quot; =&gt; &quot;self.post_id&quot; });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Preference.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Preference.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Preference.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,36 @@
++package Parley::Schema::Preference;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;preference&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;timezone&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; &quot;'UTC'::text&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;preference_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('preference_preference_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;preference_id&quot;);
++__PACKAGE__-&gt;has_many(
++  &quot;people&quot;,
++  &quot;Person&quot;,
++  { &quot;foreign.preference&quot; =&gt; &quot;self.preference_id&quot; },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,29 @@
++package Parley::Schema::RegistrationAuthentication;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;registration_authentication&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;recipient&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;registration_authentication_id&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;expires&quot;,
++  { data_type =&gt; &quot;date&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;registration_authentication_id&quot;);
++__PACKAGE__-&gt;belongs_to(&quot;recipient&quot;, &quot;Person&quot;, { person_id =&gt; &quot;recipient&quot; });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,78 @@
++package Parley::Schema::Thread;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;thread&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;thread_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('thread_thread_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;locked&quot;,
++  {
++    data_type =&gt; &quot;boolean&quot;,
++    default_value =&gt; &quot;false&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 1,
++  },
++  &quot;creator&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;subject&quot;,
++  {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++  &quot;active&quot;,
++  {
++    data_type =&gt; &quot;boolean&quot;,
++    default_value =&gt; &quot;true&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 1,
++  },
++  &quot;forum&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;created&quot;,
++  {
++    data_type =&gt; &quot;timestamp with time zone&quot;,
++    default_value =&gt; &quot;now()&quot;,
++    is_nullable =&gt; 1,
++    size =&gt; 8,
++  },
++  &quot;last_post&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;sticky&quot;,
++  {
++    data_type =&gt; &quot;boolean&quot;,
++    default_value =&gt; &quot;false&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 1,
++  },
++  &quot;post_count&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;view_count&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;thread_id&quot;);
++__PACKAGE__-&gt;belongs_to(&quot;creator&quot;, &quot;Person&quot;, { person_id =&gt; &quot;creator&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;last_post&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;forum&quot;, &quot;Forum&quot;, { forum_id =&gt; &quot;forum&quot; });
++__PACKAGE__-&gt;has_many(&quot;posts&quot;, &quot;Post&quot;, { &quot;foreign.thread&quot; =&gt; &quot;self.thread_id&quot; });
++__PACKAGE__-&gt;has_many(
++  &quot;thread_views&quot;,
++  &quot;ThreadView&quot;,
++  { &quot;foreign.thread&quot; =&gt; &quot;self.thread_id&quot; },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,52 @@
++package Parley::Schema::ThreadView;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;thread_view&quot;);
++__PACKAGE__-&gt;add_columns(
++  &quot;watched&quot;,
++  {
++    data_type =&gt; &quot;boolean&quot;,
++    default_value =&gt; &quot;false&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 1,
++  },
++  &quot;thread_view_id&quot;,
++  {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('thread_view_thread_view_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;last_notified&quot;,
++  {
++    data_type =&gt; &quot;timestamp with time zone&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 8,
++  },
++  &quot;thread&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;timestamp&quot;,
++  {
++    data_type =&gt; &quot;timestamp with time zone&quot;,
++    default_value =&gt; &quot;now()&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 8,
++  },
++  &quot;person&quot;,
++  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
++);
++__PACKAGE__-&gt;set_primary_key(&quot;thread_view_id&quot;);
++__PACKAGE__-&gt;add_unique_constraint(&quot;thread_view_person_key&quot;, [&quot;person&quot;, &quot;thread&quot;]);
++__PACKAGE__-&gt;belongs_to(&quot;thread&quot;, &quot;Thread&quot;, { thread_id =&gt; &quot;thread&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;person&quot;, &quot;Person&quot;, { person_id =&gt; &quot;person&quot; });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,13 @@
++package Parley::Schema;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class::Schema';
++
++__PACKAGE__-&gt;load_classes;
++
++1;
++
+
+Added: branches/schema_based/t/model_ParleyDB.t
+===================================================================
+--- branches/schema_based/t/model_ParleyDB.t	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/t/model_ParleyDB.t	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,6 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 1;
++
++BEGIN { use_ok 'Parley::Model::ParleyDB' }
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000089.html">[Parley-svn] r200 - / branches/schema_based/lib/Parley/View	branches/schema_based/t
+</A></li>
+	<LI>Next message: <A HREF="000091.html">[Parley-svn] r203 - / branches/schema_based/lib	branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#90">[ date ]</a>
+              <a href="thread.html#90">[ thread ]</a>
+              <a href="subject.html#90">[ subject ]</a>
+              <a href="author.html#90">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

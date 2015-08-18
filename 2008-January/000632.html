@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r744 - / trunk/root/base/post
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r744%20-%20/%20trunk/root/base/post&In-Reply-To=%3C200801172155.m0HLt0OP024086%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000631.html">
+   <LINK REL="Next"  HREF="000633.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r744 - / trunk/root/base/post</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r744%20-%20/%20trunk/root/base/post&In-Reply-To=%3C200801172155.m0HLt0OP024086%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r744 - / trunk/root/base/post">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 17 22:55:00 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000631.html">[Parley-svn] r743 - / trunk trunk/root/base/user	trunk/root/static/css
+</A></li>
+        <LI>Next message: <A HREF="000633.html">[Parley-svn] r745 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#632">[ date ]</a>
+              <a href="thread.html#632">[ thread ]</a>
+              <a href="subject.html#632">[ subject ]</a>
+              <a href="author.html#632">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-17 22:55:00 +0100 (Thu, 17 Jan 2008)
+New Revision: 744
+
+Modified:
+   /
+   trunk/root/base/post/edit
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4517 at wiggin</A>:  chisel | 2008-01-17 19:12:17 +0000
+ / improved post/edit template
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4516
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4517
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/post/edit
+===================================================================
+--- trunk/root/base/post/edit	2008-01-17 21:54:50 UTC (rev 743)
++++ trunk/root/base/post/edit	2008-01-17 21:55:00 UTC (rev 744)
+@@ -1,3 +1,13 @@
++&lt;div style=&quot;margin-top:10px;&quot;&gt;&lt;/div&gt;
++&lt;div class=&quot;thread_header&quot;&gt;
++    &lt;a href=&quot;forum/view?forum=[% current_forum.id %]&quot;&gt;[% current_forum.name %]&lt;/a&gt;
++    &nbsp;:&nbsp;
++    [%l('Edit')%]
++    &nbsp;:&nbsp;
++    [% ForumCode.escape(current_post.thread.subject) %]
++&lt;/div&gt;
++&lt;div style=&quot;margin-top:10px;&quot;&gt;&lt;/div&gt;
++
+ [% IF messages %]
+ &lt;p&gt;
+     &lt;ul&gt;
+@@ -10,18 +20,22 @@
+ 
+ &lt;form action=&quot;post/edit?post=[% current_post.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
+     &lt;table&gt;
+-        &lt;tr&gt;
+-            &lt;td&gt;
+-                &lt;textarea id=&quot;thread_message&quot; name=&quot;post_message&quot; cols=&quot;60&quot; rows=&quot;10&quot; class=&quot;post_message&quot; /&gt;[% current_post.message %]&lt;/textarea&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
++        &lt;tbody&gt;
++            &lt;tr&gt;
++                &lt;td class=&quot;thread_add_message&quot;&gt; [%l('Message')%] &lt;/td&gt;
++                &lt;td&gt;
++                    &lt;textarea id=&quot;thread_message&quot; name=&quot;post_message&quot; cols=&quot;60&quot; rows=&quot;10&quot; class=&quot;post_message&quot; /&gt;[% current_post.message %]&lt;/textarea&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
+ 
+-        &lt;tr&gt;
+-            &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-                &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; id=&quot;message_preview&quot; /&gt;
+-                &lt;input type=&quot;submit&quot; value=&quot;[%l('Update Reply')%]&quot; name=&quot;post_update&quot;    class=&quot;input_button&quot; /&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
++            &lt;tr&gt;
++                &lt;td&gt;&nbsp;&lt;/td&gt;
++                &lt;td style=&quot;text-align: center;&quot;&gt;
++                    &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; id=&quot;message_preview&quot; /&gt;
++                    &lt;input type=&quot;submit&quot; value=&quot;[%l('Update Reply')%]&quot; name=&quot;post_update&quot;    class=&quot;input_button&quot; /&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++        &lt;/tbody&gt;
+     &lt;/table&gt;
+ &lt;/form&gt;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000631.html">[Parley-svn] r743 - / trunk trunk/root/base/user	trunk/root/static/css
+</A></li>
+	<LI>Next message: <A HREF="000633.html">[Parley-svn] r745 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#632">[ date ]</a>
+              <a href="thread.html#632">[ thread ]</a>
+              <a href="subject.html#632">[ subject ]</a>
+              <a href="author.html#632">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

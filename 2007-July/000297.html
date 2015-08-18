@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r409 - / trunk trunk/lib/Parley/Controller	trunk/root/base/forum trunk/root/base/shared
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r409%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/forum%20trunk/root/base/shared&In-Reply-To=%3C200707312040.l6VKe3hr016044%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000296.html">
+   <LINK REL="Next"  HREF="000298.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r409 - / trunk trunk/lib/Parley/Controller	trunk/root/base/forum trunk/root/base/shared</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r409%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/forum%20trunk/root/base/shared&In-Reply-To=%3C200707312040.l6VKe3hr016044%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r409 - / trunk trunk/lib/Parley/Controller	trunk/root/base/forum trunk/root/base/shared">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jul 31 22:40:03 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000296.html">[Parley-svn] r408 - / trunk/root/base/forum
+</A></li>
+        <LI>Next message: <A HREF="000298.html">[Parley-svn] r410 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#297">[ date ]</a>
+              <a href="thread.html#297">[ thread ]</a>
+              <a href="subject.html#297">[ subject ]</a>
+              <a href="author.html#297">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-31 22:40:02 +0200 (Tue, 31 Jul 2007)
+New Revision: 409
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/parley.yml
+   trunk/root/base/forum/view
+   trunk/root/base/shared/pager_advanced
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3618 at wiggin</A>:  chisel | 2007-07-31 18:47:26 +0100
+ + added pager functionality to forum/view page
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3512
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3618
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2007-07-20 20:51:02 UTC (rev 408)
++++ trunk/lib/Parley/Controller/Forum.pm	2007-07-31 20:40:02 UTC (rev 409)
+@@ -21,6 +21,9 @@
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
++    # page to show - either a param, or show the first
++    $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
++
+     # get a list of (active) threads in a given forum
+     $c-&gt;stash-&gt;{thread_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;search(
+         {
+@@ -30,11 +33,41 @@
+         {
+             join        =&gt; 'last_post',
+             order_by    =&gt; 'sticky DESC, last_post.created DESC',
++            # pager information
++            rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
++            page        =&gt; $c-&gt;stash-&gt;{current_page},
+         }
+     );
++
++    # setup the pager
++    $self-&gt;_forum_view_pager($c);
+ }
+ 
+ 
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller (Private/Helper) Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _forum_view_pager {
++    my ($self, $c) = @_;
++
++    $c-&gt;stash-&gt;{page} = $c-&gt;stash-&gt;{thread_list}-&gt;pager();
++
++    # TODO - find a better way to do this if possible
++    # set up Data::SpreadPagination
++    my $pagination = Data::SpreadPagination-&gt;new(
++        {
++            totalEntries        =&gt; $c-&gt;stash-&gt;{page}-&gt;total_entries(),
++            entriesPerPage      =&gt; $c-&gt;config-&gt;{threads_per_page},
++            currentPage         =&gt; $c-&gt;stash-&gt;{current_page},
++            maxPages            =&gt; 4,
++        }
++    );
++    $c-&gt;stash-&gt;{page_range_spread} = $pagination-&gt;pages_in_spread();
++}
++
++
+ 1;
+ 
+ __END__
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2007-07-20 20:51:02 UTC (rev 408)
++++ trunk/parley.yml	2007-07-31 20:40:02 UTC (rev 409)
+@@ -1,10 +1,11 @@
+ --- #YAML:1.0
+ # DO NOT USE TABS FOR INDENTATION OR label/value SEPARATION!!!
+-name:         Parley
+-default_uri:  /forum/list
+-posts_per_page: 10
+-search_results_per_page: 25
+-replies_have_own_subject: 0
++name:                       Parley
++default_uri:                /forum/list
++posts_per_page:             10
++threads_per_page:           25
++search_results_per_page:    25
++replies_have_own_subject:   0
+ 
+ alerts:
+     from_name:      'Parley'
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2007-07-20 20:51:02 UTC (rev 408)
++++ trunk/root/base/forum/view	2007-07-31 20:40:02 UTC (rev 409)
+@@ -1,10 +1,14 @@
+ &lt;h1&gt;[% current_forum.name %] : List Of Active Threads&lt;/h1&gt;
+ 
++&lt;!-- NO LONGER NEEDED - IT'S PART OF THE MENUS NOW
+ &lt;p style=&quot;font-size: small;&quot;&gt;
+ &lt;a href=&quot;thread/add?forum=[% current_forum.id %]&quot;&gt;[Start A New Topic]&lt;/a&gt;
+ &lt;a href=&quot;javascript:;&quot; onclick=&quot;search_dialog.show(); return false;&quot;&gt;[Search]&lt;/a&gt;
++--&gt;
+ 
++
+ [%- IF thread_list.count &gt; 0 %]
++[% PROCESS shared/pager_advanced %]
+ &lt;table&gt;
+   &lt;tr&gt;
+     &lt;th&gt;&nbsp;&lt;/th&gt;
+@@ -83,6 +87,7 @@
+     &lt;/tr&gt;
+   [% END %]
+ &lt;/table&gt;
++[% PROCESS shared/pager_advanced %]
+ [% ELSE %]
+   No active threads in this forum
+ [% END %]
+
+Modified: trunk/root/base/shared/pager_advanced
+===================================================================
+--- trunk/root/base/shared/pager_advanced	2007-07-20 20:51:02 UTC (rev 408)
++++ trunk/root/base/shared/pager_advanced	2007-07-31 20:40:02 UTC (rev 409)
+@@ -2,6 +2,8 @@
+ &lt;div class=&quot;pager_advanced&quot;&gt;
+     [% IF current_thread %]
+     [% url_extra_args = '&amp;thread=' _ current_thread.id %]
++    [% ELSIF current_forum %]
++    [% url_extra_args = '&amp;forum=' _ current_forum.id %]
+     [% END %]
+ 
+     Page [% page.current_page %] of [% page.last_page %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000296.html">[Parley-svn] r408 - / trunk/root/base/forum
+</A></li>
+	<LI>Next message: <A HREF="000298.html">[Parley-svn] r410 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#297">[ date ]</a>
+              <a href="thread.html#297">[ thread ]</a>
+              <a href="subject.html#297">[ subject ]</a>
+              <a href="author.html#297">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

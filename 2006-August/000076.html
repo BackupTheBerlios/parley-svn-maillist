@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r187 - / trunk/root/base/forum
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r187%20-%20/%20trunk/root/base/forum&In-Reply-To=%3C200608161340.k7GDeKR7014460%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000077.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r187 - / trunk/root/base/forum</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r187%20-%20/%20trunk/root/base/forum&In-Reply-To=%3C200608161340.k7GDeKR7014460%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r187 - / trunk/root/base/forum">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:40:20 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000077.html">[Parley-svn] r188 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#76">[ date ]</a>
+              <a href="thread.html#76">[ thread ]</a>
+              <a href="subject.html#76">[ subject ]</a>
+              <a href="author.html#76">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:40:19 +0200 (Wed, 16 Aug 2006)
+New Revision: 187
+
+Modified:
+   /
+   trunk/root/base/forum/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4921 at ferrari</A>:  chisel | 2006-07-19 18:51:36 +0100
+ + testing a pop-up search box
+ / changed [% %] TT markup to [%- %]
+ + added mini-pager div, with Continue link
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4893
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4921
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2006-07-19 16:22:03 UTC (rev 186)
++++ trunk/root/base/forum/view	2006-08-16 13:40:19 UTC (rev 187)
+@@ -1,10 +1,23 @@
+ &lt;h1&gt;[% current_forum.name %] : List Of Active Threads&lt;/h1&gt;
+ 
+-&lt;p&gt;
++&lt;p style=&quot;font-size: small;&quot;&gt;
+ &lt;a href=&quot;thread/add?forum=[% current_forum.id %]&quot;&gt;[Start A New Topic]&lt;/a&gt;
++
++&lt;a onclick=&quot;new Effect.Appear('searchbox', { duration:0.2 }); $('username').focus(); return false;&quot; href=&quot;forum/search&quot;&gt;[Search]&lt;/a&gt;
+ &lt;/p&gt;
++&lt;!-- we have to put the div outside the table, otherwise we get trapped inside it! --&gt;
++&lt;div id=&quot;searchbox&quot; style=&quot;display: none&quot;&gt;
++    &lt;form action=&quot;user/login&quot; method=&quot;post&quot; name=&quot;search_form&quot; class=&quot;searchbox&quot;&gt;
++        &lt;fieldset&gt;
++            &lt;label for=&quot;search&quot;&gt;&lt;b&gt;Find:&lt;/b&gt;&lt;/label&gt;
++            &lt;input type=&quot;text&quot; id=&quot;search&quot; name=&quot;search&quot; class=&quot;input_text&quot; /&gt;
++            &lt;button type=&quot;submit&quot; value=&quot;search&quot; class=&quot;input_button&quot; /&gt;search&lt;/button&gt;
++        &lt;/fieldset&gt;
++    &lt;/form&gt;
++&lt;/div&gt;
++&lt;!-- status bar : end --&gt;
+ 
+-[% IF thread_list.count &gt; 0 %]
++[%- IF thread_list.count &gt; 0 %]
+ &lt;table&gt;
+   &lt;tr&gt;
+     &lt;th&gt;&nbsp;&lt;/th&gt;
+@@ -13,21 +26,30 @@
+     &lt;th&gt;Replies&lt;/th&gt;
+     &lt;th&gt;Views&lt;/th&gt;
+   &lt;/tr&gt;
+-  [% WHILE (thread = thread_list.next) %]
++  [%- WHILE (thread = thread_list.next) %]
+   &lt;tr&gt;
+     &lt;td width=&quot;36&quot;&gt;
+     &lt;!-- interesting things about the thread; sticky, locked, etc --&gt;
+-    [% IF thread.sticky %]
++    [%- IF thread.sticky %]
+     &lt;img src=&quot;static/images/sticky.png&quot; alt=&quot;Sticky&quot; title=&quot;Sticky Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-    [% END %]
+-    [% IF thread.locked %]
++    [%- END %]
++    [%- IF thread.locked %]
+     &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-    [% END %]
++    [%- END %]
+     &lt;/td&gt;
+ 
+     &lt;td&gt;
+     &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% ForumCode.escape(thread.subject) %]&lt;/a&gt;
+     &lt;br /&gt;
++    &lt;span class=&quot;forum_mini_pager&quot;&gt;
++        [%- IF authed_user || mini_pager %]
++        [
++            [%- IF authed_user %]
++            &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;Continue&lt;/a&gt;
++            [%- END %]
++        ]
++        [%- END %]
++    &lt;/span&gt;
+     &lt;span class=&quot;topic_creator&quot;&gt;created by
+         &lt;span class=&quot;post_creator&quot;&gt;[% thread.creator.forum_name %]&lt;/span&gt;
+     &lt;/span&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000077.html">[Parley-svn] r188 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#76">[ date ]</a>
+              <a href="thread.html#76">[ thread ]</a>
+              <a href="subject.html#76">[ subject ]</a>
+              <a href="author.html#76">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

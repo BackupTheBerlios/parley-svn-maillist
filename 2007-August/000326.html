@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r439 - / trunk trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/Controller/User trunk/root/base/menu	trunk/root/base/user/lostpassword
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r439%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller/User%20trunk/root/base/menu%0A%09trunk/root/base/user/lostpassword&In-Reply-To=%3C200708101957.l7AJvH6R017576%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000325.html">
+   <LINK REL="Next"  HREF="000327.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r439 - / trunk trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/Controller/User trunk/root/base/menu	trunk/root/base/user/lostpassword</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r439%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller/User%20trunk/root/base/menu%0A%09trunk/root/base/user/lostpassword&In-Reply-To=%3C200708101957.l7AJvH6R017576%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r439 - / trunk trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/Controller/User trunk/root/base/menu	trunk/root/base/user/lostpassword">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Aug 10 21:57:17 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000325.html">[Parley-svn] r438 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000327.html">[Parley-svn] r440 - / trunk trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#326">[ date ]</a>
+              <a href="thread.html#326">[ thread ]</a>
+              <a href="subject.html#326">[ subject ]</a>
+              <a href="author.html#326">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-10 21:57:15 +0200 (Fri, 10 Aug 2007)
+New Revision: 439
+
+Modified:
+   /
+   trunk/
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/App/DFV.pm
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/root/base/menu/menubar
+   trunk/root/base/user/lostpassword/lost_password
+   trunk/root/base/user/lostpassword/reset
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3708 at wiggin</A>:  chisel | 2007-08-10 09:21:18 +0100
+ - removed a few debugging statements
+ + added form_data_valid() to Parley::App::DFV
+ / modified ::LostPassword to work properly (DFV interaction changes)
+ / use new send_email() calling convention for template file(s)
+ + bump application version number (0.55_1 from 0.54)
+ + added Password Reminder to &quot;Me&quot; menu for logged out users
+ / altered lost_password page(s) to use view.error.messages instead of messages
+   [one day we'll properly factor out the error handling]
+ + set svn:ignore property for top-level directory to hide files we don't care about
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3707
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3708
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svn:ignore
+   + *gz
+*swp
+Makefile
+Makefile.old
+blib
+inc
+MANIFEST.bak
+META.yml
+
+
+Modified: trunk/lib/Parley/App/DFV.pm
+===================================================================
+--- trunk/lib/Parley/App/DFV.pm	2007-08-10 19:57:10 UTC (rev 438)
++++ trunk/lib/Parley/App/DFV.pm	2007-08-10 19:57:15 UTC (rev 439)
+@@ -15,9 +15,6 @@
+         my $dfv = shift;
+         my $data = $dfv-&gt;get_filtered_data();
+ 
+-        warn $data-&gt;{ $first };
+-        warn $data-&gt;{ $second };
+-
+         return ( $data-&gt;{$first} eq $data-&gt;{$second} );
+     }
+ }
+@@ -33,6 +30,31 @@
+     }
+ }
+ 
++sub form_data_valid :Export( :validation ) {
++    my ($self, $c) = @_;
++
++    # deal with missing/invalid fields
++    if ($c-&gt;form-&gt;has_missing()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c-&gt;form-&gt;missing ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++
++        return; # invalid form data
++    }
++    elsif ($c-&gt;form-&gt;has_invalid()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++
++        return; # invalid form data
++    }
++
++    # otherwise, the form data is ok ...
++    return 1;
++}
++
+ 1;
+ 
+ __END__
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2007-08-10 19:57:10 UTC (rev 438)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2007-08-10 19:57:15 UTC (rev 439)
+@@ -10,7 +10,7 @@
+ use Time::Piece;
+ use Time::Seconds;
+ 
+-use Parley::App::DFV qw( :constraints );
++use Parley::App::DFV qw( :constraints :validation );
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Global class data
+@@ -146,11 +146,11 @@
+             and $c-&gt;request-&gt;method() eq 'POST'
+             and defined $c-&gt;request-&gt;param('reset_password')
+     ) {
+-        @messages = $self-&gt;_reset_password($c, $pwd_reset);
++        $self-&gt;_reset_password($c, $pwd_reset);
+ 
+         # if we have any validation errors ...
+-        if (scalar @messages) {
+-            $c-&gt;stash-&gt;{messages} = \@messages;
++        if (exists $c-&gt;stash-&gt;{view}{error}{messages}) {
++            # we may want to Do Stuff when there are errors
+         }
+ 
+         # no messages, means that all should be well, so head off to the
+@@ -159,6 +159,7 @@
+             $c-&gt;stash-&gt;{template} = 'user/lostpassword/reset_success';
+         }
+     }
++    # fall through and show the form
+ }
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -168,30 +169,36 @@
+ sub _reset_password {
+     my ($self, $c, $pwd_reset) = @_;
+     my (@messages);
++    $c-&gt;log-&gt;debug('_reset_password()');
+ 
+     # validate form data
+     $c-&gt;form(
+         $dfv_profile_for{set_new_password}
+     );
+-
+-    # deal with missing/invalid fields
+-    if ($c-&gt;form-&gt;has_missing()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
+-        foreach my $f ( $c-&gt;form-&gt;missing ) {
+-            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+-        }
++    if (not $self-&gt;form_data_valid($c)) {
++        $c-&gt;log-&gt;error( q{INVALID FORM DATA} );
++        return;
+     }
+-    elsif ($c-&gt;form-&gt;has_invalid()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
+-        foreach my $f ( $c-&gt;form-&gt;invalid ) {
+-            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+-        }
+-    }
+ 
++#    # deal with missing/invalid fields
++#    if ($c-&gt;form-&gt;has_missing()) {
++#        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++#        foreach my $f ( $c-&gt;form-&gt;missing ) {
++#            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++#        }
++#    }
++#    elsif ($c-&gt;form-&gt;has_invalid()) {
++#        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++#        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++#            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++#        }
++#    }
++
+     # otherwise the form data is ok...
+-    else {
++#    else {
+         # less typing ..
+         my $reset_username = $pwd_reset-&gt;recipient()-&gt;authentication()-&gt;username;
++        $c-&gt;log-&gt;debug( &quot;password reset for: $reset_username&quot; );
+ 
+         # make sure the username matches
+         if ($reset_username eq $c-&gt;form-&gt;valid-&gt;{reset_username}) {
+@@ -215,9 +222,10 @@
+             # incorrect username
+             push @messages, 'Incorrect username supplied';
+         }
+-    }
++#    }
+ 
+-    return uniq(sort @messages);
++#    return uniq(sort @messages);
++    return 1;
+ }
+ 
+ sub _send_username_reminder {
+@@ -227,7 +235,9 @@
+     # send the email
+     $send_status = $c-&gt;send_email(
+         {
+-            template    =&gt; q{username_reminder.eml},
++            template    =&gt; {
++                text    =&gt; q{username_reminder.eml},
++            },
+             person      =&gt; $person,
+             headers =&gt; {
+                 from    =&gt; $c-&gt;application_email_address(),
+@@ -264,7 +274,9 @@
+     # send an email off to the (new) user
+     $send_status = $c-&gt;send_email(
+         {
+-            template    =&gt; q{password_reset.eml},
++            template    =&gt; {
++                text    =&gt; q{password_reset.eml},
++            },
+             person      =&gt; $person,
+             headers =&gt; {
+                 from    =&gt; $c-&gt;application_email_address(),
+@@ -350,14 +362,14 @@
+         # make sure we don't have too few matches
+         elsif ($matches-&gt;count &lt; 1) {
+             push @messages, q{There are no users matching that information};
+-            $c-&gt;log-&gt;debug(' NO MATCHES ');
++            #$c-&gt;log-&gt;debug(' NO MATCHES ');
+         }
+ 
+         # otherwise, do the work
+         else {
+             # get the first (and should be only) match
+             $person = $matches-&gt;first();
+-            $c-&gt;log-&gt;dumper( $person-&gt;{_column_data}, 'COLUMN_DATA' );
++            #$c-&gt;log-&gt;dumper( $person-&gt;{_column_data}, 'COLUMN_DATA' );
+ 
+             # if required, send a username reminder
+             if ($send_username_reminder) {
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-08-10 19:57:10 UTC (rev 438)
++++ trunk/lib/Parley.pm	2007-08-10 19:57:15 UTC (rev 439)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.54';
++our $VERSION = '0.55_1';
+ 
+ __PACKAGE__-&gt;config( version =&gt; $VERSION );
+ __PACKAGE__-&gt;setup;
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-08-10 19:57:10 UTC (rev 438)
++++ trunk/root/base/menu/menubar	2007-08-10 19:57:15 UTC (rev 439)
+@@ -37,6 +37,7 @@
+     [% ELSE %]
+ 	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Login&quot; onClick=&quot;login_dialog.show(); dojo.byId('username').focus(); return false;&quot;&gt;&lt;/div&gt;
+ 	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Register&quot; onClick=&quot;document.location.href='user/signup';&quot;&gt;&lt;/div&gt;
++	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Password Reminder&quot; onClick=&quot;document.location.href='user/password/forgotten';&quot;&gt;&lt;/div&gt;
+     [% END %]
+ &lt;/div&gt;
+ 
+
+Modified: trunk/root/base/user/lostpassword/lost_password
+===================================================================
+--- trunk/root/base/user/lostpassword/lost_password	2007-08-10 19:57:10 UTC (rev 438)
++++ trunk/root/base/user/lostpassword/lost_password	2007-08-10 19:57:15 UTC (rev 439)
+@@ -8,10 +8,10 @@
+ 
+ &lt;form method=&quot;post&quot; action=&quot;user/password/forgotten&quot; name=&quot;password_reset_form&quot;&gt;
+     &lt;fieldset&gt;
+-        [%- IF messages %]
++        [%- IF view.error.messages %]
+         &lt;p&gt;
+             &lt;ul&gt;
+-                [% FOREACH message IN messages %]
++                 [% FOREACH message IN view.error.messages %]
+                     &lt;li&gt;[% message %]&lt;/li&gt;
+                 [% END %]
+             &lt;/ul&gt;
+
+Modified: trunk/root/base/user/lostpassword/reset
+===================================================================
+--- trunk/root/base/user/lostpassword/reset	2007-08-10 19:57:10 UTC (rev 438)
++++ trunk/root/base/user/lostpassword/reset	2007-08-10 19:57:15 UTC (rev 439)
+@@ -4,10 +4,10 @@
+ fields below, then click the &lt;em&gt;reset my password&lt;/em&gt; button to proceed.
+ 
+     &lt;fieldset&gt;
+-        [%- IF messages %]
++        [%- IF view.error.messages %]
+         &lt;p&gt;
+             &lt;ul&gt;
+-                [% FOREACH message IN messages %]
++                [% FOREACH message IN view.error.messages %]
+                     &lt;li&gt;[% message %]&lt;/li&gt;
+                 [% END %]
+             &lt;/ul&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000325.html">[Parley-svn] r438 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000327.html">[Parley-svn] r440 - / trunk trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#326">[ date ]</a>
+              <a href="thread.html#326">[ thread ]</a>
+              <a href="subject.html#326">[ subject ]</a>
+              <a href="author.html#326">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

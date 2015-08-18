@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r511 - / trunk/lib/Template/Plugin trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r511%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200710011059.l91Axk3t015927%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000400.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r511 - / trunk/lib/Template/Plugin trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r511%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200710011059.l91Axk3t015927%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r511 - / trunk/lib/Template/Plugin trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct  1 12:59:46 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000400.html">[Parley-svn] r512 - / trunk/lib/Template/Plugin
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#399">[ date ]</a>
+              <a href="thread.html#399">[ thread ]</a>
+              <a href="subject.html#399">[ subject ]</a>
+              <a href="author.html#399">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-01 12:59:45 +0200 (Mon, 01 Oct 2007)
+New Revision: 511
+
+Modified:
+   /
+   trunk/lib/Template/Plugin/ForumCode.pm
+   trunk/t/04_forumcode.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3873 at wiggin</A>:  chisel | 2007-09-28 20:15:09 +0100
+ + added [pre], [code] and [quote] markup
+ + added test cases for new narkup
+ + added documentation for new markup
+ + added perl usage example in Synopsis section of documentation
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3862
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3873
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- trunk/lib/Template/Plugin/ForumCode.pm	2007-09-27 20:14:54 UTC (rev 510)
++++ trunk/lib/Template/Plugin/ForumCode.pm	2007-10-01 10:59:45 UTC (rev 511)
+@@ -22,7 +22,6 @@
+     $new_obj-&gt;{replacements} = [
+         {   from =&gt; '__',       to =&gt; 'u'   },
+         {   from =&gt; '\*\*',     to =&gt; 'b'   },
+-        #{   from =&gt; '\/\/',     to =&gt; 'i'   },
+     ];
+ 
+     return $new_obj;
+@@ -43,6 +42,8 @@
+     $self-&gt;_lists           ( \$text );
+     $self-&gt;_url_links       ( \$text );
+     $self-&gt;_images          ( \$text );
++    $self-&gt;_styled_block    ( \$text );
++    $self-&gt;_quoted_block    ( \$text );
+     
+     return $text;
+ }
+@@ -197,6 +198,37 @@
+     return $text;
+ }
+ 
++sub _styled_block {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{
++        \[(code|pre|quote)\]
++        (.+?)
++        \[/\1\]
++    }
++    {&lt;div class=&quot;forumcode_$1&quot;&gt;$2&lt;/div&gt;}xmsg;
++}
++
++# this deals with the extended case of [quote] where we have the quoting=
++# attribute
++sub _quoted_block {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{
++        \[
++            (quote)
++            \s+
++            quoting=
++            &quot;
++            (.+?)
++            &quot;
++        \]
++        (.+?)
++        \[/\1\]
++    }
++    {&lt;div class=&quot;forumcode_$1&quot;&gt;&lt;div class=&quot;forumcode_quoting&quot;&gt;Quoting $2:&lt;/div&gt;$3&lt;/div&gt;}xmsg;
++}
++
+ 1;
+ __END__
+ vim: ts=8 sts=4 et sw=4 sr sta
+@@ -209,6 +241,8 @@
+ 
+ =head1 SYNOPSIS
+ 
++Standard usage in a Template Toolkit file:
++
+   # load the TT module
+   [% USE ForumCode %]
+ 
+@@ -216,6 +250,13 @@
+   [% ForumCode.forumcode('[b]bold[/u] [u]underlined[/u] [i]italic[/i]') %]
+   [% ForumCode.forumcode('**bold** __underlined__') %]
+ 
++Usage in a perl module:
++
++  use Template::Plugin::ForumCode;
++
++  my $tt_forum  = Template::Plugin::ForumCode-&gt;new();
++  my $formatted = $tt_forum-&gt;forumcode($text);
++
+ =head1 DESCRIPTION
+ 
+ This module implements ForumCode, a simple markup language inspired by the
+@@ -287,6 +328,80 @@
+    [1]third
+    [/list]
+ 
++=item B&lt;[code]&gt;...B&lt;[/code]&gt;
++
++Marks a block of text with the CSS I&lt;forumcode_code&gt; class.
++How this displays is dependant on the CSS definitions in your application
++templates.
++
++  /* Example CSS */
++
++  .forumcode_code {
++    background-color:   #eee;
++    font-family:        monospace;
++    border:             1px solid #333;
++    font-size:          95%;
++    margin:             15px 20px 15px 20px;
++    padding:            6px;
++    width:              85%;
++    overflow:           auto;
++  }
++
++=item B&lt;[pre]&gt;...B&lt;[/pre]&gt;
++
++Marks a block of text with the CSS I&lt;forumcode_pre&gt; class.
++How this displays is dependant on the CSS definitions in your application
++templates.
++
++  /* Example CSS */
++
++  .forumcode_pre {
++    background-color:   transparent;
++    font-family:        monospace;
++    font-size:          95%;
++    margin:             15px 20px 15px 20px;
++    padding:            6px;
++    width:              85%;
++    overflow:           auto;
++
++    color:              #fff;
++    background-color:   #333;
++    border:             1px solid #666;
++  }
++
++=item B&lt;[quote]&gt;...B&lt;[/quote]&gt;
++
++Marks a block of text with the CSS I&lt;forumcode_pre&gt; class.
++How this displays is dependant on the CSS definitions in your application
++templates.
++
++You may specify the name of ther person you are quoting using the following
++addition to the markup:
++
++S&lt;[quote B&lt;quoting=&quot;...&quot;&gt;]Lorem ipsum ...[/quote]&gt;
++
++The quoted text will be prefixed with B&lt;Quoting Name:&gt;.
++This extra output will be wrapped in with the CSS I&lt;forumcode_quoting&gt; class.
++
++  /* Example CSS */
++
++  .forumcode_quote {
++    background-color:   #eee;
++    font-family:        monospace;
++    font-style:         italic;
++    border:             1px dotted #333;
++    font-size:          95%;
++    margin:             15px 20px 15px 20px;
++    padding:            6px;
++    width:              85%;
++    overflow:           auto;
++  }
++
++  .forumcode_quoting {
++    font-weight:        bold;
++    margin-bottom:      3px;
++  }
++
+ =back
+ 
+ =head1 PUBLIC METHODS
+
+Modified: trunk/t/04_forumcode.t
+===================================================================
+--- trunk/t/04_forumcode.t	2007-09-27 20:14:54 UTC (rev 510)
++++ trunk/t/04_forumcode.t	2007-10-01 10:59:45 UTC (rev 511)
+@@ -203,6 +203,17 @@
+             [/list]},
+             out     =&gt; q{&lt;ol&gt;&lt;li&gt;Red&lt;/li&gt;&lt;li&gt;Blue&lt;/li&gt;&lt;li&gt;Yellow&lt;/li&gt;&lt;/ol&gt;},
+         },
++
++        # 'code' style
++        {
++            in      =&gt; q{[code]#!/usr/bin/env perl[/code]},
++            out     =&gt; q{&lt;div class=&quot;forumcode_code&quot;&gt;#!/usr/bin/env perl&lt;/div&gt;},
++        },
++        #{&lt;div class=&quot;forumcode_$1&quot;&gt;&lt;div class=&quot;forumcode_quoting&quot;&gt;$2&lt;/div&gt;$3&lt;/div&gt;}xmsg;
++        {
++            in      =&gt; q{[quote quoting=&quot;Joe&quot;]quote markup test[/quote]},
++            out     =&gt; q{&lt;div class=&quot;forumcode_quote&quot;&gt;&lt;div class=&quot;forumcode_quoting&quot;&gt;Quoting Joe:&lt;/div&gt;quote markup test&lt;/div&gt;},
++        },
+     );
+ 
+     # test count is a fixed number of tests + the length of the @tests array
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000400.html">[Parley-svn] r512 - / trunk/lib/Template/Plugin
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#399">[ date ]</a>
+              <a href="thread.html#399">[ thread ]</a>
+              <a href="subject.html#399">[ subject ]</a>
+              <a href="author.html#399">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,538 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1019 - / branches/parley-1.1/lib/Catalyst/Controller	branches/parley-1.1/lib/Parley/Controller	branches/parley-1.1/lib/Parley/I18N	branches/parley-1.1/root/base/dfv	branches/parley-1.1/root/base/search
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1019%20-%20/%20branches/parley-1.1/lib/Catalyst/Controller%0A%09branches/parley-1.1/lib/Parley/Controller%0A%09branches/parley-1.1/lib/Parley/I18N%0A%09branches/parley-1.1/root/base/dfv%0A%09branches/parley-1.1/root/base/search&In-Reply-To=%3C200812281928.mBSJS06w022459%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000900.html">
+   <LINK REL="Next"  HREF="000902.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1019 - / branches/parley-1.1/lib/Catalyst/Controller	branches/parley-1.1/lib/Parley/Controller	branches/parley-1.1/lib/Parley/I18N	branches/parley-1.1/root/base/dfv	branches/parley-1.1/root/base/search</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1019%20-%20/%20branches/parley-1.1/lib/Catalyst/Controller%0A%09branches/parley-1.1/lib/Parley/Controller%0A%09branches/parley-1.1/lib/Parley/I18N%0A%09branches/parley-1.1/root/base/dfv%0A%09branches/parley-1.1/root/base/search&In-Reply-To=%3C200812281928.mBSJS06w022459%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1019 - / branches/parley-1.1/lib/Catalyst/Controller	branches/parley-1.1/lib/Parley/Controller	branches/parley-1.1/lib/Parley/I18N	branches/parley-1.1/root/base/dfv	branches/parley-1.1/root/base/search">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sun Dec 28 20:28:01 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000900.html">[Parley-svn] r1018 - / branches/parley-1.1
+</A></li>
+        <LI>Next message: <A HREF="000902.html">[Parley-svn] r1020 - / branches/parley-1.1	branches/parley-1.1/lib/Parley/Controller	branches/parley-1.1/root/base/search
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#901">[ date ]</a>
+              <a href="thread.html#901">[ thread ]</a>
+              <a href="subject.html#901">[ subject ]</a>
+              <a href="author.html#901">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-28 20:28:00 +0100 (Sun, 28 Dec 2008)
+New Revision: 1019
+
+Added:
+   branches/parley-1.1/root/base/search/advanced
+   branches/parley-1.1/root/base/search/results
+Modified:
+   /
+   branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm
+   branches/parley-1.1/lib/Parley/Controller/Search.pm
+   branches/parley-1.1/lib/Parley/I18N/i_default.po
+   branches/parley-1.1/root/base/dfv/validation_messages_data
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8713 at wiggin</A>:  chisel | 2008-12-28 19:22:08 +0000
+ / extend ::FormValidator to work with differennt parameter types (GET as well as POST)
+ + add the guts of &quot;advanced search&quot; to /search controller
+ + add a couple of i18n phrases
+ / update DFV/TT messages
+ + added template for search/advanced
+ + added template for search/results
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8712
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8713
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm
+===================================================================
+--- branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm	2008-12-28 01:21:46 UTC (rev 1018)
++++ branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm	2008-12-28 19:28:00 UTC (rev 1019)
+@@ -13,10 +13,29 @@
+ use Data::FormValidator::Constraints qw(:closures);
+ 
+ sub form_check :Private {
+-    my ($self, $c, $dfv_profile) = @_;
++    my ($self, $c, $dfv_profile, $param_type) = @_;
++    my $parameters;
+ 
++    # Which parameters? GET / POST or &quot;all&quot;?
++    # - POST [default]
++    if (
++        not defined $param_type
++            or
++        q{POST} eq $param_type
++    ) {
++        $parameters = $c-&gt;request-&gt;body_parameters;
++    }
++    # - GET
++    elsif (q{GET} eq $param_type) {
++        $parameters = $c-&gt;request-&gt;query_parameters;
++    }
++    # - &quot;all&quot;
++    elsif (q{all} eq $param_type) {
++        $parameters = $c-&gt;request-&gt;parameters;
++    }
++
+     my $results = Data::FormValidator-&gt;check(
+-        $c-&gt;request-&gt;body_parameters,
++        $parameters,
+         $dfv_profile
+     );
+ 
+
+Modified: branches/parley-1.1/lib/Parley/Controller/Search.pm
+===================================================================
+--- branches/parley-1.1/lib/Parley/Controller/Search.pm	2008-12-28 01:21:46 UTC (rev 1018)
++++ branches/parley-1.1/lib/Parley/Controller/Search.pm	2008-12-28 19:28:00 UTC (rev 1019)
+@@ -1,19 +1,53 @@
+ package Parley::Controller::Search;
+-
++# vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
++use base 'Catalyst::Controller::FormValidator';
+ 
++use Data::Dump qw(pp);
+ use Text::Search::SQL;
+ use URI;
+ use URI::QueryParam;
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++my %dfv_profile_for = (
++    # DFV validation profile for adding a new topic
++    advanced =&gt; {
++        required    =&gt; [qw&lt; match_type &gt;],
++        require_some =&gt; {
++            search_terms =&gt; [
++                1,
++                qw&lt;
++                    author_search_terms
++                    message_search_terms
++                    subject_search_terms
++                &gt;
++            ]
++        },
++        optional    =&gt; [qw&lt;
++            author_search_terms
++            message_search_terms
++            subject_search_terms
++            author_search_type
++            message_search_type
++            subject_search_type
++        &gt;],
++        filters     =&gt; [qw&lt; trim &gt;],
++    },
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
+ sub index : Private {
+     my ( $self, $c ) = @_;
+-
+-    $c-&gt;response-&gt;body('Matched Parley::Controller::Search in Search.');
++    $c-&gt;forward('advanced');
+ }
+ 
+ sub end :Private {
+@@ -26,6 +60,33 @@
+     $c-&gt;forward('/end');
+ }
+ 
++sub advanced : Local {
++    my ($self, $c) = @_;
++    # because we're potentially being forwarded to from / set the template
++    # explicitly
++    $c-&gt;stash-&gt;{template} = q{search/advanced};
++
++    if (
++        defined $c-&gt;request-&gt;method
++    ) {
++        $c-&gt;forward('form_check', [$dfv_profile_for{advanced}, 'GET']);
++
++        # everything passed (DFV) validation
++        if ($c-&gt;stash-&gt;{validation}-&gt;success) {
++            my $foo = $c-&gt;stash-&gt;{search_results};
++            $c-&gt;forward('do_advanced_search');
++        }
++        # something didn't validate
++        else {
++            $c-&gt;log-&gt;debug(
++                pp($c-&gt;stash-&gt;{validation})
++            );
++        }
++    }
++
++    return;
++}
++
+ sub forum :Local {
+     my ($self, $c) = @_;
+     my ($search_terms, $resultset, $tss, $search_where, $where, @join);
+@@ -63,6 +124,7 @@
+         # we want to OR the items in $sql_where
+         -or =&gt; $search_where,
+     };
++    $c-&gt;log-&gt;debug(pp($where));
+ 
+     # if we have a search_forum, limit to that
+     if (defined $c-&gt;request-&gt;param('search_forum')) {
+@@ -101,13 +163,197 @@
+     }
+ }
+ 
++sub do_advanced_search : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my ($where, $search_where, $resultset, @join, $order_by);
++
++    # default ORDER BY
++    $order_by = [\'created DESC'];
++
++    # page to show - either a param, or show the first
++    $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
++
++    $search_where = undef;
++    foreach my $search_field (qw&lt;author message subject&gt;) {
++        # process the search field
++        my ($extra_clauses, $extra_joins) =
++            @{$c-&gt;forward(q{search_clauses_} . $search_field)};
++        # add any search clauses
++        if ($extra_clauses) {
++            push @{$search_where}, @$extra_clauses;
++        }
++        # add any required table joins
++        if ($extra_joins) {
++            push @join, @$extra_joins;
++        }
++    }
++
++    # make sure we're searching for something
++    # if it turns out we're searching for nothingness, return an empty
++    # result set
++    if (not defined $search_where) {
++        return; # no need to do anything else
++    }
++
++    # build the where clause to pass to our search
++    if (q{any} eq $results-&gt;valid('match_type')) {
++        $where = {
++            # we want to OR the items in $sql_where
++            -or =&gt; $search_where,
++        };
++    }
++    elsif (q{all} eq $results-&gt;valid('match_type')) {
++        $where = {
++            # we want to OR the items in $sql_where
++            -and =&gt; $search_where,
++        };
++    }
++
++    $c-&gt;log-&gt;debug('SEARCH TERMS: ' . pp($where));
++
++    $resultset = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
++        $where,
++        {
++            join        =&gt; \@join,
++            order_by    =&gt; $order_by,
++            # results paging
++            rows        =&gt; $c-&gt;config-&gt;{search_results_per_page},
++            page        =&gt; $c-&gt;stash-&gt;{current_page},
++        }
++    );
++
++    # if we have any matches, stash them
++    if ($resultset-&gt;count() &gt; 0) {
++        $c-&gt;stash-&gt;{search_results} = $resultset;
++    }
++
++    return;
++}
++
++sub add_search_clauses : Private {
++    my ($self, $c, $current_clauses, $type, $search_field, $terms) = @_;
++    my @search_where;
++
++    # do we have any terms to search for?
++    if ($terms) {
++        if (q{contains} eq $type) {
++            push @search_where,
++                $search_field,
++                { ilike =&gt; q{%} . $terms .  q{%} }
++            ;
++        }
++        elsif (q{exact} eq $type) {
++            push @search_where,
++                $search_field,
++                { q{=}  =&gt; $terms }
++            ;
++        }
++        else {
++            $c-&gt;log-&gt;error(qq{fsc/$search_field: hmm, what's the search type?});
++            return;
++        }
++    }
++    # no terms, nothing to do
++    else {
++        return;
++    }
++
++    # add to the current list of search clauses
++    push @{$current_clauses}, @search_where;
++
++    return;
++}
++
++sub search_clauses_author : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my $search_field = 'author';
++    my @search_where;
++    my @joins;
++
++    my $terms = $results-&gt;valid(
++            $search_field
++        . q{_search_terms}
++    );
++    my $type = $results-&gt;valid(
++            $search_field
++        . q{_search_type}
++    ) || q{};
++
++    # add search clauses for the forum_name of the post's creator
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, 'creator.forum_name', $terms]
++    );
++    # add the required JOIN relation name
++    push @joins, 'creator';
++
++    return [\@search_where, \@joins];
++}
++
++sub search_clauses_message : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my $search_field = 'message';
++    my @search_where;
++
++    my $terms = $results-&gt;valid(
++            $search_field
++        . q{_search_terms}
++    );
++    my $type = $results-&gt;valid(
++            $search_field
++        . q{_search_type}
++    ) || q{};
++
++    # nice and easy - we're just searching the message body
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, $search_field, $terms]
++    );
++
++    return [\@search_where, undef];
++}
++
++sub search_clauses_subject : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my $search_field = 'subject';
++    my @search_where;
++    my @joins;
++
++    my $terms = $results-&gt;valid(
++            $search_field
++        . q{_search_terms}
++    );
++    my $type = $results-&gt;valid(
++            $search_field
++        . q{_search_type}
++    ) || q{};
++
++    # post subjects
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, 'me.subject', $terms]
++    );
++
++    # thread subjects
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, 'thread.subject', $terms]
++    );
++    # add the required JOIN relation name
++    push @joins, 'thread';
++
++    return [\@search_where, \@joins];
++}
++
+ sub _results_view_pager {
+     my ($self, $c) = @_;
+ 
++    # if we don't have any search results, do nothing
+     if (not $c-&gt;stash-&gt;{search_results}) {
+         return;
+     }
+ 
++    # get the pager (from the search results)
+     $c-&gt;stash-&gt;{page} = $c-&gt;stash-&gt;{search_results}-&gt;pager();
+ 
+     # TODO - find a better way to do this if possible
+
+Modified: branches/parley-1.1/lib/Parley/I18N/i_default.po
+===================================================================
+--- branches/parley-1.1/lib/Parley/I18N/i_default.po	2008-12-28 01:21:46 UTC (rev 1018)
++++ branches/parley-1.1/lib/Parley/I18N/i_default.po	2008-12-28 19:28:00 UTC (rev 1019)
+@@ -333,6 +333,12 @@
+ msgid &quot;Logout&quot;
+ msgstr &quot;Logout&quot;
+ 
++msgid &quot;MISSING_SEARCH_MATCH_TYPE&quot;
++msgstr &quot;Please specify the method you would like to match by&quot;
++
++msgid &quot;MISSING_SEARCH_TERMS&quot;
++msgstr &quot;Please provide something to search for&quot;
++
+ msgid &quot;Manage&quot;
+ msgstr &quot;Manage&quot;
+ 
+
+Modified: branches/parley-1.1/root/base/dfv/validation_messages_data
+===================================================================
+--- branches/parley-1.1/root/base/dfv/validation_messages_data	2008-12-28 01:21:46 UTC (rev 1018)
++++ branches/parley-1.1/root/base/dfv/validation_messages_data	2008-12-28 19:28:00 UTC (rev 1019)
+@@ -2,6 +2,9 @@
+     SET error_message = {
+         # messages for missing fields
+         missing =&gt; {
++            match_type                  =&gt; 'MISSING_SEARCH_MATCH_TYPE',
++            search_terms                =&gt; 'MISSING_SEARCH_TERMS',
++
+             moon_stick                  =&gt; 'I demand the MOON! On a STICK!',
+         },
+ 
+
+Added: branches/parley-1.1/root/base/search/advanced
+===================================================================
+--- branches/parley-1.1/root/base/search/advanced	2008-12-28 01:21:46 UTC (rev 1018)
++++ branches/parley-1.1/root/base/search/advanced	2008-12-28 19:28:00 UTC (rev 1019)
+@@ -0,0 +1,38 @@
++&lt;h1&gt;Search Forums&lt;/h1&gt;
++
++&lt;form&gt;
++
++Search for messages matching
++&lt;select name=&quot;match_type&quot;&gt;
++    &lt;option value=&quot;any&quot;&gt;any&lt;/option&gt;
++    &lt;option value=&quot;all&quot;&gt;all&lt;/option&gt;
++&lt;/select&gt;
++of the following criteria:
++&lt;br /&gt;
++
++Subject
++[% INCLUDE search_type name=&quot;subject_search_type&quot; %]
++&lt;input type=&quot;text&quot; name=&quot;subject_search_terms&quot; /&gt;
++&lt;br /&gt;
++
++Message
++[% INCLUDE search_type name=&quot;message_search_type&quot; %]
++&lt;input type=&quot;text&quot; name=&quot;message_search_terms&quot; /&gt;
++&lt;br /&gt;
++
++Author's name
++[% INCLUDE search_type name=&quot;author_search_type&quot; %]
++&lt;input type=&quot;text&quot; name=&quot;author_search_terms&quot; /&gt;
++&lt;br /&gt;
++
++&lt;input type=&quot;submit&quot; value=&quot;Search&quot; /&gt;
++
++[% PROCESS search/results %]
++
++[% BLOCK search_type %]
++&lt;select name=&quot;[%name%]&quot;&gt;
++    &lt;option value=&quot;contains&quot;&gt;contains&lt;/option&gt;
++    &lt;option value=&quot;exact&quot;&gt;is&lt;/option&gt;
++&lt;/select&gt;
++[% END %]
++
+
+Added: branches/parley-1.1/root/base/search/results
+===================================================================
+--- branches/parley-1.1/root/base/search/results	2008-12-28 01:21:46 UTC (rev 1018)
++++ branches/parley-1.1/root/base/search/results	2008-12-28 19:28:00 UTC (rev 1019)
+@@ -0,0 +1,19 @@
++&lt;h1&gt;[%l('Search Results')%]&lt;/h1&gt;
++
++[% IF search_terms.raw %]
++&lt;h2&gt;[%l('Searching for')%] &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% search_forum.name || 'all forums' %]&lt;/em&gt;&lt;/h2&gt;
++[% END %]
++
++[% IF search_results %]
++    &lt;table class=&quot;search_results&quot;&gt;
++        &lt;tbody&gt;
++            [% dummy_value = search_results.reset %]
++            [%- WHILE (post = search_results.next) %]
++            [% thread = post.thread %]
++            [% PROCESS shared/postinfo_table_row show_search_data=post %]
++            [% END %]
++        &lt;/tbody&gt;
++    &lt;/table&gt;
++[% ELSE %]
++[%l('No results found matching specified terms')%].
++[% END %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000900.html">[Parley-svn] r1018 - / branches/parley-1.1
+</A></li>
+	<LI>Next message: <A HREF="000902.html">[Parley-svn] r1020 - / branches/parley-1.1	branches/parley-1.1/lib/Parley/Controller	branches/parley-1.1/root/base/search
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#901">[ date ]</a>
+              <a href="thread.html#901">[ thread ]</a>
+              <a href="subject.html#901">[ subject ]</a>
+              <a href="author.html#901">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

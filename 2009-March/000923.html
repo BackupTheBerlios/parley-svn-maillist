@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1041 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1041%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200903012050.n21KohtL022162%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000922.html">
+   <LINK REL="Next"  HREF="000924.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1041 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1041%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200903012050.n21KohtL022162%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1041 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sun Mar  1 21:50:43 CET 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000922.html">[Parley-svn] r1040 - / trunk trunk/contrib trunk/contrib/example	trunk/lib trunk/lib/Catalyst trunk/lib/Catalyst/Controller	trunk/lib/Catalyst/Plugin trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User	trunk/lib/Parley/ControllerBase trunk/lib/Parley/I18N	trunk/root trunk/root/base trunk/root/base/dfv	trunk/root/base/search trunk/root/base/shared	trunk/root/base/user trunk/root/base/user/signup trunk/root/skin2
+</A></li>
+        <LI>Next message: <A HREF="000924.html">[Parley-svn] r1042 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#923">[ date ]</a>
+              <a href="thread.html#923">[ thread ]</a>
+              <a href="subject.html#923">[ subject ]</a>
+              <a href="author.html#923">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-03-01 21:50:43 +0100 (Sun, 01 Mar 2009)
+New Revision: 1041
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Search.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9195 at wiggin</A>:  chisel | 2009-02-25 21:04:03 +0000
+ / process &quot;search_forum&quot; list [to restrict search to]
+ + extend search to limit to specified forums
+ - remove some debugging output
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9194
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9195
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2009-03-01 20:50:26 UTC (rev 1040)
++++ trunk/lib/Parley/Controller/Search.pm	2009-03-01 20:50:43 UTC (rev 1041)
+@@ -39,6 +39,7 @@
+             message_search_type
+             subject_search_type
+             search_post_date
++            search_forum
+         &gt;],
+         filters     =&gt; [qw&lt; trim &gt;],
+     },
+@@ -176,7 +177,7 @@
+ sub do_advanced_search : Private {
+     my ($self, $c) = @_;
+     my $results = $c-&gt;stash-&gt;{validation};
+-    my ($where, $search_where, $resultset, @join, $order_by);
++    my ($where, $search_where, $resultset, @join, $order_by, @forum_ids);
+ 
+     # default ORDER BY
+     $order_by = [\'created DESC'];
+@@ -203,6 +204,20 @@
+         }
+     }
+ 
++    # are we limiting to a particular (list of) forum(s)
++    if (defined $results-&gt;valid('search_forum')) {
++        if (
++            defined(ref $results-&gt;valid('search_forum'))
++                and
++            (q{ARRAY} eq ref($results-&gt;valid('search_forum')))
++        ) {
++            @forum_ids = sort @{ $results-&gt;valid('search_forum') };
++        }
++        else {
++            @forum_ids = ( $results-&gt;valid('search_forum') );
++        }
++    }
++
+     # make sure we're searching for something
+     # if it turns out we're searching for nothingness, return an empty
+     # result set
+@@ -216,15 +231,24 @@
+             # we want to OR the items in $sql_where
+             -or =&gt; $search_where,
+         };
++        # ... AND in the list of forums to resrict to
++        if (@forum_ids) {
++            $where-&gt;{'-and'} =
++                [ 'thread.forum_id' =&gt; { 'IN', \@forum_ids } ];
++        }
+     }
+     elsif (q{all} eq $results-&gt;valid('match_type')) {
++        if (@forum_ids) {
++            push @{$search_where},
++                'thread.forum_id' =&gt; { 'IN', \@forum_ids };
++        }
+         $where = {
+             # we want to OR the items in $sql_where
+             -and =&gt; $search_where,
+         };
+     }
+ 
+-    $c-&gt;log-&gt;debug('SEARCH TERMS: ' . pp($where));
++    $c-&gt;log-&gt;debug('SEARCH TERMS: ' . pp($where)) if (0);
+ 
+     $resultset = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
+         $where,
+@@ -313,7 +337,6 @@
+ 
+     # if we don't have date &quot;stuff&quot;, don't add any terms
+     if (not $terms) {
+-        $c-&gt;log-&gt;debug('no date crap');
+         return []; # add nothing at all
+     }
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000922.html">[Parley-svn] r1040 - / trunk trunk/contrib trunk/contrib/example	trunk/lib trunk/lib/Catalyst trunk/lib/Catalyst/Controller	trunk/lib/Catalyst/Plugin trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User	trunk/lib/Parley/ControllerBase trunk/lib/Parley/I18N	trunk/root trunk/root/base trunk/root/base/dfv	trunk/root/base/search trunk/root/base/shared	trunk/root/base/user trunk/root/base/user/signup trunk/root/skin2
+</A></li>
+	<LI>Next message: <A HREF="000924.html">[Parley-svn] r1042 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#923">[ date ]</a>
+              <a href="thread.html#923">[ thread ]</a>
+              <a href="subject.html#923">[ subject ]</a>
+              <a href="author.html#923">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

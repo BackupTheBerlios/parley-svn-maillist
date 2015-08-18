@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r417 - / trunk/lib/Parley/Schema trunk/root/base/forum	trunk/root/base/thread trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r417%20-%20/%20trunk/lib/Parley/Schema%20trunk/root/base/forum%0A%09trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200708082006.l78K6DsO014942%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000304.html">
+   <LINK REL="Next"  HREF="000306.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r417 - / trunk/lib/Parley/Schema trunk/root/base/forum	trunk/root/base/thread trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r417%20-%20/%20trunk/lib/Parley/Schema%20trunk/root/base/forum%0A%09trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200708082006.l78K6DsO014942%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r417 - / trunk/lib/Parley/Schema trunk/root/base/forum	trunk/root/base/thread trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug  8 22:06:13 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000304.html">[Parley-svn] r416 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000306.html">[Parley-svn] r418 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#305">[ date ]</a>
+              <a href="thread.html#305">[ thread ]</a>
+              <a href="subject.html#305">[ subject ]</a>
+              <a href="author.html#305">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-08 22:06:13 +0200 (Wed, 08 Aug 2007)
+New Revision: 417
+
+Modified:
+   /
+   trunk/lib/Parley/Schema/Forum.pm
+   trunk/root/base/forum/view
+   trunk/root/base/thread/recent
+   trunk/root/base/thread/view
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3632 at wiggin</A>:  chisel | 2007-08-02 19:09:02 +0100
+ + added moderators() method to Schema::Forum to return a list of People that moderate the forum
+ + added &quot;Forum Moderator&quot; block to template(s)
+ / disabled thread action column in thread/recent
+ + added .moderator_list CSS style
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3631
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3632
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Schema/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Forum.pm	2007-08-08 20:06:07 UTC (rev 416)
++++ trunk/lib/Parley/Schema/Forum.pm	2007-08-08 20:06:13 UTC (rev 417)
+@@ -48,5 +48,26 @@
+ __PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.forum&quot; =&gt; &quot;self.forum_id&quot; });
+ __PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;last_post&quot; });
+ 
++sub moderators {
++    my $self = shift;
++    my ($schema, $results, @modlist);
++
++    $schema = $self-&gt;result_source()-&gt;schema();
++
++    # get all forum_moderators for a given forum
++    $results = $schema-&gt;resultset('ForumModerator')-&gt;search(
++        {
++            forum           =&gt; $self-&gt;id(),
++            can_moderate    =&gt; 1,
++        },
++    );
++
++    while (my $res = $results-&gt;next()) {
++        push @modlist, $res-&gt;person();
++    }
++
++    return \@modlist;
++}
++
+ 1;
+ 
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2007-08-08 20:06:07 UTC (rev 416)
++++ trunk/root/base/forum/view	2007-08-08 20:06:13 UTC (rev 417)
+@@ -86,7 +86,14 @@
+     [% END %]
+     &lt;/tr&gt;
+   [% END %]
++    &lt;tr&gt;
++        &lt;td colspan=&quot;5&quot;&gt;
++            [% PROCESS shared/moderator_list %]
++        &lt;/td&gt;
++    &lt;/tr&gt;
+ &lt;/table&gt;
++
++
+ [% PROCESS shared/pager_advanced %]
+ [% ELSE %]
+   No active threads in this forum
+
+Modified: trunk/root/base/thread/recent
+===================================================================
+--- trunk/root/base/thread/recent	2007-08-08 20:06:07 UTC (rev 416)
++++ trunk/root/base/thread/recent	2007-08-08 20:06:13 UTC (rev 417)
+@@ -46,7 +46,7 @@
+         &lt;/td&gt;
+ 
+         &lt;td&gt;
+-            [% IF thread.forum_moderators.can_moderate %]
++            [% IF 0 &amp;&amp; thread.forum_moderators.can_moderate %]
+             &lt;!-- add/remove sticky --&gt;
+             [% IF thread.sticky %]
+             &lt;a href=&quot;admin/sticky?thread=[% thread.id %]&amp;sticky=0&quot;&gt;{S-}&lt;/a&gt;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-08-08 20:06:07 UTC (rev 416)
++++ trunk/root/base/thread/view	2007-08-08 20:06:13 UTC (rev 417)
+@@ -154,6 +154,11 @@
+         &lt;/tr&gt;
+         &lt;!-- end : nested table evil --&gt;
+     &lt;!-- end : post thread info --&gt;
++    &lt;tr&gt;
++        &lt;td colspan=&quot;2&quot;&gt;
++            [% PROCESS shared/moderator_list %]
++        &lt;/td&gt;
++    &lt;/tr&gt;
+ 
+     &lt;/tbody&gt;
+ &lt;/table&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-08-08 20:06:07 UTC (rev 416)
++++ trunk/root/css/common.css	2007-08-08 20:06:13 UTC (rev 417)
+@@ -221,6 +221,9 @@
+ .pager_advanced {
+     font-size:          x-small;
+ }
++.moderator_list {
++    font-size:          x-small;
++}
+ 
+ .thread_header {
+     font-weight:        bold;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000304.html">[Parley-svn] r416 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000306.html">[Parley-svn] r418 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#305">[ date ]</a>
+              <a href="thread.html#305">[ thread ]</a>
+              <a href="subject.html#305">[ subject ]</a>
+              <a href="author.html#305">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

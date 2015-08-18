@@ -1,0 +1,2085 @@
+From chiselwright at mail.berlios.de  Mon Jun  4 21:53:27 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 4 Jun 2007 21:53:27 +0200
+Subject: [Parley-svn] r348 - / trunk trunk/lib/Parley/Controller
+	trunk/root/base trunk/root/base/my trunk/root/base/shared
+	trunk/root/css trunk/root/static/images
+Message-ID: <200706041953.l54JrRui003015@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-04 21:53:26 +0200 (Mon, 04 Jun 2007)
+New Revision: 348
+
+Added:
+   trunk/root/base/my/tab_watch
+   trunk/root/static/images/unread_posts.gif
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/header
+   trunk/root/base/my/preferences
+   trunk/root/base/shared/login_dialog
+   trunk/root/base/shared/user_status
+   trunk/root/css/common.css
+Log:
+ r3322 at wiggin:  chisel | 2007-05-25 19:17:45 +0100
+ + fetch data for watched threads
+ / check for defined-ness before comparing referer()
+ / some w3c validation tweaks
+ + added Watches tab to my/preferences
+ + focus username field when showing login dialog
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3303
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3322
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/Changes	2007-06-04 19:53:26 UTC (rev 348)
+@@ -1,5 +1,14 @@
+ This file documents the revision history for Parley.
+ 
++0.53
++
++    - improved preference screen (time, watch info)
++    - preferences are now in a tabbed container
++    - tidied up CSS and layout
++    - added more missing dependencies to Makefile.PL
++    - person preference data now created at sign-up time
++    - added more time/TZ options for user
++
+ 0.52    Fri May  4 19:00:32 BST 2007
+ 
+     - added DB configuration to parley.yml
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/lib/Parley/Controller/My.pm	2007-06-04 19:53:26 UTC (rev 348)
+@@ -85,7 +85,11 @@
+     my ($tz_categories);
+ 
+     # where did we come from? it would be nice to return there when we're done
+-    if ($c->request->referer() !~ m{/my/preferences}xms) {
++    if (
++        defined $c->request->referer()
++            and 
++        $c->request->referer() !~ m{/my/preferences}xms
++    ) {
+         $c->session->{my_pref_came_from} = $c->request->referer();
+     }
+ 
+@@ -106,6 +110,21 @@
+     $c->stash->{formdata}{show_tz}
+         = $c->_authed_user()->preference()->show_tz();
+ 
++    # watched threads
++    my $watches = $c->model('ParleyDB')->resultset('ThreadView')->search(
++        {
++            person      => $c->_authed_user()->id(),
++            watched     => 1,
++        },
++        {
++            order_by    => 'last_post.created DESC',
++            join        => {
++                'thread' => 'last_post',
++            },
++        }
++    );
++    $c->stash->{thread_watches} = $watches;
++
+     return;
+ }
+ 
+@@ -174,6 +193,7 @@
+     return;
+ }
+ 
++
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Private Methods
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/header	2007-06-04 19:53:26 UTC (rev 348)
+@@ -27,15 +27,18 @@
+             [% END %]
+         </title>
+         <meta name="author" content="Chisel Wright" />
+-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+-        <link rel="stylesheet" title="Default" href="css/common.css" />
+-        <link rel="stylesheet" title="Default" href="css/layout23.css" />
++        <link rel="shortcut icon" href="[% c.request.base %]/favicon.ico" type="image/x-icon" />
++        <link type="text/css" rel="stylesheet" title="Default" href="[% c.request.base %]/css/common.css" />
++        <link type="text/css" rel="stylesheet" title="Default" href="[% c.request.base %]/css/layout23.css" />
+ 
+-        <link rel="alternate stylesheet" title="Layout 33" href="css/layout33.css" />
++        <link type="text/css" rel="alternate stylesheet" title="Layout 33" href="[% c.request.base %]/css/layout33.css" />
+ 
+         <!-- Dojo Magic -->
+-        <script type="text/javascript" src="/static/magic/dojo.js"></script>
+         <script type="text/javascript">
++            var djConfig = { isDebug: true };
++        </script>
++        <script type="text/javascript" src="[% c.request.base %]/static/magic/dojo.js"></script>
++        <script type="text/javascript">
+             dojo.require("dojo.lfx.*");         // animations and eye candy
+             dojo.require("dojo.widget.Dialog");
+             dojo.require("dojo.widget.Button");
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/my/preferences	2007-06-04 19:53:26 UTC (rev 348)
+@@ -14,9 +14,14 @@
+     <div id="tab_you" dojoType="ContentPane" label="Your Details">
+         [% PROCESS my/tab_you %]
+     </div>
++
+     <div id="tab_time" dojoType="ContentPane" label="Time">
+         [% PROCESS my/tab_time %]
+     </div>
++
++    <div id="tab_watch" dojoType="ContentPane" label="Thread Watches">
++        [% PROCESS my/tab_watch %]
++    </div>
+ </div>
+ 
+ [% IF c.session.my_pref_came_from %]
+
+Added: trunk/root/base/my/tab_watch
+===================================================================
+--- trunk/root/base/my/tab_watch	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/my/tab_watch	2007-06-04 19:53:26 UTC (rev 348)
+@@ -0,0 +1,56 @@
++[% IF thread_watches %]
++    <table class="thread_watches">
++        <tbody>
++            <tr>
++                <th style="width:14px;">&nbsp;</th>
++                <th>Subject</th>
++                <th>Last Modified</th>
++                <th>Last Viewed</th>
++            [% WHILE (watch = thread_watches.next) %]
++            [% thread = watch.thread %]
++            <tr>
++                <td style="width:14px;">
++                    [% IF (thread.last_post.created > watch.timestamp) %]
++                    <img src="static/images/unread_posts.gif" width="12" height="12" alt="Unread Posts" title="Unread Posts" />
++                    [% ELSE %]
++                    &nbsp;
++                    [% END %]
++                </td>
++                <td style="vertical-align: top;">
++                    <a href="thread/view?thread=[% thread.id %]">
++                    [% ForumCode.escape(watch.thread.subject) %]
++                    </a>
++                    <br />
++                    <span class="forum_mini_pager">
++                        [%- IF authed_user || mini_pager %]
++                        [
++                            [%- IF authed_user %]
++                            <a href="thread/next_post?thread=[% thread.id %]">Continue</a>
++                            [%- END %]
++                        ]
++                        [%- END %]
++                    </span>
++                </td>
++
++                <td style="vertical-align: top;">
++                    [% nicedate(thread.last_post.created) %]
++                    <br />
++                    <span class="topic_creator">last post by
++                    <span class="post_creator">[% thread.last_post.creator.forum_name %]</span>
++                    </span>
++                </td>
++
++                <td style="vertical-align: top;">
++                    [% nicedate(watch.timestamp) %]
++                    <br />
++                    [% IF (thread.last_post.created > watch.timestamp) %]
++                    <span class="topic_creator">Unread posts</span>
++                    [% END %]
++                </td>
++            </tr>
++            [% END %]
++        </tbody>
++    </table>
++[% ELSE %]
++    <p>You are not watching any threads</p>
++[% END %]
+
+Modified: trunk/root/base/shared/login_dialog
+===================================================================
+--- trunk/root/base/shared/login_dialog	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/shared/login_dialog	2007-06-04 19:53:26 UTC (rev 348)
+@@ -22,7 +22,7 @@
+             <label for="password"><b>Password:</b></label>
+             <input type="password" id="password" name="password" style="width: 15em;" class="input_text" />
+             <br />
+-            <button type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>log in</button>
++            <button type="submit" value="log in" class="input_button" style="margin-left: 170px;">log in</button>
+ 
+             <p align="right">
+             <a href="user/password/forgotten">Forgotten Password</a>
+
+Modified: trunk/root/base/shared/user_status
+===================================================================
+--- trunk/root/base/shared/user_status	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/shared/user_status	2007-06-04 19:53:26 UTC (rev 348)
+@@ -10,7 +10,7 @@
+         ]</i>
+     [% ELSE %]
+         <i>[
+-        <a href="javascript:;" onclick="login_dialog.show(); return false;">Login</a>
++        <a href="javascript:;" onclick="login_dialog.show(); dojo.byId('username').focus(); return false;">Login</a>
+         |
+         <a href="user/signup">Signup</a>
+         ]</i>
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/css/common.css	2007-06-04 19:53:26 UTC (rev 348)
+@@ -206,6 +206,12 @@
+     padding:            4px;
+ }
+ 
++.thread_watches {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
+ .search_results {
+     margin-left:        50px;
+     margin-right:       50px;
+
+Added: trunk/root/static/images/unread_posts.gif
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/unread_posts.gif
+___________________________________________________________________
+Name: svn:mime-type
+   + image/gif
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 19 21:30:48 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 19 Jun 2007 21:30:48 +0200
+Subject: [Parley-svn] r349 - / trunk/root/base/user
+Message-ID: <200706191930.l5JJUmq4028652@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-19 21:30:47 +0200 (Tue, 19 Jun 2007)
+New Revision: 349
+
+Added:
+   trunk/root/base/user/profile
+Modified:
+   /
+Log:
+ r3374 at wiggin:  chisel | 2007-06-19 19:08:48 +0100
+ + added template page for user/profile
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3322
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3374
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2007-06-04 19:53:26 UTC (rev 348)
++++ trunk/root/base/user/profile	2007-06-19 19:30:47 UTC (rev 349)
+@@ -0,0 +1,58 @@
++<!-- user/profile -->
++<h1>User Profile</h1>
++[% IF profiled_user %]
++
++<table class="user_profile">
++    <tbody>
++        <tr>
++            <!-- user avatar -->
++            [% avatar_file = c.path_to('root') _ "/static/user_file/${profiled_user.id}/avatar.jpg" %]
++            [% TRY %]
++                [% USE avatar = Image(avatar_file) %]
++                [% tmp = avatar.attr %]
++                <td rowspan="4">
++                    <img class="picborder" src="/static/user_file/[% profiled_user.id %]/avatar.jpg" border="0" [% avatar.attr %] alt="Avatar" />
++                    <br />
++                </td>
++            [% CATCH %]
++                <!-- No User Avatar -->
++            [% END %]
++            <!-- end : user avatar -->
++            <td class="user_profile_key">
++                Nickname:
++            </td>
++            <td class="user_profile_value">
++                [% profiled_user.forum_name %]
++            </td>
++        </tr>
++
++        <tr>
++            <td class="user_profile_key">
++                Posts made:
++            </td>
++            <td class="user_profile_value">
++                [% profiled_user.post_count %]
++            </td>
++        </tr>
++
++        <tr>
++            <td class="user_profile_key">
++                Last Post:
++            </td>
++            <td class="user_profile_value">
++                [% IF profiled_user.last_post %]
++                <a href="thread/view?thread=[% profiled_user.last_post.thread.id %]">[% ForumCode.escape(profiled_user.last_post.thread.subject) %]</a>
++                <br />
++                [% nicedate(profiled_user.last_post.created) %]
++                [% ELSE %]
++                Never Posted
++                [% END %]
++            </td>
++        </tr>
++    </tbody>
++</table>
++
++[% ELSE %]
++<p>Can't locate a profile for requested user</p>
++[% END %]
++<!-- end : user/profile -->
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 19 21:30:58 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 19 Jun 2007 21:30:58 +0200
+Subject: [Parley-svn] r350 - / trunk/db
+Message-ID: <200706191930.l5JJUwdv028720@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-19 21:30:57 +0200 (Tue, 19 Jun 2007)
+New Revision: 350
+
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/db/patch_0.52_to_0.53.psql
+Log:
+ r3375 at wiggin:  chisel | 2007-06-19 19:10:11 +0100
+ + add a field to store an author's IP for each post
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3374
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3375
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-06-19 19:30:47 UTC (rev 349)
++++ trunk/db/parley.psql	2007-06-19 19:30:57 UTC (rev 350)
+@@ -125,7 +125,10 @@
+     created         timestamp with time zone
+                     default CURRENT_TIMESTAMP,
+     creator         integer     not null
+-                    references person
++                    references person,
++
++    ip_addr         ip
++
+ );
+ 
+ -- add ReplyTo information for post
+
+Modified: trunk/db/patch_0.52_to_0.53.psql
+===================================================================
+--- trunk/db/patch_0.52_to_0.53.psql	2007-06-19 19:30:47 UTC (rev 349)
++++ trunk/db/patch_0.52_to_0.53.psql	2007-06-19 19:30:57 UTC (rev 350)
+@@ -14,6 +14,11 @@
+ INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d', '18:15, Jul 13');
+ INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d ''%y', '18:15, Jul 13 \'06');
+ 
++-- new post field (to capture IP of poster)
++ALTER TABLE post
++    ADD COLUMN  ip_addr     inet
++;
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 19 21:31:11 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 19 Jun 2007 21:31:11 +0200
+Subject: [Parley-svn] r351 - / trunk/lib/Parley/Schema
+Message-ID: <200706191931.l5JJVBA7028781@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-19 21:31:11 +0200 (Tue, 19 Jun 2007)
+New Revision: 351
+
+Modified:
+   /
+   trunk/lib/Parley/Schema/Post.pm
+Log:
+ r3376 at wiggin:  chisel | 2007-06-19 19:10:45 +0100
+ + add "ip" column info to schema
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3375
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3376
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-06-19 19:30:57 UTC (rev 350)
++++ trunk/lib/Parley/Schema/Post.pm	2007-06-19 19:31:11 UTC (rev 351)
+@@ -65,6 +65,13 @@
+     is_nullable => 1,
+     size => 8,
+   },
++
++  ip_addr => {
++    data_type => "inet",
++    default_value => undef,
++    is_nullable => 1,
++    size => 8,
++  },
+ );
+ __PACKAGE__->set_primary_key("post_id");
+ __PACKAGE__->has_many("threads", "Thread", { "foreign.last_post" => "self.post_id" });
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 19 21:31:22 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 19 Jun 2007 21:31:22 +0200
+Subject: [Parley-svn] r352 - / trunk/lib/Parley/Controller
+Message-ID: <200706191931.l5JJVMkv028842@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-19 21:31:21 +0200 (Tue, 19 Jun 2007)
+New Revision: 352
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ r3377 at wiggin:  chisel | 2007-06-19 19:11:19 +0100
+ + store IP address when adding a new post
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3376
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3377
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-06-19 19:31:11 UTC (rev 351)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-06-19 19:31:21 UTC (rev 352)
+@@ -689,6 +689,7 @@
+             subject     => $c->form->valid->{thread_subject},
+             message     => $c->form->valid->{thread_message},
+             creator     => $c->_authed_user->id(),
++            ip_addr     => $c->request->address(),
+         }
+     );
+ 
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 19 21:31:41 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 19 Jun 2007 21:31:41 +0200
+Subject: [Parley-svn] r353 - / trunk/lib/Parley/Controller
+Message-ID: <200706191931.l5JJVfU2028919@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-19 21:31:40 +0200 (Tue, 19 Jun 2007)
+New Revision: 353
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+Log:
+ r3378 at wiggin:  chisel | 2007-06-19 19:13:19 +0100
+ + add the ability to specify the tab to show via a URI param (tab=you|time|watch)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3377
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3378
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-06-19 19:31:21 UTC (rev 352)
++++ trunk/lib/Parley/Controller/My.pm	2007-06-19 19:31:40 UTC (rev 353)
+@@ -93,6 +93,11 @@
+         $c->session->{my_pref_came_from} = $c->request->referer();
+     }
+ 
++    # show a specific tab?
++    if (defined $c->request->param('tab')) {
++        $c->flash->{show_pref_tab} ||= 'tab_' . $c->request->param('tab');
++    }
++
+     # formfill/stash data
+     if ('UTC' eq $c->_authed_user()->preference()->timezone()) {
+         $c->stash->{formdata}{use_utc} = 1;
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 19 21:31:48 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 19 Jun 2007 21:31:48 +0200
+Subject: [Parley-svn] r354 - / trunk/root/base
+Message-ID: <200706191931.l5JJVmic028971@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-19 21:31:48 +0200 (Tue, 19 Jun 2007)
+New Revision: 354
+
+Modified:
+   /
+   trunk/root/base/header
+Log:
+ r3379 at wiggin:  chisel | 2007-06-19 19:28:55 +0100
+ / changed header area to read "Parley" instead of "Header"
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3378
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3379
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-06-19 19:31:40 UTC (rev 353)
++++ trunk/root/base/header	2007-06-19 19:31:48 UTC (rev 354)
+@@ -57,7 +57,7 @@
+     <body>
+         <div id="container">
+             <div id="header">
+-                <h1>Header</h1>
++                <h1>Parley</h1>
+             </div><!-- header div -->
+ 
+             <div id="wrapper">
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 19 21:31:54 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 19 Jun 2007 21:31:54 +0200
+Subject: [Parley-svn] r355 - / trunk/db trunk/lib/Parley/Schema
+	trunk/root/base/my trunk/root/css
+Message-ID: <200706191931.l5JJVsU1029029@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-19 21:31:53 +0200 (Tue, 19 Jun 2007)
+New Revision: 355
+
+Added:
+   trunk/root/base/my/tab_notifications
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/db/patch_0.52_to_0.53.psql
+   trunk/lib/Parley/Schema/Preference.pm
+   trunk/root/base/my/preferences
+   trunk/root/css/common.css
+Log:
+ r3380 at wiggin:  chisel | 2007-06-19 19:30:08 +0100
+ + schema, template and code changes for our first toe-dip into notification preferences
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3379
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3380
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/db/parley.psql	2007-06-19 19:31:53 UTC (rev 355)
+@@ -45,7 +45,9 @@
+     timezone        text        not null
+             default 'UTC',
+     time_format     integer     references preference_time_string,
+-    show_tz         boolean     default True
++    show_tz         boolean     default True,
++
++    notify_thread_watch     boolean     default False
+ );
+ 
+ CREATE TABLE person (
+
+Modified: trunk/db/patch_0.52_to_0.53.psql
+===================================================================
+--- trunk/db/patch_0.52_to_0.53.psql	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/db/patch_0.52_to_0.53.psql	2007-06-19 19:31:53 UTC (rev 355)
+@@ -19,6 +19,11 @@
+     ADD COLUMN  ip_addr     inet
+ ;
+ 
++-- new fields in preference table
++ALTER TABLE preference
++    ADD COLUMN  notify_thread_watch boolean default False
++;
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+Modified: trunk/lib/Parley/Schema/Preference.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Preference.pm	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/lib/Parley/Schema/Preference.pm	2007-06-19 19:31:53 UTC (rev 355)
+@@ -36,6 +36,12 @@
+     default_value => 'true',
+     size => 1,
+   },
++
++  'notify_thread_watch' => {
++    data_type => 'boolean',
++    default_value => 'false',
++    size => 1,
++  },
+ );
+ __PACKAGE__->set_primary_key("preference_id");
+ __PACKAGE__->has_many(
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/root/base/my/preferences	2007-06-19 19:31:53 UTC (rev 355)
+@@ -22,6 +22,10 @@
+     <div id="tab_watch" dojoType="ContentPane" label="Thread Watches">
+         [% PROCESS my/tab_watch %]
+     </div>
++
++    <div id="tab_notify" dojoType="ContentPane" label="Notifications">
++        [% PROCESS my/tab_notifications %]
++    </div>
+ </div>
+ 
+ [% IF c.session.my_pref_came_from %]
+
+Added: trunk/root/base/my/tab_notifications
+===================================================================
+--- trunk/root/base/my/tab_notifications	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/root/base/my/tab_notifications	2007-06-19 19:31:53 UTC (rev 355)
+@@ -0,0 +1,13 @@
++<!-- preferences : notification tab -->
++
++<table class="prefs_notification">
++    <tbody>
++        <tr>
++            <td>
++                <input type="checkbox" name="notify_thread_watch" />
++                Email notification for watched threads
++            </td>
++        </tr>
++    </tbody>
++</table>
++<!-- (end) preferences : notification tab -->
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/root/css/common.css	2007-06-19 19:31:53 UTC (rev 355)
+@@ -224,6 +224,12 @@
+     width:              500px;
+ }
+ 
++.prefs_notification {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
+ .user_profile_key {
+     font-weight:        bold;
+     text-align:         right;
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:09:00 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:09:00 +0200
+Subject: [Parley-svn] r356 - / trunk trunk/db trunk/lib/Parley/Controller
+	trunk/lib/Parley/Schema trunk/root/base/thread
+Message-ID: <200706252209.l5PM90wO024800@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:08:59 +0200 (Tue, 26 Jun 2007)
+New Revision: 356
+
+Modified:
+   /
+   trunk/Changes
+   trunk/db/parley.psql
+   trunk/db/patch_0.52_to_0.53.psql
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Schema/Preference.pm
+   trunk/root/base/thread/add
+   trunk/root/base/thread/reply
+Log:
+ r3403 at wiggin:  chisel | 2007-06-20 08:54:30 +0100
+ + add new fields to preference table: notify_thread_watch (unused) and watch_on_post
+ + schema change(s) for new fields
+ / fix a type or two
+ + add functionality to automatically add a thread watch for new posts/threads (based on checkbox in form with default value driven by preference setting)
+ / hide "Reset Form" and "Cancel" on thread/add
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3380
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3403
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-06-19 19:31:53 UTC (rev 355)
++++ trunk/Changes	2007-06-25 22:08:59 UTC (rev 356)
+@@ -2,6 +2,10 @@
+ 
+ 0.53
+ 
++    - automatically add thread-watch on new thread/post
++      (checkbox value defaults to appropriate pref value for user)
++    - added a basic profile page for users
++    - store the IP address of each post author
+     - improved preference screen (time, watch info)
+     - preferences are now in a tabbed container
+     - tidied up CSS and layout
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-06-19 19:31:53 UTC (rev 355)
++++ trunk/db/parley.psql	2007-06-25 22:08:59 UTC (rev 356)
+@@ -47,7 +47,8 @@
+     time_format     integer     references preference_time_string,
+     show_tz         boolean     default True,
+ 
+-    notify_thread_watch     boolean     default False
++    notify_thread_watch     boolean     default False,
++    watch_on_post           boolean     default True
+ );
+ 
+ CREATE TABLE person (
+
+Modified: trunk/db/patch_0.52_to_0.53.psql
+===================================================================
+--- trunk/db/patch_0.52_to_0.53.psql	2007-06-19 19:31:53 UTC (rev 355)
++++ trunk/db/patch_0.52_to_0.53.psql	2007-06-25 22:08:59 UTC (rev 356)
+@@ -21,7 +21,8 @@
+ 
+ -- new fields in preference table
+ ALTER TABLE preference
+-    ADD COLUMN  notify_thread_watch boolean default False
++    ADD COLUMN  notify_thread_watch boolean default False,
++    ADD COLUMN  watch_on_post       boolean default True
+ ;
+ 
+ -- patch ends here --
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-06-19 19:31:53 UTC (rev 355)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-06-25 22:08:59 UTC (rev 356)
+@@ -15,6 +15,7 @@
+     # DFV validation profile for adding a new topic
+     new_topic => {
+         required    => [qw( thread_subject thread_message )],
++        optional    => [qw( watch_on_post )],
+         filters     => [qw( trim )],
+         msgs => {
+             format  => q{%s},
+@@ -25,7 +26,7 @@
+     # DFV validation profile for adding a reply to an existing topic
+     new_reply => {
+         required    => [qw( thread_message )],
+-        optional    => [qw( thread_subject lock_thread )],
++        optional    => [qw( thread_subject lock_thread watch_on_post )],
+         filters     => [qw( trim )],
+     },
+ );
+@@ -47,7 +48,7 @@
+     if (defined $c->request->method() and $c->request->method() eq 'POST') {
+         $self->_add_new_thread($c);
+     }
+-    # other wise we continue merrily on our way, and simply display the
++    # otherwise we continue merrily on our way, and simply display the
+     # thread/add page
+     else {
+         # thread/add template shown automagically
+@@ -150,7 +151,7 @@
+     # make sure we're authenticated
+     # XXX
+ 
+-    # can't replay to a locked thread
++    # can't reply to a locked thread
+     if ($c->_current_thread()->locked()) {
+         #die q{can't reply to a locked thread!};
+         $c->stash->{error}{message} = q{You can't reply to a locked thread};
+@@ -727,6 +728,25 @@
+         $new_post->thread->update;
+     }
+ 
++    # would we like to set a thread watch at the time of posting?
++    if ($c->form->valid->{watch_on_post}) {
++        $c->log->debug( q{Auto-add thread watch on new post} );
++        my $thread_view =
++            $c->model('ParleyDB')->resultset('ThreadView')->find(
++                {
++                    person      => $c->_authed_user()->id(),
++                    thread      => $c->_current_thread()->id(),
++                },
++            )
++        ;
++        if (defined $thread_view) {
++            $c->log->debug( q{Adding Watch} );
++            #$thread_view->timestamp( $new_post->created() );
++            $thread_view->watched( 1 );
++            $thread_view->update;
++        }
++    }
++
+     # update the records
+     $new_post->update;
+ 
+@@ -768,6 +788,20 @@
+         ($new_thread->forum->post_count() || 0) + 1
+     );
+ 
++    # if the poster wants to add a watch we need to create the ThreadView record here
++    # (it's a new thread so they can't have viewed it yet)
++    if ($c->form->valid->{watch_on_post}) {
++        $c->log->debug( q{Auto-add thread watch on new thread} );
++        my $thread_view =
++            $c->model('ParleyDB')->resultset('ThreadView')->create(
++                {
++                    person      => $c->_authed_user()->id(),
++                    thread      => $new_thread->id(),
++                    watched     => 1,
++                },
++            )
++        ;
++    }
+ 
+     # update information about the most recent forum/thread post
+     $self->_update_last_post($c, $new_post);
+
+Modified: trunk/lib/Parley/Schema/Preference.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Preference.pm	2007-06-19 19:31:53 UTC (rev 355)
++++ trunk/lib/Parley/Schema/Preference.pm	2007-06-25 22:08:59 UTC (rev 356)
+@@ -42,6 +42,12 @@
+     default_value => 'false',
+     size => 1,
+   },
++
++  'watch_on_post' => {
++    data_type => 'boolean',
++    default_value => 'false',
++    size => 1,
++  },
+ );
+ __PACKAGE__->set_primary_key("preference_id");
+ __PACKAGE__->has_many(
+
+Modified: trunk/root/base/thread/add
+===================================================================
+--- trunk/root/base/thread/add	2007-06-19 19:31:53 UTC (rev 355)
++++ trunk/root/base/thread/add	2007-06-25 22:08:59 UTC (rev 356)
+@@ -34,11 +34,19 @@
+       <!--
+       <input type="submit" value="Preview Topic"  name="preview_topic"      class="input_button" />
+       -->
++      <!--
+       <input type="reset"  value="Reset Form"     name="reset_topic"        class="input_button" />
+       <input type="submit" value="Cancel"         name="cancel_new_topic"   class="input_button" />
++      -->
+     </td>
+   </tr>
+ 
++  <tr>
++    <td colspan="2" align="right">
++        <input type="checkbox" name="watch_on_post" value="1" [% IF authed_user.preference.watch_on_post %]checked="checked" [% END %]/>
++        Add a Thread Watch
++    </td>
++  </tr>
+ </table>
+ 
+ </form>
+
+Modified: trunk/root/base/thread/reply
+===================================================================
+--- trunk/root/base/thread/reply	2007-06-19 19:31:53 UTC (rev 355)
++++ trunk/root/base/thread/reply	2007-06-25 22:08:59 UTC (rev 356)
+@@ -82,6 +82,12 @@
+     </td>
+   </tr>
+   [% END %]
++  <tr>
++    <td colspan="2" align="right">
++        <input type="checkbox" name="watch_on_post" value="1" [% IF authed_user.preference.watch_on_post %]checked="checked" [% END %]/>
++        Add a Thread Watch
++    </td>
++  </tr>
+ 
+   <tr>
+     <td colspan="2" style="text-align: center;">
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:09:13 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:09:13 +0200
+Subject: [Parley-svn] r357 - / trunk/db
+Message-ID: <200706252209.l5PM9DsY024859@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:09:13 +0200 (Tue, 26 Jun 2007)
+New Revision: 357
+
+Modified:
+   /
+   trunk/db/parley.psql
+Log:
+ r3404 at wiggin:  chisel | 2007-06-20 18:45:17 +0100
+ / fixed incorrect column type: ip --> inet
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3403
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3404
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-06-25 22:08:59 UTC (rev 356)
++++ trunk/db/parley.psql	2007-06-25 22:09:13 UTC (rev 357)
+@@ -130,7 +130,7 @@
+     creator         integer     not null
+                     references person,
+ 
+-    ip_addr         ip
++    ip_addr         inet
+ 
+ );
+ 
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:09:20 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:09:20 +0200
+Subject: [Parley-svn] r358 - / trunk/lib
+Message-ID: <200706252209.l5PM9KGF024920@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:09:20 +0200 (Tue, 26 Jun 2007)
+New Revision: 358
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ r3405 at wiggin:  chisel | 2007-06-20 18:48:26 +0100
+ + bumped version number (to generate a new tarball)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3404
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3405
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-06-25 22:09:13 UTC (rev 357)
++++ trunk/lib/Parley.pm	2007-06-25 22:09:20 UTC (rev 358)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.53_001';
++our $VERSION = '0.53_002';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:09:32 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:09:32 +0200
+Subject: [Parley-svn] r359 - / trunk/lib
+Message-ID: <200706252209.l5PM9WVq024975@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:09:32 +0200 (Tue, 26 Jun 2007)
+New Revision: 359
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ r3406 at wiggin:  chisel | 2007-06-20 18:48:47 +0100
+ + version bump post-tarball
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3405
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3406
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-06-25 22:09:20 UTC (rev 358)
++++ trunk/lib/Parley.pm	2007-06-25 22:09:32 UTC (rev 359)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.53_002';
++our $VERSION = '0.53_003';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:09:46 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:09:46 +0200
+Subject: [Parley-svn] r360 - / trunk/root/base/my
+Message-ID: <200706252209.l5PM9kiI025033@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:09:46 +0200 (Tue, 26 Jun 2007)
+New Revision: 360
+
+Modified:
+   /
+   trunk/root/base/my/tab_notifications
+Log:
+ r3407 at wiggin:  chisel | 2007-06-20 18:49:17 +0100
+ / disable checkboxes as we're not saving any changes made to them yet
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3406
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3407
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/my/tab_notifications
+===================================================================
+--- trunk/root/base/my/tab_notifications	2007-06-25 22:09:32 UTC (rev 359)
++++ trunk/root/base/my/tab_notifications	2007-06-25 22:09:46 UTC (rev 360)
+@@ -4,10 +4,16 @@
+     <tbody>
+         <tr>
+             <td>
+-                <input type="checkbox" name="notify_thread_watch" />
+-                Email notification for watched threads
++                <input type="checkbox" name="watch_on_post" value="1" [% IF authed_user.preference.watch_on_post %]checked="checked" [% END %] disabled="true" />
++                Automatically add watches for new posts
+             </td>
+         </tr>
++        <tr>
++            <td>
++                <input type="checkbox" name="notify_thread_watch" value="1" [% IF authed_user.preference.notify_thread_watch %]checked="checked" [% END %] disabled="true" />
++                Recieve email notification for watched threads
++            </td>
++        </tr>
+     </tbody>
+ </table>
+ <!-- (end) preferences : notification tab -->
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:09:57 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:09:57 +0200
+Subject: [Parley-svn] r361 - / trunk/lib/Parley/App
+Message-ID: <200706252209.l5PM9vhF025121@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:09:56 +0200 (Tue, 26 Jun 2007)
+New Revision: 361
+
+Modified:
+   /
+   trunk/lib/Parley/App/Notification.pm
+Log:
+ r3408 at wiggin:  chisel | 2007-06-20 19:01:28 +0100
+ / DO NOT notify people that have the 'notify_thread_watch' preference set to false
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3407
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3408
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/App/Notification.pm
+===================================================================
+--- trunk/lib/Parley/App/Notification.pm	2007-06-25 22:09:46 UTC (rev 360)
++++ trunk/lib/Parley/App/Notification.pm	2007-06-25 22:09:56 UTC (rev 361)
+@@ -21,6 +21,13 @@
+         $c->log->debug( q{NOTIFY: } . $thread_view_row->person()->id() );
+         $c->log->debug( q{NOTIFY: } . $thread_view_row->person()->forum_name() );
+ 
++        # DO NOT notify people that have the 'notify_thread_watch' preference set to false
++        if (not $thread_view_row->person()->preference()->notify_thread_watch()) {
++            $c->log->debug( q{NOTIFY: DO NOT NOTIFY PERSON (preference.notify_thread_watch=false)} );
++            next;
++        }
++        $c->log->debug( q{NOTIFY: NOTIFY PERSON (preference.notify_thread_watch=true)} );
++
+         # send email
+         $send_status = $c->send_email(
+             {
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:10:03 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:10:03 +0200
+Subject: [Parley-svn] r362 - / trunk
+Message-ID: <200706252210.l5PMA3JJ025180@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:10:02 +0200 (Tue, 26 Jun 2007)
+New Revision: 362
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r3409 at wiggin:  chisel | 2007-06-21 08:46:54 +0100
+ + added missing deps for script/parley_email_engine.pl
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3408
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3409
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-06-25 22:09:56 UTC (rev 361)
++++ trunk/Makefile.PL	2007-06-25 22:10:02 UTC (rev 362)
+@@ -30,6 +30,8 @@
+ requires 'List::MoreUtils';
+ requires 'MIME::Lite';
+ requires 'Perl6::Export::Attrs';
++requires 'Proc::Daemon';
++requires 'Proc::PID::File';
+ requires 'Readonly';
+ requires 'Text::Context::EitherSide';
+ requires 'YAML'; # This should reflect the config file format you've chosen
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:10:15 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:10:15 +0200
+Subject: [Parley-svn] r363 - / trunk/lib/Parley/Controller/User
+Message-ID: <200706252210.l5PMAFxX025241@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:10:15 +0200 (Tue, 26 Jun 2007)
+New Revision: 363
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/User/SignUp.pm
+Log:
+ r3410 at wiggin:  chisel | 2007-06-21 08:53:23 +0100
+ / fix for bug with person.preference not being set when new user is created
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3409
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3410
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2007-06-25 22:10:02 UTC (rev 362)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2007-06-25 22:10:15 UTC (rev 363)
+@@ -371,8 +371,8 @@
+     );
+     # and link to the new person
+     $new_person->preference( $new_preference->id() );
++    $new_person->update;
+ 
+-
+     # send an authentication email
+     $status_ok = $self->_new_user_authentication_email( $c, $new_person );
+ 
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:10:34 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:10:34 +0200
+Subject: [Parley-svn] r364 - / trunk/lib/Parley/Controller trunk/root/base/my
+Message-ID: <200706252210.l5PMAYQP025323@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:10:34 +0200 (Tue, 26 Jun 2007)
+New Revision: 364
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/tab_notifications
+   trunk/root/base/my/tab_time
+Log:
+ r3411 at wiggin:  chisel | 2007-06-21 09:20:00 +0100
+ / modify the way we process form submissions for preferences and begin to factor out some common elements
+ / rename DFV 'timezone' profile to 'time_format' and set some default values
+ + new DFV profile for 'notifications'
+ + add form_name hidden field to template(s) so we know which form to process
+ / factor out handling for time_format preferences (into _process_form_time_format())
+ + added _form_data_valid() to factor out common DFV checks, i.e. has_missing() and has_invalid()
+ + added _process_form_notifications() to handle notification preference changes
+ / remove "disabled" attribute from notification preference check boxes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3410
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3411
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:15 UTC (rev 363)
++++ trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:34 UTC (rev 364)
+@@ -9,8 +9,15 @@
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ my %dfv_profile_for = (
+-    # DFV validation profile for adding a new topic
+-    timezone => {
++    # DFV validation profile for preferences
++    time_format => {
++        # make sure we get *something* for checkboxes
++        # (which don't submit anything at all when unchecked)
++        defaults => {
++            use_utc     => 0,
++            show_tz     => 0,
++        },
++
+         require_some => {
+             tz_data => [ 1, qw(use_utc selectZone) ],
+         },
+@@ -28,6 +35,22 @@
+             },
+         },
+     },
++
++    notifications => {
++        # make sure we get *something* for checkboxes
++        # (which don't submit anything at all when unchecked)
++        defaults => {
++            watch_on_post       => 0,
++            notify_thread_watch => 0,
++        },
++
++        required => [
++            qw(
++                watch_on_post
++                notify_thread_watch
++            )
++        ],
++    },
+ );
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -135,33 +158,120 @@
+ 
+ sub update :Path('/my/preferences/update') {
+     my ($self, $c) = @_;
++    my $form_name = $c->request->param('form_name');
++
+     # use the my/preferences template
+     $c->stash->{template} = 'my/preferences';
+ 
+-    # return to the right tab
+-    # use session flash, or we lose the info with the redirect
+-    $c->flash->{show_pref_tab} = 'tab_time';
++    # make sure the form name matches something we have a DFV profile for
++    if (not exists $dfv_profile_for{ $form_name }) {
++        $c->stash->{error}{message} = "no such form: $form_name";
++        return;
++    }
+ 
+-    # are we updating TZ information?
+-    # validate the form data
++    # validate the specified form
+     $c->form(
+-        $dfv_profile_for{timezone}
++        $dfv_profile_for{ $form_name }
+     );
++
++    # are we updating TZ preferences?
++    if ('time_format' eq $form_name) {
++        # return to the right tab
++        # use session flash, or we lose the info with the redirect
++        $c->flash->{show_pref_tab} = 'tab_time';
++
++        $self->_process_form_time_format( $c );
++    }
++    # are we updating notification preferences?
++    elsif ('notifications' eq $form_name) {
++        # return to the right tab
++        # use session flash, or we lose the info with the redirect
++        $c->flash->{show_pref_tab} = 'tab_notify';
++
++        $self->_process_form_notifications( $c );
++    }
++
++    # otherwise we haven't decided how to handle the specified form ...
++    else {
++        $c->stash->{error}{message} = "don't know how to handle: $form_name";
++        return;
++    }
++
++    return;
++}
++
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Private Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _form_data_valid {
++    my ($self, $c) = @_;
++
+     # deal with missing/invalid fields
+     if ($c->form->has_missing()) {
+         $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
+         foreach my $f ( $c->form->missing ) {
+             push @{ $c->stash->{view}{error}{messages} }, $f;
+         }
++
++        return; # invalid form data
+     }
+     elsif ($c->form->has_invalid()) {
+         $c->stash->{view}{error}{message} = q{One or more fields are invalid};
+         foreach my $f ( $c->form->invalid ) {
+             push @{ $c->stash->{view}{error}{messages} }, $f;
+         }
++
++        return; # invalid form data
+     }
+ 
+     # otherwise, the form data is ok ...
++    return 1;
++}
++
++sub _process_form_notifications {
++    my ($self, $c) = @_;
++
++    if (not $self->_form_data_valid($c)) {
++        return;
++    }
++
++    # Automatically add watches for new posts?
++    $c->_authed_user()->preference()->watch_on_post(
++        $c->form->valid('watch_on_post')
++    );
++
++    # Receive email notification for watched threads
++    $c->_authed_user()->preference()->notify_thread_watch(
++        $c->form->valid('notify_thread_watch')
++    );
++
++    # store changes
++    $c->_authed_user()->preference()->update;
++
++    return;
++}
++
++
++sub _process_form_time_format {
++    my ($self, $c) = @_;
++
++    # deal with missing/invalid fields
++    if ($c->form->has_missing()) {
++        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c->form->missing ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c->form->has_invalid()) {
++        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c->form->invalid ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise, the form data is ok ...
+     else {
+         $c->log->debug(
+             ref($c->_authed_user()->preference())
+@@ -198,11 +308,6 @@
+     return;
+ }
+ 
+-
+-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-# Private Methods
+-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+ =head1 NAME
+ 
+ Parley::Controller::My - Catalyst Controller
+
+Modified: trunk/root/base/my/tab_notifications
+===================================================================
+--- trunk/root/base/my/tab_notifications	2007-06-25 22:10:15 UTC (rev 363)
++++ trunk/root/base/my/tab_notifications	2007-06-25 22:10:34 UTC (rev 364)
+@@ -1,19 +1,30 @@
+ <!-- preferences : notification tab -->
+ 
+-<table class="prefs_notification">
+-    <tbody>
+-        <tr>
+-            <td>
+-                <input type="checkbox" name="watch_on_post" value="1" [% IF authed_user.preference.watch_on_post %]checked="checked" [% END %] disabled="true" />
+-                Automatically add watches for new posts
+-            </td>
+-        </tr>
+-        <tr>
+-            <td>
+-                <input type="checkbox" name="notify_thread_watch" value="1" [% IF authed_user.preference.notify_thread_watch %]checked="checked" [% END %] disabled="true" />
+-                Recieve email notification for watched threads
+-            </td>
+-        </tr>
+-    </tbody>
+-</table>
++<form action="my/preferences/update" method="POST" name="notifications">
++    <input type="hidden" name="form_name" value="notifications">
++    <table class="prefs_notification">
++        <tbody>
++            <tr>
++                <td>
++                    <input type="checkbox" name="watch_on_post" value="1" [% IF authed_user.preference.watch_on_post %]checked="checked" [% END %] />
++                    Automatically add watches for new posts
++                </td>
++            </tr>
++            <tr>
++                <td>
++                    <input type="checkbox" name="notify_thread_watch" value="1" [% IF authed_user.preference.notify_thread_watch %]checked="checked" [% END %] />
++                    Receive email notification for watched threads
++                </td>
++            </tr>
++
++            <tr><td colspan="2">&nbsp;</td></tr>
++
++            <tr>
++                <td colspan="2" style="text-align: center;">
++                <input type="submit" value="Update" name="update" class="input_button" />
++                </td>
++            </tr>
++        </tbody>
++    </table>
++</form>
+ <!-- (end) preferences : notification tab -->
+
+Modified: trunk/root/base/my/tab_time
+===================================================================
+--- trunk/root/base/my/tab_time	2007-06-25 22:10:15 UTC (rev 363)
++++ trunk/root/base/my/tab_time	2007-06-25 22:10:34 UTC (rev 364)
+@@ -1,7 +1,8 @@
+ <!-- preferences : time tab -->
+ <p>Select your desired location. This will be used to display times using your local timezone.</p>
+ 
+-<form action="my/preferences/update" method="POST" name="timezone">
++<form action="my/preferences/update" method="POST" name="time_format">
++    <input type="hidden" name="form_name" value="time_format">
+     <table width="550" border="1">
+         [% IF tz_message %]
+         <!-- Message to user -->
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:10:40 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:10:40 +0200
+Subject: [Parley-svn] r365 - / trunk/lib/Parley/Controller
+Message-ID: <200706252210.l5PMAe8i025404@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:10:40 +0200 (Tue, 26 Jun 2007)
+New Revision: 365
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+Log:
+ r3412 at wiggin:  chisel | 2007-06-21 09:26:08 +0100
+ / refactored _process_form_time_format()
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3411
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3412
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:34 UTC (rev 364)
++++ trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:40 UTC (rev 365)
+@@ -181,6 +181,7 @@
+         $c->flash->{show_pref_tab} = 'tab_time';
+ 
+         $self->_process_form_time_format( $c );
++        $c->response->redirect( $c->uri_for('/my/preferences') );
+     }
+     # are we updating notification preferences?
+     elsif ('notifications' eq $form_name) {
+@@ -189,6 +190,7 @@
+         $c->flash->{show_pref_tab} = 'tab_notify';
+ 
+         $self->_process_form_notifications( $c );
++        $c->response->redirect( $c->uri_for('/my/preferences') );
+     }
+ 
+     # otherwise we haven't decided how to handle the specified form ...
+@@ -250,6 +252,7 @@
+     # store changes
+     $c->_authed_user()->preference()->update;
+ 
++    #$c->response->redirect( $c->uri_for('/my/preferences') );
+     return;
+ }
+ 
+@@ -257,54 +260,40 @@
+ sub _process_form_time_format {
+     my ($self, $c) = @_;
+ 
+-    # deal with missing/invalid fields
+-    if ($c->form->has_missing()) {
+-        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
+-        foreach my $f ( $c->form->missing ) {
+-            push @{ $c->stash->{view}{error}{messages} }, $f;
+-        }
++    if (not $self->_form_data_valid($c)) {
++        return;
+     }
+-    elsif ($c->form->has_invalid()) {
+-        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
+-        foreach my $f ( $c->form->invalid ) {
+-            push @{ $c->stash->{view}{error}{messages} }, $f;
+-        }
+-    }
+ 
+-    # otherwise, the form data is ok ...
++    $c->log->debug(
++        ref($c->_authed_user()->preference())
++    );
++
++    # tz preference value
++    if ($c->form->valid('use_utc')) {
++        $c->_authed_user()->preference()->timezone('UTC');
++    }
+     else {
+-        $c->log->debug(
+-            ref($c->_authed_user()->preference())
++        $c->_authed_user()->preference()->timezone(
++            $c->form->valid('selectZone')
+         );
+-
+-        # tz preference value
+-        if ($c->form->valid('use_utc')) {
+-            $c->_authed_user()->preference()->timezone('UTC');
+-        }
+-        else {
+-            $c->_authed_user()->preference()->timezone(
+-                $c->form->valid('selectZone')
+-            );
+-        }
+-        # time_format preference
+-        if (defined $c->form->valid('time_format')) {
+-            $c->_authed_user()->preference()->time_format(
+-                $c->form->valid('time_format')
+-            )
+-        }
+-        else {
+-            $c->_authed_user()->preference()->time_format( undef );
+-        }
+-        # show_tz
+-        $c->_authed_user()->preference()->show_tz(
+-            ($c->form->valid('show_tz') || 0)
+-        );
+-        # store changes
+-        $c->_authed_user()->preference()->update();
+-
+-        $c->response->redirect( $c->uri_for('/my/preferences') );
+     }
++    # time_format preference
++    if (defined $c->form->valid('time_format')) {
++        $c->_authed_user()->preference()->time_format(
++            $c->form->valid('time_format')
++        )
++    }
++    else {
++        $c->_authed_user()->preference()->time_format( undef );
++    }
++    # show_tz
++    $c->_authed_user()->preference()->show_tz(
++        ($c->form->valid('show_tz') || 0)
++    );
++    # store changes
++    $c->_authed_user()->preference()->update();
+ 
++    #$c->response->redirect( $c->uri_for('/my/preferences') );
+     return;
+ }
+ 
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:10:51 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:10:51 +0200
+Subject: [Parley-svn] r366 - / trunk/root/base/my
+Message-ID: <200706252210.l5PMAp4R025480@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:10:50 +0200 (Tue, 26 Jun 2007)
+New Revision: 366
+
+Modified:
+   /
+   trunk/root/base/my/tab_watch
+Log:
+ r3413 at wiggin:  chisel | 2007-06-21 09:28:05 +0100
+ / fix output when no threads are watched
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3412
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3413
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/my/tab_watch
+===================================================================
+--- trunk/root/base/my/tab_watch	2007-06-25 22:10:40 UTC (rev 365)
++++ trunk/root/base/my/tab_watch	2007-06-25 22:10:50 UTC (rev 366)
+@@ -1,4 +1,4 @@
+-[% IF thread_watches %]
++[% IF thread_watches > 0 %]
+     <table class="thread_watches">
+         <tbody>
+             <tr>
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 26 00:11:03 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 26 Jun 2007 00:11:03 +0200
+Subject: [Parley-svn] r367 - / trunk trunk/lib trunk/lib/Parley/Controller
+	trunk/lib/Parley/Schema trunk/root/base/thread trunk/root/css
+Message-ID: <200706252211.l5PMB3OS025534@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-06-26 00:11:03 +0200 (Tue, 26 Jun 2007)
+New Revision: 367
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/root/base/thread/view
+   trunk/root/css/common.css
+Log:
+ r3414 at wiggin:  chisel | 2007-06-22 08:51:59 +0100
+ + reimplemented post/edit
+ / added missing inflate_column() for post.edited column
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3413
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3414
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/Changes	2007-06-25 22:11:03 UTC (rev 367)
+@@ -2,11 +2,12 @@
+ 
+ 0.53
+ 
++    - reimplemented post/edit (lost in the 0.5 rewrite)
+     - automatically add thread-watch on new thread/post
+       (checkbox value defaults to appropriate pref value for user)
+     - added a basic profile page for users
+     - store the IP address of each post author
+-    - improved preference screen (time, watch info)
++    - improved preference screen (time, watch info, notifications)
+     - preferences are now in a tabbed container
+     - tidied up CSS and layout
+     - added more missing dependencies to Makefile.PL
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/lib/Parley/Controller/Post.pm	2007-06-25 22:11:03 UTC (rev 367)
+@@ -3,12 +3,91 @@
+ use strict;
+ use warnings;
+ use base 'Catalyst::Controller';
++use DateTime;
+ 
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++my %dfv_profile_for = (
++    # DFV validation profile for adding a new topic
++    edit_post => {
++        required    => [qw( post_message )],
++        filters     => [qw( trim )],
++        msgs => {
++            format  => q{%s},
++            missing => q{One or more required fields are missing},
++        },
++    },
++);
++
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Controller Actions
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++sub edit : Local {
++    my ($self, $c) = @_;
++
++    # if we don't have a post param, then return with an error
++    unless (defined $c->_current_post) {
++        $c->stash->{error}{message} = q{Incomplete URL};
++        return;
++    }
++
++    # you need to be logged in to edit a post
++    # (although non-logged users shouldn't see an edit link, you never know
++    # what people will make-up or bookmark)
++    $c->login_if_required(q{You must be logged in before you can edit your posts.});
++
++    # you can only edit you own posts
++    # (unless you're a moderator, but we don't do that yet)
++    if ($c->_authed_user()->id() != $c->_current_post()->creator()->id()) {
++        $c->stash->{error}{message} = q{You can only edit posts you have made};
++        return;
++    }
++
++    # you can't edit a locked post
++    elsif ($c->_current_post->thread->locked) {
++        $c->stash->{error}{message} = q{You can't edit locked posts};
++        return;
++    }
++
++    # process the form submission
++    else {
++        # validate the form data
++        $c->form(
++            $dfv_profile_for{edit_post}
++        );
++        # deal with missing/invalid fields
++        if ($c->form->has_missing()) {
++            $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++            foreach my $f ( $c->form->missing ) {
++                push @{ $c->stash->{view}{error}{messages} }, $f;
++            }
++        }
++        elsif ($c->form->has_invalid()) {
++            $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++            foreach my $f ( $c->form->invalid ) {
++                push @{ $c->stash->{view}{error}{messages} }, $f;
++            }
++        }
++        # otherwise; everything seems fine - edit the post
++        else {
++            # update the post with the new information
++            $c->_current_post->message( $c->form->valid->{post_message} );
++
++            # set the edited time
++            $c->_current_post->edited( DateTime->now() );
++
++            # store the updates in the db
++            $c->_current_post->update();
++
++            # view the (updated) post
++            $c->detach('/post/view');
++        }
++    }
++}
++
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/lib/Parley/Schema/Post.pm	2007-06-25 22:11:03 UTC (rev 367)
+@@ -95,7 +95,7 @@
+ 
+ 
+ 
+-foreach my $datecol (qw/created/) {
++foreach my $datecol (qw/created edited/) {
+     __PACKAGE__->inflate_column($datecol, {
+         inflate => sub { DateTime::Format::Pg->parse_datetime(shift); },
+         deflate => sub { DateTime::Format::Pg->format_datetime(shift); },
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/lib/Parley.pm	2007-06-25 22:11:03 UTC (rev 367)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.53_003';
++our $VERSION = '0.53_004';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/root/base/thread/view	2007-06-25 22:11:03 UTC (rev 367)
+@@ -89,9 +89,23 @@
+ 
+                 <div class="post_info">
+                     [% nicedate(post.created) %]
++                    [% IF post.edited %]
++                    <br /><span class="post_edited_alert">Edited: [% nicedate(post.edited) %]</span>
++                    [% END %]
++                    <br />
++                    [% IF post.ip_addr %]
++                        [% IF moderator %]
++                            Posted from: [% post.ip_addr %]
++                        [% ELSE %]
++                            IP Logged
++                        [% END %]
++                    [% END %]
+                     [% UNLESS current_thread.locked %]
+                         <br />
+                         <br />
++                        [% IF authed_user.id == post.creator.id %]
++                        <a class="button" href="post/edit?post=[% post.id %]">Edit</a>
++                        [% END %]
+                         <a class="button" href="thread/reply?post=[% post.id %]">Quote</a>
+                         <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
+                     [% END %]
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/root/css/common.css	2007-06-25 22:11:03 UTC (rev 367)
+@@ -269,6 +269,12 @@
+     vertical-align:     top;
+ }
+ 
++.post_edited_alert {
++    font-weight:    bold;
++    font-style:     italic;
++    font-size:      0.8em;
++}
++
+ .user_post_info {
+     background:         #ccc;
+     font-size:          85%;
+
+
+

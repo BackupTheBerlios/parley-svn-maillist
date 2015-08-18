@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r468 - / trunk/root/base trunk/root/base/my
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r468%20-%20/%20trunk/root/base%20trunk/root/base/my&In-Reply-To=%3C200709051926.l85JQ2qX009997%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000355.html">
+   <LINK REL="Next"  HREF="000357.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r468 - / trunk/root/base trunk/root/base/my</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r468%20-%20/%20trunk/root/base%20trunk/root/base/my&In-Reply-To=%3C200709051926.l85JQ2qX009997%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r468 - / trunk/root/base trunk/root/base/my">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Sep  5 21:26:02 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000355.html">[Parley-svn] r467 - / trunk/root/base/menu
+</A></li>
+        <LI>Next message: <A HREF="000357.html">[Parley-svn] r469 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#356">[ date ]</a>
+              <a href="thread.html#356">[ thread ]</a>
+              <a href="subject.html#356">[ subject ]</a>
+              <a href="author.html#356">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-05 21:26:02 +0200 (Wed, 05 Sep 2007)
+New Revision: 468
+
+Modified:
+   /
+   trunk/root/base/header
+   trunk/root/base/my/preferences
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3783 at wiggin</A>:  chisel | 2007-09-05 20:24:56 +0100
+ / update my/preferences to use YUI tab-view
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3782
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3783
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-09-05 19:25:51 UTC (rev 467)
++++ trunk/root/base/header	2007-09-05 19:26:02 UTC (rev 468)
+@@ -62,6 +62,7 @@
+         --&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/container/assets/skins/sam/container.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css&quot; /&gt; 
++        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/tabview/assets/skins/sam/tabview.css&quot; /&gt;
+ 
+         &lt;!-- Dependency source files --&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/yahoo-dom-event/yahoo-dom-event.js&quot;&gt;&lt;/script&gt;
+@@ -70,6 +71,7 @@
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/button/button-beta.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/menu/menu.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/tabview/tabview.js&quot;&gt;&lt;/script&gt;
+     &lt;/head&gt;
+ 
+     &lt;body class=&quot;yui-skin-sam&quot;&gt;
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-09-05 19:25:51 UTC (rev 467)
++++ trunk/root/base/my/preferences	2007-09-05 19:26:02 UTC (rev 468)
+@@ -9,24 +9,31 @@
+     &lt;/ul&gt;
+ [% END %]
+ 
+-&lt;p&gt;
+-&lt;div id=&quot;mainTabContainer&quot; dojoType=&quot;TabContainer&quot; style=&quot;width: 100%; height: 300px&quot; selectedChild=&quot;[% c.flash.show_pref_tab || 'tab_you' %]&quot; &gt;
+-    &lt;div id=&quot;tab_you&quot; dojoType=&quot;ContentPane&quot; label=&quot;Your Details&quot;&gt;
+-        [% PROCESS my/tab_you %]
+-    &lt;/div&gt;
++&lt;div id=&quot;demo&quot; class=&quot;yui-navset&quot;&gt;
++    [% tab_info = [
++            { label =&gt; 'Your Details',       tab_name =&gt; 'tab_you' },
++            { label =&gt; 'Time',               tab_name =&gt; 'tab_time' },
++            { label =&gt; 'Notifications',      tab_name =&gt; 'tab_notifications' },
++            { label =&gt; 'Avatar',             tab_name =&gt; 'tab_avatar' },
++       ]
++    %]
++    [% SET selected_tab = c.flash.show_pref_tab || 'tab_you' %]
+ 
+-    &lt;div id=&quot;tab_time&quot; dojoType=&quot;ContentPane&quot; label=&quot;Time&quot;&gt;
+-        [% PROCESS my/tab_time %]
+-    &lt;/div&gt;
++    &lt;ul class=&quot;yui-nav&quot;&gt;
++    [% FOR tab IN tab_info %]
++        &lt;li[% IF tab.tab_name == selected_tab %] class=&quot;selected&quot;[%END%]&gt;&lt;a href=&quot;#[% tab.tab_name %]&quot;&gt;&lt;em&gt;[% tab.label %]&lt;/em&gt;&lt;/a&gt;&lt;/li&gt;
++    [% END %]
++    &lt;/ul&gt;            
+ 
+-    &lt;div id=&quot;tab_notify&quot; dojoType=&quot;ContentPane&quot; label=&quot;Notifications&quot;&gt;
+-        [% PROCESS my/tab_notifications %]
++    &lt;div class=&quot;yui-content&quot;&gt;
++    [% FOR tab IN tab_info %]
++        &lt;div id=&quot;[% tab.tab_name %]&quot;&gt;&lt;p&gt;[% PROCESS &quot;my/${tab.tab_name}&quot; %]&lt;/p&gt;&lt;/div&gt;
++    [% END %]
+     &lt;/div&gt;
+-
+-    &lt;div id=&quot;tab_avatar&quot; dojoType=&quot;ContentPane&quot; label=&quot;Avatar&quot;&gt;
+-        [% PROCESS my/tab_avatar %]
+-    &lt;/div&gt;
+ &lt;/div&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++    var tabView = new YAHOO.widget.TabView('demo');
++&lt;/script&gt;
+ 
+ [% IF c.session.my_pref_came_from %]
+ &lt;p&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000355.html">[Parley-svn] r467 - / trunk/root/base/menu
+</A></li>
+	<LI>Next message: <A HREF="000357.html">[Parley-svn] r469 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#356">[ date ]</a>
+              <a href="thread.html#356">[ thread ]</a>
+              <a href="subject.html#356">[ subject ]</a>
+              <a href="author.html#356">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

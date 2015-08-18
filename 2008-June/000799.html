@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r911 - / trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r911%20-%20/%20trunk/script&In-Reply-To=%3C200806242042.m5OKggXi026157%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000798.html">
+   <LINK REL="Next"  HREF="000800.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r911 - / trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r911%20-%20/%20trunk/script&In-Reply-To=%3C200806242042.m5OKggXi026157%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r911 - / trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jun 24 22:42:42 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000798.html">[Parley-svn] r910 - / trunk/root/static/css
+</A></li>
+        <LI>Next message: <A HREF="000800.html">[Parley-svn] r912 - / trunk/script
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#799">[ date ]</a>
+              <a href="thread.html#799">[ thread ]</a>
+              <a href="subject.html#799">[ subject ]</a>
+              <a href="author.html#799">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-06-24 22:42:41 +0200 (Tue, 24 Jun 2008)
+New Revision: 911
+
+Added:
+   trunk/script/i18n_todo.pl
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5973 at wiggin</A>:  chisel | 2008-06-23 08:42:26 +0100
+ + a new script to show missing translations for a given language; it's a little hacky, but does what I want it to (for now)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5961
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5973
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/script/i18n_todo.pl
+===================================================================
+--- trunk/script/i18n_todo.pl	2008-06-16 21:22:20 UTC (rev 910)
++++ trunk/script/i18n_todo.pl	2008-06-24 20:42:41 UTC (rev 911)
+@@ -0,0 +1,120 @@
++#!/usr/bin/env perl
++use strict;
++use warnings;
++
++use Data::Dump qw(pp);
++use Getopt::Long;
++use File::Slurp;
++use FindBin qw($Bin);
++# use List::Compare
++use Path::Class;
++
++# default options
++my %cliopt = (
++    language    =&gt; 'it',
++);
++# get overrides from cli
++GetOptions(\%cliopt, &quot;language=s&quot;);
++
++# show the differences for the chosen language
++token_diffs( $cliopt{language} );
++
++sub token_diffs {
++    my $target_lang = shift;
++
++    # get the i_default list
++    my $idefault_msgids = get_msgids(q{i_default});
++
++    # get the target lang list
++    my $targetlang_msgids = get_msgids($target_lang);
++    #warn pp($targetlang_msgids); exit;
++
++    # see what's missing from the target
++    print &quot;Missing phrases in '$target_lang' translation:\n\n&quot;;
++    diffs($idefault_msgids, $targetlang_msgids);
++
++    # see if we have anything extra in the target
++    print &quot;Additional phrases in '$target_lang' translation:\n\n&quot;;
++    diffs($targetlang_msgids, $idefault_msgids);
++
++    return;
++}
++
++# XXX sane people would probably have used List::Compare
++# XXX unfortunately I didn't have it installed, and was working
++# XXX without a 'net connection
++sub diffs {
++    my ($left, $right) = @_;
++
++    my %left_copy = %{ $left };
++
++    # see what's missing from the target
++    map (
++        delete $left_copy{$_},
++        keys %{$right}
++    );
++
++    my @keys = sort keys %left_copy;
++    if (@keys) {
++        foreach my $key (@keys) {
++            print &quot;  $key\n    $left_copy{$key}\n\n&quot;;
++        }
++    }
++    else {
++        print &quot; - NONE -\n\n&quot;;
++    }
++
++    return;
++}
++
++# read in an i18n file
++sub read_i18n {
++    my $filename = shift;
++
++    my $dir = dir(
++        dir($Bin)-&gt;parent,
++        q{lib},
++        q{Parley},
++        q{I18N}
++    );
++
++    my $file = file(
++        $dir,
++        $filename
++    ) . q{}; # to stop read_file() throwing a strop
++
++    my $filedata = read_file( $file )
++        or die $!;
++
++    return $filedata;
++}
++
++# TODO - find a suitable &quot;gettext&quot; perl module to do this properly
++# the regexp to match on .. it's easier to format outside the &quot;while&quot;
++sub get_msgids {
++    my $lang = shift;
++    my ($data, %msg_of, @msgids, $regexp);
++
++    $data = read_i18n(
++        $lang . q{.po}
++    );
++
++    # (sorry!)
++    $regexp = qr{
++        (?:.+?)         # any preceding junk
++        ^msgid
++        \s+             # whitespace after first token
++        &quot;(.+?)&quot;         # the token name
++        \s* \n          # optional whitespace to EOL
++        ^msgstr
++        \s+             # whitespace after second token
++        &quot;(.+?)&quot;         # the token name
++    }xms;
++
++    # get all the msgid/msgstr pairs and store the data in a hash
++    while ($data =~ m{\G$regexp}g) {
++        $msg_of{$1} = $2;
++    }
++
++    return \%msg_of;
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000798.html">[Parley-svn] r910 - / trunk/root/static/css
+</A></li>
+	<LI>Next message: <A HREF="000800.html">[Parley-svn] r912 - / trunk/script
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#799">[ date ]</a>
+              <a href="thread.html#799">[ thread ]</a>
+              <a href="subject.html#799">[ subject ]</a>
+              <a href="author.html#799">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

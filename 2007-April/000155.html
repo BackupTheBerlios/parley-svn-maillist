@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r267 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r267%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/thread&In-Reply-To=%3C200704031946.l33JkxNl009499%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000156.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r267 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r267%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/thread&In-Reply-To=%3C200704031946.l33JkxNl009499%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r267 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Apr  3 21:46:59 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000156.html">[Parley-svn] r268 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#155">[ date ]</a>
+              <a href="thread.html#155">[ thread ]</a>
+              <a href="subject.html#155">[ subject ]</a>
+              <a href="author.html#155">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-03 21:46:58 +0200 (Tue, 03 Apr 2007)
+New Revision: 267
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/lib/Parley/Schema/ThreadView.pm
+   trunk/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3022 at wiggin</A>:  chisel | 2007-03-29 20:08:06 +0100
+ + thread-watchers now get an email queued to tell them there's something to read
+ / login_if_required() now uses detach() instead of redirect()
+ / last_post_in_list() [Schema::Post] no longer uses slice()
+ + try to display user avatar image in a [% TRY/CATCH %] block, showing nothing if it fails (i.e. user has no avatar)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2983
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3022
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-03-26 21:42:01 UTC (rev 266)
++++ trunk/Changes	2007-04-03 19:46:58 UTC (rev 267)
+@@ -1,5 +1,11 @@
+ This file documents the revision history for Parley.
+ 
++    - thread-watchers now get an email queued to tell them there's something to
++      read
++    - login_if_required() now uses detach() instead of redirect()
++    - last_post_in_list() [Schema::Post] no longer uses slice()
++    - try to display user avatar image in a [% TRY/CATCH %] block, showing
++      nothing if it fails (i.e. user has no avatar)
+     - update DFV profile for DFV 4.50
+     - logged-in users get bounced from user/signup to the default_uri
+     - moved send_email() out to Parley::Communication::Email
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-03-26 21:42:01 UTC (rev 266)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-04-03 19:46:58 UTC (rev 267)
+@@ -5,6 +5,8 @@
+ use base 'Catalyst::Controller';
+ use Data::SpreadPagination;
+ 
++use Parley::App::Notification qw( :watch );
++
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Global class data
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -286,6 +288,9 @@
+     # set the current post
+     $c-&gt;_current_post( $new_reply );
+ 
++    # let interested parties know about the new post
++    notify_watchers( $c, $new_reply );
++
+     # view the &quot;next post&quot; in the new thread
+     $c-&gt;detach('next_post');
+ }
+@@ -547,6 +552,7 @@
+     $last_post = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;last_post_in_list(
+         $c-&gt;stash-&gt;{post_list}
+     );
++
+     # get the timestamp of the last post
+     $last_post_timestamp = $last_post-&gt;created();
+     $c-&gt;log-&gt;debug( qq{\$last_post_timestamp = $last_post_timestamp} );
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2007-03-26 21:42:01 UTC (rev 266)
++++ trunk/lib/Parley/Controller/User.pm	2007-04-03 19:46:58 UTC (rev 267)
+@@ -12,6 +12,8 @@
+     $c-&gt;stash-&gt;{'message'} = 'Please enter your username and password';
+     # if we have a custom message to use ..
+     $c-&gt;stash-&gt;{'login_message'} = delete( $c-&gt;session-&gt;{login_message} );
++    # make sure we use the correct template - we sometimes detach() here
++    $c-&gt;stash-&gt;{template} = 'user/login';
+ 
+     # if we have a username, try to log the user in
+     if ( $c-&gt;request-&gt;param('username') ) {
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-03-26 21:42:01 UTC (rev 266)
++++ trunk/lib/Parley/Schema/Post.pm	2007-04-03 19:46:58 UTC (rev 267)
+@@ -94,24 +94,21 @@
+ 
+ 
+ 
+-
++# we used to use -&gt;slice() but it sopped working on page #2 (!!)
++# this may be slower [not benchmarked] but it works
+ sub last_post_in_list : ResultSet {
+     my ($self, $post_list) = @_;
++    my ($current_post);
+ 
+-    my $posts_in_list = $post_list-&gt;count();
+-    my $splice_position = $posts_in_list - 1;
+-
+-    # get the last post on the page
+-    my $slice = $post_list-&gt;slice(
+-        $splice_position,
+-        $splice_position,
+-    );
+-
+-    if (defined $slice-&gt;first()) {
+-        return $slice-&gt;first();
++    while (my $tmp = $post_list-&gt;next()) {
++        # do nothing, we're just iterating the list
++        $current_post = $tmp;
++        #warn qq{LOOP: } . ref($current_post);
+     }
+-
+-    return;
++    # return the current post, which is the last one we saw
++    # i.e. the last one in the list
++    #warn qq{CURRENT: } . ref($current_post);
++    return $current_post;
+ }
+ 
+ 
+
+Modified: trunk/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ThreadView.pm	2007-03-26 21:42:01 UTC (rev 266)
++++ trunk/lib/Parley/Schema/ThreadView.pm	2007-04-03 19:46:58 UTC (rev 267)
+@@ -6,6 +6,7 @@
+ use warnings;
+ 
+ use base 'DBIx::Class';
++use DateTime::Format::Pg;
+ 
+ __PACKAGE__-&gt;load_components('ResultSetManager', &quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;thread_view&quot;);
+@@ -88,5 +89,55 @@
+     return $thread_view-&gt;watched();
+ }
+ 
++sub notification_list : ResultSet {
++    my ($self, $post) = @_;
++    my ($schema);
++
++    if (not defined $post) {
++        warn 'undefined value passed as $post in notification_list()';
++        return;
++    }
++
++    # make sure we have full object details
++    # [we don't seem to get all the default column data for a new create()]
++    $schema = $self-&gt;result_source()-&gt;schema();
++    $post = $schema-&gt;resultset('Post')-&gt;find(
++        post_id =&gt; $post-&gt;id()
++    );
++    if (not defined $post) {
++        warn 'failed to re-fetch post in notification_list()';
++        return;
++    }
++
++    # find the list of people to notify about this update
++    my $notification_list = $self-&gt;search(
++        {
++            # the thread the post belongs to
++            thread          =&gt; $post-&gt;thread()-&gt;id(),
++            # only interested in records where a person is watching
++            watched         =&gt; 1,
++            # and they last viewed the thread before the last post
++            timestamp       =&gt; {
++                '&lt;',
++                DateTime::Format::Pg-&gt;format_datetime(
++                    $post-&gt;created()
++                )
++            },
++            # and they've not been notified
++            last_notified   =&gt; [
++                {   '=',    undef   },
++                   \'&lt; timestamp'    ,
++            ],
++            # and they aren't the person that created the post itself
++            person          =&gt; {
++                '!=',
++                $post-&gt;creator()-&gt;id(),
++            },
++        }
++    );
++
++    return $notification_list;
++}
++
+ 1;
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-03-26 21:42:01 UTC (rev 266)
++++ trunk/lib/Parley.pm	2007-04-03 19:46:58 UTC (rev 267)
+@@ -109,7 +109,7 @@
+             $c-&gt;session-&gt;{login_message} = $message;
+         }
+         # send the user to the login screen
+-        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/user/login') );
++        $c-&gt;detach( '/user/login' );
+         return;
+     }
+ }
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-03-26 21:42:01 UTC (rev 266)
++++ trunk/root/base/thread/view	2007-04-03 19:46:58 UTC (rev 267)
+@@ -610,7 +610,14 @@
+                     &lt;tr&gt;
+                       &lt;td align=&quot;center&quot;&gt;
+                         &lt;a href=&quot;&quot;&gt;
+-                          &lt;img class=&quot;picborder&quot; src=&quot;/static/user_file/[% post.creator.id %]/avatar.jpg&quot; border=&quot;0&quot; width=&quot;100&quot; height=&quot;100&quot; alt=&quot;Avatar&quot; /&gt;
++                        [% avatar_file = c.path_to('root') _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
++                        [% TRY %]
++                            [% USE avatar = Image(avatar_file) %]
++                            [% tmp = avatar.attr %]
++                            &lt;img class=&quot;picborder&quot; src=&quot;/static/user_file/[% post.creator.id %]/avatar.jpg&quot; border=&quot;0&quot; [% avatar.attr %] alt=&quot;Avatar&quot; /&gt;
++                        [% CATCH %]
++                            &lt;!-- No User Avatar --&gt;
++                        [% END %]
+                         &lt;/a&gt;
+                       &lt;/td&gt;
+                     &lt;/tr&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000156.html">[Parley-svn] r268 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#155">[ date ]</a>
+              <a href="thread.html#155">[ thread ]</a>
+              <a href="subject.html#155">[ subject ]</a>
+              <a href="author.html#155">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

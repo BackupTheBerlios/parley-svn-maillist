@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r679 - / trunk trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r679%20-%20/%20trunk%20trunk/lib/Parley/I18N&In-Reply-To=%3C200712052120.lB5LKVVv020299%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000566.html">
+   <LINK REL="Next"  HREF="000568.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r679 - / trunk trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r679%20-%20/%20trunk%20trunk/lib/Parley/I18N&In-Reply-To=%3C200712052120.lB5LKVVv020299%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r679 - / trunk trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Dec  5 22:20:31 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000566.html">[Parley-svn] r678 - / trunk trunk/lib/Parley/I18N
+</A></li>
+        <LI>Next message: <A HREF="000568.html">[Parley-svn] r680 - / trunk/root/base/forum trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#567">[ date ]</a>
+              <a href="thread.html#567">[ thread ]</a>
+              <a href="subject.html#567">[ subject ]</a>
+              <a href="author.html#567">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-05 22:20:29 +0100 (Wed, 05 Dec 2007)
+New Revision: 679
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/lib/Parley/I18N/i_default.po
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4294 at wiggin</A>:  chisel | 2007-12-05 19:24:17 +0000
+ / i18n updates and improvements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4292
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4294
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2007-12-04 23:04:23 UTC (rev 678)
++++ trunk/Changes.i18n	2007-12-05 21:20:29 UTC (rev 679)
+@@ -10,10 +10,13 @@
+     (en renamed to i_default)
+ 
+     i_default.po:
+-        - 'There is no current forum to view'
+-        - 'There is no current thread to view'
+-        - &quot;%quant(%1,reply)&quot;
+-        - &quot;%quant(%1,view)&quot;
++        - added:
++            - 'There is no current forum to view'
++            - 'There is no current thread to view'
++            - &quot;%quant(%1,reply)&quot;
++            - &quot;%quant(%1,view)&quot;
++            - &quot;last post by (%1)&quot;
++            - &quot;created by (%1)&quot;
+ 
+ 0.57
+     - initial i18n inplementation (en only)
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2007-12-04 23:04:23 UTC (rev 678)
++++ trunk/lib/Parley/I18N/i_default.po	2007-12-05 21:20:29 UTC (rev 679)
+@@ -1,6 +1,12 @@
++msgid &quot;%quant(%1,Reply)&quot;
++msgstr &quot;%quant(%1,Reply,Replies)&quot;
++
+ msgid &quot;%quant(%1,reply)&quot;
+ msgstr &quot;%quant(%1,reply,replies)&quot;
+ 
++msgid &quot;%quant(%1,View)&quot;
++msgstr &quot;%quant(%1,View,Views)&quot;
++
+ msgid &quot;%quant(%1,view)&quot;
+ msgstr &quot;%quant(%1,view,views)&quot;
+ 
+@@ -85,6 +91,9 @@
+ msgid &quot;created by&quot;
+ msgstr &quot;created by&quot;
+ 
++msgid &quot;created by (%1)&quot;
++msgstr &quot;created by %1&quot;
++
+ msgid &quot;Current Avatar&quot;
+ msgstr &quot;Current Avatar&quot;
+ 
+@@ -229,6 +238,9 @@
+ msgid &quot;last post by&quot;
+ msgstr &quot;last post by&quot;
+ 
++msgid &quot;last post by (%1)&quot;
++msgstr &quot;last post by %1&quot;
++
+ msgid &quot;Last Viewed&quot;
+ msgstr &quot;Last Viewed&quot;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000566.html">[Parley-svn] r678 - / trunk trunk/lib/Parley/I18N
+</A></li>
+	<LI>Next message: <A HREF="000568.html">[Parley-svn] r680 - / trunk/root/base/forum trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#567">[ date ]</a>
+              <a href="thread.html#567">[ thread ]</a>
+              <a href="subject.html#567">[ subject ]</a>
+              <a href="author.html#567">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

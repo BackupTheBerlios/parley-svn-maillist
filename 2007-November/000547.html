@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r659 - / trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r659%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema&In-Reply-To=%3C200711082148.lA8LmPlG016715%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000546.html">
+   <LINK REL="Next"  HREF="000548.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r659 - / trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r659%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema&In-Reply-To=%3C200711082148.lA8LmPlG016715%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r659 - / trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Nov  8 22:48:25 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000546.html">[Parley-svn] r658 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000548.html">[Parley-svn] r660 - / trunk/lib/Parley/ResultSet
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#547">[ date ]</a>
+              <a href="thread.html#547">[ thread ]</a>
+              <a href="subject.html#547">[ subject ]</a>
+              <a href="author.html#547">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-08 22:48:24 +0100 (Thu, 08 Nov 2007)
+New Revision: 659
+
+Added:
+   trunk/lib/Parley/ResultSet/Thread.pm
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Schema/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4173 at wiggin</A>:  chisel | 2007-11-08 21:17:52 +0000
+ / factor out thread/recent query into a resultset class for Schema::Thread
+ + add some query prefetching
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4172
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4173
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-11-08 21:47:57 UTC (rev 658)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-11-08 21:48:24 UTC (rev 659)
+@@ -81,70 +81,9 @@
+ 
+ sub recent : Local {
+     my ($self, $c) = @_;
+-    my ($where, @join);
++    $c-&gt;stash-&gt;{thread_list} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;recent($c);
+ 
+-    # page to show - either a param, or show the first
+-    $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
+-
+-    # always want to join with last_post table
+-    @join = qw(last_post);
+-
+-    # only search active forums
+-    $where-&gt;{active} = 1;
+-
+-    # if we're only interested in a given forum
+-    if (defined $c-&gt;_current_forum()) {
+-        $where-&gt;{forum} = $c-&gt;_current_forum-&gt;id();
+-    }
+-
+-    # Trying to achieve:
+-    # SELECT me.thread_id, me.locked, me.creator, me.subject, me.active,
+-    #   me.forum, me.created, me.last_post, me.sticky, me.post_count,
+-    #   me.view_count, forum_moderator.can_moderate
+-    # FROM thread me
+-    # LEFT JOIN forum_moderator ON ( me.forum = forum_moderator.forum )
+-    # JOIN post last_post ON ( last_post.post_id = me.last_post )
+-    # ORDER BY sticky DESC, last_post.created DESC;
+-    #
+-    # Version 2 of the SQL we're aiming for:
+-    #   SELECT  thread_id,post_count,active,sticky,person,can_moderate
+-    #   FROM    thread me
+-    #       JOIN post last_post
+-    #       ON ( last_post.post_id = me.last_post )
+-    #
+-    #       LEFT JOIN forum_moderator forum_moderators
+-    #       ON (    forum_moderators.forum = me.forum
+-    #               and
+-    #               forum_moderators.person = NULL)
+-    #   WHERE ( active = true );
+-
+-
+-    # if we have an authed_user, we can see if they're a moderator for given
+-    # threads
+-    # XXX
+-#    if (defined $c-&gt;_authed_user()) {
+-#        # limit to person we're authed as
+-#        $where-&gt;{'forum_moderators.person'} = $c-&gt;_authed_user()-&gt;id();
+-#        # add the new join that's required
+-#        push @join, 'forum_moderators';
+-#    }
+-#    else {
+-#        $where-&gt;{'forum_moderators.person'} = undef;
+-#        push @join, 'forum_moderators';
+-#    }
+-
+-    # get a list of threads, most recently updated first
+-    $c-&gt;stash-&gt;{thread_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;search(
+-        $where,
+-        {
+-            join        =&gt; \@join,
+-            order_by    =&gt; 'last_post.created DESC',
+-
+-            rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
+-            page        =&gt; $c-&gt;stash-&gt;{current_page},
+-        }
+-    );
+-
+     # setup the pager
+     $self-&gt;_prepare_pager($c, $c-&gt;stash-&gt;{thread_list});
+ 
+
+Added: trunk/lib/Parley/ResultSet/Thread.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Thread.pm	2007-11-08 21:47:57 UTC (rev 658)
++++ trunk/lib/Parley/ResultSet/Thread.pm	2007-11-08 21:48:24 UTC (rev 659)
+@@ -0,0 +1,63 @@
++package Parley::ResultSet::Thread;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use base 'DBIx::Class::ResultSet';
++
++sub latest_terms {
++    my $resultset = shift;
++
++    my $latest_rs = $resultset-&gt;search(
++        {
++        },
++        {
++            rows        =&gt; 1,
++            order_by    =&gt; 'created DESC',
++        }
++    );
++
++    if ($latest_rs-&gt;count()) {
++        return $latest_rs-&gt;first();
++    }
++
++    return;
++}
++
++sub recent {
++    my ($resultset, $c) = @_;
++    my ($thread_list, $where, @join);
++
++    # page to show - either a param, or show the first
++    $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
++
++    # always want to join with last_post table
++    @join = qw(last_post);
++
++    # only search active forums
++    $where-&gt;{'me.active'} = 1;
++
++    # if we're only interested in a given forum
++    if (defined $c-&gt;_current_forum()) {
++        $where-&gt;{forum} = $c-&gt;_current_forum-&gt;id();
++    }
++
++    $resultset-&gt;search(
++        $where,
++        {
++            join        =&gt; \@join,
++            order_by    =&gt; 'last_post.created DESC',
++
++            rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
++            page        =&gt; $c-&gt;stash-&gt;{current_page},
++
++            prefetch =&gt; [
++                {'creator' =&gt; 'authentication'},
++                'last_post',
++                'forum',
++            ],
++        }
++    );
++}
++
++1;
+
+Modified: trunk/lib/Parley/Schema/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Thread.pm	2007-11-08 21:47:57 UTC (rev 658)
++++ trunk/lib/Parley/Schema/Thread.pm	2007-11-08 21:48:24 UTC (rev 659)
+@@ -78,6 +78,8 @@
+   },
+ );
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Thread');
++
+ __PACKAGE__-&gt;belongs_to(
+     &quot;creator&quot; =&gt; &quot;Person&quot;,
+     { 'foreign.id' =&gt; 'self.creator_id' }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000546.html">[Parley-svn] r658 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000548.html">[Parley-svn] r660 - / trunk/lib/Parley/ResultSet
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#547">[ date ]</a>
+              <a href="thread.html#547">[ thread ]</a>
+              <a href="subject.html#547">[ subject ]</a>
+              <a href="author.html#547">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

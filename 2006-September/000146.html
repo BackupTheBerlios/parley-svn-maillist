@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r258 - / branches/schema_based/lib
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r258%20-%20/%20branches/schema_based/lib&In-Reply-To=%3C200609141112.k8EBCiPF027795%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000145.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r258 - / branches/schema_based/lib</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r258%20-%20/%20branches/schema_based/lib&In-Reply-To=%3C200609141112.k8EBCiPF027795%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r258 - / branches/schema_based/lib">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Sep 14 13:12:44 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000145.html">[Parley-svn] r257 - / branches/schema_based/root/css
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#146">[ date ]</a>
+              <a href="thread.html#146">[ thread ]</a>
+              <a href="subject.html#146">[ subject ]</a>
+              <a href="author.html#146">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-14 13:12:44 +0200 (Thu, 14 Sep 2006)
+New Revision: 258
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r1222 at ferrari</A>:  chisel | 2006-09-14 09:04:21 +0100
+ / tweaked send_email() to use -&gt;{template}{text}
+ + updated and extended POD
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1214
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-09-12 15:47:41 UTC (rev 257)
++++ branches/schema_based/lib/Parley.pm	2006-09-14 11:12:44 UTC (rev 258)
+@@ -27,7 +27,7 @@
+ /;
+ 
+ 
+-our $VERSION = '0.10-pre';
++our $VERSION = '0.50-pre';
+ 
+ __PACKAGE__-&gt;config( version =&gt; $VERSION );
+ __PACKAGE__-&gt;setup;
+@@ -115,6 +115,19 @@
+ sub send_email {
+     my ($c, $options) = @_;
+ 
++    # preparing for future expansion, where we intend to build multipart emails
++    # and we'll be using -&gt;{template}{text} and -&gt;{template}{html}
++    if (            exists $options-&gt;{template}
++            and not exists $options-&gt;{template}{text}
++    ) {
++        $c-&gt;log-&gt;warn(
++              $options-&gt;{template}{text}
++            . q{: plain-text template name should be stored in }
++            . q{-&gt;{template}{text} instead of -&gt;{template}}
++        );
++        $options-&gt;{template}{text} = $options-&gt;{template};
++    }
++
+     # send an email off to the new user
+     my $email_status = $c-&gt;email(
+         header =&gt; [
+@@ -125,7 +138,7 @@
+ 
+         body =&gt; $c-&gt;view('Plain')-&gt;render(
+             $c,
+-            $options-&gt;{template},
++            $options-&gt;{template}{text},
+             {
+                 additional_template_paths =&gt; [ $c-&gt;config-&gt;{root} . q{/email_templates}],
+ 
+@@ -176,12 +189,35 @@
+ 
+ =head1 METHODS
+ 
+-=head2 is_logged_in
++=head2 application_email_address($c)
+ 
++=over 4
++
++B&lt;Return Value:&gt; $string
++
++=back
++
++Returns the email address string for the application built from the
++I&lt;from_name&gt; and I&lt;from_address&gt; in the alerts section of parley.yml
++
++=head2 is_logged_in($c)
++
++=over 4
++
++B&lt;Return Value:&gt; 0 or 1
++
++=back
++
+ Returns 1 or 0 depending on whether there is a logged-in user or not.
+ 
+-=head2 login_if_required($message)
++=head2 login_if_required($c,$message)
+ 
++=over 4
++
++B&lt;Return Value:&gt; Void Context
++
++=back
++
+ If a user isn't logged in, send them to the login page, optionally setting the
+ message for the login box.
+ 
+@@ -189,6 +225,42 @@
+ magic) be redirected to wherever they were trying to view before the required
+ login.
+ 
++=head2 send_email($c,\%options)
++
++=over 4
++
++B&lt;Return Value:&gt; 0 or 1
++
++=back
++
++Send an email using the render() method in the TT view. \%options should
++contain the following keys:
++
++=over 4
++
++=item headers
++
++Header fields to be passed though to the call to L&lt;Catalyst::Plugin::Email&gt;.
++
++=item person
++
++A Parley::Schema::Person object for the intended recipient of the message.
++
++Or, any object with an email() method, and methods to match
++&quot;S&lt;[% person.foo() %]&gt;&quot;
++methods called in the email template(s).
++
++=item template
++
++Used to store the name of the email template(s) to be sent. I&lt;Currently the
++application only sends plain-text emails, so only one file is specified.&gt;
++
++The text template name should be passed in -&gt;{template}{text}.
++
++The html template name should be passed in -&gt;{template}{html}. (I&lt;Not Implemented&gt;)
++
++=back
++
+ =head1 EVIL, LAZY STASH ACCESS
+ 
+ I know someone will look at this at some point and tell me this is evil, but
+@@ -224,7 +296,7 @@
+ 
+ =head1 SEE ALSO
+ 
+-L&lt;Parley::Controller::Root&gt;, L&lt;Catalyst&gt;
++L&lt;Parley::Controller::Root&gt;, L&lt;Catalyst::Plugin::Email&gt;, L&lt;Catalyst&gt;
+ 
+ =head1 AUTHOR
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000145.html">[Parley-svn] r257 - / branches/schema_based/root/css
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#146">[ date ]</a>
+              <a href="thread.html#146">[ thread ]</a>
+              <a href="subject.html#146">[ subject ]</a>
+              <a href="author.html#146">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

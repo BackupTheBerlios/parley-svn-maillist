@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r292 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r292%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200704132022.l3DKMkwo029516%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000179.html">
+   <LINK REL="Next"  HREF="000181.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r292 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r292%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200704132022.l3DKMkwo029516%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r292 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Apr 13 22:22:46 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000179.html">[Parley-svn] r291 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000181.html">[Parley-svn] r293 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#180">[ date ]</a>
+              <a href="thread.html#180">[ thread ]</a>
+              <a href="subject.html#180">[ subject ]</a>
+              <a href="author.html#180">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-13 22:22:45 +0200 (Fri, 13 Apr 2007)
+New Revision: 292
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3140 at wiggin</A>:  chisel | 2007-04-13 19:21:33 +0100
+ + added thread/recent
+ + can no longer reply to a locked thread
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3139
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3140
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-04-13 20:22:37 UTC (rev 291)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-04-13 20:22:45 UTC (rev 292)
+@@ -77,6 +77,44 @@
+     $c-&gt;detach('/post/view');
+ }
+ 
++sub recent : Local {
++    my ($self, $c) = @_;
++    my ($where);
++
++    # only search active forums
++    $where-&gt;{active} = 1;
++
++    if (defined $c-&gt;_current_forum()) {
++        $where-&gt;{forum} = $c-&gt;_current_forum-&gt;id();
++    }
++
++    # XXX
++    # Trying to achieve:
++    # SELECT me.thread_id, me.locked, me.creator, me.subject, me.active,
++    #   me.forum, me.created, me.last_post, me.sticky, me.post_count,
++    #   me.view_count, forum_moderator.can_moderate
++    # FROM thread me
++    # LEFT JOIN forum_moderator ON ( me.forum = forum_moderator.forum )
++    # JOIN post last_post ON ( last_post.post_id = me.last_post )
++    # ORDER BY sticky DESC, last_post.created DESC;
++
++    # get a list of threads, most recently updated first
++    $c-&gt;stash-&gt;{thread_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;search(
++        $where,
++        {
++            join        =&gt; [
++                'last_post',
++                'forum_moderators',
++            ],
++            order_by    =&gt; 'last_post.created DESC',
++        }
++    );
++
++    $c-&gt;log-&gt;debug( $c-&gt;stash-&gt;{thread_list}-&gt;count() );
++
++    return;
++}
++
+ sub reply : Local {
+     my ($self, $c) = @_;
+ 
+@@ -86,6 +124,13 @@
+     # make sure we're authenticated
+     # XXX
+ 
++    # can't replay to a locked thread
++    if ($c-&gt;_current_thread()-&gt;locked()) {
++        #die q{can't reply to a locked thread!};
++        $c-&gt;stash-&gt;{error}{message} = q{You can't reply to a locked thread};
++        return;
++    };
++
+     # if we have a current post, then we're performing a quoted reply
+     # (otherwise we should have the thread that we're adding a reply to)
+     # are we quoting a post that we're replying to?
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000179.html">[Parley-svn] r291 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000181.html">[Parley-svn] r293 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#180">[ date ]</a>
+              <a href="thread.html#180">[ thread ]</a>
+              <a href="subject.html#180">[ subject ]</a>
+              <a href="author.html#180">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

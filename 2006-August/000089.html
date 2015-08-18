@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r200 - / branches/schema_based/lib/Parley/View	branches/schema_based/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r200%20-%20/%20branches/schema_based/lib/Parley/View%0A%09branches/schema_based/t&In-Reply-To=%3C200608161341.k7GDfdhr016047%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000088.html">
+   <LINK REL="Next"  HREF="000090.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r200 - / branches/schema_based/lib/Parley/View	branches/schema_based/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r200%20-%20/%20branches/schema_based/lib/Parley/View%0A%09branches/schema_based/t&In-Reply-To=%3C200608161341.k7GDfdhr016047%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r200 - / branches/schema_based/lib/Parley/View	branches/schema_based/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:41:39 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000088.html">[Parley-svn] r199 - / branches/schema_based
+</A></li>
+        <LI>Next message: <A HREF="000090.html">[Parley-svn] r201 - / branches/schema_based/lib/Parley	branches/schema_based/lib/Parley/Model	branches/schema_based/lib/Parley/Schema branches/schema_based/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#89">[ date ]</a>
+              <a href="thread.html#89">[ thread ]</a>
+              <a href="subject.html#89">[ subject ]</a>
+              <a href="author.html#89">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:41:34 +0200 (Wed, 16 Aug 2006)
+New Revision: 200
+
+Added:
+   branches/schema_based/lib/Parley/View/TT.pm
+   branches/schema_based/t/view_TT.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5115 at ferrari</A>:  chisel | 2006-08-10 09:10:00 +0100
+ + added TT view
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5114
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5115
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Parley/View/TT.pm
+===================================================================
+--- branches/schema_based/lib/Parley/View/TT.pm	2006-08-16 13:41:28 UTC (rev 199)
++++ branches/schema_based/lib/Parley/View/TT.pm	2006-08-16 13:41:34 UTC (rev 200)
+@@ -0,0 +1,29 @@
++package Parley::View::TT;
++
++use strict;
++use base 'Catalyst::View::TT';
++
++=head1 NAME
++
++Parley::View::TT - Catalyst TT View
++
++=head1 SYNOPSIS
++
++See L&lt;Parley&gt;
++
++=head1 DESCRIPTION
++
++Catalyst TT View.
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/t/view_TT.t
+===================================================================
+--- branches/schema_based/t/view_TT.t	2006-08-16 13:41:28 UTC (rev 199)
++++ branches/schema_based/t/view_TT.t	2006-08-16 13:41:34 UTC (rev 200)
+@@ -0,0 +1,6 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 1;
++
++BEGIN { use_ok 'Parley::View::TT' }
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000088.html">[Parley-svn] r199 - / branches/schema_based
+</A></li>
+	<LI>Next message: <A HREF="000090.html">[Parley-svn] r201 - / branches/schema_based/lib/Parley	branches/schema_based/lib/Parley/Model	branches/schema_based/lib/Parley/Schema branches/schema_based/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#89">[ date ]</a>
+              <a href="thread.html#89">[ thread ]</a>
+              <a href="subject.html#89">[ subject ]</a>
+              <a href="author.html#89">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

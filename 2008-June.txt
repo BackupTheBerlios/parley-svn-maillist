@@ -1,0 +1,1910 @@
+From chiselwright at mail.berlios.de  Mon Jun 16 23:20:52 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:20:52 +0200
+Subject: [Parley-svn] r900 - / trunk/root/static/css
+Message-ID: <200806162120.m5GLKq73026822@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:20:51 +0200 (Mon, 16 Jun 2008)
+New Revision: 900
+
+Modified:
+   /
+   trunk/root/static/css/parley-min.css
+   trunk/root/static/css/parley.css
+Log:
+ r5498 at wiggin:  chisel | 2008-05-28 20:15:19 +0100
+ + added 'service_list' class
+ / recompressed -min.css
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5491
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5498
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/static/css/parley-min.css
+===================================================================
+--- trunk/root/static/css/parley-min.css	2008-05-28 11:51:47 UTC (rev 899)
++++ trunk/root/static/css/parley-min.css	2008-06-16 21:20:51 UTC (rev 900)
+@@ -1 +1 @@
+-body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#user_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;margin-top:!
+ 5px;margin-bottom:5px;color:#79B30B;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:right;}.align_right{tex!
+ t-align:right;}.forum_description{font-size:93%;}.forum_lastpo!
+ st{font-
+size:85%;text-align:right;}.forum_lastpost_subject a{color:#333;color:#79B30B;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#333;color:#79B30B;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol !
+ li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-alig!
+ n:top;border:1px dashed #ddd;border:none;line-height:120%;padd!
+ ing-left
+:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_inf!
+ o td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#333;color:#79B30B;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-align:right;}.user_login form{width:350px;margin-left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;fon!
+ t-size:93%;width:100%;}.user_permission_list td{vertical-align!
+ :top;bor
+der:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#ysearch{text-align:center;}#ysearchinput{positi!
+ on:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset!
+  .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav!
+  a{backg
+round-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
++body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#user_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;margin-top:!
+ 5px;margin-bottom:5px;color:#79B30B;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:right;}.align_right{tex!
+ t-align:right;}.forum_description{font-size:93%;}.forum_lastpo!
+ st{font-
+size:85%;text-align:right;}.forum_lastpost_subject a{color:#333;color:#79B30B;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#333;color:#79B30B;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol !
+ li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-alig!
+ n:top;border:1px dashed #ddd;border:none;line-height:120%;padd!
+ ing-left
+:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-alig!
+ n:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#333;color:#79B30B;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-a!
+ lign:right;}.user_login form{width:350px;margin-left:auto;marg!
+ in-right
+:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_ov!
+ erlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#ysearch{text-align:center;}#ysearchinput{position:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navs!
+ et .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav!
+ {border:
+solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2008-05-28 11:51:47 UTC (rev 899)
++++ trunk/root/static/css/parley.css	2008-06-16 21:20:51 UTC (rev 900)
+@@ -357,6 +357,21 @@
+     padding-top:        5px;
+     padding-bottom:     5px;
+ }
++.service_list  {
++    margin-left:        auto;
++    margin-right:       auto;
++    margin-top:         15px;
++    width:              100%;
++    font-size:          93%;
++}
++.service_list td {
++    vertical-align:     top;
++    border:             1px dashed #ddd;
++    border:             none;
++    line-height:        120%;
++    padding-left:       10px;
++    padding-right:      10px;
++}
+ 
+ .site_terms {
+     width:              80%;
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:21:01 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:21:01 +0200
+Subject: [Parley-svn] r901 - / trunk/root/base/site
+Message-ID: <200806162121.m5GLL1CJ026896@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:21:01 +0200 (Mon, 16 Jun 2008)
+New Revision: 901
+
+Modified:
+   /
+   trunk/root/base/site/services
+Log:
+ r5499 at wiggin:  chisel | 2008-05-28 20:15:48 +0100
+ / made page look a tiny bit nicer
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5498
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5499
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/site/services
+===================================================================
+--- trunk/root/base/site/services	2008-06-16 21:20:51 UTC (rev 900)
++++ trunk/root/base/site/services	2008-06-16 21:21:01 UTC (rev 901)
+@@ -1,6 +1,6 @@
+ <h1>[%l('Services')%]</h1>
+ 
+-<table class="site_services">
++<table class="service_list">
+     <thead>
+         <tr>
+             <th>[%l('Service')%]</th>
+@@ -11,7 +11,7 @@
+     </thead>
+ 
+     <tbody>
+-        <tr>
++        <tr class="row row_odd">
+             <td>[%l('Email Engine')%]</td>
+             <td>
+                 [% IF email_engine.pid %]
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:21:10 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:21:10 +0200
+Subject: [Parley-svn] r902 - / trunk/lib/Parley/Controller
+Message-ID: <200806162121.m5GLLAx2026968@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:21:10 +0200 (Mon, 16 Jun 2008)
+New Revision: 902
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Site.pm
+Log:
+ r5500 at wiggin:  chisel | 2008-05-29 08:53:00 +0100
+ / fixed moderator suicide bug (= vs ==, oops!)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5499
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5500
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-06-16 21:21:01 UTC (rev 901)
++++ trunk/lib/Parley/Controller/Site.pm	2008-06-16 21:21:10 UTC (rev 902)
+@@ -144,13 +144,13 @@
+                     my $userrole = $c->model('ParleyDB::UserRole')->find(
+                         {
+                             authentication_id   => $person->authentication_id,
+-                            role_id     => $role_id,
++                            role_id             => $role_id,
+                         }
+                     );
+ 
+                     # moderator suicide?
+                     if (
+-                        $person_id = $c->_authed_user->id
++                        $person_id == $c->_authed_user->id
+                             and
+                         q{site_moderator} eq $userrole->role->name
+                     ) {
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:21:19 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:21:19 +0200
+Subject: [Parley-svn] r903 - / trunk/doc
+Message-ID: <200806162121.m5GLLJl6027041@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:21:19 +0200 (Mon, 16 Jun 2008)
+New Revision: 903
+
+Added:
+   trunk/doc/fonts-min.css
+Modified:
+   /
+   trunk/doc/setup.html
+Log:
+ r5501 at wiggin:  chisel | 2008-05-29 21:45:36 +0100
+ + add YUI font normalizer to the docs; keeps things a bit nicer
+ + add more yum to the setup guide
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5500
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5501
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/doc/fonts-min.css
+===================================================================
+--- trunk/doc/fonts-min.css	2008-06-16 21:21:10 UTC (rev 902)
++++ trunk/doc/fonts-min.css	2008-06-16 21:21:19 UTC (rev 903)
+@@ -0,0 +1,7 @@
++/*
++Copyright (c) 2008, Yahoo! Inc. All rights reserved.
++Code licensed under the BSD License:
++http://developer.yahoo.net/yui/license.txt
++version: 2.5.1
++*/
++body {font:13px/1.231 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}table {font-size:inherit;font:100%;}pre,code,kbd,samp,tt{font-family:monospace;*font-size:108%;line-height:100%;}
+
+Modified: trunk/doc/setup.html
+===================================================================
+--- trunk/doc/setup.html	2008-06-16 21:21:10 UTC (rev 902)
++++ trunk/doc/setup.html	2008-06-16 21:21:19 UTC (rev 903)
+@@ -6,6 +6,8 @@
+     <head>
+         <title>Parley - Setup Guide</title>
+ 
++        <link rel="stylesheet" type="text/css" href="fonts-min.css" />
++
+         <style type="text/css">
+             body {
+                 color:              #000;
+@@ -47,6 +49,17 @@
+             <li><a href="#launching">Launching the Application</a></li>
+             <li><a href="#email_engine">The Email Engine</a></li>
+             <li><a href="#using_parley">Using Parley</a></li>
++            <ul>
++                <li><a href="#site_usage_terms">Site Usage Terms</a></li>
++                <li><a href="#site_administration">Site Administration</a></li>
++                <ul>
++                    <li><a href="#services">Services</a></li>
++                    <li><a href="#users">Users</a></li>
++                    <li><a href="#ip_bans">IP Bans</a></li>
++                </ul>
++                <li><a href="#additional_user_administration">Additional User Administration</a></li>
++            </ul>
++            <li><a href="#apache_fastcgi">apache + fastcgi</a></li>
+         </ol>
+ 
+         <a id="getting_parley"></a>
+@@ -127,11 +140,11 @@
+         run the application for testing and evaluation using
+         <code>script/parley_server.pl</code>.</p>
+ 
+-        <p>In its most simple form you can start that application with:</p>
++        <p>In its most simple form you can start the application with:</p>
+ 
+         <blockquote><code>script/parley_server.pl</code></blockquote>
+ 
+-        <p>If there are no problems you should see somthing similar to:
++        <p>If there are no problems you should see something similar to:
+ 
+         <blockquote><code>[info] Parley powered by Catalyst 5.7012
+ You can connect to your server at http://localhost:3000</code></blockquote>
+@@ -139,7 +152,12 @@
+         <p>View the URL in your browser and you should see the Forum List page
+         with three forums listed.</p>
+ 
++        <h3>Running under apache</h3>
+ 
++        <p>This is described in greater detail later in this document. At this
++        point in the process we just want to run the application and explore
++        it a little.</p>
++
+         <a id="email_engine"></a>
+         <h2>The Email Engine</h2>
+ 
+@@ -193,7 +211,8 @@
+         <p>Both users can post, read posts, search, browse, etc. Top Dog also
+         has access to the <em>Site</em> menu in the menu-bar.</p>
+ 
+-        <h2>Site Usage Terms</h2>
++        <a id="site_usage_terms"></a>
++        <h3>Site Usage Terms</h3>
+ 
+         <p>One of the first tasks you may like to perform as Top Dog is adding
+         T&amp;Cs for the site. If Parley has T&amp;Cs defined all registered
+@@ -206,5 +225,81 @@
+ 
+         <p>You can add new T&amp;Cs by clicking the <em>Add T&amp;Cs</em> item
+         in the <em>Site</em> menu.</p>
++
++        <a id="site_administration"></a>
++        <h3>Site Administration</h3>
++
++        <p>As a <em>site moderator</em> you will have access to the
++        "Site&rarr;Manage" menu.</p>
++
++        <p>This is the primary area for checking on the status of services,
++        managing users and also various ban types</p>
++
++        <a id="services"></a>
++        <h4>Services</h4>
++
++        <p>Lists known services (currently only the email-engine) and their
++        current status</p>
++
++        <a id="users"></a>
++        <h4>Users</h4>
++
++        <p>This section currently provides role-management functionality. It's
++        functional, but in the early phases of development - which means it
++        could be nicer to use.</p>
++
++        <p>Select the user you'd like to manage by typing the first part of
++        their name in the User Search field, then selecting the correct menu
++        item, and submitting the query.</p>
++
++        <p>You'll be presented with a list of roles and checkboxes. Select and
++        unselect the options to your heart's delight</p>
++
++        <p><b>Note:</b> you are not able to remove your own "Site Moderator"
++        role. Other site moderators can do it to you, you can do it to them.
++        Unless my brain is broken this means you'll always have a minimum of
++        one Site Moderator.</p>
++
++        <a id="ip_bans"></a>
++        <h4>IP Bans</h4>
++
++        <p>Unfortunately there will always be at least one bad apple. The IP
++        bans are one tool in your battle against the Bad Ones. Banning by IP
++        isn't a silver bullet for numerous reasons but it can stop or slow
++        down some abusers.</p>
++
++        <p>Click on the data area for the type of ban you'd like to edit and
++        edit the values in the text input area that appears. The items in the
++        list should be in CIDR format (<em>a.b.c.d/x</em>) format.</p>
++
++        <p>To remove bans, edit the field and remove the relevant entry.</p>
++
++        <p>The anticipated escalation level for bans is:
++        posting, sign-up, login, all
++        </p>
++
++        <a id="additional_user_administration"></a>
++        <h3>Additional User Administration</h3>
++
++        <p>Providing you have the required roles you will be able to perform
++        additional tasks from a user's profile page: <em>Suspend Account</em>
++        and <em>Forum Moderation</em>.</p>
++
++        <a id="apache_fastcgi"></a>
++        <h3>apache + fastcgi</h3>
++
++        <p>Any vaguely sane deployment of parley <strong>will not</strong> run
++        using <i>server/parley_server.pl</i>.</p>
++
++        <p>A common (and Catalyst recommended) deployment method is to use
++        <em>apache + fastcgi</em>. The process is outlined in the
++        <a href="">Catalyst Cookbook</a></p>
++
++        <p>Assuming you have a system with <em>a2ensite</em> installed on it
++        you can do the following:</p>
++
++        <blockquote><code>sudo cp config/parley.sites-enabled /etc/apache2/sites-enabled/parley.named_vhost
++sudo vim /etc/apache2/sites-enabled/parley.named_vhost <font color="green"># make appropriate changes</font>
++sudo a2en parley.named_vhost</code></blockquote>
+     </body>
+ </html>
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:21:28 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:21:28 +0200
+Subject: [Parley-svn] r904 - / trunk/doc
+Message-ID: <200806162121.m5GLLS4v027113@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:21:28 +0200 (Mon, 16 Jun 2008)
+New Revision: 904
+
+Modified:
+   /
+   trunk/doc/setup.html
+Log:
+ r5502 at wiggin:  chisel | 2008-05-29 21:48:10 +0100
+ / make it more obvious that the email settings need to be modified
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5501
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5502
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/doc/setup.html
+===================================================================
+--- trunk/doc/setup.html	2008-06-16 21:21:19 UTC (rev 903)
++++ trunk/doc/setup.html	2008-06-16 21:21:28 UTC (rev 904)
+@@ -168,9 +168,9 @@
+         <p>It polls a table for emails that need to be sent and performs the
+         required magic to send them.</p>
+ 
+-        <p><strong>BEFORE</strong> you start the email engine, please edit
+-        <code>parley.yml</code> and edit <code>from_name</code> and
+-        <code>from_address</code> in the <code>alerts</code> section.</p>
++        <p><u><strong>BEFORE</strong> you start the email engine, please edit
++        <code>parley.conf</code> and edit <code>from_name</code> and
++        <code>from_address</code> in the <code>alerts</code> section.</u></p>
+ 
+         <p>You can start the email engine with:</p>
+ 
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:21:37 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:21:37 +0200
+Subject: [Parley-svn] r905 - / trunk
+Message-ID: <200806162121.m5GLLbXr027183@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:21:37 +0200 (Mon, 16 Jun 2008)
+New Revision: 905
+
+Modified:
+   /
+   trunk/TODO
+Log:
+ r5503 at wiggin:  chisel | 2008-05-29 21:48:28 +0100
+ + more TODO items
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5502
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5503
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-06-16 21:21:28 UTC (rev 904)
++++ trunk/TODO	2008-06-16 21:21:37 UTC (rev 905)
+@@ -1,5 +1,8 @@
+ TODO LIST
+ 
++  - Gravatar?
++  - OpenID?
++  - User Profile --> User Roles (for admins)
+   - use TheSchwartz
+   - forumcode "quickhelp" in posting screen(s)
+   - get latest i18n from DJ
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:21:46 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:21:46 +0200
+Subject: [Parley-svn] r906 - / trunk trunk/lib/Parley/Controller
+	trunk/lib/Parley/I18N trunk/root/base/user
+Message-ID: <200806162121.m5GLLkjI027255@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:21:45 +0200 (Mon, 16 Jun 2008)
+New Revision: 906
+
+Modified:
+   /
+   trunk/Changes
+   trunk/Changes.i18n
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/user/profile
+Log:
+ r5504 at wiggin:  chisel | 2008-05-30 08:46:46 +0100
+ + updated change log
+ + updated i18n change log
+ / modified "access denied" to use localize()
+ + added i18n terms to i_default.po
+ / improved "IPs posted from" on user profile
+ + added link to role management from user profile
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5503
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5504
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/Changes	2008-06-16 21:21:45 UTC (rev 906)
+@@ -7,6 +7,7 @@
+     - switched from Graphics::Magick to Image::Magick
+     - resolved some bugs and errors when deploying from scratch
+     - added more comprehensive instructions for getting started
++    - updated to new Authentication and Authorization modules
+ 
+ 
+ After knackering up the version numbers towards the end of 0.59
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/Changes.i18n	2008-06-16 21:21:45 UTC (rev 906)
+@@ -6,10 +6,17 @@
+ will be used as the 'en' i18n file.
+ It's unlikely that we'll need an 'en' file in the project.
+ 
+-0.59 (UNDER DEVELOPMENT)
++1.0.0 (UNDER DEVELOPMENT)
+ 
+     i_default.po:
+         - added:
++            - "User has never posted"
++            - "Manage user roles"
++            - "Unauthorized!"
++
++0.59
++    i_default.po:
++        - added:
+             - "ADMIN LOCK POST"
+             - "Locked Post"
+             - "Post Edited By"
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/lib/Parley/Controller/Root.pm	2008-06-16 21:21:45 UTC (rev 906)
+@@ -278,7 +278,7 @@
+ 
+ sub access_denied :Local {
+     my ($self, $c) = @_;
+-    parley_die($c,"Unauthorized!");
++    parley_die($c,$c->localize('Unauthorized!'));
+ }
+ 
+ # deal with the end of the phase
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/lib/Parley/I18N/i_default.po	2008-06-16 21:21:45 UTC (rev 906)
+@@ -336,6 +336,9 @@
+ msgid "Manage"
+ msgstr "Manage"
+ 
++msgid "Manage user roles"
++msgstr "Manage user roles"
++
+ msgid "Me"
+ msgstr "Me"
+ 
+@@ -741,6 +744,9 @@
+ msgid "Topic"
+ msgstr "Topic"
+ 
++msgid "Unauthorized!"
++msgstr "Unauthorized!"
++
+ msgid "Unknown field name"
+ msgstr "Unknown field name"
+ 
+@@ -777,6 +783,9 @@
+ msgid "User Profile"
+ msgstr "User Profile"
+ 
++msgid "User has never posted"
++msgstr "User has never posted"
++
+ msgid "USERNAME IN USE"
+ msgstr "The username you have chosen is already in use. Please try a different one."
+ 
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/root/base/user/profile	2008-06-16 21:21:45 UTC (rev 906)
+@@ -86,32 +86,38 @@
+     [% END %]
+ 
+     [% IF authed_user.can_ip_ban %]
++        [% SET ips = profiled_user.ips_posted_from %]
+         <h2>[%l('IP Addresses')%]</h2>
+         <div class="yui-gf top_padded">
+             <div class="yui-u first align_right">
+-                [%l('User has posted from')%]
++                [% IF ips.size %]
++                    [%l('User has posted from')%]
++                [% ELSE %]
++                    [%l('User has never posted')%]
++                [% END %]
+             </div>
+             <div class="yui-u">
+-                [% SET ips = profiled_user.ips_posted_from %]
+-                [% FOR ip IN ips %]
+-                <span id="ctx_[%ip%]">
+-                    <a href="[%c.uri_for('/site/ip_info',{'address'=>ip})%]">[% ip %]</a>
+-                </span>[% UNLESS loop.last %], [% END %]
+-                <script type="text/javascript">
+-                    YAHOO.namespace("example.container");
+-                    [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip("$ip") %]
+-                    [% SET ttTxt = '' %]
+-                    [% WHILE (post = people_posting.next) %]
+-                    [% ttTxt = "${ttTxt} <li>$post.creator.forum_name</li>" %]
++                [% IF ips.size %]
++                    [% FOR ip IN ips %]
++                    <span id="ctx_[%ip%]">
++                        <a href="[%c.uri_for('/site/ip_info',{'address'=>ip})%]">[% ip %]</a>
++                    </span>[% UNLESS loop.last %], [% END %]
++                    <script type="text/javascript">
++                        YAHOO.namespace("example.container");
++                        [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip("$ip") %]
++                        [% SET ttTxt = '' %]
++                        [% WHILE (post = people_posting.next) %]
++                        [% ttTxt = "${ttTxt} <li>$post.creator.forum_name</li>" %]
++                        [% END %]
++                        YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
++                            "tt_[%ip%]",
++                            {
++                                context:"ctx_[%ip%]",
++                                text:"Users posting from [%ip%]: <ul>[%ttTxt%]</ul>"
++                            }
++                        );
++                    </script>
+                     [% END %]
+-                    YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
+-                        "tt_[%ip%]",
+-                        {
+-                            context:"ctx_[%ip%]",
+-                            text:"Users posting from [%ip%]: <ul>[%ttTxt%]</ul>"
+-                        }
+-                    );
+-                </script>
+                 [% END %]
+             </div>
+         </div>
+@@ -139,6 +145,12 @@
+             </div>
+         [% END %]
+     [% END %]
++
++    [% IF authed_user.is_site_moderator %]
++        <h2>[%l('User Roles')%]</h2>
++
++        <a href="[%c.uri_for('/site/user',{pid=>0})%]">[%l('Manage user roles')%]</a>
++    [% END %]
+ [% ELSE %]
+     <p>[%l('PROFILE NOT FOUND')%]</p>
+ [% END %]
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:21:56 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:21:56 +0200
+Subject: [Parley-svn] r907 - / trunk
+Message-ID: <200806162121.m5GLLutQ027361@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:21:55 +0200 (Mon, 16 Jun 2008)
+New Revision: 907
+
+Modified:
+   /
+   trunk/MANIFEST
+Log:
+ r5505 at wiggin:  chisel | 2008-05-30 08:50:35 +0100
+ + updated MANIFEST
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5504
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5505
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-06-16 21:21:45 UTC (rev 906)
++++ trunk/MANIFEST	2008-06-16 21:21:55 UTC (rev 907)
+@@ -24,6 +24,7 @@
+ db_script/Parley-Schema-0.59_01-MySQL.sql
+ db_script/Parley-Schema-0.59_01-PostgreSQL.sql
+ db_script/Parley-Schema-0.59_01-SQLite.sql
++doc/fonts-min.css
+ doc/parley-qs.html
+ doc/README.admin
+ doc/README.gravatar
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:22:04 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:22:04 +0200
+Subject: [Parley-svn] r908 - / trunk
+Message-ID: <200806162122.m5GLM4F5027459@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:22:04 +0200 (Mon, 16 Jun 2008)
+New Revision: 908
+
+Modified:
+   /
+   trunk/MANIFEST
+Log:
+ r5506 at wiggin:  chisel | 2008-05-30 08:59:15 +0100
+ / another MANIEST update
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5505
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5506
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-06-16 21:21:55 UTC (rev 907)
++++ trunk/MANIFEST	2008-06-16 21:22:04 UTC (rev 908)
+@@ -29,16 +29,6 @@
+ doc/README.admin
+ doc/README.gravatar
+ doc/setup.html
+-inc.nip/Module/Install.pm
+-inc.nip/Module/Install/Base.pm
+-inc.nip/Module/Install/Can.pm
+-inc.nip/Module/Install/Catalyst.pm
+-inc.nip/Module/Install/Fetch.pm
+-inc.nip/Module/Install/Makefile.pm
+-inc.nip/Module/Install/Metadata.pm
+-inc.nip/Module/Install/Scripts.pm
+-inc.nip/Module/Install/Win32.pm
+-inc.nip/Module/Install/WriteAll.pm
+ inc/Module/Install.pm
+ inc/Module/Install/Base.pm
+ inc/Module/Install/Can.pm
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:22:11 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:22:11 +0200
+Subject: [Parley-svn] r909 - / trunk/t.output
+Message-ID: <200806162122.m5GLMBcS027547@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:22:11 +0200 (Mon, 16 Jun 2008)
+New Revision: 909
+
+Added:
+   trunk/t.output/1.0.0
+Modified:
+   /
+Log:
+ r5507 at wiggin:  chisel | 2008-05-30 09:05:05 +0100
+ + added test reulst for 1.0.0
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5506
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5507
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/t.output/1.0.0
+===================================================================
+--- trunk/t.output/1.0.0	2008-06-16 21:22:04 UTC (rev 908)
++++ trunk/t.output/1.0.0	2008-06-16 21:22:11 UTC (rev 909)
+@@ -0,0 +1,48 @@
++PERL_DL_NONLAZY=1 /usr/bin/perl "-MExtUtils::Command::MM" "-e" "test_harness(0, 'inc', 'blib/lib', 'blib/arch')" t/*.t t/bug/*.t t/mechanize/*.t t/schema/*.t
++t/01app...................................ok
++t/02pod...................................skipped: Test::Pod 1.14 required
++t/03podcoverage...........................skipped: Test::Pod::Coverage 1.04 required
++t/04_forumcode............................ok
++t/05.userroles............................ok
++t/50.text_search.sql......................ok
++t/bug/01.forum_list_no_posts..............ok
++t/controller_Admin........................ok
++t/controller_Forum........................ok
++t/controller_Help.........................ok
++t/controller_My...........................ok
++t/controller_Post.........................ok
++t/controller_Search.......................ok
++t/controller_Site.........................ok
++t/controller_Terms........................ok
++t/controller_Thread.......................ok
++t/controller_User.........................ok
++t/mechanize/00.login......................ok
++t/mechanize/01.main_page..................ok
++t/mechanize/02.forum......................ok
++t/model_ParleyDB..........................ok
++t/model_Post..............................ok
++t/schema/adminaction......................ok
++t/schema/authentication...................ok
++t/schema/email_queue......................ok
++t/schema/forum............................ok
++t/schema/forum_moderator..................ok
++t/schema/ip_ban...........................ok
++t/schema/ip_ban_type......................ok
++t/schema/logadminaction...................ok
++t/schema/password_reset...................ok
++t/schema/person...........................ok
++t/schema/post.............................ok
++t/schema/preference.......................ok
++t/schema/preference_time_string...........ok
++t/schema/registration_authentication......ok
++t/schema/role.............................ok
++t/schema/terms............................ok
++t/schema/terms_agreed.....................ok
++t/schema/thread...........................ok
++t/schema/thread_view......................ok
++t/schema/user_role........................ok
++t/view_Plain..............................ok
++t/view_TT.................................ok
++All tests successful.
++Files=44, Tests=458, 49 wallclock secs ( 0.25 usr  0.04 sys + 39.88 cusr  2.48 csys = 42.65 CPU)
++Result: PASS
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 16 23:22:20 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 16 Jun 2008 23:22:20 +0200
+Subject: [Parley-svn] r910 - / trunk/root/static/css
+Message-ID: <200806162122.m5GLMKIv027643@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-16 23:22:20 +0200 (Mon, 16 Jun 2008)
+New Revision: 910
+
+Modified:
+   /
+   trunk/root/static/css/parley-min.css
+   trunk/root/static/css/parley.css
+Log:
+ r5961 at wiggin:  chisel | 2008-06-05 19:38:53 +0100
+ / colour change to make K happy
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5507
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5961
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/static/css/parley-min.css
+===================================================================
+--- trunk/root/static/css/parley-min.css	2008-06-16 21:22:11 UTC (rev 909)
++++ trunk/root/static/css/parley-min.css	2008-06-16 21:22:20 UTC (rev 910)
+@@ -1 +1 @@
+-body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#user_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;margin-top:!
+ 5px;margin-bottom:5px;color:#79B30B;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:right;}.align_right{tex!
+ t-align:right;}.forum_description{font-size:93%;}.forum_lastpo!
+ st{font-
+size:85%;text-align:right;}.forum_lastpost_subject a{color:#333;color:#79B30B;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#333;color:#79B30B;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol !
+ li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-alig!
+ n:top;border:1px dashed #ddd;border:none;line-height:120%;padd!
+ ing-left
+:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-alig!
+ n:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#333;color:#79B30B;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-a!
+ lign:right;}.user_login form{width:350px;margin-left:auto;marg!
+ in-right
+:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_ov!
+ erlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#ysearch{text-align:center;}#ysearchinput{position:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navs!
+ et .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav!
+ {border:
+solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
++body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B color:#36C;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#user_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;!
+ margin-top:5px;margin-bottom:5px;color:#79B30B color:#36C;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:r!
+ ight;}.align_right{text-align:right;}.forum_description{font-s!
+ ize:93%;
+}.forum_lastpost{font-size:85%;text-align:right;}.forum_lastpost_subject a{color:#79B30B color:#36C;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#79B30B color:#36C;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help!
+  li ul li,.help li ol li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_up!
+ dated td{vertical-align:top;border:1px dashed #ddd;border:none!
+ ;line-he
+ight:120%;padding-left:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-ali!
+ gn:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#79B30B color:#36C;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:bloc!
+ k;font-size:85%;text-align:right;}.user_login form{width:350px!
+ ;margin-
+left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-al!
+ ign:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#ysearch{text-align:center;}#ysearchinput{position:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.!
+ yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .y!
+ ui-navse
+t-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2008-06-16 21:22:11 UTC (rev 909)
++++ trunk/root/static/css/parley.css	2008-06-16 21:22:20 UTC (rev 910)
+@@ -12,6 +12,7 @@
+     padding-left:   10px;
+     background:     #EEE url('/static/images/parley_logo.jpg') no-repeat left;
+     color:          #79B30B
++    color:          #3366CC;
+ }
+ 
+ #hd h1 {
+@@ -74,6 +75,7 @@
+     margin-top:         5px;
+     margin-bottom:      5px;
+     color:              #79B30B
++    color:              #3366CC;
+ }
+ 
+ /* links */
+@@ -166,8 +168,8 @@
+     text-align:         right;
+ }
+ .forum_lastpost_subject a {
+-    color:              #333;
+     color:              #79B30B
++    color:              #3366CC;
+ }
+ .forum_link {
+     font-size:          100%;
+@@ -201,8 +203,8 @@
+     margin-top:         5px;
+ }
+ .forum_name a {
+-    color:              #333;
+     color:              #79B30B
++    color:              #3366CC;
+ }
+ .forum_postcount {
+     font-size:          85%;
+@@ -479,8 +481,8 @@
+ 
+ .thread_subject a {
+     font-size:          93%;
+-    color:              #333;
+     color:              #79B30B
++    color:              #3366CC;
+ }
+ 
+ .thread_watch {
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 24 22:42:42 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 24 Jun 2008 22:42:42 +0200
+Subject: [Parley-svn] r911 - / trunk/script
+Message-ID: <200806242042.m5OKggXi026157@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-24 22:42:41 +0200 (Tue, 24 Jun 2008)
+New Revision: 911
+
+Added:
+   trunk/script/i18n_todo.pl
+Modified:
+   /
+Log:
+ r5973 at wiggin:  chisel | 2008-06-23 08:42:26 +0100
+ + a new script to show missing translations for a given language; it's a little hacky, but does what I want it to (for now)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5961
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5973
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/script/i18n_todo.pl
+===================================================================
+--- trunk/script/i18n_todo.pl	2008-06-16 21:22:20 UTC (rev 910)
++++ trunk/script/i18n_todo.pl	2008-06-24 20:42:41 UTC (rev 911)
+@@ -0,0 +1,120 @@
++#!/usr/bin/env perl
++use strict;
++use warnings;
++
++use Data::Dump qw(pp);
++use Getopt::Long;
++use File::Slurp;
++use FindBin qw($Bin);
++# use List::Compare
++use Path::Class;
++
++# default options
++my %cliopt = (
++    language    => 'it',
++);
++# get overrides from cli
++GetOptions(\%cliopt, "language=s");
++
++# show the differences for the chosen language
++token_diffs( $cliopt{language} );
++
++sub token_diffs {
++    my $target_lang = shift;
++
++    # get the i_default list
++    my $idefault_msgids = get_msgids(q{i_default});
++
++    # get the target lang list
++    my $targetlang_msgids = get_msgids($target_lang);
++    #warn pp($targetlang_msgids); exit;
++
++    # see what's missing from the target
++    print "Missing phrases in '$target_lang' translation:\n\n";
++    diffs($idefault_msgids, $targetlang_msgids);
++
++    # see if we have anything extra in the target
++    print "Additional phrases in '$target_lang' translation:\n\n";
++    diffs($targetlang_msgids, $idefault_msgids);
++
++    return;
++}
++
++# XXX sane people would probably have used List::Compare
++# XXX unfortunately I didn't have it installed, and was working
++# XXX without a 'net connection
++sub diffs {
++    my ($left, $right) = @_;
++
++    my %left_copy = %{ $left };
++
++    # see what's missing from the target
++    map (
++        delete $left_copy{$_},
++        keys %{$right}
++    );
++
++    my @keys = sort keys %left_copy;
++    if (@keys) {
++        foreach my $key (@keys) {
++            print "  $key\n    $left_copy{$key}\n\n";
++        }
++    }
++    else {
++        print " - NONE -\n\n";
++    }
++
++    return;
++}
++
++# read in an i18n file
++sub read_i18n {
++    my $filename = shift;
++
++    my $dir = dir(
++        dir($Bin)->parent,
++        q{lib},
++        q{Parley},
++        q{I18N}
++    );
++
++    my $file = file(
++        $dir,
++        $filename
++    ) . q{}; # to stop read_file() throwing a strop
++
++    my $filedata = read_file( $file )
++        or die $!;
++
++    return $filedata;
++}
++
++# TODO - find a suitable "gettext" perl module to do this properly
++# the regexp to match on .. it's easier to format outside the "while"
++sub get_msgids {
++    my $lang = shift;
++    my ($data, %msg_of, @msgids, $regexp);
++
++    $data = read_i18n(
++        $lang . q{.po}
++    );
++
++    # (sorry!)
++    $regexp = qr{
++        (?:.+?)         # any preceding junk
++        ^msgid
++        \s+             # whitespace after first token
++        "(.+?)"         # the token name
++        \s* \n          # optional whitespace to EOL
++        ^msgstr
++        \s+             # whitespace after second token
++        "(.+?)"         # the token name
++    }xms;
++
++    # get all the msgid/msgstr pairs and store the data in a hash
++    while ($data =~ m{\G$regexp}g) {
++        $msg_of{$1} = $2;
++    }
++
++    return \%msg_of;
++}
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 24 22:42:52 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 24 Jun 2008 22:42:52 +0200
+Subject: [Parley-svn] r912 - / trunk/script
+Message-ID: <200806242042.m5OKgqnG026253@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-24 22:42:52 +0200 (Tue, 24 Jun 2008)
+New Revision: 912
+
+Modified:
+   /
+   trunk/script/i18n_todo.pl
+Log:
+ r5974 at wiggin:  chisel | 2008-06-23 19:35:52 +0100
+ + list differences in template directory
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5973
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5974
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/script/i18n_todo.pl
+===================================================================
+--- trunk/script/i18n_todo.pl	2008-06-24 20:42:41 UTC (rev 911)
++++ trunk/script/i18n_todo.pl	2008-06-24 20:42:52 UTC (rev 912)
+@@ -4,11 +4,14 @@
+ 
+ use Data::Dump qw(pp);
+ use Getopt::Long;
++use File::Find;
+ use File::Slurp;
+ use FindBin qw($Bin);
+-# use List::Compare
+ use Path::Class;
+ 
++# evil global for wanted() function used with File::Find
++my %tpl_of;
++
+ # default options
+ my %cliopt = (
+     language    => 'it',
+@@ -18,6 +21,7 @@
+ 
+ # show the differences for the chosen language
+ token_diffs( $cliopt{language} );
++template_diffs( $cliopt{language} );
+ 
+ sub token_diffs {
+     my $target_lang = shift;
+@@ -40,6 +44,26 @@
+     return;
+ }
+ 
++sub template_diffs {
++    my $target_lang = shift;
++
++    # get the list of i_default email templates
++    my %idefault_tpls = template_list( q{i_default} );
++
++    # get the list of templates for the target language
++    my %targetlang_tpls = template_list( $target_lang );
++
++    # see what's missing from the target
++    print "Missing templates in '$target_lang' translation:\n\n";
++    tpl_diffs(\%idefault_tpls, \%targetlang_tpls);
++
++    # see if we have anything extra in the target
++    print "Additional templates in '$target_lang' translation:\n\n";
++    tpl_diffs(\%targetlang_tpls, \%idefault_tpls);
++    
++    return;
++}
++
+ # XXX sane people would probably have used List::Compare
+ # XXX unfortunately I didn't have it installed, and was working
+ # XXX without a 'net connection
+@@ -67,6 +91,30 @@
+     return;
+ }
+ 
++sub tpl_diffs {
++    my ($left, $right) = @_;
++
++    my %left_copy = %{ $left };
++
++    # see what's missing from the target
++    map (
++        delete $left_copy{$_},
++        keys %{$right}
++    );
++
++    my @keys = sort keys %left_copy;
++    if (@keys) {
++        foreach my $key (@keys) {
++            print "  $key\n\n";
++        }
++    }
++    else {
++        print " - NONE -\n\n";
++    }
++
++    return;
++}
++
+ # read in an i18n file
+ sub read_i18n {
+     my $filename = shift;
+@@ -89,6 +137,27 @@
+     return $filedata;
+ }
+ 
++sub wanted {
++    -f $_
++    && $tpl_of{$_}++
++}
++
++sub template_list {
++    my $target_lang = shift;
++
++    my $dir = dir(
++        dir($Bin)->parent,
++        q{root},
++        q{email_templates},
++        $target_lang
++    );
++
++    %tpl_of = ();
++    find( \&wanted, $dir );
++
++    return %tpl_of;
++}
++
+ # TODO - find a suitable "gettext" perl module to do this properly
+ # the regexp to match on .. it's easier to format outside the "while"
+ sub get_msgids {
+
+
+
+From chiselwright at mail.berlios.de  Tue Jun 24 22:43:00 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 24 Jun 2008 22:43:00 +0200
+Subject: [Parley-svn] r913 - / trunk/config
+Message-ID: <200806242043.m5OKh0b3026331@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-24 22:43:00 +0200 (Tue, 24 Jun 2008)
+New Revision: 913
+
+Added:
+   trunk/config/parley.sites-available
+Removed:
+   trunk/config/parley.sites-enabled
+Modified:
+   /
+Log:
+ r5978 at wiggin:  chisel | 2008-06-24 19:08:58 +0100
+ / fix filename
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5974
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5978
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Copied: trunk/config/parley.sites-available (from rev 890, trunk/config/parley.sites-enabled)
+
+Deleted: trunk/config/parley.sites-enabled
+===================================================================
+--- trunk/config/parley.sites-enabled	2008-06-24 20:42:52 UTC (rev 912)
++++ trunk/config/parley.sites-enabled	2008-06-24 20:43:00 UTC (rev 913)
+@@ -1,12 +0,0 @@
+-# this is an example of a named virtualhost config file
+-# for a Debian/Ubuntu system using the sites-enabled method with apache2:
+-#
+-# $ cp parley.sites-enabled /etc/apache2/sites-enabled/parley.named_vhost
+-# $ sudo a2en parley.named_vhost
+-
+-<VirtualHost *:80>                                                                                     
+-	ServerName parley.herlpacker.co.uk                                                                   
+-	DocumentRoot /home/parley/parley/root                                                                
+-	Alias /static /home/parley/parley/root/static                                                        
+-	Alias / /home/parley/parley/script/parley_fastcgi.pl/                                                
+-</VirtualHost>    
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:09:05 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:09:05 +0200
+Subject: [Parley-svn] r914 - / trunk/root/base
+Message-ID: <200806301309.m5UD95Ju016055@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:09:05 +0200 (Mon, 30 Jun 2008)
+New Revision: 914
+
+Modified:
+   /
+   trunk/root/base/header
+Log:
+ r5986 at wiggin:  chisel | 2008-06-25 19:54:14 +0100
+ / switch to uri_for()
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5978
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5986
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2008-06-24 20:43:00 UTC (rev 913)
++++ trunk/root/base/header	2008-06-30 13:09:05 UTC (rev 914)
+@@ -33,21 +33,21 @@
+ 
+         <!-- CSS -->
+         <link rel="stylesheet" type="text/css" href="[%c.uri_for('/static/yui/fonts/fonts-min.css')%]" />
+-        <link rel="stylesheet" type="text/css" href="[%c.request.base%]/static/yui/reset-fonts-grids/reset-fonts-grids.css" />
++        <link rel="stylesheet" type="text/css" href="[%c.uri_for('/static/yui/reset-fonts-grids/reset-fonts-grids.css')%]" />
+ 
+-        <link rel="stylesheet" type="text/css" href="[%c.request.base%]/static/yui/button/assets/skins/sam/button.css" />
+-        <link rel="stylesheet" type="text/css" href="[%c.request.base%]/static/yui/container/assets/skins/sam/container.css" />
+-        <link rel="stylesheet" type="text/css" href="[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css" /> 
+-        <link rel="stylesheet" type="text/css" href="[%c.request.base%]/static/yui/tabview/assets/skins/sam/tabview.css" />
++        <link rel="stylesheet" type="text/css" href="[%c.uri_for('/static/yui/button/assets/skins/sam/button.css')%]" />
++        <link rel="stylesheet" type="text/css" href="[%c.uri_for('/static/yui/container/assets/skins/sam/container.css')%]" />
++        <link rel="stylesheet" type="text/css" href="[%c.uri_for('/static/yui/menu/assets/skins/sam/menu.css')%]" /> 
++        <link rel="stylesheet" type="text/css" href="[%c.uri_for('/static/yui/tabview/assets/skins/sam/tabview.css')%]" />
+         <link rel="stylesheet" type="text/css" href="[%c.uri_for('/static/yui/autocomplete/assets/skins/sam/autocomplete.css')%]" />
+ 
+         <!-- Dependency source files -->
+-        <script type="text/javascript" src="[%c.request.base%]/static/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+-        <script type="text/javascript" src="[%c.request.base%]/static/yui/container/container-min.js"></script>
++        <script type="text/javascript" src="[%c.uri_for('/static/yui/yahoo-dom-event/yahoo-dom-event.js')%]"></script>
++        <script type="text/javascript" src="[%c.uri_for('/static/yui/container/container-min.js')%]"></script>
+         <script type="text/javascript" src="[%c.uri_for('/static/yui/utilities/utilities.js')%]"></script>
+-        <script type="text/javascript" src="[%c.request.base%]/static/yui/button/button-min.js"></script>
+-        <script type="text/javascript" src="[%c.request.base%]/static/yui/menu/menu-min.js"></script>
+-        <script type="text/javascript" src="[%c.request.base%]/static/yui/tabview/tabview-min.js"></script>
++        <script type="text/javascript" src="[%c.uri_for('/static/yui/button/button-min.js')%]"></script>
++        <script type="text/javascript" src="[%c.uri_for('/static/yui/menu/menu-min.js')%]"></script>
++        <script type="text/javascript" src="[%c.uri_for('/static/yui/tabview/tabview-min.js')%]"></script>
+         <script type="text/javascript" src="[%c.uri_for('/static/yui/autocomplete/autocomplete-min.js')%]"></script>
+ 
+         <!-- homebrew javascript -->
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:09:20 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:09:20 +0200
+Subject: [Parley-svn] r915 - / trunk/config
+Message-ID: <200806301309.m5UD9K6W016140@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:09:20 +0200 (Mon, 30 Jun 2008)
+New Revision: 915
+
+Modified:
+   /
+   trunk/config/parley.sites-available
+Log:
+ r5987 at wiggin:  chisel | 2008-06-25 19:54:52 +0100
+ / update/correct the file whilst working through the deployment doc
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5986
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5987
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/config/parley.sites-available
+===================================================================
+--- trunk/config/parley.sites-available	2008-06-30 13:09:05 UTC (rev 914)
++++ trunk/config/parley.sites-available	2008-06-30 13:09:20 UTC (rev 915)
+@@ -1,12 +1,19 @@
+ # this is an example of a named virtualhost config file
+ # for a Debian/Ubuntu system using the sites-enabled method with apache2:
+ #
+-# $ cp parley.sites-enabled /etc/apache2/sites-enabled/parley.named_vhost
++# $ cp parley.sites-available /etc/apache2/sites-available/parley.named_vhost
+ # $ sudo a2en parley.named_vhost
+ 
+-<VirtualHost *:80>                                                                                     
+-	ServerName parley.herlpacker.co.uk                                                                   
+-	DocumentRoot /home/parley/parley/root                                                                
+-	Alias /static /home/parley/parley/root/static                                                        
+-	Alias / /home/parley/parley/script/parley_fastcgi.pl/                                                
+-</VirtualHost>    
++<VirtualHost parley.private.herlpacker.co.uk:80>
++	ServerName              parley.private.herlpacker.co.uk
++	DocumentRoot            /home/parley/development_parley_app/root
++	Alias           /static /home/parley/development_parley_app/root/static
++	Alias           /       /home/parley/development_parley_app/script/parley_fastcgi.pl/
++
++    FastCgiServer           /home/parley/development_parley_app/script/parley_fastcgi.pl -processes 3
++
++    # stuff that's good to have
++    ServerAdmin         someone.useful at somewhere.useful
++    ErrorLog            /var/log/apache2/parley-error_log
++    CustomLog           /var/log/apache2/parley-access_log common
++</VirtualHost>
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:09:52 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:09:52 +0200
+Subject: [Parley-svn] r916 - / trunk/doc
+Message-ID: <200806301309.m5UD9qfD016285@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:09:52 +0200 (Mon, 30 Jun 2008)
+New Revision: 916
+
+Modified:
+   /
+   trunk/doc/setup.html
+Log:
+ r5988 at wiggin:  chisel | 2008-06-25 19:55:29 +0100
+ / documentation fixes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5987
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5988
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/doc/setup.html
+===================================================================
+--- trunk/doc/setup.html	2008-06-30 13:09:20 UTC (rev 915)
++++ trunk/doc/setup.html	2008-06-30 13:09:52 UTC (rev 916)
+@@ -295,11 +295,15 @@
+         <em>apache + fastcgi</em>. The process is outlined in the
+         <a href="">Catalyst Cookbook</a></p>
+ 
++        <p>Before going too far down this route, please ensure that you have
++        mod_fastcgi installed:</p>
++        <blockquote><code>sudo aptitude install libapache2-mod-fastcgi</code></blockquote>
++
+         <p>Assuming you have a system with <em>a2ensite</em> installed on it
+         you can do the following:</p>
+ 
+-        <blockquote><code>sudo cp config/parley.sites-enabled /etc/apache2/sites-enabled/parley.named_vhost
+-sudo vim /etc/apache2/sites-enabled/parley.named_vhost <font color="green"># make appropriate changes</font>
+-sudo a2en parley.named_vhost</code></blockquote>
++        <blockquote><code>sudo cp config/parley.sites-enabled /etc/apache2/sites-available/parley.named_vhost
++sudo vim /etc/apache2/sites-available/parley.named_vhost <font color="green"># make appropriate changes</font>
++sudo a2ensite parley.named_vhost</code></blockquote>
+     </body>
+ </html>
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:10:14 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:10:14 +0200
+Subject: [Parley-svn] r917 - / trunk
+Message-ID: <200806301310.m5UDAEgo016475@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:10:14 +0200 (Mon, 30 Jun 2008)
+New Revision: 917
+
+Modified:
+   /
+   trunk/MANIFEST
+Log:
+ r5989 at wiggin:  chisel | 2008-06-27 09:20:49 +0100
+ / rebuilt MANIFEST file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5988
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5989
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-06-30 13:09:52 UTC (rev 916)
++++ trunk/MANIFEST	2008-06-30 13:10:14 UTC (rev 917)
+@@ -1,7 +1,7 @@
+ Changes
+ Changes.i18n
+ config/parley.fastcgi
+-config/parley.sites-enabled
++config/parley.sites-available
+ contrib/patch/0.57_02_KAARE.patch
+ contrib/patch/0.59_001_TJC.patch
+ db/parley.psql
+@@ -819,6 +819,7 @@
+ root/static/yui/yuitest/yuitest_core-min.js
+ root/static/yui/yuitest/yuitest_core.js
+ script/deploy.sh
++script/i18n_todo.pl
+ script/parley_cgi.pl
+ script/parley_create.pl
+ script/parley_email_engine.pl
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:10:33 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:10:33 +0200
+Subject: [Parley-svn] r918 - / trunk/config
+Message-ID: <200806301310.m5UDAXWN016653@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:10:32 +0200 (Mon, 30 Jun 2008)
+New Revision: 918
+
+Modified:
+   /
+   trunk/config/parley.sites-available
+Log:
+ r5990 at wiggin:  chisel | 2008-06-27 09:21:37 +0100
+ / fixed paths
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5989
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5990
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/config/parley.sites-available
+===================================================================
+--- trunk/config/parley.sites-available	2008-06-30 13:10:14 UTC (rev 917)
++++ trunk/config/parley.sites-available	2008-06-30 13:10:32 UTC (rev 918)
+@@ -6,11 +6,11 @@
+ 
+ <VirtualHost parley.private.herlpacker.co.uk:80>
+ 	ServerName              parley.private.herlpacker.co.uk
+-	DocumentRoot            /home/parley/development_parley_app/root
+-	Alias           /static /home/parley/development_parley_app/root/static
+-	Alias           /       /home/parley/development_parley_app/script/parley_fastcgi.pl/
++	DocumentRoot            /home/parley/development/parley_app/root
++	Alias           /static /home/parley/development/parley_app/root/static
++	Alias           /       /home/parley/development/parley_app/script/parley_fastcgi.pl/
+ 
+-    FastCgiServer           /home/parley/development_parley_app/script/parley_fastcgi.pl -processes 3
++    FastCgiServer           /home/parley/development/parley_app/script/parley_fastcgi.pl -processes 3
+ 
+     # stuff that's good to have
+     ServerAdmin         someone.useful at somewhere.useful
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:10:54 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:10:54 +0200
+Subject: [Parley-svn] r919 - / trunk/script
+Message-ID: <200806301310.m5UDAslh016821@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:10:54 +0200 (Mon, 30 Jun 2008)
+New Revision: 919
+
+Modified:
+   /
+   trunk/script/parley_create.pl
+   trunk/script/parley_server.pl
+Log:
+ r5991 at wiggin:  chisel | 2008-06-27 09:22:12 +0100
+ ran "catalyst.pl -force -scripts Parley"
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5990
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5991
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/script/parley_create.pl
+===================================================================
+--- trunk/script/parley_create.pl	2008-06-30 13:10:32 UTC (rev 918)
++++ trunk/script/parley_create.pl	2008-06-30 13:10:54 UTC (rev 919)
+@@ -39,6 +39,7 @@
+ 
+  Examples:
+    parley_create.pl controller My::Controller
++   parley_create.pl controller My::Controller BindLex
+    parley_create.pl -mechanize controller My::Controller
+    parley_create.pl view My::View
+    parley_create.pl view MyView TT
+
+Modified: trunk/script/parley_server.pl
+===================================================================
+--- trunk/script/parley_server.pl	2008-06-30 13:10:32 UTC (rev 918)
++++ trunk/script/parley_server.pl	2008-06-30 13:10:54 UTC (rev 919)
+@@ -2,7 +2,7 @@
+ 
+ BEGIN { 
+     $ENV{CATALYST_ENGINE} ||= 'HTTP';
+-    $ENV{CATALYST_SCRIPT_GEN} = 30;
++    $ENV{CATALYST_SCRIPT_GEN} = 31;
+     require Catalyst::Engine::HTTP;
+ }  
+ 
+@@ -17,12 +17,13 @@
+ my $fork              = 0;
+ my $help              = 0;
+ my $host              = undef;
+-my $port              = 3000;
++my $port              = $ENV{PARLEY_PORT} || $ENV{CATALYST_PORT} || 3000;
+ my $keepalive         = 0;
+-my $restart           = 0;
++my $restart           = $ENV{PARLEY_RELOAD} || $ENV{CATALYST_RELOAD} || 0;
+ my $restart_delay     = 1;
+-my $restart_regex     = '\.yml$|\.yaml$|\.pm$';
++my $restart_regex     = '(?:/|^)(?!\.#).+(?:\.yml$|\.yaml$|\.conf|\.pm)$';
+ my $restart_directory = undef;
++my $follow_symlinks   = 0;
+ 
+ my @argv = @ARGV;
+ 
+@@ -36,12 +37,13 @@
+     'restart|r'           => \$restart,
+     'restartdelay|rd=s'   => \$restart_delay,
+     'restartregex|rr=s'   => \$restart_regex,
+-    'restartdirectory=s'  => \$restart_directory,
++    'restartdirectory=s@' => \$restart_directory,
++    'followsymlinks'      => \$follow_symlinks,
+ );
+ 
+ pod2usage(1) if $help;
+ 
+-if ( $restart ) {
++if ( $restart && $ENV{CATALYST_ENGINE} eq 'HTTP' ) {
+     $ENV{CATALYST_ENGINE} = 'HTTP::Restarter';
+ }
+ if ( $debug ) {
+@@ -60,6 +62,7 @@
+     restart_delay     => $restart_delay,
+     restart_regex     => qr/$restart_regex/,
+     restart_directory => $restart_directory,
++    follow_symlinks   => $follow_symlinks,
+ } );
+ 
+ 1;
+@@ -85,11 +88,12 @@
+    -rd -restartdelay  delay between file checks
+    -rr -restartregex  regex match files that trigger
+                       a restart when modified
+-                      (defaults to '\.yml$|\.yaml$|\.pm$')
++                      (defaults to '\.yml$|\.yaml$|\.conf|\.pm$')
+    -restartdirectory  the directory to search for
+-                      modified files
+-                      (defaults to '../')
+-
++                      modified files, can be set mulitple times
++                      (defaults to '[SCRIPT_DIR]/..')
++   -follow_symlinks   follow symlinks in search directories
++                      (defaults to false. this is a no-op on Win32)
+  See also:
+    perldoc Catalyst::Manual
+    perldoc Catalyst::Manual::Intro
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:11:01 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:11:01 +0200
+Subject: [Parley-svn] r920 - / trunk/lib/Parley/Controller
+Message-ID: <200806301311.m5UDB1YQ016893@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:11:01 +0200 (Mon, 30 Jun 2008)
+New Revision: 920
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ r5992 at wiggin:  chisel | 2008-06-27 09:44:20 +0100
+ / remove some extraneous ->info() logging
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5991
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5992
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2008-06-30 13:10:54 UTC (rev 919)
++++ trunk/lib/Parley/Controller/Thread.pm	2008-06-30 13:11:01 UTC (rev 920)
+@@ -567,7 +567,6 @@
+     eval {
+         $c->model('ParleyDB')->schema->txn_do(
+             sub {
+-                $c->log->info( q{Increasing view count} );
+                 $c->_current_thread->view_count(
+                     $c->_current_thread->view_count + 1
+                 );
+
+
+
+From chiselwright at mail.berlios.de  Mon Jun 30 15:11:09 2008
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 30 Jun 2008 15:11:09 +0200
+Subject: [Parley-svn] r921 - / trunk/lib/Parley/Controller
+Message-ID: <200806301311.m5UDB9ZD017002@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2008-06-30 15:11:09 +0200 (Mon, 30 Jun 2008)
+New Revision: 921
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Root.pm
+Log:
+ r5993 at wiggin:  chisel | 2008-06-27 09:46:49 +0100
+ - remove more ->info() logging
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5992
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5993
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-06-30 13:11:01 UTC (rev 920)
++++ trunk/lib/Parley/Controller/Root.pm	2008-06-30 13:11:09 UTC (rev 921)
+@@ -173,8 +173,6 @@
+     # if we have a user ... fetch some info (if we don't already have it)
+     ############################################################
+     if ( $c->user and not defined $c->_authed_user ) {
+-        $c->log->info('Fetching user information for ' . $c->user->id);
+-
+         # FIXME : move this to the ResultSet class?
+         # get the person info for the username
+         my $row = $c->model('ParleyDB')->resultset('Person')->find(
+
+
+

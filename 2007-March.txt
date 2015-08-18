@@ -1,0 +1,926 @@
+From chiselwright at mail.berlios.de  Tue Mar 20 23:18:06 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 20 Mar 2007 23:18:06 +0100
+Subject: [Parley-svn] r259 - / branches
+Message-ID: <200703202218.l2KMI6WL024077@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-20 23:18:06 +0100 (Tue, 20 Mar 2007)
+New Revision: 259
+
+Added:
+   branches/pre-schema-based/
+Removed:
+   trunk/
+Log:
+Deprecating old/pre-schema trunk to a branch
+
+Copied: branches/pre-schema-based (from rev 194, trunk)
+
+
+
+From chiselwright at mail.berlios.de  Tue Mar 20 23:21:16 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 20 Mar 2007 23:21:16 +0100
+Subject: [Parley-svn] r260 - / branches
+Message-ID: <200703202221.l2KMLGmK024743@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-20 23:21:16 +0100 (Tue, 20 Mar 2007)
+New Revision: 260
+
+Added:
+   trunk/
+Removed:
+   branches/schema_based/
+Log:
+Promoting the schema-based branch (as this has been the active area of development for some time now (excluding the massive hiatus)
+
+Copied: trunk (from rev 258, branches/schema_based)
+
+
+
+From chiselwright at mail.berlios.de  Mon Mar 26 23:40:51 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 26 Mar 2007 23:40:51 +0200
+Subject: [Parley-svn] r261 - / trunk
+Message-ID: <200703262140.l2QLepKZ007545@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-26 23:40:51 +0200 (Mon, 26 Mar 2007)
+New Revision: 261
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r2978 at wiggin:  chisel | 2007-03-21 17:21:00 +0000
+ + added a couple of missing dependencies
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2978
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-03-20 22:21:16 UTC (rev 260)
++++ trunk/Makefile.PL	2007-03-26 21:40:51 UTC (rev 261)
+@@ -5,8 +5,11 @@
+ 
+ requires 'Catalyst' => '5.7001';
+ requires 'Catalyst::Plugin::ConfigLoader';
++requires 'Catalyst::Plugin::FormValidator';
+ requires 'Catalyst::Plugin::Static::Simple';
+ requires 'Catalyst::Action::RenderView';
++requires 'Catalyst::Model::DBIC::Schema';
++requires 'Email::Valid';
+ requires 'YAML'; # This should reflect the config file format you've chosen
+                  # See Catalyst::Plugin::ConfigLoader for supported formats
+ catalyst;
+
+
+
+From chiselwright at mail.berlios.de  Mon Mar 26 23:41:10 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 26 Mar 2007 23:41:10 +0200
+Subject: [Parley-svn] r262 - / trunk/lib/Parley/Controller
+Message-ID: <200703262141.l2QLfAtQ007638@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-26 23:41:10 +0200 (Mon, 26 Mar 2007)
+New Revision: 262
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Post.pm
+Log:
+ r2979 at wiggin:  chisel | 2007-03-21 17:21:37 +0000
+ / fixed post/view - uri_for() syntax change since we last used it
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2978
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2979
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2007-03-26 21:40:51 UTC (rev 261)
++++ trunk/lib/Parley/Controller/Post.pm	2007-03-26 21:41:10 UTC (rev 262)
+@@ -26,12 +26,16 @@
+     );
+ 
+     # build the URL to redirect to
+-    my $redirect_url = $c->uri_for(
+-        '/thread',
+-          "view?thread=$thread"
+-        . "&page=$page_number"
++    my $redirect_url =
++        $c->uri_for(
++            '/thread/view',
++            {
++                thread  => $thread,
++                page    => $page_number,
++            }
++        )
+         . "#" . $c->_current_post->id()
+-    );
++    ;
+ 
+     # redirect to the relevant place in the appropriate thread
+     $c->log->debug( "post/view: redirecting to $redirect_url" );
+
+
+
+From chiselwright at mail.berlios.de  Mon Mar 26 23:41:31 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 26 Mar 2007 23:41:31 +0200
+Subject: [Parley-svn] r263 - / trunk trunk/db trunk/lib
+	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User
+	trunk/lib/Parley/Schema trunk/script
+Message-ID: <200703262141.l2QLfV7q007719@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-26 23:41:30 +0200 (Mon, 26 Mar 2007)
+New Revision: 263
+
+Modified:
+   /
+   trunk/Changes
+   trunk/Makefile.PL
+   trunk/db/parley.psql
+   trunk/db/patch_0.09_to_0.10.psql
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+   trunk/lib/Parley/Schema/EmailQueue.pm
+   trunk/script/parley_fastcgi.pl
+   trunk/script/parley_server.pl
+Log:
+ r2980 at wiggin:  chisel | 2007-03-23 19:21:02 +0000
+ - update DFV profile for DFV 4.50
+ - logged-in users get bounced from user/signup to the default_uri
+ - moved send_email() out to Parley::Communication::Email
+ - send_email() now uses queue_email() to insert pending emails into database queue instead of sending immediately
+ - consolidate schema and patches
+ - add email_queue table to database and modify Schema::EmailQueue accordingly
+ / updated scripts/ for new catalyst version
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2979
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2980
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/Changes	2007-03-26 21:41:30 UTC (rev 263)
+@@ -1,5 +1,14 @@
+ This file documents the revision history for Parley.
+ 
++    - update DFV profile for DFV 4.50
++    - logged-in users get bounced from user/signup to the default_uri
++    - moved send_email() out to Parley::Communication::Email
++    - send_email() now uses queue_email() to insert pending emails into
++      database queue instead of sending immediately
++    - consolidate schema and patches
++    - add email_queue table to database and modify
++      Schema::EmailQueue accordingly
++    - fix post/view to work with [new?] uri_for() syntax
+     - re-implement, starting from a fresh call to catalyst.pl
+     - use Schema based model
+     - general tidy-up of existing methods
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/Makefile.PL	2007-03-26 21:41:30 UTC (rev 263)
+@@ -9,7 +9,9 @@
+ requires 'Catalyst::Plugin::Static::Simple';
+ requires 'Catalyst::Action::RenderView';
+ requires 'Catalyst::Model::DBIC::Schema';
++requires 'Data::FormValidator' => '4.50';
+ requires 'Email::Valid';
++requiees 'Perl6::Export::Attrs';
+ requires 'YAML'; # This should reflect the config file format you've chosen
+                  # See Catalyst::Plugin::ConfigLoader for supported formats
+ catalyst;
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/db/parley.psql	2007-03-26 21:41:30 UTC (rev 263)
+@@ -175,8 +175,31 @@
+     unique(person, thread)
+ );
+ 
++-- overall it's better to queue outgoing emails, and have a separate process
++-- deal with them
++CREATE TABLE email_queue (
++    email_queue_id      SERIAL      not null        primary key,
++    queued              timestamp with time zone    not null
++                        default CURRENT_TIMESTAMP,
+ 
++    recipient           integer     not null        references person,
++    cc                  integer                     references person,
++    bcc                 integer                     references person,
+ 
++    sender              text        not null,
++
++    subject             text        not null,
++    text_content        text        not null,
++    html_content        text,
++
++    -- delivery statuses
++    attempted_delivery  boolean     not null        default False
++);
++
++
++
++
++
+ --
+ -- some default stuff
+ --
+
+Modified: trunk/db/patch_0.09_to_0.10.psql
+===================================================================
+--- trunk/db/patch_0.09_to_0.10.psql	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/db/patch_0.09_to_0.10.psql	2007-03-26 21:41:30 UTC (rev 263)
+@@ -32,7 +32,11 @@
+                         default CURRENT_TIMESTAMP,
+ 
+     recipient           integer     not null        references person,
++    cc                  integer                     references person,
++    bcc                 integer                     references person,
+ 
++    sender              text        not null,
++
+     subject             text        not null,
+     text_content        text        not null,
+     html_content        text,
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-03-26 21:41:30 UTC (rev 263)
+@@ -788,7 +788,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C<< <chisel at herlpacker.co.uk> >>
++Chisel Wright C<< <chiselwright at berlios.de> >>
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2007-03-26 21:41:30 UTC (rev 263)
+@@ -16,18 +16,30 @@
+ 
+ # used by DFV
+ sub _dfv_constraint_confirm_equal {
+-    my $dfv  = shift;
+-    my $val1 = shift;
+-    my $val2 = shift;
++    my ($attrs)  = @_;
+ 
+-    return ( $val1 eq $val2 );
++    my ($first, $second) = @{ $attrs->{fields} } if $attrs->{fields};
++
++    return sub {
++        my $dfv = shift;
++        my $data = $dfv->get_filtered_data();
++
++        warn $data->{ $first };
++        warn $data->{ $second };
++
++        return ( $data->{$first} eq $data->{$second} );
++    }
+ }
+ 
+ sub _dfv_constraint_valid_email {
+-    my $dfv   = shift;
+-    my $email = shift;
++    my $attrs = @_;
+ 
+-    return Email::Valid->address($email);
++    return sub {
++        my $dfv = shift;
++        my $data = $dfv->get_filtered_data();
++
++        return Email::Valid->address($data->{email});
++    }
+ }
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -46,28 +58,26 @@
+         filters => [qw(trim)],
+ 
+         constraint_methods => {
+-            confirm_password => {
+-                name => 'confirm_password',
+-                constraint  => \&_dfv_constraint_confirm_equal,
+-                params      => [qw( password confirm_password )],
+-            },
+-            email => {
+-                name => 'email',
+-                constraint_method => \&_dfv_constraint_valid_email,
+-                params      => [qw( email )],
+-            },
+-            Xconfirm_email => {
+-                name => 'Xconfirm_email',
+-                constraint  => \&_dfv_constraint_confirm_equal,
+-                params      => [qw( email confirm_email )],
+-            },
++            confirm_password =>
++                _dfv_constraint_confirm_equal(
++                    {
++                        fields => [qw/password confirm_password/],
++                    }
++                ),
+ 
+-            confirm_email => {
+-                name        => q{confirm_email},
+-                constraint  => \&_dfv_constraint_confirm_equal,
+-                params      => [qw( email confirm_email )],
+-            },
++            email =>
++                _dfv_constraint_valid_email(
++                    {
++                        fields => [qw/email/],
++                    }
++                ),
+ 
++            confirm_email =>
++                _dfv_constraint_confirm_equal(
++                    {
++                        fields => [qw/email confirm_email/],
++                    }
++                ),
+         },
+ 
+         msgs => {
+@@ -141,6 +151,12 @@
+     my ( $self, $c ) = @_;
+     my (@messages);
+ 
++    # logged-in? no need to signup again...
++    if ($c->is_logged_in()) {
++        $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++        return;
++    }
++
+     # deal with form submissions
+     if (defined $c->request->method()
+             and $c->request->method() eq 'POST'
+@@ -254,7 +270,9 @@
+     # send an email off to the (new) user
+     $send_status = $c->send_email(
+         {
+-            template    => q{authentication_email.eml},
++            template    => {
++                text    => q{authentication_email.eml},
++            },
+             person      => $person,
+             headers => {
+                 from    => $c->application_email_address(),
+
+Modified: trunk/lib/Parley/Schema/EmailQueue.pm
+===================================================================
+--- trunk/lib/Parley/Schema/EmailQueue.pm	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/lib/Parley/Schema/EmailQueue.pm	2007-03-26 21:41:30 UTC (rev 263)
+@@ -12,6 +12,17 @@
+ __PACKAGE__->add_columns(
+   "recipient",
+   { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "cc",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "bcc",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "sender",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 1,
++    size => undef,
++  },
+   "subject",
+   {
+     data_type => "text",
+@@ -57,6 +68,8 @@
+ );
+ __PACKAGE__->set_primary_key("email_queue_id");
+ __PACKAGE__->belongs_to("recipient", "Person", { person_id => "recipient" });
++__PACKAGE__->belongs_to("cc", "Person", { person_id => "recipient" });
++__PACKAGE__->belongs_to("bcc", "Person", { person_id => "recipient" });
+ 
+ 1;
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/lib/Parley.pm	2007-03-26 21:41:30 UTC (rev 263)
+@@ -26,7 +26,9 @@
+     Authentication::Credential::Password
+ /;
+ 
++use Parley::Communication::Email qw( :email );
+ 
++
+ our $VERSION = '0.50-pre';
+ 
+ __PACKAGE__->config( version => $VERSION );
+@@ -112,63 +114,6 @@
+     }
+ }
+ 
+-sub send_email {
+-    my ($c, $options) = @_;
+-
+-    # preparing for future expansion, where we intend to build multipart emails
+-    # and we'll be using ->{template}{text} and ->{template}{html}
+-    if (            exists $options->{template}
+-            and not exists $options->{template}{text}
+-    ) {
+-        $c->log->warn(
+-              $options->{template}{text}
+-            . q{: plain-text template name should be stored in }
+-            . q{->{template}{text} instead of ->{template}}
+-        );
+-        $options->{template}{text} = $options->{template};
+-    }
+-
+-    # send an email off to the new user
+-    my $email_status = $c->email(
+-        header => [
+-            To      => $options->{person}->email(),
+-            From    => $options->{headers}{from}      || q{Missing From <chisel at somewhere.com>},
+-            Subject => $options->{headers}{subject}   || q{Subject Line Missing},
+-        ],
+-
+-        body => $c->view('Plain')->render(
+-            $c,
+-            $options->{template}{text},
+-            {
+-                additional_template_paths => [ $c->config->{root} . q{/email_templates}],
+-
+-                # automatically make the person data available
+-                person => $options->{person},
+-
+-                # pass through extra TT data
+-                %{ $options->{template_data} || {} },
+-            }
+-        ),
+-    );
+-
+-    # did we get "Message sent" from the email send?
+-    if ($email_status eq q{Message sent}) {
+-        $c->log->info(
+-              q{send_email(}
+-            . $options->{person}->email()
+-            . q{): }
+-            . $email_status
+-        );
+-
+-        return 1;
+-    }
+-    else {
+-        $c->log->error( $email_status );
+-        $c->stash->{error}{message} = q{Sorry, we are currently unable to store your information. Please try again later.};
+-        return 0;
+-    }
+-}
+-
+ 1;
+ 
+ __END__
+
+Modified: trunk/script/parley_fastcgi.pl
+===================================================================
+--- trunk/script/parley_fastcgi.pl	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/script/parley_fastcgi.pl	2007-03-26 21:41:30 UTC (rev 263)
+@@ -11,7 +11,7 @@
+ use Parley;
+ 
+ my $help = 0;
+-my ( $listen, $nproc, $pidfile, $manager, $detach );
++my ( $listen, $nproc, $pidfile, $manager, $detach, $keep_stderr );
+  
+ GetOptions(
+     'help|?'      => \$help,
+@@ -20,6 +20,7 @@
+     'pidfile|p=s' => \$pidfile,
+     'manager|M=s' => \$manager,
+     'daemon|d'    => \$detach,
++    'keeperr|e'   => \$keep_stderr,
+ );
+ 
+ pod2usage(1) if $help;
+@@ -30,6 +31,7 @@
+         pidfile => $pidfile, 
+         manager => $manager,
+         detach  => $detach,
++	keep_stderr => $keep_stderr,
+     }
+ );
+ 
+@@ -58,6 +60,8 @@
+    -M -manager   specify alternate process manager
+                  (FCGI::ProcManager sub-class)
+                  or empty string to disable
++   -e -keeperr   send error messages to STDOUT, not
++                 to the webserver
+ 
+ =head1 DESCRIPTION
+ 
+
+Modified: trunk/script/parley_server.pl
+===================================================================
+--- trunk/script/parley_server.pl	2007-03-26 21:41:10 UTC (rev 262)
++++ trunk/script/parley_server.pl	2007-03-26 21:41:30 UTC (rev 263)
+@@ -2,7 +2,8 @@
+ 
+ BEGIN { 
+     $ENV{CATALYST_ENGINE} ||= 'HTTP';
+-    $ENV{CATALYST_SCRIPT_GEN} = 28;
++    $ENV{CATALYST_SCRIPT_GEN} = 30;
++    require Catalyst::Engine::HTTP;
+ }  
+ 
+ use strict;
+
+
+
+From chiselwright at mail.berlios.de  Mon Mar 26 23:41:43 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 26 Mar 2007 23:41:43 +0200
+Subject: [Parley-svn] r264 - / trunk/lib/Parley/Controller
+Message-ID: <200703262141.l2QLfhmL007846@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-26 23:41:43 +0200 (Mon, 26 Mar 2007)
+New Revision: 264
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ r2981 at wiggin:  chisel | 2007-03-23 19:26:51 +0000
+ / update uri_for() usage when setting a thread watch
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2980
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2981
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-03-26 21:41:30 UTC (rev 263)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-03-26 21:41:43 UTC (rev 264)
+@@ -221,10 +221,11 @@
+ 
+         # build the URL to redirect to
+         $redirect_url = $c->uri_for(
+-            '/thread',
+-            'view?thread='
+-            . $c->_current_thread()->id()
+-            . "&page=$page_number"
++            '/thread/view',
++            {
++                thread  => $c->_current_thread()->id(),
++                page    => $page_number,
++            }
+         );
+ 
+         # redirect to the apropriate place
+
+
+
+From chiselwright at mail.berlios.de  Mon Mar 26 23:41:52 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 26 Mar 2007 23:41:52 +0200
+Subject: [Parley-svn] r265 - / trunk/lib/Parley/Controller
+Message-ID: <200703262141.l2QLfque007919@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-26 23:41:52 +0200 (Mon, 26 Mar 2007)
+New Revision: 265
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ r2982 at wiggin:  chisel | 2007-03-26 07:44:45 +0100
+ / typo: threac_view --> thread_view
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2981
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2982
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-03-26 21:41:43 UTC (rev 264)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-03-26 21:41:52 UTC (rev 265)
+@@ -199,7 +199,7 @@
+         return;
+     }
+ 
+-    # we have a threac_view entry for the user, so update it, and redirect the
++    # we have a thread_view entry for the user, so update it, and redirect the
+     # user back to the thread
+ 
+     # update the watched status
+
+
+
+From chiselwright at mail.berlios.de  Mon Mar 26 23:42:04 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 26 Mar 2007 23:42:04 +0200
+Subject: [Parley-svn] r266 - / trunk/lib trunk/lib/Parley
+	trunk/lib/Parley/App trunk/lib/Parley/App/Communication
+Message-ID: <200703262142.l2QLg4df007995@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-03-26 23:42:01 +0200 (Mon, 26 Mar 2007)
+New Revision: 266
+
+Added:
+   trunk/lib/Parley/App/
+   trunk/lib/Parley/App/Communication/
+   trunk/lib/Parley/App/Communication/Email.pm
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ r2983 at wiggin:  chisel | 2007-03-26 07:52:52 +0100
+ + checked in (factored-out) send_email() and queue_email() functions
+ / modified use path in lib/Parley.pm
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2982
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2983
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/App/Communication/Email.pm
+===================================================================
+--- trunk/lib/Parley/App/Communication/Email.pm	2007-03-26 21:41:52 UTC (rev 265)
++++ trunk/lib/Parley/App/Communication/Email.pm	2007-03-26 21:42:01 UTC (rev 266)
+@@ -0,0 +1,183 @@
++package Parley::App::Communication::Email;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Perl6::Export::Attrs;
++
++sub queue_email :Export( :email ) {
++    my ($c, $options) = @_;
++    my $queued_mail = $c->model('ParleyDB')->resultset('EmailQueue')->create(
++        {
++            sender          => $options->{headers}{from}        || q{Missing From <chisel at somewhere.com>},
++
++            recipient       => $options->{recipient}->id()      || 0,
++            subject         => $options->{headers}{subject}     || q{Subject Line Missing},
++            text_content    => $options->{text_content}         || q{Email Body Text Missing},
++        }
++    );
++    return 1; # success
++}
++
++sub send_email :Export( :email ) {
++    my ($c, $options) = @_;
++    my ($text_content, $html_content, $email_status);
++
++    # preparing for future expansion, where we intend to build multipart emails
++    # and we'll be using ->{template}{text} and ->{template}{html}
++    if (            exists $options->{template}
++            and ref($options->{template}) ne 'HASH'
++    ) {
++        $c->log->warn(
++              q{DEPRECATED use of ->{template} = 'file.eml'}
++            . q{: plain-text template name should be stored in }
++            . q{->{template}{text} instead of ->{template}}
++        );
++
++        # put the data in the right place
++        my $tpl_name = $options->{template};
++        $options->{template} = {};
++        $options->{template}{text} = $tpl_name;
++    }
++
++    # we don't send anything immediately ... push it into the queue of outgoing
++    # messages
++
++    # prepare the text content portion of the message - we read this from a
++    # [template] file which we render
++    $text_content = $c->view('Plain')->render(
++        $c,
++        $options->{template}{text},
++        {
++            additional_template_paths => [ $c->config->{root} . q{/email_templates}],
++
++            # automatically make the person data available
++            person => $options->{person},
++
++            # pass through extra TT data
++            %{ $options->{template_data} || {} },
++        }
++    );
++
++    # queue the message
++    $email_status = $c->queue_email(
++        {
++            headers => {
++                from        =>     $options->{headers}{from}
++                                || q{Missing From <missing.from at localhost>},
++                subject     =>     $options->{headers}{subject}
++                                || q{Subject Line Missing},
++            },
++
++            recipient       => $options->{person},
++            text_content    => $text_content,
++        },
++    );
++
++    # did we queue the email OK?
++    if ($email_status) {
++        $c->log->info(
++              q{send_email(}
++            . $options->{person}->email()
++            . q{): }
++            . $email_status
++        );
++
++        return 1;
++    }
++    else {
++        $c->log->error( $email_status );
++        $c->stash->{error}{message} = q{There was a problem sending an email from the system};
++        return 0;
++    }
++}
++
++sub old_send_email :Export( :email ) {
++    my ($c, $options) = @_;
++
++    # preparing for future expansion, where we intend to build multipart emails
++    # and we'll be using ->{template}{text} and ->{template}{html}
++    if (            exists $options->{template}
++            and ref($options->{template}) ne 'HASH'
++    ) {
++        $c->log->warn(
++              q{DEPRECATED use of ->{template} = 'file.eml'}
++            . q{: plain-text template name should be stored in }
++            . q{->{template}{text} instead of ->{template}}
++        );
++
++        # put the data in the right place
++        my $tpl_name = $options->{template};
++        $options->{template} = {};
++        $options->{template}{text} = $tpl_name;
++    }
++
++    # send an email off to the new user
++    my $email_status = $c->email(
++        header => [
++            To      => $options->{person}->email(),
++            From    => $options->{headers}{from}      || q{Missing From <chisel at somewhere.com>},
++            Subject => $options->{headers}{subject}   || q{Subject Line Missing},
++        ],
++
++        body => $c->view('Plain')->render(
++            $c,
++            $options->{template}{text},
++            {
++                additional_template_paths => [ $c->config->{root} . q{/email_templates}],
++
++                # automatically make the person data available
++                person => $options->{person},
++
++                # pass through extra TT data
++                %{ $options->{template_data} || {} },
++            }
++        ),
++    );
++
++    # did we get "Message sent" from the email send?
++    if ($email_status eq q{Message sent}) {
++        $c->log->info(
++              q{send_email(}
++            . $options->{person}->email()
++            . q{): }
++            . $email_status
++        );
++
++        return 1;
++    }
++    else {
++        $c->log->error( $email_status );
++        $c->stash->{error}{message} = q{Sorry, we are currently unable to store your information. Please try again later.};
++        return 0;
++    }
++}
++
++1;
++
++__END__
++
++=head1 NAME
++
++Parley::App::Communication::Email - email helper functions
++
++=head1 SYNOPSIS
++
++  use Parley::App::Communication::Email;
++
++  $self->send_email($c, $options);
++
++=head1 SEE ALSO
++
++L<Parley::Controller::Root>, L<Catalyst::Plugin::Email>, L<Catalyst>
++
++=head1 AUTHOR
++
++Chisel Wright C<< <chisel at herlpacker.co.uk> >>
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-03-26 21:41:52 UTC (rev 265)
++++ trunk/lib/Parley.pm	2007-03-26 21:42:01 UTC (rev 266)
+@@ -26,7 +26,7 @@
+     Authentication::Credential::Password
+ /;
+ 
+-use Parley::Communication::Email qw( :email );
++use Parley::App::Communication::Email qw( :email );
+ 
+ 
+ our $VERSION = '0.50-pre';
+
+
+

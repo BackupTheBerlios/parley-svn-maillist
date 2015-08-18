@@ -1,0 +1,477 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r567 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r567%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N&In-Reply-To=%3C200710222026.l9MKQkew001300%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000454.html">
+   <LINK REL="Next"  HREF="000456.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r567 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r567%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N&In-Reply-To=%3C200710222026.l9MKQkew001300%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r567 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct 22 22:26:46 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000454.html">[Parley-svn] r566 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+        <LI>Next message: <A HREF="000456.html">[Parley-svn] r568 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#455">[ date ]</a>
+              <a href="thread.html#455">[ thread ]</a>
+              <a href="subject.html#455">[ subject ]</a>
+              <a href="author.html#455">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-22 22:26:45 +0200 (Mon, 22 Oct 2007)
+New Revision: 567
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/Controller/Terms.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/I18N/en.po
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3994 at wiggin</A>:  chisel | 2007-10-18 23:06:29 +0100
+ + added more i18n to the application controllers
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3992
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3994
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2007-10-17 20:27:38 UTC (rev 566)
++++ trunk/lib/Parley/Controller/Post.pm	2007-10-22 20:26:45 UTC (rev 567)
+@@ -32,25 +32,25 @@
+ 
+     # if we don't have a post param, then return with an error
+     unless (defined $c-&gt;_current_post) {
+-        $c-&gt;stash-&gt;{error}{message} = q{Incomplete URL};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{Incomplete URL});
+         return;
+     }
+ 
+     # you need to be logged in to edit a post
+     # (although non-logged users shouldn't see an edit link, you never know
+     # what people will make-up or bookmark)
+-    $c-&gt;login_if_required(q{You must be logged in before you can edit your posts.});
++    $c-&gt;login_if_required($c-&gt;localize(q{EDIT LOGIN REQUIRED}));
+ 
+     # you can only edit you own posts
+     # (unless you're a moderator, but we don't do that yet)
+     if ($c-&gt;_authed_user()-&gt;id() != $c-&gt;_current_post()-&gt;creator()-&gt;id()) {
+-        $c-&gt;stash-&gt;{error}{message} = q{You can only edit posts you have made};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{EDIT OWN POSTS ONLY});
+         return;
+     }
+ 
+     # you can't edit a locked post
+     elsif ($c-&gt;_current_post-&gt;thread-&gt;locked) {
+-        $c-&gt;stash-&gt;{error}{message} = q{You can't edit locked posts};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{EDIT LOCKED POST}) 
+         return;
+     }
+ 
+@@ -62,13 +62,13 @@
+         );
+         # deal with missing/invalid fields
+         if ($c-&gt;form-&gt;has_missing()) {
+-            $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++            $c-&gt;stash-&gt;{view}{error}{message} = $c-&gt;localize(q{DFV FILL REQUIRED});
+             foreach my $f ( $c-&gt;form-&gt;missing ) {
+                 push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+             }
+         }
+         elsif ($c-&gt;form-&gt;has_invalid()) {
+-            $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++            $c-&gt;stash-&gt;{view}{error}{message} = $c-&gt;localize(q{DFV FIELDS INVALID});
+             foreach my $f ( $c-&gt;form-&gt;invalid ) {
+                 push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+             }
+@@ -95,7 +95,7 @@
+ 
+     # if we don't have a post param, then return with an error
+     unless (defined $c-&gt;_current_post) {
+-        $c-&gt;stash-&gt;{error}{message} = q{Incomplete URL};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{Incomplete URL});
+         return;
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2007-10-17 20:27:38 UTC (rev 566)
++++ trunk/lib/Parley/Controller/Site.pm	2007-10-22 20:26:45 UTC (rev 567)
+@@ -13,7 +13,7 @@
+     my ($self, $c) = @_;
+ 
+     if (not $c-&gt;stash-&gt;{site_moderator}) {
+-        parley_warn($c, q{You need to be a site moderator});
++        parley_warn($c, $c-&gt;localize(q{SITE MODERATOR REQUIRED}));
+ 
+         $c-&gt;response-&gt;redirect(
+             $c-&gt;uri_for(
+
+Modified: trunk/lib/Parley/Controller/Terms.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Terms.pm	2007-10-17 20:27:38 UTC (rev 566)
++++ trunk/lib/Parley/Controller/Terms.pm	2007-10-22 20:26:45 UTC (rev 567)
+@@ -51,7 +51,7 @@
+     my ( $self, $c ) = @_;
+ 
+     my $status = $c-&gt;login_if_required(
+-        q{You must be logged in before you can access this area}
++        $c-&gt;localize(q{LOGIN REQUIRED}) 
+     );
+     if (not defined $status) {
+         return 0;
+@@ -117,7 +117,7 @@
+ 
+     # currently only a global moderator can add new site terms
+     if (not $c-&gt;stash-&gt;{site_moderator}) {
+-        parley_die($c, q{You must be a site-moderator to access this area});
++        parley_die($c, $c-&gt;localize(q{SITE MODERATOR REQUIRED}));
+         return;
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-10-17 20:27:38 UTC (rev 566)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-10-22 20:26:45 UTC (rev 567)
+@@ -39,7 +39,7 @@
+     my ($self, $c) = @_;
+ 
+     # make sure we're logged in
+-    $c-&gt;login_if_required(q{You must be logged in before you can add a new topic.});
++    $c-&gt;login_if_required($c-&gt;localize(q{LOGIN NEW TOPIC}));
+ 
+     # make sure we're authenticated
+     # XXX
+@@ -59,7 +59,7 @@
+     my ($self, $c) = @_;
+ 
+     # make sure we're logged in
+-    $c-&gt;login_if_required(q{You must be logged in before you can use the thread continuation function});
++    $c-&gt;login_if_required($c-&gt;localize(q{LOGIN THREAD CONTINUE}));
+ 
+     # get the most recent post the user has seen
+     my $last_viewed_post = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;last_post_viewed_in_thread(
+@@ -155,7 +155,7 @@
+     my ($self, $c) = @_;
+ 
+     # make sure we're logged in
+-    $c-&gt;login_if_required(q{You must be logged in before you can add a reply.});
++    $c-&gt;login_if_required($c-&gt;localize(q{LOGIN ADD REPLY}));
+ 
+     # make sure we're authenticated
+     # XXX
+@@ -163,7 +163,7 @@
+     # can't reply to a locked thread
+     if ($c-&gt;_current_thread()-&gt;locked()) {
+         #die q{can't reply to a locked thread!};
+-        $c-&gt;stash-&gt;{error}{message} = q{You can't reply to a locked thread};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{REPLY LOCKED THREAD});
+         return;
+     };
+ 
+@@ -264,7 +264,7 @@
+     }
+ 
+     # need to be logged in to watch threads
+-    $c-&gt;login_if_required($c, q{You must be logged in before you can watch a topic.});
++    $c-&gt;login_if_required($c, $c-&gt;localize(q{LOGIN WATCH TOPIC}));
+ 
+     # get the ThreadView so we can update it
+     my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
+@@ -277,7 +277,7 @@
+     # if we couldn't find a thread view, then something odd is happening -
+     # logged in users should always have a thread_view entry
+     if (not defined $thread_view) {
+-        $c-&gt;stash-&gt;{error}{message} = q{Failed to watch requested thread};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{THREAD WATCH FAILED});
+         $c-&gt;log-&gt;error(q{User doesn't have a thread_view entry});
+         return;
+     }
+@@ -321,7 +321,7 @@
+     my ($self, $c) = @_;
+ 
+     # make sure we're logged in
+-    $c-&gt;login_if_required(q{You must be logged in before you can view your watched threads});
++    $c-&gt;login_if_required($c-&gt;localize(q{LOGIN VIEW WATCHES}));
+ 
+     # watched threads
+     my $watches = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;search(
+@@ -353,7 +353,7 @@
+             # if we couldn't find a thread view, then something odd is happening -
+             # logged in users should always have a thread_view entry
+             if (not defined $thread_view) {
+-                $c-&gt;stash-&gt;{error}{message} = q{Failed to watch requested thread};
++                $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{THREAD WATCH FAILED});
+                 $c-&gt;log-&gt;error(q{User doesn't have a thread_view entry});
+                 return;
+             }
+@@ -384,13 +384,13 @@
+ 
+     # deal with missing/invalid fields
+     if ($c-&gt;form-&gt;has_missing()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        $c-&gt;stash-&gt;{view}{error}{message} = $c-&gt;localize(q{DFV FILL REQUIRED});
+         foreach my $f ( $c-&gt;form-&gt;missing ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
+     }
+     elsif ($c-&gt;form-&gt;has_invalid()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        $c-&gt;stash-&gt;{view}{error}{message} = $c-&gt;localize(q{DFV FIELDS INVALID});
+         foreach my $f ( $c-&gt;form-&gt;invalid ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
+@@ -439,13 +439,13 @@
+ 
+     # deal with missing/invalid fields
+     if ($c-&gt;form-&gt;has_missing()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        $c-&gt;stash-&gt;{view}{error}{message} = $c-&gt;localize(q{DFV FILL REQUIRED});
+         foreach my $f ( $c-&gt;form-&gt;missing ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
+     }
+     elsif ($c-&gt;form-&gt;has_invalid()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        $c-&gt;stash-&gt;{view}{error}{message} = $c-&gt;localize(q{DFV FIELDS INVALID});
+         foreach my $f ( $c-&gt;form-&gt;invalid ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
+@@ -512,13 +512,13 @@
+         );
+     }
+     else {
+-        $c-&gt;stash-&gt;{error}{message} = q{No information for thread or post to reply to};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{THREAD NO INFORMATION});
+         return;
+     }
+ 
+     # if we don't have one post, something really odd happened
+     if (1 != $posts-&gt;count()) {
+-        $c-&gt;stash-&gt;{error}{message} = q{I don't know how you managed to reply to a thread with no posts};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{THREAD NO POSTS});
+         return;
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2007-10-17 20:27:38 UTC (rev 566)
++++ trunk/lib/Parley/Controller/User.pm	2007-10-22 20:26:45 UTC (rev 567)
+@@ -9,7 +9,7 @@
+     my ( $self, $c ) = @_;
+ 
+     # default form message
+-    $c-&gt;stash-&gt;{'message'} = 'Please enter your username and password';
++    $c-&gt;stash-&gt;{'message'} = $c-&gt;localize(q{PASSWORD ENTER DETAILS});
+     # if we have a custom message to use ..
+     $c-&gt;stash-&gt;{'login_message'} = delete( $c-&gt;session-&gt;{login_message} );
+     # make sure we use the correct template - we sometimes detach() here
+@@ -63,7 +63,7 @@
+         # otherwise we failed to login, try again!
+         else {
+             $c-&gt;stash-&gt;{'message'}
+-                = 'Unable to authenticate the login details supplied';
++                = $c-&gt;localize(q{AUTHENTICATION FAILED});
+         }
+     }
+ }
+@@ -95,7 +95,8 @@
+     if (defined $user_id) {
+         # make sure we got a sane looking user-id
+         if (not $user_id =~ m{\A\d+\z}) {
+-            $c-&gt;stash-&gt;{error}{message} = 'non-integer user passed';
++            $c-&gt;stash-&gt;{error}{message}
++                = $c-&gt;localize(q{non-integer user id passed});
+             return;
+         }
+ 
+@@ -104,7 +105,7 @@
+             = $c-&gt;model('ParleyDB::Person')-&gt;find( $user_id );
+     }
+     else {
+-        $c-&gt;stash-&gt;{error}{message} = 'No user specified';
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{No User Specified});
+         return;
+     }
+ }
+
+Modified: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-17 20:27:38 UTC (rev 566)
++++ trunk/lib/Parley/I18N/en.po	2007-10-22 20:26:45 UTC (rev 567)
+@@ -40,6 +40,9 @@
+ msgid &quot;An error has occurred&quot;
+ msgstr &quot;An error has occurred&quot;
+ 
++msgid &quot;AUTHENTICATION FAILED&quot;
++msgstr &quot;Unable to authenticate the supplied login credentials&quot;
++
+ msgid &quot;Avatar&quot;
+ msgstr &quot;Avatar&quot;
+ 
+@@ -94,6 +97,15 @@
+ msgid &quot;DFV FILL REQUIRED&quot;
+ msgstr &quot;You must fill in all the required fields.&quot;
+ 
++msgid &quot;EDIT LOCKED POST&quot;
++msgstr &quot;You can't edit locked posts.&quot;
++
++msgid &quot;EDIT LOGIN REQUIRED&quot;
++msgstr &quot;You must be logged in before you can edit your posts.&quot;
++
++msgid &quot;EDIT OWN POSTS ONLY&quot;
++msgstr &quot;You can only edit posts you have made.&quot;
++
+ msgid &quot;Edit&quot;
+ msgstr &quot;Edit&quot;
+ 
+@@ -172,6 +184,9 @@
+ msgid &quot;Help&quot;
+ msgstr &quot;Help&quot;
+ 
++msgid &quot;Incomplete URL&quot;
++msgstr &quot;Incomplete URL&quot;
++
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Logged&quot;
+ 
+@@ -205,9 +220,24 @@
+ msgid &quot;Locked Topic&quot;
+ msgstr &quot;Locked Topic&quot;
+ 
++msgid &quot;LOGIN ADD REPLY&quot;
++msgstr &quot;You must be logged in before you can add a reply.&quot;
++
++msgid &quot;LOGIN NEW TOPIC&quot;
++msgstr &quot;You must be logged in to add a new topic.&quot;
++
+ msgid &quot;LOGIN REQUIRED&quot;
+ msgstr &quot;You must be logged in before you can access this area.&quot;
+ 
++msgid &quot;LOGIN THREAD CONTINUE&quot;
++msgstr &quot;You must be logged in before you can use the thread continuation function.&quot;
++
++msgid &quot;LOGIN VIEW WATCHES&quot;
++msgstr &quot;You must be logged in before you can view your watched threads.&quot;
++
++msgid &quot;LOGIN WATCH TOPIC&quot;
++msgstr &quot;You must be logged in before you can watch a topic.&quot;
++
+ msgid &quot;Logged in as&quot;
+ msgstr &quot;Logged in as&quot;
+ 
+@@ -274,6 +304,9 @@
+ msgid &quot;No User Avatar&quot;
+ msgstr &quot;No User Avatar&quot;
+ 
++msgid &quot;No User Specified&quot;
++msgstr &quot;No User Specified&quot;
++
+ msgid &quot;non-integer post id passed&quot;
+ msgstr &quot;Non-integer post id passed&quot;
+ 
+@@ -301,6 +334,9 @@
+ msgid &quot;PASSWORD DETAILS SENT&quot;
+ msgstr &quot;You should recieve an email in the next few minutes with further instructions to reset your password.&quot;
+ 
++msgid &quot;PASSWORD ENTER DETAILS&quot;
++msgstr &quot;Please enter your username and password&quot;
++
+ msgid &quot;PASSWORD GAIN&quot;
+ msgstr &quot;To gain access to your account your password can be re-set, and an authentication email re-sent.&quot;
+ 
+@@ -394,6 +430,9 @@
+ msgid &quot;Remove Watch&quot;
+ msgstr &quot;Remove Watch&quot;
+ 
++msgid &quot;REPLY LOCKED THREAD&quot;
++msgstr &quot;You can't reply to a locked thread.&quot;
++
+ msgid &quot;Reply&quot;
+ msgstr &quot;Reply&quot;
+ 
+@@ -466,6 +505,9 @@
+ msgid &quot;SIGNUP USERNAME&quot;
+ msgstr &quot;Desired Username&quot;
+ 
++msgid &quot;SITE MODERATOR REQUIRED&quot;
++msgstr &quot;You need to be a site moderator to access this section of the site.&quot;
++
+ msgid &quot;Site&quot;
+ msgstr &quot;Site&quot;
+ 
+@@ -514,6 +556,15 @@
+ msgid &quot;The following error message was returned by the application&quot;
+ msgstr &quot;The following error message was returned by the application&quot;
+ 
++msgid &quot;THREAD NO INFORMATION&quot;
++msgstr &quot;No information exists for the thread or post you are trying to reply to.&quot;
++
++msgid &quot;THREAD NO POSTS&quot;
++msgstr &quot;You are trying to reply to a thread with no posts in it.&quot;
++
++msgid &quot;THREAD WATCH FAILED&quot;
++msgstr &quot;Failed to add a watch for the requested thread.&quot;
++
+ msgid &quot;Thread&quot;
+ msgstr &quot;Thread&quot;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000454.html">[Parley-svn] r566 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+	<LI>Next message: <A HREF="000456.html">[Parley-svn] r568 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#455">[ date ]</a>
+              <a href="thread.html#455">[ thread ]</a>
+              <a href="subject.html#455">[ subject ]</a>
+              <a href="author.html#455">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

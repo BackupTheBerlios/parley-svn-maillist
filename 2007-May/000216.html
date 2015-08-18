@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r328 - / trunk trunk/doc
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r328%20-%20/%20trunk%20trunk/doc&In-Reply-To=%3C200705042109.l44L9DUk014729%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000215.html">
+   <LINK REL="Next"  HREF="000217.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r328 - / trunk trunk/doc</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r328%20-%20/%20trunk%20trunk/doc&In-Reply-To=%3C200705042109.l44L9DUk014729%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r328 - / trunk trunk/doc">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri May  4 23:09:13 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000215.html">[Parley-svn] r327 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000217.html">[Parley-svn] r329 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#216">[ date ]</a>
+              <a href="thread.html#216">[ thread ]</a>
+              <a href="subject.html#216">[ subject ]</a>
+              <a href="author.html#216">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-04 23:09:12 +0200 (Fri, 04 May 2007)
+New Revision: 328
+
+Added:
+   trunk/doc/
+   trunk/doc/parley-qs.html
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3220 at wiggin</A>:  chisel | 2007-05-04 18:59:13 +0100
+ + new folder for (useful) documentation to live in
+ + quick start guide - from nothing to forum in a few easy steps
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3219
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3220
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/doc/parley-qs.html
+===================================================================
+--- trunk/doc/parley-qs.html	2007-05-04 21:08:55 UTC (rev 327)
++++ trunk/doc/parley-qs.html	2007-05-04 21:09:12 UTC (rev 328)
+@@ -0,0 +1,69 @@
++&lt;html&gt;
++    &lt;head&gt;
++        &lt;title&gt;Parley - Quick Start Guide&lt;/title&gt;
++    &lt;/head&gt;
++
++    &lt;body&gt;
++        &lt;h1&gt;Parley - Quick Start Guide&lt;/h1&gt;
++
++        &lt;p&gt;This is a quick guide to getting Parley running on a machine using
++        the Catalyst testing/development server.&lt;/p&gt;
++
++        &lt;p&gt;&lt;b&gt;NOTE&lt;/b&gt; v0.51 has missing dependencies in Makefile.PL. Save
++        yourself some pain and fetch v0.52 or later.&lt;/p&gt;
++
++        &lt;h2&gt;Initial Installation&lt;/h2&gt;
++        &lt;blockquote&gt;&lt;code&gt;
++        mkdir -p ~/development&lt;br /&gt;
++        cd ~/development&lt;br /&gt;
++&lt;br /&gt;
++        wget <A HREF="http://download.berlios.de/parley/Parley-0.52.tar.gz&lt;br">http://download.berlios.de/parley/Parley-0.52.tar.gz&lt;br</A> /&gt;
++        tar -zxvf Parley-0.52.tar.gz&lt;br /&gt;
++        cd Parley-0.52/&lt;br /&gt;
++&lt;br /&gt;
++        perl Makefile.PL&lt;br /&gt;
++        &lt;em&gt;# install missing dependencies&lt;/em&gt;&lt;br /&gt;
++        &lt;em&gt;# 'sudo make' may work here&lt;/em&gt;&lt;br /&gt;
++&lt;br /&gt;
++        &lt;em&gt;# you may need to tweak pg_hba.conf&lt;/em&gt;&lt;br /&gt;
++        &lt;em&gt;## local   all  parley                trust&lt;/em&gt;&lt;br /&gt;
++        &lt;em&gt;## host&nbsp;   all  parley  127.0.0.1/32  trust&lt;/em&gt;&lt;br /&gt;
++        sudo -u postgres createuser -A -d parley&lt;br /&gt;
++        createdb -U parley -E UTF8 parley&lt;br /&gt;
++        psql -U parley -d parley -f db/parley.psql&lt;br /&gt;
++        &lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;h2&gt;Configuring&lt;/h2&gt;
++
++        &lt;p&gt;If you're running Parley out of the box it should Just Work.&lt;/p&gt;
++
++        &lt;p&gt;One problem can sometimes be with the database connection.
++        If you find you can't connect, make sure you've correctly configured
++        &lt;code&gt;pg_hba.conf&lt;/code&gt; and that the &lt;code&gt;Model::ParleyDB&lt;/code&gt;
++        section in &lt;code&gt;parley.yml&lt;/code&gt; appears sane for your setup.&lt;/p&gt;
++
++        &lt;h2&gt;Running the Server&lt;/h2&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;
++        ./script/parley_server.pl
++        &lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;h2&gt;Ubuntu Users&lt;/h2&gt;
++
++        &lt;p&gt;There are others, but these are the key packages I'd recommend installing
++        with &quot;sudo aptitude install ...&quot;
++
++        &lt;ul&gt;
++            &lt;li&gt;libdbi-perl&lt;/li&gt;
++            &lt;li&gt;libdbd-pg-perl&lt;/li&gt;
++            &lt;li&gt;libfile-copy-recursive-perl&lt;/li&gt;
++            &lt;li&gt;libtemplate-perl&lt;/li&gt;
++            &lt;li&gt;libtemplate-timer-perl&lt;/li&gt;
++            &lt;li&gt;libdatetime-perl&lt;/li&gt;
++            &lt;li&gt;libdatetime-format-pg-perl&lt;/li&gt;
++            &lt;li&gt;libdatetime-timezone-perl&lt;/li&gt;
++            &lt;li&gt;liblist-moreutils-perl&lt;/li&gt;
++        &lt;/ul&gt;
++        &lt;/p&gt;
++    &lt;/body&gt;
++&lt;/html&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000215.html">[Parley-svn] r327 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000217.html">[Parley-svn] r329 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#216">[ date ]</a>
+              <a href="thread.html#216">[ thread ]</a>
+              <a href="subject.html#216">[ subject ]</a>
+              <a href="author.html#216">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

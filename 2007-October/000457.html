@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r569 - / trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r569%20-%20/%20trunk/root/base/thread&In-Reply-To=%3C200710222027.l9MKRGfX001485%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000456.html">
+   <LINK REL="Next"  HREF="000458.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r569 - / trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r569%20-%20/%20trunk/root/base/thread&In-Reply-To=%3C200710222027.l9MKRGfX001485%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r569 - / trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct 22 22:27:16 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000456.html">[Parley-svn] r568 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N
+</A></li>
+        <LI>Next message: <A HREF="000458.html">[Parley-svn] r570 - / trunk/root/base/help trunk/root/base/help/en
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#457">[ date ]</a>
+              <a href="thread.html#457">[ thread ]</a>
+              <a href="subject.html#457">[ subject ]</a>
+              <a href="author.html#457">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-22 22:27:16 +0200 (Mon, 22 Oct 2007)
+New Revision: 569
+
+Modified:
+   /
+   trunk/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3996 at wiggin</A>:  chisel | 2007-10-19 19:50:22 +0100
+ / fixed a couple of typos
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3995
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3996
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-10-22 20:27:02 UTC (rev 568)
++++ trunk/root/base/thread/view	2007-10-22 20:27:16 UTC (rev 569)
+@@ -38,7 +38,7 @@
+                                 &lt;small&gt;
+                                 [% IF current_thread.locked %]
+                                     [%l('Thread Locked')%] 
+-                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')&quot;%] title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+                                 [% ELSE %]
+                                     &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                                         &lt;span class=&quot;first-child&quot;&gt;
+@@ -60,7 +60,7 @@
+         &lt;tr&gt;
+             &lt;td class=&quot;user_post_info&quot;&gt;
+                 &lt;!-- user avatar --&gt;
+-                [% avatar_file = c.path_to('root')%] _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
++                [% avatar_file = c.path_to('root') _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
+                 [% TRY %]
+                     [% USE avatar = Image(avatar_file) %]
+                     [% tmp = avatar.attr %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000456.html">[Parley-svn] r568 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N
+</A></li>
+	<LI>Next message: <A HREF="000458.html">[Parley-svn] r570 - / trunk/root/base/help trunk/root/base/help/en
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#457">[ date ]</a>
+              <a href="thread.html#457">[ thread ]</a>
+              <a href="subject.html#457">[ subject ]</a>
+              <a href="author.html#457">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

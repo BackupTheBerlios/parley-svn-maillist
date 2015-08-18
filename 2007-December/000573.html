@@ -1,0 +1,241 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r685 - / trunk/lib/Parley/Controller	trunk/root/base/search trunk/root/base/shared	trunk/root/base/thread trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r685%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/search%20trunk/root/base/shared%0A%09trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200712182253.lBIMrW6b027339%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000572.html">
+   <LINK REL="Next"  HREF="000574.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r685 - / trunk/lib/Parley/Controller	trunk/root/base/search trunk/root/base/shared	trunk/root/base/thread trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r685%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/search%20trunk/root/base/shared%0A%09trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200712182253.lBIMrW6b027339%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r685 - / trunk/lib/Parley/Controller	trunk/root/base/search trunk/root/base/shared	trunk/root/base/thread trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Dec 18 23:53:32 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000572.html">[Parley-svn] r684 - / trunk/root/base/search trunk/root/base/shared	trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000574.html">[Parley-svn] r686 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#573">[ date ]</a>
+              <a href="thread.html#573">[ thread ]</a>
+              <a href="subject.html#573">[ subject ]</a>
+              <a href="author.html#573">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-18 23:53:31 +0100 (Tue, 18 Dec 2007)
+New Revision: 685
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/root/base/search/forum
+   trunk/root/base/shared/postinfo_table_row
+   trunk/root/base/thread/view
+   trunk/root/css/experiment.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4312 at wiggin</A>:  chisel | 2007-12-18 22:08:31 +0000
+ / fixed forum --&gt; forum_id bug in ::Search
+ - removed old search results layout from results page
+ / improved new search result info in postinfo_table_row
+ / tweaked cell widths in postinfo_table_row
+ + added missing &lt;a name=&quot;...&quot;&gt; to thread/view (for viewing specific posts)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4311
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4312
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2007-12-18 22:53:07 UTC (rev 684)
++++ trunk/lib/Parley/Controller/Search.pm	2007-12-18 22:53:31 UTC (rev 685)
+@@ -74,7 +74,7 @@
+         };
+ 
+         if (defined $forum) {
+-            $where-&gt;{'thread.forum'} = $forum-&gt;id(),
++            $where-&gt;{'thread.forum_id'} = $forum-&gt;id(),
+             push @join, 'thread';
+             # put in the stash
+             $c-&gt;stash-&gt;{search_forum} = $forum;
+
+Modified: trunk/root/base/search/forum
+===================================================================
+--- trunk/root/base/search/forum	2007-12-18 22:53:07 UTC (rev 684)
++++ trunk/root/base/search/forum	2007-12-18 22:53:31 UTC (rev 685)
+@@ -12,40 +12,6 @@
+             [% END %]
+         &lt;/tbody&gt;
+     &lt;/table&gt;
+-
+-    &lt;table class=&quot;search_results&quot;&gt;
+-    &lt;tr&gt;
+-        &lt;th&gt;[%l('Subject')%]&lt;/th&gt;
+-        &lt;th&gt;[%l('Snippet')%]&lt;/th&gt;
+-    &lt;/tr&gt;
+-    [% dummy_value = search_results.reset %]
+-    [% WHILE (result = search_results.next) %]
+-    [% toggler = (1 - toggler) %]
+-    &lt;tr class=&quot;row [% row_styles.$toggler %]&quot;&gt;
+-        &lt;td width=&quot;25%&quot;&gt;
+-            &lt;a href=&quot;/post/view?post=[% result.id %]&quot;&gt;[% ForumCode.escape(result.subject) || ForumCode.escape(result.thread.subject) %]&lt;/a&gt;
+-        &lt;/td&gt;
+-        &lt;td&gt;
+-            &lt;em&gt;
+-            [% context = result.match_context(search_terms.raw) %]
+-            [% IF context %]
+-            [% context %]
+-            [% ELSE %]
+-            [% FILTER truncate(60) %]
+-            [% result.message %]
+-            [% END %]
+-            [% END %]
+-            &lt;/em&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-    [% END %]
+-
+-    &lt;tr&gt;
+-        &lt;td class=&quot;right_align&quot; valign=&quot;top&quot; colspan=&quot;2&quot;&gt;
+-        [% INCLUDE shared/pager_advanced %]
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-    &lt;/table&gt;
+ [% ELSE %]
+ [%l('No results found matching specified terms')%].
+ [% END %]
+
+Modified: trunk/root/base/shared/postinfo_table_row
+===================================================================
+--- trunk/root/base/shared/postinfo_table_row	2007-12-18 22:53:07 UTC (rev 684)
++++ trunk/root/base/shared/postinfo_table_row	2007-12-18 22:53:31 UTC (rev 685)
+@@ -32,23 +32,20 @@
+     &lt;/td&gt;
+ 
+     [% IF (search_post = show_search_data) %]
+-    &lt;td style=&quot;width:50px;background:yellow;&quot;&gt;
+-        &lt;em&gt;
+-            X
+-        [% context = search_post.match_context(search_terms.raw) %]
+-        [% IF context %]
+-        [% context %]
+-        [% ELSE %]
+-        [% FILTER truncate(60) %]
+-        [% search_post.message %]
+-        [% END %]
+-        [% END %]
+-        Y
+-        &lt;/em&gt;
++    &lt;td style=&quot;&quot;&gt;
++        &lt;div class=&quot;search_match_context&quot;&gt;
++            [% context = search_post.match_context(search_terms.raw) %]
++            [% context %]
++        &lt;/div&gt;
++        &lt;div class=&quot;forum_mini_pager&quot;&gt;
++            [
++            &lt;a href=&quot;post/view?post=[%search_post.id%]&quot;&gt;Go to post&lt;/a&gt;
++            ]
++        &lt;/div&gt;
+     &lt;/td&gt;
+     [% END %]
+ 
+-    &lt;td&gt;
++    &lt;td width=&quot;80&quot;&gt;
+         &lt;div class=&quot;topic_creator&quot;&gt;
+             [% l('last post by ([_1])', thread.last_post.creator.forum_name) %]
+         &lt;/div&gt;
+@@ -58,7 +55,7 @@
+         &lt;/div&gt;
+     &lt;/td&gt;
+ 
+-    &lt;td&gt;
++    &lt;td width=&quot;80&quot;&gt;
+         &lt;div class=&quot;topic_creator&quot;&gt;
+             [% l('created by ([_1])', thread.creator.forum_name) %]
+         &lt;/div&gt;
+@@ -67,7 +64,7 @@
+         &lt;/div&gt;
+     &lt;/td&gt;
+ 
+-    &lt;td width=&quot;10%&quot;&gt;
++    &lt;td width=&quot;50&quot;&gt;
+         &lt;div class=&quot;forum_postcount&quot;&gt;
+             [%# number of replies is one less than the number of posts %]
+             [% SET tpc = (thread.post_count - 1) %]
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-12-18 22:53:07 UTC (rev 684)
++++ trunk/root/base/thread/view	2007-12-18 22:53:31 UTC (rev 685)
+@@ -56,6 +56,7 @@
+     [% WHILE (post = post_list.next) %]
+         &lt;tr class=&quot;thread_post_row&quot;&gt;
+             &lt;td class=&quot;user_post_info&quot;&gt;
++                &lt;a name=&quot;[%post.id%]&quot;&gt;&lt;/a&gt;
+                 &lt;!-- user avatar --&gt;
+                 [% avatar_file = c.path_to('root') _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
+                 [% TRY %]
+
+Modified: trunk/root/css/experiment.css
+===================================================================
+--- trunk/root/css/experiment.css	2007-12-18 22:53:07 UTC (rev 684)
++++ trunk/root/css/experiment.css	2007-12-18 22:53:31 UTC (rev 685)
+@@ -291,6 +291,10 @@
+     border: 2px inset #fff;
+ }
+ 
++.search_match_context {
++    font-size:          85%;
++}
++
+ .search_results {
+     margin-left:        auto;
+     margin-right:       auto;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000572.html">[Parley-svn] r684 - / trunk/root/base/search trunk/root/base/shared	trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000574.html">[Parley-svn] r686 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#573">[ date ]</a>
+              <a href="thread.html#573">[ thread ]</a>
+              <a href="subject.html#573">[ subject ]</a>
+              <a href="author.html#573">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

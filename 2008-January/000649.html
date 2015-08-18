@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r761 - / trunk/root/base/user/lostpassword
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r761%20-%20/%20trunk/root/base/user/lostpassword&In-Reply-To=%3C200801282333.m0SNXJ5C001809%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000648.html">
+   <LINK REL="Next"  HREF="000650.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r761 - / trunk/root/base/user/lostpassword</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r761%20-%20/%20trunk/root/base/user/lostpassword&In-Reply-To=%3C200801282333.m0SNXJ5C001809%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r761 - / trunk/root/base/user/lostpassword">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jan 29 00:33:19 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000648.html">[Parley-svn] r760 - / trunk/root/base/user/lostpassword
+</A></li>
+        <LI>Next message: <A HREF="000650.html">[Parley-svn] r762 - / trunk/root/base/user/signup
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#649">[ date ]</a>
+              <a href="thread.html#649">[ thread ]</a>
+              <a href="subject.html#649">[ subject ]</a>
+              <a href="author.html#649">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-29 00:33:17 +0100 (Tue, 29 Jan 2008)
+New Revision: 761
+
+Modified:
+   /
+   trunk/root/base/user/lostpassword/reset
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4554 at wiggin</A>:  chisel | 2008-01-24 19:29:47 +0000
+ / more UI improvements for the lost password process
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4553
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4554
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/user/lostpassword/reset
+===================================================================
+--- trunk/root/base/user/lostpassword/reset	2008-01-28 23:33:05 UTC (rev 760)
++++ trunk/root/base/user/lostpassword/reset	2008-01-28 23:33:17 UTC (rev 761)
+@@ -1,8 +1,17 @@
+ &lt;form action=&quot;user/password/reset/[% reset_uid %]&quot; method=&quot;post&quot; name=&quot;password_reset_form&quot;&gt;
+ 
+-[%l('PASSWORD RESET')%]
++&lt;div class=&quot;yui-gb top_padded&quot;&gt;
++    &lt;div class=&quot;yui-u first align_right&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
++    &lt;div class=&quot;yui-u&quot; style=&quot;text-align:justify;&quot;&gt;
++        [%l('PASSWORD RESET')%]
++    &lt;/div&gt;
++    &lt;div class=&quot;yui-u&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
++&lt;/div&gt;
+ 
+-    &lt;fieldset&gt;
+         [%- IF view.error.messages %]
+         &lt;p&gt;
+             &lt;ul&gt;
+@@ -13,26 +22,71 @@
+         &lt;/p&gt;
+         [% END %]
+ 
+-        &lt;label&gt;[%l('Name')%]:&lt;/label&gt;
+-        &lt;input type=&quot;text&quot; value=&quot;[% reset_user.first_name %] [% reset_user.last_name %]&quot; tabindex=&quot;1&quot; readonly=&quot;readonly&quot; disabled=&quot;disabled&quot; size=&quot;40&quot; /&gt;
++    &lt;fieldset&gt;
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                &lt;label&gt;[%l('Name')%]:&lt;/label&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;input type=&quot;text&quot; value=&quot;[% reset_user.first_name %] [% reset_user.last_name %]&quot; tabindex=&quot;1&quot; readonly=&quot;readonly&quot; disabled=&quot;disabled&quot; size=&quot;40&quot; /&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
+ 
+-        &lt;label for=&quot;reset_username&quot;&gt;[%l('Username')%]:&lt;/label&gt;
+-        &lt;input type=&quot;text&quot; name=&quot;reset_username&quot; id=&quot;reset_username&quot; size=&quot;40&quot; tabindex=&quot;2&quot; /&gt;
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                &lt;label for=&quot;reset_username&quot;&gt;[%l('Username')%]:&lt;/label&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;input type=&quot;text&quot; name=&quot;reset_username&quot; id=&quot;reset_username&quot; size=&quot;40&quot; tabindex=&quot;2&quot; /&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
+ 
+-        &lt;label for=&quot;new_password&quot;&gt;[%l('New Password')%]:&lt;/label&gt;
+-        &lt;input type=&quot;password&quot; name=&quot;new_password&quot; id=&quot;new_password&quot; size=&quot;40&quot; tabindex=&quot;3&quot; /&gt;
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                &lt;label for=&quot;new_password&quot;&gt;[%l('New Password')%]:&lt;/label&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;input type=&quot;password&quot; name=&quot;new_password&quot; id=&quot;new_password&quot; size=&quot;40&quot; tabindex=&quot;3&quot; /&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
+ 
+-        &lt;label for=&quot;confirm_password&quot;&gt;[%l('Confirm Password')%]:&lt;/label&gt;
+-        &lt;input type=&quot;password&quot; name=&quot;confirm_password&quot; id=&quot;confirm_password&quot; size=&quot;40&quot; tabindex=&quot;4&quot; /&gt;
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                &lt;label for=&quot;confirm_password&quot;&gt;[%l('Confirm Password')%]:&lt;/label&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;input type=&quot;password&quot; name=&quot;confirm_password&quot; id=&quot;confirm_password&quot; size=&quot;40&quot; tabindex=&quot;4&quot; /&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
+ 
+-        &lt;br /&gt;
+-        &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;5&quot; name=&quot;reset_password&quot; /&gt;[%l('Reset My Password')%]&lt;/button&gt;
+-
++        &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;5&quot; name=&quot;reset_password&quot; /&gt;[%l('Reset My Password')%]&lt;/button&gt;
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                &nbsp;
++            &lt;/div&gt;
++        &lt;/div&gt;
+     &lt;/fieldset&gt;
+ &lt;/form&gt;
+ 
+ &lt;!-- put focus into the username field on the form above --&gt;
+-&lt;script language=&quot;JavaScript&quot;&gt;
++&lt;script language=&quot;text/javascript&quot;&gt;
+     &lt;!-- Begin
+     document.forms['password_reset_form'].elements['reset_username'].focus();
+     // End --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000648.html">[Parley-svn] r760 - / trunk/root/base/user/lostpassword
+</A></li>
+	<LI>Next message: <A HREF="000650.html">[Parley-svn] r762 - / trunk/root/base/user/signup
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#649">[ date ]</a>
+              <a href="thread.html#649">[ thread ]</a>
+              <a href="subject.html#649">[ subject ]</a>
+              <a href="author.html#649">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

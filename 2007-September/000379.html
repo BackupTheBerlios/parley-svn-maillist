@@ -1,0 +1,386 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r491 - / trunk/lib/Parley trunk/lib/Parley/App	trunk/lib/Parley/Controller trunk/lib/Parley/ResultSet	trunk/root/base trunk/root/base/terms trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r491%20-%20/%20trunk/lib/Parley%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/ResultSet%0A%09trunk/root/base%20trunk/root/base/terms%20trunk/t&In-Reply-To=%3C200709242001.l8OK1DQp028002%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000378.html">
+   <LINK REL="Next"  HREF="000380.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r491 - / trunk/lib/Parley trunk/lib/Parley/App	trunk/lib/Parley/Controller trunk/lib/Parley/ResultSet	trunk/root/base trunk/root/base/terms trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r491%20-%20/%20trunk/lib/Parley%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/ResultSet%0A%09trunk/root/base%20trunk/root/base/terms%20trunk/t&In-Reply-To=%3C200709242001.l8OK1DQp028002%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r491 - / trunk/lib/Parley trunk/lib/Parley/App	trunk/lib/Parley/Controller trunk/lib/Parley/ResultSet	trunk/root/base trunk/root/base/terms trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Sep 24 22:01:13 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000378.html">[Parley-svn] r490 - / trunk trunk/db trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/Schema trunk/lib/Parley/View	trunk/lib/Text/Search trunk/root/base/menu trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000380.html">[Parley-svn] r492 - / trunk trunk/lib/Parley/Controller/User
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#379">[ date ]</a>
+              <a href="thread.html#379">[ thread ]</a>
+              <a href="subject.html#379">[ subject ]</a>
+              <a href="author.html#379">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-24 22:01:12 +0200 (Mon, 24 Sep 2007)
+New Revision: 491
+
+Added:
+   trunk/lib/Parley/App/Terms.pm
+   trunk/lib/Parley/Controller/Terms.pm
+   trunk/lib/Parley/ResultSet/
+   trunk/lib/Parley/ResultSet/Terms.pm
+   trunk/root/base/terms/
+   trunk/root/base/terms/accept
+   trunk/root/base/terms/index
+   trunk/t/controller_Terms.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3832 at wiggin</A>:  chisel | 2007-09-19 19:33:11 +0100
+ + added helper package for Terms
+ + added controller to handle /terms URIs
+ + added resultset class for Schema::Terms
+ + added templates for /terms URIs
+ + added (generated) test file for Terms controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3831
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3832
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/App/Terms.pm
+===================================================================
+--- trunk/lib/Parley/App/Terms.pm	2007-09-24 20:00:47 UTC (rev 490)
++++ trunk/lib/Parley/App/Terms.pm	2007-09-24 20:01:12 UTC (rev 491)
+@@ -0,0 +1,50 @@
++package Parley::App::Terms;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Perl6::Export::Attrs;
++
++sub terms_check :Export( :terms ) {
++    my ($c, $user) = @_;
++    my $latest_terms = $c-&gt;model('ParleyDB')-&gt;resultset('Terms')-&gt;latest_terms();
++
++    my $path = $c-&gt;request-&gt;path();
++    my $action = $c-&gt;action;
++    $c-&gt;log-&gt;debug('REVERSE: ' . $action-&gt;reverse);
++
++    $c-&gt;log-&gt;debug('PATH: ' . $path);
++    $c-&gt;log-&gt;debug('ACPT: ' . $c-&gt;config-&gt;{terms_accept_uri});
++
++    if ($c-&gt;request-&gt;path() eq 'terms/accept') {
++        $c-&gt;log-&gt;debug('visiting: terms/accept');
++        return 1;
++    }
++
++    # if the user is trying to login ... that's ok
++    if ($c-&gt;request-&gt;path() eq 'user/login') {
++        $c-&gt;log-&gt;debug('visiting: user/login');
++        return 1;
++    }
++
++    # if we don't have any terms ... just carry on
++    if (not defined $latest_terms) {
++        $c-&gt;log-&gt;debug('no site terms');
++        return 1;
++    }
++
++    if ($latest_terms-&gt;user_accepted_latest_terms($user)) {
++        $c-&gt;log-&gt;debug('user already accepted terms');
++        return 1;
++    }
++
++    $c-&gt;log-&gt;debug('forwarding to acceptance page: '.  $c-&gt;config-&gt;{terms_accept_uri});
++    $c-&gt;response-&gt;redirect(
++        $c-&gt;uri_for($c-&gt;config-&gt;{terms_accept_uri})
++    );
++    return 0;
++}
++
++
++
++1;
+
+Added: trunk/lib/Parley/Controller/Terms.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Terms.pm	2007-09-24 20:00:47 UTC (rev 490)
++++ trunk/lib/Parley/Controller/Terms.pm	2007-09-24 20:01:12 UTC (rev 491)
+@@ -0,0 +1,118 @@
++package Parley::Controller::Terms;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use Parley::App::Terms qw( :terms );
++
++sub auto : Private {
++    my ($self, $c) = @_;
++
++    # it's always useful to have a copy of the T&amp;Cs to show
++    $c-&gt;stash-&gt;{latest_terms} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('Terms')-&gt;latest_terms();
++
++    return 1;
++}
++
++sub index : Private {
++    my ( $self, $c ) = @_;
++}
++
++sub accept : Local {
++    my ( $self, $c ) = @_;
++
++    my $status = $c-&gt;login_if_required(
++        q{You must be logged in before you can access this area}
++    );
++    if (not defined $status) {
++        return 0;
++    }
++
++    # no need to accept the terms again
++    my $latest_terms = $c-&gt;stash-&gt;{latest_terms};
++    if ($latest_terms and $latest_terms-&gt;user_accepted_latest_terms($c-&gt;_authed_user)) {
++        $c-&gt;response-&gt;redirect(
++            $c-&gt;uri_for('/terms')
++        );
++        return;
++    }
++
++    # make sure to set the template to view as we expect to get forwarded to
++    $c-&gt;stash-&gt;{template} = 'terms/accept';
++
++    # store where they were trying to get to
++    if (not $c-&gt;session-&gt;{after_terms}) {
++        $c-&gt;session-&gt;{after_terms} = $c-&gt;request-&gt;uri();
++    }
++
++    # deal with form submits
++    if (defined $c-&gt;request-&gt;method()
++            and $c-&gt;request-&gt;method() eq 'POST'
++    ) {
++        if ($c-&gt;request-&gt;param('terms_reject')) {
++            # session logout, and remove information we've stashed
++            $c-&gt;logout;
++            delete $c-&gt;session-&gt;{'authed_user'};
++            $c-&gt;response-&gt;redirect(
++                $c-&gt;uri_for($c-&gt;config()-&gt;{default_uri})
++            );
++            return;
++        }
++        elsif ($c-&gt;request-&gt;param('terms_accept')) {
++            # insert the appropriate record
++            $c-&gt;model('ParleyDB')-&gt;resultset('TermsAgreed')-&gt;create(
++                {
++                    person_id   =&gt; $c-&gt;_authed_user()-&gt;id(),
++                    terms_id    =&gt; $c-&gt;stash-&gt;{latest_terms}-&gt;id(),
++                }
++            );
++            $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_commit;
++
++            # if we can, send them back to where they were trying to go
++            if ( $c-&gt;session-&gt;{after_terms} ) {
++                $c-&gt;response-&gt;redirect(
++                    delete $c-&gt;session-&gt;{after_terms}
++                );
++            }
++            else {
++                $c-&gt;response-&gt;redirect(
++                    $c-&gt;uri_for($c-&gt;config()-&gt;{default_uri})
++                );
++            }
++            return;
++        }
++    }
++
++    else {
++        # otherwise, show the terms to be accepted
++    }
++}
++
++1;
++
++__END__
++
++=head1 NAME
++
++Parley::Controller::Terms - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=head2 index 
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Added: trunk/lib/Parley/ResultSet/Terms.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Terms.pm	2007-09-24 20:00:47 UTC (rev 490)
++++ trunk/lib/Parley/ResultSet/Terms.pm	2007-09-24 20:01:12 UTC (rev 491)
+@@ -0,0 +1,27 @@
++package Parley::ResultSet::Terms;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use base 'DBIx::Class::ResultSet';
++
++sub latest_terms {
++    my $resultset = shift;
++
++    my $latest_rs = $resultset-&gt;search(
++        {
++        },
++        {
++            rows        =&gt; 1,
++            order_by    =&gt; 'created DESC',
++        }
++    );
++
++    if ($latest_rs-&gt;count()) {
++        return $latest_rs-&gt;first();
++    }
++
++    return;
++}
++
++1;
+
+Added: trunk/root/base/terms/accept
+===================================================================
+--- trunk/root/base/terms/accept	2007-09-24 20:00:47 UTC (rev 490)
++++ trunk/root/base/terms/accept	2007-09-24 20:01:12 UTC (rev 491)
+@@ -0,0 +1,29 @@
++&lt;h1&gt;Terms and Conditions&lt;/h1&gt;
++
++&lt;p&gt;
++You need to accept the Terms and Conditions below to continue using the site:
++&lt;/p&gt;
++
++&lt;div class=&quot;site_terms&quot;&gt;
++    [% ForumCode.forumcode(latest_terms.content) %]
++    &lt;div style=&quot;text-align: right;&quot;&gt;
++    Last Modified: [% nicedate(latest_terms.created) %]
++    &lt;/div&gt;
++&lt;/div&gt;
++
++[% IF latest_terms.change_summary %]
++&lt;h1&gt;Summary of Changes&lt;/h1&gt;
++&lt;div class=&quot;site_terms&quot;&gt;
++    [% ForumCode.forumcode(latest_terms.change_summary) %]
++&lt;/div&gt;
++[% END %]
++
++&lt;div class=&quot;site_terms&quot; style=&quot;border: none; text-align: center;&quot;&gt;
++    &lt;form method=&quot;post&quot; action=&quot;terms/accept&quot; /&gt;
++
++    &lt;input type=&quot;submit&quot; name=&quot;terms_accept&quot; value=&quot;I AGREE to the terms above&quot; /&gt;
++    &lt;br /&gt;
++    &lt;input type=&quot;submit&quot; name=&quot;terms_reject&quot; value=&quot;I DO NOT agree to the terms above&quot; /&gt;
++
++    &lt;/form&gt;
++&lt;/div&gt;
+
+Added: trunk/root/base/terms/index
+===================================================================
+--- trunk/root/base/terms/index	2007-09-24 20:00:47 UTC (rev 490)
++++ trunk/root/base/terms/index	2007-09-24 20:01:12 UTC (rev 491)
+@@ -0,0 +1,18 @@
++[% IF latest_terms %]
++    &lt;h1&gt;Terms and Conditions&lt;/h1&gt;
++    &lt;div class=&quot;site_terms&quot;&gt;
++        [% ForumCode.forumcode(latest_terms.content) %]
++        &lt;div style=&quot;text-align: right;&quot;&gt;
++        Last Modified: [% nicedate(latest_terms.created) %]
++        &lt;/div&gt;
++    &lt;/div&gt;
++
++    [% IF latest_terms.change_summary %]
++    &lt;h1&gt;Summary of Changes&lt;/h1&gt;
++    &lt;div class=&quot;site_terms&quot;&gt;
++        [% ForumCode.forumcode(latest_terms.change_summary) %]
++    &lt;/div&gt;
++    [% END %]
++[% ELSE %]
++This site has no Terms and Conditions to view.
++[% END %]
+
+Added: trunk/t/controller_Terms.t
+===================================================================
+--- trunk/t/controller_Terms.t	2007-09-24 20:00:47 UTC (rev 490)
++++ trunk/t/controller_Terms.t	2007-09-24 20:01:12 UTC (rev 491)
+@@ -0,0 +1,10 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 3;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::Terms' }
++
++ok( request('/terms')-&gt;is_success, 'Request should succeed' );
++
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000378.html">[Parley-svn] r490 - / trunk trunk/db trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/Schema trunk/lib/Parley/View	trunk/lib/Text/Search trunk/root/base/menu trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000380.html">[Parley-svn] r492 - / trunk trunk/lib/Parley/Controller/User
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#379">[ date ]</a>
+              <a href="thread.html#379">[ thread ]</a>
+              <a href="subject.html#379">[ subject ]</a>
+              <a href="author.html#379">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

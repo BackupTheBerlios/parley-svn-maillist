@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r306 - / trunk/lib trunk/lib/Text	trunk/lib/Text/Search trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r306%20-%20/%20trunk/lib%20trunk/lib/Text%0A%09trunk/lib/Text/Search%20trunk/t&In-Reply-To=%3C200704191649.l3JGnNb5008670%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000193.html">
+   <LINK REL="Next"  HREF="000195.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r306 - / trunk/lib trunk/lib/Text	trunk/lib/Text/Search trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r306%20-%20/%20trunk/lib%20trunk/lib/Text%0A%09trunk/lib/Text/Search%20trunk/t&In-Reply-To=%3C200704191649.l3JGnNb5008670%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r306 - / trunk/lib trunk/lib/Text	trunk/lib/Text/Search trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Apr 19 18:49:23 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000193.html">[Parley-svn] r305 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000195.html">[Parley-svn] r307 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#194">[ date ]</a>
+              <a href="thread.html#194">[ thread ]</a>
+              <a href="subject.html#194">[ subject ]</a>
+              <a href="author.html#194">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-19 18:49:22 +0200 (Thu, 19 Apr 2007)
+New Revision: 306
+
+Added:
+   trunk/lib/Text/
+   trunk/lib/Text/Search/
+   trunk/lib/Text/Search/SQL.pm
+   trunk/t/50.text_search.sql.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3173 at wiggin</A>:  chisel | 2007-04-18 18:54:35 +0100
+ + new module (and tests) to parse [simple] search strings and provide an SQL::Abstract suitable where-clause
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3167
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3173
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Text/Search/SQL.pm
+===================================================================
+--- trunk/lib/Text/Search/SQL.pm	2007-04-17 21:32:41 UTC (rev 305)
++++ trunk/lib/Text/Search/SQL.pm	2007-04-19 16:49:22 UTC (rev 306)
+@@ -0,0 +1,139 @@
++package Text::Search::SQL;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++use Carp;
++use Data::Dump qw(pp);
++
++sub new {
++    my ($proto, $options) = @_;
++
++    my $defaults = {
++        search_term     =&gt; undef,
++        search_fields   =&gt; [],
++    };
++
++    my $self = bless $defaults, ref($proto) || $proto;
++
++    # slip in the options passed to us
++    while (my ($k,$v) = each %{$options}) {
++        if (exists $defaults-&gt;{$k}) {
++            if (not ref($self-&gt;{$k})) {
++                $self-&gt;{$k} = $v;
++            }
++            elsif ( ref $self-&gt;{$k} and (ref($v) eq ref($self-&gt;{$k}))) {
++                $self-&gt;{$k} = $v;
++            }
++            else {
++                Carp::carp( qq{'$k' should be of type } . ref($self-&gt;{$k}) );
++            }
++        }
++        else {
++            Carp::carp( qq{unknown option '$k'} );
++        }
++    }
++
++    return $self;
++}
++
++sub set_search_term {
++    my ($self, $value) = @_;
++
++    $self-&gt;{search_term} = $value;
++}
++sub get_search_term {
++    my ($self) = @_;
++    return $self-&gt;{search_term};
++}
++
++sub set_search_fields {
++    my ($self, $value) = @_;
++
++    $self-&gt;{search_fields} = $value;
++}
++sub get_search_fields {
++    my ($self) = @_;
++    return $self-&gt;{search_fields};
++}
++
++sub set_chunks {
++    my ($self, $value) = @_;
++
++    $self-&gt;{chunks} = $value;
++}
++sub get_chunks {
++    my ($self) = @_;
++    return $self-&gt;{chunks};
++}
++
++sub set_sql_where {
++    my ($self, $value) = @_;
++
++    $self-&gt;{sql_where} = $value;
++}
++sub get_sql_where {
++    my ($self) = @_;
++    return $self-&gt;{sql_where};
++}
++
++sub parse {
++    my ($self) = @_;
++    my ($fields);
++
++    # split the search term into its relevant chunks
++    $self-&gt;set_chunks( $self-&gt;_parse_chunks( $self-&gt;{search_term} ) );
++
++    # can't do anything more if we don't have search_fields
++    $fields = $self-&gt;get_search_fields();
++    if (not @{$fields}) {
++        Carp::carp( qq{no search_fields defined, cannot prepare SQL::Abstract data} );
++        return;
++    }
++
++    foreach my $field ( @{$fields} ) {
++        $self-&gt;{sql_where}-&gt;{ $field } = $self-&gt;get_chunks();
++    }
++
++    return 1;
++}
++
++sub _parse_chunks {
++    my ($self, $string) = @_;
++    my (@chunks, @quotes);
++
++    # we only group with double quotes
++    @quotes = qw( &quot; );
++
++    # pull out quoted groups of words
++    foreach my $quote (@quotes) {
++        while ($string =~ s{${quote}(.+?)${quote}}{ }g) {
++            push @chunks, $1;
++        }
++    }
++
++    # strip leading and trailing whitespace
++    $string =~ s{\A\s+}{};
++    $string =~ s{\s+\z}{};
++
++    # split on whitespace - how naive!
++    push @chunks, split( m{\s+}, $string );
++
++    return \@chunks;
++}
++
++
++1;
++
++__END__
++
++=pod
++
++=head1 NAME
++
++Text::Search::SQL - split search terms into something that can be used with DBIx::Class or SQL::Abstract
++
++=head1 AUTHOR
++
++Chisel Wright C&lt; &lt;&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel.wright at users.berlios.de</A>&gt;&gt; &gt;
++
++=cut
+
+Added: trunk/t/50.text_search.sql.t
+===================================================================
+--- trunk/t/50.text_search.sql.t	2007-04-17 21:32:41 UTC (rev 305)
++++ trunk/t/50.text_search.sql.t	2007-04-19 16:49:22 UTC (rev 306)
+@@ -0,0 +1,165 @@
++#!/usr/bin/env perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++use Data::Dump qw(pp);
++
++use Test::More tests =&gt; 36;
++
++BEGIN {
++    use_ok('Text::Search::SQL');
++}
++
++# GLOBAL VARIABLES
++my ($sp);
++
++# make sure we offer the expected methods in the interface
++can_ok('Text::Search::SQL',
++    qw[
++        new
++        set_search_term
++        get_search_term
++        set_search_fields
++        get_search_fields
++        set_chunks
++        get_chunks
++        set_sql_where
++        get_sql_where
++        parse
++
++        _parse_chunks
++    ]
++);
++
++# get a new instance of the object, name sure it's what we're expecting
++$sp = Text::Search::SQL-&gt;new();
++isa_ok($sp, q{Text::Search::SQL});
++
++# calling with no argument means we should have default attributes
++is( $sp-&gt;{search_term}, undef, q{undefined search_term} );
++
++# create a new object with a search_term in the call to new
++$sp = Text::Search::SQL-&gt;new( { search_term =&gt; 'one man' } );
++isa_ok($sp, q{Text::Search::SQL});
++
++# calling with no argument means we should have default attributes
++is( $sp-&gt;{search_term}, q{one man}, q{search_term is 'one man'} );
++
++# using set_search_term() gives expected results
++$sp-&gt;set_search_term('went to mow');
++is( $sp-&gt;{search_term}, q{went to mow}, q{search_term is 'went to mow'} );
++
++# data to loop through for _parse_chunks() and parse() tests
++my @data = (
++    {
++        input   =&gt; q{isn't},
++        output  =&gt; [ q{isn't} ],
++
++        search_fields   =&gt; [ qw/subject/ ],
++        sql_where       =&gt; {
++            subject =&gt; [ q{isn't} ],
++        },
++    },
++    {
++        input   =&gt; q{went to mow},
++        output  =&gt; ['went', 'to', 'mow'],
++
++        search_fields   =&gt; [ qw/subject/ ],
++        sql_where       =&gt; {
++            subject =&gt; [ qw(went to mow) ],
++        },
++    },
++    {
++        input   =&gt; q{&quot;went to&quot; mow},
++        output  =&gt; ['went to', 'mow'],
++
++        search_fields   =&gt; [ qw/subject/ ],
++        sql_where       =&gt; {
++            subject =&gt; [ q{went to}, q{mow} ],
++        },
++    },
++    {
++        input   =&gt; q{'went to' mow},
++        output  =&gt; [ q{'went}, q{to'}, q{mow} ],
++    },
++    {
++        input   =&gt; q{'went to' &quot;mow a meadow&quot;},
++        output  =&gt; [ q{'went}, q{mow a meadow}, q{to'}],
++    },
++    {
++        input   =&gt; q{went to' mow a meadow&quot;},
++        output  =&gt; [ q{a}, q{meadow&quot;}, q{mow}, q{to'}, q{went} ],
++    },
++    {
++        input   =&gt; q{went to' mow a &quot;meadow&quot;'},
++        output  =&gt; [ q{'}, q{a}, q{meadow}, q{mow}, q{to'}, q{went} ],
++    },
++    {
++        input   =&gt; q{went to&quot; mow a 'meadow'&quot;},
++        output  =&gt; [ q{ mow a 'meadow'}, q{to}, q{went} ],
++    },
++    {
++        input   =&gt; q{isn't it nice to be here?},
++        output  =&gt; [ q{isn't}, q{it}, q{nice}, q{to}, q{be}, q{here?} ],
++    },
++    {
++        input   =&gt; q{&quot;isn't it nice to be here?&quot;},
++        output  =&gt; [ q{isn't it nice to be here?} ],
++    },
++
++    # some tests geared to the returned where data
++    {
++        input   =&gt; q{alpha beta},
++        output  =&gt; [ qw(alpha beta) ],
++
++        search_fields   =&gt; [ qw(subject) ],
++        sql_where       =&gt; {
++            subject =&gt; [ qw(alpha beta) ],
++        },
++    },
++    {
++        input   =&gt; q{alpha beta},
++        output  =&gt; [ qw(alpha beta) ],
++
++        search_fields   =&gt; [ qw(subject message) ],
++        sql_where       =&gt; {
++            subject =&gt; [ qw(alpha beta) ],
++            message =&gt; [ qw(alpha beta) ],
++        },
++    },
++);
++
++# tests for _parse_chunks()
++foreach my $data (@data) {
++    # _parse_chunks()
++    my $chunks = $sp-&gt;_parse_chunks( $data-&gt;{input} );
++    is_deeply(
++        [ sort @{ $data-&gt;{output} } ],
++        [ sort @{ $chunks } ],
++        qq{_parse_chunks: $data-&gt;{input}}
++    );
++
++    # check where clause meets our expectation
++    if (defined $data-&gt;{search_fields}) {
++        $sp-&gt;set_search_fields( $data-&gt;{search_fields} );
++    }
++
++    # parse()
++    $sp-&gt;set_search_term( $data-&gt;{input} );
++    $sp-&gt;parse();
++    is_deeply(
++        $sp-&gt;{chunks},
++        $chunks,
++        qq{\$sp-&gt;{chunks} matches _parse_chunks($data-&gt;{input})}
++    );
++
++    # where clause
++    if (defined $data-&gt;{sql_where}) {
++        is_deeply(
++            $sp-&gt;get_sql_where(),
++            $data-&gt;{sql_where},
++            qq{correct where data for $data-&gt;{input}},
++        );
++    }
++}
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000193.html">[Parley-svn] r305 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000195.html">[Parley-svn] r307 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#194">[ date ]</a>
+              <a href="thread.html#194">[ thread ]</a>
+              <a href="subject.html#194">[ subject ]</a>
+              <a href="author.html#194">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,286 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r697 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r697%20-%20/%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200712201015.lBKAFmU3007374%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000584.html">
+   <LINK REL="Next"  HREF="000586.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r697 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r697%20-%20/%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200712201015.lBKAFmU3007374%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r697 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Dec 20 11:15:48 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000584.html">[Parley-svn] r696 - / trunk/lib/Parley
+</A></li>
+        <LI>Next message: <A HREF="000586.html">[Parley-svn] r698 - / trunk/lib/Parley/ResultSet
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#585">[ date ]</a>
+              <a href="thread.html#585">[ thread ]</a>
+              <a href="subject.html#585">[ subject ]</a>
+              <a href="author.html#585">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-20 11:15:48 +0100 (Thu, 20 Dec 2007)
+New Revision: 697
+
+Added:
+   trunk/lib/Parley/ResultSet/Post.pm
+Modified:
+   /
+   trunk/lib/Parley/Schema/Post.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4336 at wiggin</A>:  chisel | 2007-12-20 09:14:06 +0000
+ / moved :ResultSetManager classes into separate resultset class
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4335
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4336
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/ResultSet/Post.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Post.pm	2007-12-20 10:15:41 UTC (rev 696)
++++ trunk/lib/Parley/ResultSet/Post.pm	2007-12-20 10:15:48 UTC (rev 697)
+@@ -0,0 +1,84 @@
++package Parley::ResultSet::Post;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use base 'DBIx::Class::ResultSet';
++
++# we used to use -&gt;slice() but it sopped working on page #2 (!!)
++# this may be slower [not benchmarked] but it works
++sub last_post_in_list :ResultSet {
++    my ($self, $post_list) = @_;
++    my ($current_post);
++
++    while (my $tmp = $post_list-&gt;next()) {
++        # do nothing, we're just iterating the list
++        $current_post = $tmp;
++        #warn qq{LOOP: } . ref($current_post);
++    }
++    # return the current post, which is the last one we saw
++    # i.e. the last one in the list
++    #warn qq{CURRENT: } . ref($current_post);
++    return $current_post;
++}
++
++
++sub next_post :ResultSet {
++    my ($self, $post) = @_;
++    my $next_post;
++
++    # we want to find the next post after the one we've been given, based on
++    # creation time
++    # if for some reason there are no matches, just return the post we were passed
++    $next_post = $self-&gt;search(
++        {
++            created    =&gt; { '&gt;' =&gt; DateTime::Format::Pg-&gt;format_datetime($post-&gt;created()) },
++            thread_id  =&gt; $post-&gt;thread()-&gt;id(),
++        },
++        {
++            rows    =&gt; 1,
++        }
++    );
++
++    if (defined $next_post-&gt;first()) {
++        return $next_post-&gt;first();
++    }
++
++    return $post;
++}
++
++
++sub page_containing_post : ResultSet {
++    my ($self, $post, $posts_per_page) = @_;
++
++    my $position_in_thread = $self-&gt;thread_position($post);
++
++    # work out what page the Nth post is on
++    my $page_number = int(($position_in_thread - 1) / $posts_per_page) + 1;
++
++    return $page_number;
++}
++
++
++sub thread_position : ResultSet {
++    my ($self, $post) = @_;
++
++    if (not defined $post) {
++        warn('$post id undefined in call to Parley::Model::ParleyDB::Post-&gt;thread_position()');
++        return;
++    }
++
++    # explicitly 'deflate' the creation time, as DBIx::Class (&lt;=v0.06003) doesn't deflate on search()
++    my $position = $self-&gt;count(
++        {
++            thread_id  =&gt; $post-&gt;thread()-&gt;id(),
++            created =&gt; {
++                '&lt;='   =&gt; DateTime::Format::Pg-&gt;format_datetime($post-&gt;created())
++            },
++        }
++    );
++
++    return $position;
++}
++
++1;
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-12-20 10:15:41 UTC (rev 696)
++++ trunk/lib/Parley/Schema/Post.pm	2007-12-20 10:15:48 UTC (rev 697)
+@@ -15,7 +15,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__-&gt;load_components(&quot;ResultSetManager&quot;, &quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;post&quot;);
+ __PACKAGE__-&gt;add_columns(
+   &quot;id&quot; =&gt; {
+@@ -86,7 +86,10 @@
+     size =&gt; 8,
+   },
+ );
++
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Post');
++
+ __PACKAGE__-&gt;has_many(
+     &quot;threads&quot; =&gt; &quot;Thread&quot;,
+     { &quot;foreign.last_post_id&quot; =&gt; &quot;self.id&quot; }
+@@ -138,82 +141,7 @@
+ 
+ 
+ 
+-# we used to use -&gt;slice() but it sopped working on page #2 (!!)
+-# this may be slower [not benchmarked] but it works
+-sub last_post_in_list : ResultSet {
+-    my ($self, $post_list) = @_;
+-    my ($current_post);
+ 
+-    while (my $tmp = $post_list-&gt;next()) {
+-        # do nothing, we're just iterating the list
+-        $current_post = $tmp;
+-        #warn qq{LOOP: } . ref($current_post);
+-    }
+-    # return the current post, which is the last one we saw
+-    # i.e. the last one in the list
+-    #warn qq{CURRENT: } . ref($current_post);
+-    return $current_post;
+-}
+-
+-
+-sub next_post :ResultSet {
+-    my ($self, $post) = @_;
+-    my $next_post;
+-
+-    # we want to find the next post after the one we've been given, based on
+-    # creation time
+-    # if for some reason there are no matches, just return the post we were passed
+-    $next_post = $self-&gt;search(
+-        {
+-            created    =&gt; { '&gt;' =&gt; DateTime::Format::Pg-&gt;format_datetime($post-&gt;created()) },
+-            thread_id  =&gt; $post-&gt;thread()-&gt;id(),
+-        },
+-        {
+-            rows    =&gt; 1,
+-        }
+-    );
+-
+-    if (defined $next_post-&gt;first()) {
+-        return $next_post-&gt;first();
+-    }
+-
+-    return $post;
+-}
+-
+-
+-sub page_containing_post : ResultSet {
+-    my ($self, $post, $posts_per_page) = @_;
+-
+-    my $position_in_thread = $self-&gt;thread_position($post);
+-
+-    # work out what page the Nth post is on
+-    my $page_number = int(($position_in_thread - 1) / $posts_per_page) + 1;
+-
+-    return $page_number;
+-}
+-
+-
+-sub thread_position : ResultSet {
+-    my ($self, $post) = @_;
+-
+-    if (not defined $post) {
+-        warn('$post id undefined in call to Parley::Model::ParleyDB::Post-&gt;thread_position()');
+-        return;
+-    }
+-
+-    # explicitly 'deflate' the creation time, as DBIx::Class (&lt;=v0.06003) doesn't deflate on search()
+-    my $position = $self-&gt;count(
+-        {
+-            thread_id  =&gt; $post-&gt;thread()-&gt;id(),
+-            created =&gt; {
+-                '&lt;='   =&gt; DateTime::Format::Pg-&gt;format_datetime($post-&gt;created())
+-            },
+-        }
+-    );
+-
+-    return $position;
+-}
+-
+ # accessor to use in search results to return context matches
+ sub match_context {
+     my $self = shift;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000584.html">[Parley-svn] r696 - / trunk/lib/Parley
+</A></li>
+	<LI>Next message: <A HREF="000586.html">[Parley-svn] r698 - / trunk/lib/Parley/ResultSet
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#585">[ date ]</a>
+              <a href="thread.html#585">[ thread ]</a>
+              <a href="subject.html#585">[ subject ]</a>
+              <a href="author.html#585">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

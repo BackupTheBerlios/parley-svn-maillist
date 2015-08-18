@@ -1,0 +1,292 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r266 - / trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r266%20-%20/%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/App%20trunk/lib/Parley/App/Communication&In-Reply-To=%3C200703262142.l2QLg4df007995%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000153.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r266 - / trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r266%20-%20/%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/App%20trunk/lib/Parley/App/Communication&In-Reply-To=%3C200703262142.l2QLg4df007995%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r266 - / trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Mar 26 23:42:04 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000153.html">[Parley-svn] r265 - / trunk/lib/Parley/Controller
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#154">[ date ]</a>
+              <a href="thread.html#154">[ thread ]</a>
+              <a href="subject.html#154">[ subject ]</a>
+              <a href="author.html#154">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-03-26 23:42:01 +0200 (Mon, 26 Mar 2007)
+New Revision: 266
+
+Added:
+   trunk/lib/Parley/App/
+   trunk/lib/Parley/App/Communication/
+   trunk/lib/Parley/App/Communication/Email.pm
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r2983 at wiggin</A>:  chisel | 2007-03-26 07:52:52 +0100
+ + checked in (factored-out) send_email() and queue_email() functions
+ / modified use path in lib/Parley.pm
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2982
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:2983
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/App/Communication/Email.pm
+===================================================================
+--- trunk/lib/Parley/App/Communication/Email.pm	2007-03-26 21:41:52 UTC (rev 265)
++++ trunk/lib/Parley/App/Communication/Email.pm	2007-03-26 21:42:01 UTC (rev 266)
+@@ -0,0 +1,183 @@
++package Parley::App::Communication::Email;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Perl6::Export::Attrs;
++
++sub queue_email :Export( :email ) {
++    my ($c, $options) = @_;
++    my $queued_mail = $c-&gt;model('ParleyDB')-&gt;resultset('EmailQueue')-&gt;create(
++        {
++            sender          =&gt; $options-&gt;{headers}{from}        || q{Missing From &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at somewhere.com</A>&gt;},
++
++            recipient       =&gt; $options-&gt;{recipient}-&gt;id()      || 0,
++            subject         =&gt; $options-&gt;{headers}{subject}     || q{Subject Line Missing},
++            text_content    =&gt; $options-&gt;{text_content}         || q{Email Body Text Missing},
++        }
++    );
++    return 1; # success
++}
++
++sub send_email :Export( :email ) {
++    my ($c, $options) = @_;
++    my ($text_content, $html_content, $email_status);
++
++    # preparing for future expansion, where we intend to build multipart emails
++    # and we'll be using -&gt;{template}{text} and -&gt;{template}{html}
++    if (            exists $options-&gt;{template}
++            and ref($options-&gt;{template}) ne 'HASH'
++    ) {
++        $c-&gt;log-&gt;warn(
++              q{DEPRECATED use of -&gt;{template} = 'file.eml'}
++            . q{: plain-text template name should be stored in }
++            . q{-&gt;{template}{text} instead of -&gt;{template}}
++        );
++
++        # put the data in the right place
++        my $tpl_name = $options-&gt;{template};
++        $options-&gt;{template} = {};
++        $options-&gt;{template}{text} = $tpl_name;
++    }
++
++    # we don't send anything immediately ... push it into the queue of outgoing
++    # messages
++
++    # prepare the text content portion of the message - we read this from a
++    # [template] file which we render
++    $text_content = $c-&gt;view('Plain')-&gt;render(
++        $c,
++        $options-&gt;{template}{text},
++        {
++            additional_template_paths =&gt; [ $c-&gt;config-&gt;{root} . q{/email_templates}],
++
++            # automatically make the person data available
++            person =&gt; $options-&gt;{person},
++
++            # pass through extra TT data
++            %{ $options-&gt;{template_data} || {} },
++        }
++    );
++
++    # queue the message
++    $email_status = $c-&gt;queue_email(
++        {
++            headers =&gt; {
++                from        =&gt;     $options-&gt;{headers}{from}
++                                || q{Missing From &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">missing.from at localhost</A>&gt;},
++                subject     =&gt;     $options-&gt;{headers}{subject}
++                                || q{Subject Line Missing},
++            },
++
++            recipient       =&gt; $options-&gt;{person},
++            text_content    =&gt; $text_content,
++        },
++    );
++
++    # did we queue the email OK?
++    if ($email_status) {
++        $c-&gt;log-&gt;info(
++              q{send_email(}
++            . $options-&gt;{person}-&gt;email()
++            . q{): }
++            . $email_status
++        );
++
++        return 1;
++    }
++    else {
++        $c-&gt;log-&gt;error( $email_status );
++        $c-&gt;stash-&gt;{error}{message} = q{There was a problem sending an email from the system};
++        return 0;
++    }
++}
++
++sub old_send_email :Export( :email ) {
++    my ($c, $options) = @_;
++
++    # preparing for future expansion, where we intend to build multipart emails
++    # and we'll be using -&gt;{template}{text} and -&gt;{template}{html}
++    if (            exists $options-&gt;{template}
++            and ref($options-&gt;{template}) ne 'HASH'
++    ) {
++        $c-&gt;log-&gt;warn(
++              q{DEPRECATED use of -&gt;{template} = 'file.eml'}
++            . q{: plain-text template name should be stored in }
++            . q{-&gt;{template}{text} instead of -&gt;{template}}
++        );
++
++        # put the data in the right place
++        my $tpl_name = $options-&gt;{template};
++        $options-&gt;{template} = {};
++        $options-&gt;{template}{text} = $tpl_name;
++    }
++
++    # send an email off to the new user
++    my $email_status = $c-&gt;email(
++        header =&gt; [
++            To      =&gt; $options-&gt;{person}-&gt;email(),
++            From    =&gt; $options-&gt;{headers}{from}      || q{Missing From &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at somewhere.com</A>&gt;},
++            Subject =&gt; $options-&gt;{headers}{subject}   || q{Subject Line Missing},
++        ],
++
++        body =&gt; $c-&gt;view('Plain')-&gt;render(
++            $c,
++            $options-&gt;{template}{text},
++            {
++                additional_template_paths =&gt; [ $c-&gt;config-&gt;{root} . q{/email_templates}],
++
++                # automatically make the person data available
++                person =&gt; $options-&gt;{person},
++
++                # pass through extra TT data
++                %{ $options-&gt;{template_data} || {} },
++            }
++        ),
++    );
++
++    # did we get &quot;Message sent&quot; from the email send?
++    if ($email_status eq q{Message sent}) {
++        $c-&gt;log-&gt;info(
++              q{send_email(}
++            . $options-&gt;{person}-&gt;email()
++            . q{): }
++            . $email_status
++        );
++
++        return 1;
++    }
++    else {
++        $c-&gt;log-&gt;error( $email_status );
++        $c-&gt;stash-&gt;{error}{message} = q{Sorry, we are currently unable to store your information. Please try again later.};
++        return 0;
++    }
++}
++
++1;
++
++__END__
++
++=head1 NAME
++
++Parley::App::Communication::Email - email helper functions
++
++=head1 SYNOPSIS
++
++  use Parley::App::Communication::Email;
++
++  $self-&gt;send_email($c, $options);
++
++=head1 SEE ALSO
++
++L&lt;Parley::Controller::Root&gt;, L&lt;Catalyst::Plugin::Email&gt;, L&lt;Catalyst&gt;
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-03-26 21:41:52 UTC (rev 265)
++++ trunk/lib/Parley.pm	2007-03-26 21:42:01 UTC (rev 266)
+@@ -26,7 +26,7 @@
+     Authentication::Credential::Password
+ /;
+ 
+-use Parley::Communication::Email qw( :email );
++use Parley::App::Communication::Email qw( :email );
+ 
+ 
+ our $VERSION = '0.50-pre';
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000153.html">[Parley-svn] r265 - / trunk/lib/Parley/Controller
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#154">[ date ]</a>
+              <a href="thread.html#154">[ thread ]</a>
+              <a href="subject.html#154">[ subject ]</a>
+              <a href="author.html#154">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

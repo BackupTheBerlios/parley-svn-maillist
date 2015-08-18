@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r407 - / trunk trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r407%20-%20/%20trunk%20trunk/root/base/thread&In-Reply-To=%3C200707202050.l6KKotFI017291%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000294.html">
+   <LINK REL="Next"  HREF="000296.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r407 - / trunk trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r407%20-%20/%20trunk%20trunk/root/base/thread&In-Reply-To=%3C200707202050.l6KKotFI017291%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r407 - / trunk trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Jul 20 22:50:55 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000294.html">[Parley-svn] r406 - / trunk/lib/Parley/Controller	trunk/root/base/menu trunk/root/base/my	trunk/root/base/thread trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000296.html">[Parley-svn] r408 - / trunk/root/base/forum
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#295">[ date ]</a>
+              <a href="thread.html#295">[ thread ]</a>
+              <a href="subject.html#295">[ subject ]</a>
+              <a href="author.html#295">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-20 22:50:54 +0200 (Fri, 20 Jul 2007)
+New Revision: 407
+
+Added:
+   trunk/root/base/thread/watches
+Modified:
+   /
+   trunk/MANIFEST
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3511 at wiggin</A>:  chisel | 2007-07-20 20:53:11 +0100
+ + added root/base/thread/watches
+ / updated MANIFEST (make manifest)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3510
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3511
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2007-07-20 20:50:47 UTC (rev 406)
++++ trunk/MANIFEST	2007-07-20 20:50:54 UTC (rev 407)
+@@ -83,6 +83,10 @@
+ root/base/forum/list
+ root/base/forum/view
+ root/base/header
++root/base/help/contents
++root/base/help/faq
++root/base/help/formatting_posts
++root/base/help/unknown
+ root/base/menu/left/main
+ root/base/menu/menubar
+ root/base/menu/statusbar
+@@ -108,6 +112,7 @@
+ root/base/thread/recent
+ root/base/thread/reply
+ root/base/thread/view
++root/base/thread/watches
+ root/base/user/auth_emailed
+ root/base/user/auth_success
+ root/base/user/login
+
+Added: trunk/root/base/thread/watches
+===================================================================
+--- trunk/root/base/thread/watches	2007-07-20 20:50:47 UTC (rev 406)
++++ trunk/root/base/thread/watches	2007-07-20 20:50:54 UTC (rev 407)
+@@ -0,0 +1,88 @@
++&lt;h1&gt;Watched Threads&lt;/h1&gt;
++
++[% IF thread_watches &gt; 0 %]
++&lt;form method=&quot;post&quot;&gt;
++    &lt;table class=&quot;thread_watches&quot;&gt;
++        &lt;tbody&gt;
++            &lt;tr&gt;
++                &lt;th style=&quot;width:14px;&quot;&gt;&nbsp;&lt;/th&gt;
++                &lt;th&gt;Subject&lt;/th&gt;
++                &lt;th&gt;Last Modified&lt;/th&gt;
++                &lt;th&gt;Last Viewed&lt;/th&gt;
++            &lt;/tr&gt;
++            [% WHILE (watch = thread_watches.next) %]
++            [% thread = watch.thread %]
++            &lt;tr&gt;
++                &lt;td style=&quot;width:14px;&quot;&gt;
++                    [% IF (thread.last_post.created &gt; watch.timestamp) %]
++                    &lt;img src=&quot;static/images/unread_posts.gif&quot; width=&quot;12&quot; height=&quot;12&quot; alt=&quot;Unread Posts&quot; title=&quot;Unread Posts&quot; /&gt;
++                    [% ELSE %]
++                    &nbsp;
++                    [% END %]
++                &lt;/td&gt;
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;
++                    &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot;&gt;
++                    [% ForumCode.escape(watch.thread.subject) %]
++                    &lt;/a&gt;
++                    &lt;br /&gt;
++                    &lt;span class=&quot;forum_mini_pager&quot;&gt;
++                        [%- IF authed_user || mini_pager %]
++                        [
++                            [%- IF authed_user %]
++                            &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;Continue&lt;/a&gt;
++                            [%- END %]
++                        ]
++                        [%- END %]
++                    &lt;/span&gt;
++                &lt;/td&gt;
++
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;
++                    [% nicedate(thread.last_post.created) %]
++                    &lt;br /&gt;
++                    &lt;span class=&quot;topic_creator&quot;&gt;last post by
++                    &lt;span class=&quot;post_creator&quot;&gt;[% thread.last_post.creator.forum_name %]&lt;/span&gt;
++                    &lt;/span&gt;
++                &lt;/td&gt;
++
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;
++                    [% nicedate(watch.timestamp) %]
++                    &lt;br /&gt;
++                    [% IF (thread.last_post.created &gt; watch.timestamp) %]
++                    &lt;span class=&quot;topic_creator&quot;&gt;Unread posts&lt;/span&gt;
++                    [% END %]
++                &lt;/td&gt;
++                &lt;td style=&quot;width:14px;&quot;&gt;
++                    &lt;input type=&quot;checkbox&quot; name=&quot;stop_watching&quot; value=&quot;[% thread.id %]&quot; /&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++            [% END %]
++            &lt;tr&gt;
++                &lt;td colspan=&quot;5&quot; class=&quot;right_align&quot;&gt;
++                    &lt;small&gt;
++                        &lt;a href=&quot;javascript:toggle_all('stop_watching',1);&quot;&gt;Select All&lt;/a&gt;
++                        &lt;a href=&quot;javascript:toggle_all('stop_watching',0);&quot;&gt;Deselect All&lt;/a&gt;
++                    &lt;/small&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++            &lt;tr&gt;
++                &lt;td colspan=&quot;5&quot; class=&quot;center_align&quot;&gt;
++                    &lt;input type=&quot;submit&quot; value=&quot;Stop Watching Selected Threads&quot; /&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++        &lt;/tbody&gt;
++    &lt;/table&gt;
++&lt;/form&gt;
++[% ELSE %]
++    &lt;p&gt;You are not watching any threads&lt;/p&gt;
++[% END %]
++
++&lt;script type=&quot;text/javascript&quot;&gt;
++    /* set the 'checked' value for all items matching 'name' to 'value' (0|1) */
++    function toggle_all(name,value) {
++        //alert( name );
++        var cboxes = document.getElementsByName( name );
++        for (var i=0;i&lt;cboxes.length;i++) {
++            cboxes[i].checked = value;
++        }
++    }
++&lt;/script&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000294.html">[Parley-svn] r406 - / trunk/lib/Parley/Controller	trunk/root/base/menu trunk/root/base/my	trunk/root/base/thread trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000296.html">[Parley-svn] r408 - / trunk/root/base/forum
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#295">[ date ]</a>
+              <a href="thread.html#295">[ thread ]</a>
+              <a href="subject.html#295">[ subject ]</a>
+              <a href="author.html#295">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

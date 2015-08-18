@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r998 - / trunk/lib trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r998%20-%20/%20trunk/lib%20trunk/lib/Parley/Controller&In-Reply-To=%3C200812232042.mBNKgNiB021746%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000879.html">
+   <LINK REL="Next"  HREF="000881.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r998 - / trunk/lib trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r998%20-%20/%20trunk/lib%20trunk/lib/Parley/Controller&In-Reply-To=%3C200812232042.mBNKgNiB021746%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r998 - / trunk/lib trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Dec 23 21:42:23 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000879.html">[Parley-svn] r997 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000881.html">[Parley-svn] r999 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#880">[ date ]</a>
+              <a href="thread.html#880">[ thread ]</a>
+              <a href="subject.html#880">[ subject ]</a>
+              <a href="author.html#880">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-23 21:42:23 +0100 (Tue, 23 Dec 2008)
+New Revision: 998
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Root.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8672 at wiggin</A>:  chisel | 2008-12-23 09:18:50 +0000
+ / fixed TT include path skinning thinko
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8661
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8672
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-12-22 22:01:53 UTC (rev 997)
++++ trunk/lib/Parley/Controller/Root.pm	2008-12-23 20:42:23 UTC (rev 998)
+@@ -282,23 +282,10 @@
+ # deal with the end of the phase
+ sub render : ActionClass('RenderView') {
+     my ($self, $c) = @_;
++    
++    # deal with any skinning
++    $c-&gt;forward('skin');
+ 
+-    # are we skinned?
+-    if (defined $c-&gt;config-&gt;{site_skin}) {
+-        # we always want root and &quot;skin dir&quot;
+-        my $include_path = [
+-            $c-&gt;path_to( 'root' ),
+-            $c-&gt;path_to( 'root', $c-&gt;config-&gt;{site_skin}),
+-        ];
+-        # we /might/ want to fall back on the default (base)
+-        if ($c-&gt;config-&gt;{skin_default_fallback}) {
+-            push @{$include_path}, 
+-                $c-&gt;path_to( 'root', 'base' );
+-        }
+-        # set the INCLUDE_PATH for TT
+-        $c-&gt;view('TT')-&gt;{include_path} = $include_path
+-    }
+-
+     # if we have any error(s) in the stash, automatically show the error page
+     if (defined $c-&gt;stash-&gt;{error}) {
+         $c-&gt;stash-&gt;{template} = 'error/simple';
+@@ -311,6 +298,38 @@
+     }
+ }
+ 
++sub skin : Private {
++    my ($self, $c) = @_;
++
++    my $skin = $c-&gt;skin;
++
++    # we always want root (do we?)
++    my $include_path = [
++        $c-&gt;path_to( 'root' ),
++    ];
++
++    # if we are skinned?
++    if (defined $skin) {
++        # we always want root and &quot;skin dir&quot;
++        push @{$include_path}, 
++            $c-&gt;path_to( 'root', $skin);
++
++        # we /might/ want to fall back on the default (base)
++        if ($c-&gt;config-&gt;{skin_default_fallback}) {
++            push @{$include_path}, 
++                $c-&gt;path_to( 'root', 'base' );
++        }
++    }
++    # use the base/ templates
++    else {
++        push @{$include_path}, 
++            $c-&gt;path_to( 'root', 'base' );
++    }
++
++    # always (re)set the INCLUDE_PATH for TT
++    $c-&gt;view('TT')-&gt;{include_path} = $include_path;
++}
++
+ sub end : Private {
+     my ($self, $c) = @_;
+     $c-&gt;forward('render');
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-12-22 22:01:53 UTC (rev 997)
++++ trunk/lib/Parley.pm	2008-12-23 20:42:23 UTC (rev 998)
+@@ -202,6 +202,32 @@
+     );
+ }
+ 
++sub skin {
++    my $c = shift;
++    my $skin;
++
++    # what's the skin?
++    if (
++        defined $c-&gt;_authed_user()
++            and
++        $c-&gt;_authed_user()-&gt;preference()-&gt;skin()
++    ) {
++        # user preference
++        $skin = $c-&gt;_authed_user()-&gt;preference()-&gt;skin();
++        $c-&gt;log-&gt;debug('user-skin');
++    }
++    else {
++        # application config
++        $skin = $c-&gt;config-&gt;{site_skin};
++        $c-&gt;log-&gt;debug('app-skin');
++    };
++
++    $c-&gt;log-&gt;debug(
++        q{skin is: } . ($skin || '[site default]')
++    );
++    return $skin;
++}
++
+ 1;
+ 
+ __END__
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000879.html">[Parley-svn] r997 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000881.html">[Parley-svn] r999 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#880">[ date ]</a>
+              <a href="thread.html#880">[ thread ]</a>
+              <a href="subject.html#880">[ subject ]</a>
+              <a href="author.html#880">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r467 - / trunk/root/base/menu
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r467%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200709051925.l85JPpS7009936%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000354.html">
+   <LINK REL="Next"  HREF="000356.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r467 - / trunk/root/base/menu</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r467%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200709051925.l85JPpS7009936%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r467 - / trunk/root/base/menu">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Sep  5 21:25:51 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000354.html">[Parley-svn] r466 - / trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000356.html">[Parley-svn] r468 - / trunk/root/base trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#355">[ date ]</a>
+              <a href="thread.html#355">[ thread ]</a>
+              <a href="subject.html#355">[ subject ]</a>
+              <a href="author.html#355">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-05 21:25:51 +0200 (Wed, 05 Sep 2007)
+New Revision: 467
+
+Modified:
+   /
+   trunk/root/base/menu/menubar
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3782 at wiggin</A>:  chisel | 2007-09-05 19:12:39 +0100
+ / fixed incorrect id on thread menu
+ / modified entries in forum and thread menus to appear and behave disabled (under certain conditions)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3781
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3782
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-09-05 19:25:40 UTC (rev 466)
++++ trunk/root/base/menu/menubar	2007-09-05 19:25:51 UTC (rev 467)
+@@ -1,6 +1,6 @@
+ &lt;!-- menubar (YUI) --&gt;
+-[%- IF NOT current_forum  %][% SET  forum_disabled='disabled=&quot;true&quot;' %][% END %]
+-[%- IF NOT current_thread %][% SET thread_disabled='disabled=&quot;true&quot;' %][% END %]
++[%- IF NOT current_forum  %][% SET  forum_disabled=' disabled' %][% END %]
++[%- IF NOT current_thread %][% SET thread_disabled=' disabled' %][% END %]
+ &lt;!-- Page-specific script --&gt;
+ &lt;script type=&quot;text/javascript&quot;&gt;
+     // Initialize and render the menu bar when it is available in the DOM
+@@ -35,21 +35,21 @@
+                 &lt;div id=&quot;menu_forum&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
+                         &lt;ul&gt;
+-                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;forum/view?forum=[%current_forum.id%]&quot;&gt;View Threads&lt;/a&gt;&lt;/li&gt;
+-                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;thread/add?forum=[%current_forum.id%]&quot;&gt;Create New Thread&lt;/a&gt;&lt;/li&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%forum_disabled%]&quot; href=&quot;[%IF forum_disabled%]#[%ELSE%]forum/view?forum=[%current_forum.id%][%END%]&quot;&gt;View Threads&lt;/a&gt;&lt;/li&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%forum_disabled%]&quot; href=&quot;[%IF forum_disabled%]#[%ELSE%]thread/add?forum=[%current_forum.id%][%END%]&quot;&gt;Create New Thread&lt;/a&gt;&lt;/li&gt;
+                         &lt;/ul&gt;
+                     &lt;/div&gt;
+                 &lt;/div&gt;                                        
+             &lt;/li&gt;
+             &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Thread&lt;/a&gt;
+-                &lt;div id=&quot;menu_forum&quot; class=&quot;yuimenu&quot;&gt;
++                &lt;div id=&quot;menu_thread&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
+                         &lt;ul&gt;
+-                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;thread/reply?thread=[%current_thread.id%]&quot;&gt;Add Reply&lt;/a&gt;&lt;/li&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%thread_disabled%]&quot; href=&quot;[%IF thread_disabled%]#[%ELSE%]thread/reply?thread=[%current_thread.id%][%END%]&quot;&gt;Add Reply&lt;/a&gt;&lt;/li&gt;
+                             [%- IF watching_thread %]
+-                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0&quot;&gt;Remove Watch&lt;/a&gt;&lt;/li&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%thread_disabled%]&quot; href=&quot;[%IF thread_disabled%]#[%ELSE%]thread/watch?thread=[%current_thread.id%]&amp;page=[%page.current_page%]&amp;watch=0[%END%]&quot;&gt;Remove Watch&lt;/a&gt;&lt;/li&gt;
+                             [%- ELSE %]
+-                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=1&quot;&gt;Add Watch&lt;/a&gt;&lt;/li&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%thread_disabled%]&quot; href=&quot;[%IF thread_disabled%]#[%ELSE%]thread/watch?thread=[%current_thread.id%]&amp;page=[%page.current_page%]&amp;watch=1[%END%]&quot;&gt;Add Watch&lt;/a&gt;&lt;/li&gt;
+                             [%- END %]
+                         &lt;/ul&gt;
+                     &lt;/div&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000354.html">[Parley-svn] r466 - / trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000356.html">[Parley-svn] r468 - / trunk/root/base trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#355">[ date ]</a>
+              <a href="thread.html#355">[ thread ]</a>
+              <a href="subject.html#355">[ subject ]</a>
+              <a href="author.html#355">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

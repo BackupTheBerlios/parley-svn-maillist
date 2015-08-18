@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r728 - / trunk/lib/Parley/ResultSet trunk/root/base	trunk/root/base/thread trunk/root/static/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r728%20-%20/%20trunk/lib/Parley/ResultSet%20trunk/root/base%0A%09trunk/root/base/thread%20trunk/root/static/css&In-Reply-To=%3C200801101950.m0AJoThd021791%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000615.html">
+   <LINK REL="Next"  HREF="000617.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r728 - / trunk/lib/Parley/ResultSet trunk/root/base	trunk/root/base/thread trunk/root/static/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r728%20-%20/%20trunk/lib/Parley/ResultSet%20trunk/root/base%0A%09trunk/root/base/thread%20trunk/root/static/css&In-Reply-To=%3C200801101950.m0AJoThd021791%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r728 - / trunk/lib/Parley/ResultSet trunk/root/base	trunk/root/base/thread trunk/root/static/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 10 20:50:29 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000615.html">[Parley-svn] r727 - / trunk trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000617.html">[Parley-svn] r729 - / trunk trunk/root/base/thread trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#616">[ date ]</a>
+              <a href="thread.html#616">[ thread ]</a>
+              <a href="subject.html#616">[ subject ]</a>
+              <a href="author.html#616">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-10 20:50:29 +0100 (Thu, 10 Jan 2008)
+New Revision: 728
+
+Modified:
+   /
+   trunk/lib/Parley/ResultSet/Thread.pm
+   trunk/root/base/header
+   trunk/root/base/thread/add
+   trunk/root/static/css/experiment.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4466 at wiggin</A>:  chisel | 2008-01-10 18:47:10 +0000
+ / add a die() if we try to find the last post in an undefined thread
+ / rename the style attached to experiment.css
+ / tidy-up thread/add layout, including CSS additions and tweaks
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4462
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4466
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/ResultSet/Thread.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Thread.pm	2008-01-09 19:51:04 UTC (rev 727)
++++ trunk/lib/Parley/ResultSet/Thread.pm	2008-01-10 19:50:29 UTC (rev 728)
+@@ -17,6 +17,10 @@
+     my ($self, $person, $thread) = @_;
+     my ($last_viewed, $last_post) = @_;
+ 
++    if (not defined $thread) {
++        die &quot;no thread defined&quot;;
++    }
++
+     my $schema = $self-&gt;result_source()-&gt;schema();
+ 
+     # we need to be careful that we haven't deleted/hidden the post that
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2008-01-09 19:51:04 UTC (rev 727)
++++ trunk/root/base/header	2008-01-10 19:50:29 UTC (rev 728)
+@@ -53,7 +53,7 @@
+ 
+ 
+         &lt;!-- defined styles for parley --&gt;
+-        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Experiment&quot;           href=&quot;[% c.request.base %]/static/css/experiment.css&quot; /&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Simple&quot; href=&quot;[%c.uri_for('/static/css/experiment.css')%]&quot; /&gt;
+     &lt;/head&gt;
+ 
+     &lt;body class=&quot;yui-skin-sam&quot;&gt;
+
+Modified: trunk/root/base/thread/add
+===================================================================
+--- trunk/root/base/thread/add	2008-01-09 19:51:04 UTC (rev 727)
++++ trunk/root/base/thread/add	2008-01-10 19:50:29 UTC (rev 728)
+@@ -1,4 +1,9 @@
+-&lt;h1&gt;[%l('Start A New Topic')%]&lt;/h1&gt;
++&lt;div style=&quot;margin-top:10px;&quot;&gt;&lt;/div&gt;
++&lt;div class=&quot;thread_header&quot;&gt;
++    &lt;a href=&quot;forum/view?forum=[% current_forum.id %]&quot;&gt;[% current_forum.name %]&lt;/a&gt;
++    &nbsp;:&nbsp;
++    [%l('Start A New Topic')%]
++&lt;/div&gt;
+ 
+ [% IF view.error.message %]
+     [% view.error.message %]
+@@ -9,41 +14,71 @@
+     &lt;/ul&gt;
+ [% END %]
+ 
+-
+ &lt;form action=&quot;thread/add?forum=[% current_forum.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
++    &lt;table class=&quot;thread_add&quot; border=&quot;0&quot;&gt;
++        &lt;tr&gt;
++            &lt;td class=&quot;thread_add_topic&quot;&gt; [%l('Topic')%] &lt;/td&gt;
++            &lt;td&gt;
++            &lt;input type=&quot;text&quot; name=&quot;thread_subject&quot; size=&quot;60&quot; class=&quot;input_text&quot; /&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
+ 
+-&lt;table&gt;
++        &lt;tr&gt;
++            &lt;td class=&quot;thread_add_message&quot;&gt; [%l('Message')%] &lt;/td&gt;
++            &lt;td&gt;
++                &lt;textarea name=&quot;thread_message&quot; id=&quot;thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
+ 
+-  &lt;tr&gt;
+-    &lt;td&gt; [%l('Topic')%] &lt;/td&gt;
+-    &lt;td&gt;
+-      &lt;input type=&quot;text&quot; name=&quot;thread_subject&quot; size=&quot;60&quot; class=&quot;input_text&quot; /&gt;
+-    &lt;/td&gt;
+-  &lt;/tr&gt;
++        &lt;tr&gt;
++            &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
++            &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; id=&quot;message_preview&quot; /&gt;
++            &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Topic')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; /&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
+ 
+-  &lt;tr&gt;
+-    &lt;td&gt; [%l('Message')%] &lt;/td&gt;
+-    &lt;td&gt;
+-        &lt;textarea name=&quot;thread_message&quot; id=&quot;thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
+-    &lt;/td&gt;
+-  &lt;/tr&gt;
++        &lt;tr&gt;
++            &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
++                &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %]/&gt;
++                [%l('ADD THREAD WATCH')%] 
++            &lt;/td&gt;
++        &lt;/tr&gt;
++    &lt;/table&gt;
++&lt;/form&gt;
+ 
+-  &lt;tr&gt;
+-    &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-      &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
+-      &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Topic')%]&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
+-    &lt;/td&gt;
+-  &lt;/tr&gt;
++[% IF 0 %]
++&lt;form action=&quot;thread/add?forum=[% current_forum.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
++    &lt;table border=&quot;1&quot;&gt;
++    &lt;tr&gt;
++        &lt;td&gt; [%l('Topic')%] &lt;/td&gt;
++        &lt;td&gt;
++        &lt;input type=&quot;text&quot; name=&quot;thread_subject&quot; size=&quot;60&quot; class=&quot;input_text&quot; /&gt;
++        &lt;/td&gt;
++    &lt;/tr&gt;
+ 
+-  &lt;tr&gt;
+-    &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
+-        &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %]/&gt;
+-        [%l('ADD THREAD WATCH')%] 
+-    &lt;/td&gt;
+-  &lt;/tr&gt;
+-&lt;/table&gt;
++    &lt;tr&gt;
++        &lt;td&gt; [%l('Message')%] &lt;/td&gt;
++        &lt;td&gt;
++            &lt;textarea name=&quot;thread_message&quot; id=&quot;old_thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
++        &lt;/td&gt;
++    &lt;/tr&gt;
+ 
++    &lt;tr&gt;
++        &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
++        &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
++        &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Topic')%]&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
++        &lt;/td&gt;
++    &lt;/tr&gt;
++
++    &lt;tr&gt;
++        &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
++            &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %]/&gt;
++            [%l('ADD THREAD WATCH')%] 
++        &lt;/td&gt;
++    &lt;/tr&gt;
++    &lt;/table&gt;
+ &lt;/form&gt;
++[% END %]
+ 
+ &lt;style type=&quot;text/css&quot;&gt;
+ 	.yui-overlay { position:absolute;background:transparent;border:none;padding:none;margin:none; }
+
+Modified: trunk/root/static/css/experiment.css
+===================================================================
+--- trunk/root/static/css/experiment.css	2008-01-09 19:51:04 UTC (rev 727)
++++ trunk/root/static/css/experiment.css	2008-01-10 19:50:29 UTC (rev 728)
+@@ -336,6 +336,34 @@
+     border:             1px solid #666;
+ }
+ 
++.thread_add {
++    margin-left:        auto;
++    margin-right:       auto;
++    margin-top:         15px;
++    width:              100%;
++    font-size:          93%;
++}
++
++.thread_add td {
++    padding-top:        4px;
++    padding-bottom:     4px;
++}
++
++.thread_add .input_text {
++    width:              450px;
++    margin-left:        10px;
++}
++
++.thread_add_topic {
++    text-align:         right;
++    padding-right:      5px;
++}
++.thread_add_message {
++    text-align:         right;
++    vertical-align:     top;
++    padding-right:      5px;
++}
++
+ .thread_header {
+     font-weight:        bold;
+     background:         #666;
+@@ -456,14 +484,15 @@
+ #preview_overlay {
+     border:             1px dashed #ccc;
+     text-align:         left;
+-    padding:            3px;
++    padding:            0px;
+ }
+ #thread_message {
+     font-family:        monospace;
+     text-align:         left;
+-    padding:            3px;
++    padding:            0px;
+     background-color:   #eee;
+     font-size:          93%;
++    width:              450px;
+ }
+ 
+ /* ForumCode styles */
+@@ -514,14 +543,3 @@
+ }
+ 
+ 
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000615.html">[Parley-svn] r727 - / trunk trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000617.html">[Parley-svn] r729 - / trunk trunk/root/base/thread trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#616">[ date ]</a>
+              <a href="thread.html#616">[ thread ]</a>
+              <a href="subject.html#616">[ subject ]</a>
+              <a href="author.html#616">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

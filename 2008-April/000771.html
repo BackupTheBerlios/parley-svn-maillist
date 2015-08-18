@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r883 - / trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/t/bug
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r883%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/ResultSet%20trunk/t/bug&In-Reply-To=%3C200804211025.m3LAPWKn016617%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000770.html">
+   <LINK REL="Next"  HREF="000772.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r883 - / trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/t/bug</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r883%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/ResultSet%20trunk/t/bug&In-Reply-To=%3C200804211025.m3LAPWKn016617%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r883 - / trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/t/bug">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Apr 21 12:25:32 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000770.html">[Parley-svn] r882 - / trunk/t/mechanize
+</A></li>
+        <LI>Next message: <A HREF="000772.html">[Parley-svn] r884 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#771">[ date ]</a>
+              <a href="thread.html#771">[ thread ]</a>
+              <a href="subject.html#771">[ subject ]</a>
+              <a href="author.html#771">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-04-21 12:25:31 +0200 (Mon, 21 Apr 2008)
+New Revision: 883
+
+Added:
+   trunk/t/bug/01.forum_list_no_posts.t
+Modified:
+   /
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/ResultSet/Forum.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5003 at wiggin</A>:  chisel | 2008-04-21 08:48:01 +0100
+ + added test script for forum list join bug
+ / factored controller search into model method call
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4972
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5003
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2008-04-20 12:13:10 UTC (rev 882)
++++ trunk/lib/Parley/Controller/Forum.pm	2008-04-21 10:25:31 UTC (rev 883)
+@@ -13,17 +13,8 @@
+ 
+     # get a list of (active) forums
+     $c-&gt;stash-&gt;{forum_list} =
+-        $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
+-            {
+-                active =&gt; 1,
+-            },
+-            {
+-                'order_by'  =&gt; 'me.id ASC',
+-                prefetch =&gt; [
+-                    {'last_post' =&gt; { 'creator' =&gt; 'authentication' } },
+-                ],
+-            }
+-        );
++        $c-&gt;model('ParleyDB')-&gt;resultset('Forum')
++            -&gt;forum_list();
+ }
+ 
+ sub view : Local {
+
+Modified: trunk/lib/Parley/ResultSet/Forum.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Forum.pm	2008-04-20 12:13:10 UTC (rev 882)
++++ trunk/lib/Parley/ResultSet/Forum.pm	2008-04-21 10:25:31 UTC (rev 883)
+@@ -7,6 +7,7 @@
+ 
+ use base 'DBIx::Class::ResultSet';
+ 
++# list of available forums (for menus and search-drop-downs)
+ sub available_list {
+     my ($resultsource) = @_;
+     my ($rs);
+@@ -23,6 +24,25 @@
+     return $rs;
+ }
+ 
++sub forum_list {
++    my ($resultsource) = @_;
++    my ($rs);
++
++    $rs = $resultsource-&gt;search(
++        {
++            active =&gt; 1,
++        },
++        {
++            'order_by'  =&gt; 'me.id ASC',
++            prefetch =&gt; [
++                {'last_post' =&gt; { 'creator' =&gt; 'authentication' } },
++            ],
++        }
++    );
++
++    return $rs;
++}
++
+ sub record_from_id {
+     my ($resultsource, $forum_id) = @_;
+     my ($rs);
+
+Added: trunk/t/bug/01.forum_list_no_posts.t
+===================================================================
+--- trunk/t/bug/01.forum_list_no_posts.t	2008-04-20 12:13:10 UTC (rev 882)
++++ trunk/t/bug/01.forum_list_no_posts.t	2008-04-21 10:25:31 UTC (rev 883)
+@@ -0,0 +1,92 @@
++#!/usr/bin/env perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# DESCRIPTION
++#
++# After a fresh installation, there are three default forums in the database,
++# but not yet any posts.
++# Due to the current join types there are no forums listed/returned on the
++# forum/list page.
++#
++# SOLUTION
++#
++# The solution appears to be to use LEFT JOINs all the way from
++# forum --&gt; post (last_post) --&gt; person (creator) --&gt; authentication
++#
++# EXTRA WORK
++#
++# sub list() in Controller::Forum does its own -&gt;search() instead of calling
++# out to the model.
++# Before this bug can be fixed/tested we need to move the search call out to
++# the model, and then call a model method in the controller
++
++use Test::More tests =&gt; 5;
++
++BEGIN { use_ok 'Parley::Schema' }
++
++my ($schema, $resultset, $rs);
++
++# get a schema to query
++$schema = Parley::Schema-&gt;connect(
++    'dbi:Pg:dbname=parley'
++);
++isa_ok($schema, 'Parley::Schema');
++
++# grab the Post resultset
++$resultset = $schema-&gt;resultset('Forum');
++isa_ok($resultset, 'Parley::ResultSet::Forum');
++
++# make sure we can call the forum_list method on the resultset
++can_ok(
++    $resultset,
++    qw( forum_list )
++);
++
++
++# because we need to test the behaviour when there are no &quot;last_post&quot;s
++# we run the bulk of the tests in a txn so we can clear data, run tests, and
++# rollback to where we were at the start
++eval {
++    $schema-&gt;txn_do(
++        sub {
++            _forum_list_test(
++                $schema
++            );
++        }
++    );
++};
++if ($@) {
++    die $@;
++}
++
++sub _forum_list_test {
++    my $schema = shift;
++    my $resultset = $schema-&gt;resultset('Forum');
++    my ($no_join_count, $list_count);
++
++    # clear last_post references
++    $resultset-&gt;update(
++        {
++            last_post_id =&gt; undef,
++        }
++    );
++
++    # count the number of forums, no joins followed
++    $no_join_count = $resultset-&gt;count();
++
++    # count the number of forums, calling the method with the joins
++    $list_count = $resultset-&gt;forum_list-&gt;count();
++
++    # the two should match
++    is($list_count, $no_join_count, q{correct numer of forums returned});
++
++
++    
++    # make sure our changes don't land in the database
++    $schema-&gt;txn_rollback;
++}
++
++
++1;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000770.html">[Parley-svn] r882 - / trunk/t/mechanize
+</A></li>
+	<LI>Next message: <A HREF="000772.html">[Parley-svn] r884 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#771">[ date ]</a>
+              <a href="thread.html#771">[ thread ]</a>
+              <a href="subject.html#771">[ subject ]</a>
+              <a href="author.html#771">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,258 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r906 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/user
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r906%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/root/base/user&In-Reply-To=%3C200806162121.m5GLLkjI027255%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000793.html">
+   <LINK REL="Next"  HREF="000795.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r906 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/user</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r906%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/root/base/user&In-Reply-To=%3C200806162121.m5GLLkjI027255%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r906 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/user">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Jun 16 23:21:46 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000793.html">[Parley-svn] r905 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000795.html">[Parley-svn] r907 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#794">[ date ]</a>
+              <a href="thread.html#794">[ thread ]</a>
+              <a href="subject.html#794">[ subject ]</a>
+              <a href="author.html#794">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-06-16 23:21:45 +0200 (Mon, 16 Jun 2008)
+New Revision: 906
+
+Modified:
+   /
+   trunk/Changes
+   trunk/Changes.i18n
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/user/profile
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5504 at wiggin</A>:  chisel | 2008-05-30 08:46:46 +0100
+ + updated change log
+ + updated i18n change log
+ / modified &quot;access denied&quot; to use localize()
+ + added i18n terms to i_default.po
+ / improved &quot;IPs posted from&quot; on user profile
+ + added link to role management from user profile
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5503
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5504
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/Changes	2008-06-16 21:21:45 UTC (rev 906)
+@@ -7,6 +7,7 @@
+     - switched from Graphics::Magick to Image::Magick
+     - resolved some bugs and errors when deploying from scratch
+     - added more comprehensive instructions for getting started
++    - updated to new Authentication and Authorization modules
+ 
+ 
+ After knackering up the version numbers towards the end of 0.59
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/Changes.i18n	2008-06-16 21:21:45 UTC (rev 906)
+@@ -6,10 +6,17 @@
+ will be used as the 'en' i18n file.
+ It's unlikely that we'll need an 'en' file in the project.
+ 
+-0.59 (UNDER DEVELOPMENT)
++1.0.0 (UNDER DEVELOPMENT)
+ 
+     i_default.po:
+         - added:
++            - &quot;User has never posted&quot;
++            - &quot;Manage user roles&quot;
++            - &quot;Unauthorized!&quot;
++
++0.59
++    i_default.po:
++        - added:
+             - &quot;ADMIN LOCK POST&quot;
+             - &quot;Locked Post&quot;
+             - &quot;Post Edited By&quot;
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/lib/Parley/Controller/Root.pm	2008-06-16 21:21:45 UTC (rev 906)
+@@ -278,7 +278,7 @@
+ 
+ sub access_denied :Local {
+     my ($self, $c) = @_;
+-    parley_die($c,&quot;Unauthorized!&quot;);
++    parley_die($c,$c-&gt;localize('Unauthorized!'));
+ }
+ 
+ # deal with the end of the phase
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/lib/Parley/I18N/i_default.po	2008-06-16 21:21:45 UTC (rev 906)
+@@ -336,6 +336,9 @@
+ msgid &quot;Manage&quot;
+ msgstr &quot;Manage&quot;
+ 
++msgid &quot;Manage user roles&quot;
++msgstr &quot;Manage user roles&quot;
++
+ msgid &quot;Me&quot;
+ msgstr &quot;Me&quot;
+ 
+@@ -741,6 +744,9 @@
+ msgid &quot;Topic&quot;
+ msgstr &quot;Topic&quot;
+ 
++msgid &quot;Unauthorized!&quot;
++msgstr &quot;Unauthorized!&quot;
++
+ msgid &quot;Unknown field name&quot;
+ msgstr &quot;Unknown field name&quot;
+ 
+@@ -777,6 +783,9 @@
+ msgid &quot;User Profile&quot;
+ msgstr &quot;User Profile&quot;
+ 
++msgid &quot;User has never posted&quot;
++msgstr &quot;User has never posted&quot;
++
+ msgid &quot;USERNAME IN USE&quot;
+ msgstr &quot;The username you have chosen is already in use. Please try a different one.&quot;
+ 
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2008-06-16 21:21:37 UTC (rev 905)
++++ trunk/root/base/user/profile	2008-06-16 21:21:45 UTC (rev 906)
+@@ -86,32 +86,38 @@
+     [% END %]
+ 
+     [% IF authed_user.can_ip_ban %]
++        [% SET ips = profiled_user.ips_posted_from %]
+         &lt;h2&gt;[%l('IP Addresses')%]&lt;/h2&gt;
+         &lt;div class=&quot;yui-gf top_padded&quot;&gt;
+             &lt;div class=&quot;yui-u first align_right&quot;&gt;
+-                [%l('User has posted from')%]
++                [% IF ips.size %]
++                    [%l('User has posted from')%]
++                [% ELSE %]
++                    [%l('User has never posted')%]
++                [% END %]
+             &lt;/div&gt;
+             &lt;div class=&quot;yui-u&quot;&gt;
+-                [% SET ips = profiled_user.ips_posted_from %]
+-                [% FOR ip IN ips %]
+-                &lt;span id=&quot;ctx_[%ip%]&quot;&gt;
+-                    &lt;a href=&quot;[%c.uri_for('/site/ip_info',{'address'=&gt;ip})%]&quot;&gt;[% ip %]&lt;/a&gt;
+-                &lt;/span&gt;[% UNLESS loop.last %], [% END %]
+-                &lt;script type=&quot;text/javascript&quot;&gt;
+-                    YAHOO.namespace(&quot;example.container&quot;);
+-                    [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip(&quot;$ip&quot;) %]
+-                    [% SET ttTxt = '' %]
+-                    [% WHILE (post = people_posting.next) %]
+-                    [% ttTxt = &quot;${ttTxt} &lt;li&gt;$post.creator.forum_name&lt;/li&gt;&quot; %]
++                [% IF ips.size %]
++                    [% FOR ip IN ips %]
++                    &lt;span id=&quot;ctx_[%ip%]&quot;&gt;
++                        &lt;a href=&quot;[%c.uri_for('/site/ip_info',{'address'=&gt;ip})%]&quot;&gt;[% ip %]&lt;/a&gt;
++                    &lt;/span&gt;[% UNLESS loop.last %], [% END %]
++                    &lt;script type=&quot;text/javascript&quot;&gt;
++                        YAHOO.namespace(&quot;example.container&quot;);
++                        [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip(&quot;$ip&quot;) %]
++                        [% SET ttTxt = '' %]
++                        [% WHILE (post = people_posting.next) %]
++                        [% ttTxt = &quot;${ttTxt} &lt;li&gt;$post.creator.forum_name&lt;/li&gt;&quot; %]
++                        [% END %]
++                        YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
++                            &quot;tt_[%ip%]&quot;,
++                            {
++                                context:&quot;ctx_[%ip%]&quot;,
++                                text:&quot;Users posting from [%ip%]: &lt;ul&gt;[%ttTxt%]&lt;/ul&gt;&quot;
++                            }
++                        );
++                    &lt;/script&gt;
+                     [% END %]
+-                    YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
+-                        &quot;tt_[%ip%]&quot;,
+-                        {
+-                            context:&quot;ctx_[%ip%]&quot;,
+-                            text:&quot;Users posting from [%ip%]: &lt;ul&gt;[%ttTxt%]&lt;/ul&gt;&quot;
+-                        }
+-                    );
+-                &lt;/script&gt;
+                 [% END %]
+             &lt;/div&gt;
+         &lt;/div&gt;
+@@ -139,6 +145,12 @@
+             &lt;/div&gt;
+         [% END %]
+     [% END %]
++
++    [% IF authed_user.is_site_moderator %]
++        &lt;h2&gt;[%l('User Roles')%]&lt;/h2&gt;
++
++        &lt;a href=&quot;[%c.uri_for('/site/user',{pid=&gt;0})%]&quot;&gt;[%l('Manage user roles')%]&lt;/a&gt;
++    [% END %]
+ [% ELSE %]
+     &lt;p&gt;[%l('PROFILE NOT FOUND')%]&lt;/p&gt;
+ [% END %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000793.html">[Parley-svn] r905 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000795.html">[Parley-svn] r907 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#794">[ date ]</a>
+              <a href="thread.html#794">[ thread ]</a>
+              <a href="subject.html#794">[ subject ]</a>
+              <a href="author.html#794">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

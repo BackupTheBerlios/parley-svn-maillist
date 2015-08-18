@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r709 - / trunk trunk/lib/Parley/I18N	trunk/root/base/shared trunk/root/base/user/lostpassword
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r709%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/shared%20trunk/root/base/user/lostpassword&In-Reply-To=%3C200712201633.lBKGXhjT029994%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000596.html">
+   <LINK REL="Next"  HREF="000598.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r709 - / trunk trunk/lib/Parley/I18N	trunk/root/base/shared trunk/root/base/user/lostpassword</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r709%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/shared%20trunk/root/base/user/lostpassword&In-Reply-To=%3C200712201633.lBKGXhjT029994%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r709 - / trunk trunk/lib/Parley/I18N	trunk/root/base/shared trunk/root/base/user/lostpassword">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Dec 20 17:33:43 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000596.html">[Parley-svn] r708 - / trunk trunk/lib trunk/lib/Parley
+</A></li>
+        <LI>Next message: <A HREF="000598.html">[Parley-svn] r710 - / trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#597">[ date ]</a>
+              <a href="thread.html#597">[ thread ]</a>
+              <a href="subject.html#597">[ subject ]</a>
+              <a href="author.html#597">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-20 17:33:43 +0100 (Thu, 20 Dec 2007)
+New Revision: 709
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/lib/Parley/I18N/it.po
+   trunk/root/base/shared/search_dialog
+   trunk/root/base/user/lostpassword/lost_password
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4364 at wiggin</A>:  chisel | 2007-12-20 16:21:29 +0000
+ / more i18n improvements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4361
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4364
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2007-12-20 16:04:48 UTC (rev 708)
++++ trunk/Changes.i18n	2007-12-20 16:33:43 UTC (rev 709)
+@@ -11,6 +11,9 @@
+ 
+     it.po:
+         - full translation from i_default.po
++        - added:
++            - 'Cancel'
++            - 'in'
+ 
+     i_default.po:
+         - added:
+
+Modified: trunk/lib/Parley/I18N/it.po
+===================================================================
+--- trunk/lib/Parley/I18N/it.po	2007-12-20 16:04:48 UTC (rev 708)
++++ trunk/lib/Parley/I18N/it.po	2007-12-20 16:33:43 UTC (rev 709)
+@@ -67,6 +67,9 @@
+ msgid &quot;Avatar&quot;
+ msgstr &quot;Avatar&quot;
+ 
++msgid &quot;Cancel&quot;
++msgstr &quot;Annulla&quot;
++
+ msgid &quot;CHANGE AVATAR&quot;
+ msgstr &quot;Cambia l'avatar selezionando un file e cliccando il bottone Upload qui sotto&quot;
+ 
+@@ -220,6 +223,10 @@
+ msgid &quot;Help&quot;
+ msgstr &quot;Aiuto&quot;
+ 
++# Search for [....] _in_ [......]
++msgid &quot;in&quot;
++msgstr &quot;in&quot;
++
+ msgid &quot;Incomplete authentication URL&quot;
+ msgstr &quot;Autenticazione URL Incompleta&quot;
+ 
+@@ -293,7 +300,7 @@
+ msgstr &quot;Logout&quot;
+ 
+ msgid &quot;Me&quot;
+-msgstr &quot;Io&quot;
++msgstr &quot;Personale&quot;
+ 
+ msgid &quot;Main Page&quot;
+ msgstr &quot;Pagina Principale&quot;
+@@ -425,7 +432,7 @@
+ msgstr &quot;Password&quot;
+ 
+ msgid &quot;Password Reminder&quot;
+-msgstr &quot;Fornisci Password&quot;
++msgstr &quot;Dimenticato la Password?&quot;
+ 
+ msgid &quot;person&quot;
+ msgstr &quot;persona&quot;
+@@ -521,7 +528,7 @@
+ msgstr &quot;Cerca&quot;
+ 
+ msgid &quot;Search For&quot;
+-msgstr &quot;Cerca per&quot;
++msgstr &quot;Trova&quot;
+ 
+ msgid &quot;Search Results&quot;
+ msgstr &quot;Risultati Ricerca&quot;
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2007-12-20 16:04:48 UTC (rev 708)
++++ trunk/root/base/shared/search_dialog	2007-12-20 16:33:43 UTC (rev 709)
+@@ -27,8 +27,8 @@
+             modal: false,
+             constraintoviewport : true,
+             buttons : [
+-                { text:'Search', handler:handleSubmit, isDefault:true },
+-                { text:'Cancel', handler:handleCancel }
++                { text:'[%l('Search')%]', handler:handleSubmit, isDefault:true },
++                { text:'[%l('Cancel')%]', handler:handleCancel }
+             ]
+         }
+     );
+
+Modified: trunk/root/base/user/lostpassword/lost_password
+===================================================================
+--- trunk/root/base/user/lostpassword/lost_password	2007-12-20 16:04:48 UTC (rev 708)
++++ trunk/root/base/user/lostpassword/lost_password	2007-12-20 16:33:43 UTC (rev 709)
+@@ -27,6 +27,6 @@
+         &lt;label for=&quot;pwd_reset_email&quot;&gt;[%l('Email Address')%]:&lt;/a&gt;&lt;/label&gt;
+         &lt;input type=&quot;text&quot; id=&quot;pwd_reset_email&quot; name=&quot;email&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; size=&quot;40&quot; /&gt;
+ 
+-        &lt;button name=&quot;pwd_reset_submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;Reset My Password&lt;/button&gt;
++        &lt;button name=&quot;pwd_reset_submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;[%l('Reset My Password')%]&lt;/button&gt;
+     &lt;/fieldset&gt;
+ &lt;/form&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000596.html">[Parley-svn] r708 - / trunk trunk/lib trunk/lib/Parley
+</A></li>
+	<LI>Next message: <A HREF="000598.html">[Parley-svn] r710 - / trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#597">[ date ]</a>
+              <a href="thread.html#597">[ thread ]</a>
+              <a href="subject.html#597">[ subject ]</a>
+              <a href="author.html#597">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

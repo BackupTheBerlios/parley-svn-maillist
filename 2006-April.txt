@@ -1,0 +1,2330 @@
+From chiselwright at berlios.de  Wed Apr  5 21:55:40 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Wed, 5 Apr 2006 21:55:40 +0200
+Subject: [Parley-svn] r110 - in trunk: . lib lib/Template lib/Template/Plugin t
+Message-ID: <200604051955.k35JteA5012007@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-05 21:55:39 +0200 (Wed, 05 Apr 2006)
+New Revision: 110
+
+Added:
+   trunk/lib/Template/
+   trunk/lib/Template/Plugin/
+   trunk/lib/Template/Plugin/ForumCode.pm
+   trunk/t/04_forumcode.t
+Modified:
+   trunk/
+   trunk/Changes
+Log:
+ r14374 at ferrari:  chisel | 2006-04-05 20:55:27 +0100
+ + added Template::Plugin::ForumCode (not all BBCode functionality is complete yet)
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14374
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-01-31 13:52:46 UTC (rev 109)
++++ trunk/Changes	2006-04-05 19:55:39 UTC (rev 110)
+@@ -1,5 +1,10 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - added Template::Plugin::ForumCode (not all BBCode functionality is complete yet)
++    - from-address for emails is now set in config file
++    - new helper function application_email_address()
++    - small layout fixes
++
+ 0.08  Tue Jan 31 08:54:32 GMT 2006
+     - move to using uri_for(...) in redirects
+     - hide per-post actions in a locked thread
+
+Added: trunk/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- trunk/lib/Template/Plugin/ForumCode.pm	2006-01-31 13:52:46 UTC (rev 109)
++++ trunk/lib/Template/Plugin/ForumCode.pm	2006-04-05 19:55:39 UTC (rev 110)
+@@ -0,0 +1,219 @@
++package Template::Plugin::ForumCode;
++use strict;
++use warnings;
++
++use base qw{ Template::Plugin };
++use base qw{ Template::Plugin::HTML };
++
++our $VERSION = '0.01';
++
++sub new {
++    my ($class, $context, @args) = @_;
++
++    my $new_obj = bless {}, $class;
++
++    # simple [x][/x] --> <x></x> tags
++    $new_obj->{simple_tags} = [qw{
++        b
++        u
++        i
++    }];
++    # replacements; e.g. __x__ --> <u>x</u>
++    $new_obj->{replacements} = [
++        {   from => '__',       to => 'u'   },
++        {   from => '\*\*',     to => 'b'   },
++        {   from => '\/\/',     to => 'i'   },
++    ];
++
++    return $new_obj;
++}
++
++sub forumcode {
++    my ($self, $text) = @_;
++
++    # first of all ESCAPE EVERYTHING!
++    $text = Template::Plugin::HTML->escape($text);
++
++    $self->_simple_tags     ( \$text );
++    $self->_replacements    ( \$text );
++    $self->_colouring       ( \$text );
++    $self->_lists           ( \$text );
++    $self->_url_links       ( \$text );
++    $self->_images          ( \$text );
++    
++    return $text;
++}
++
++sub _simple_tags {
++    my ($self, $textref) = @_;
++
++    # deal with acceptable [x]...[/x] markup
++    foreach my $tag (@{ $self->{simple_tags} }) {
++        # we should be able to combine these two into one
++        $$textref =~ s{\[$tag\]}{<$tag>}g;
++        $$textref =~ s{\[/$tag\]}{</$tag>}g;
++    }
++}
++
++sub _replacements {
++    my ($self, $textref) = @_;
++
++    # now deal with replacements
++    foreach my $tag (@{ $self->{replacements} }) {
++        $$textref =~ s{
++            $tag->{from}
++            (.+?)
++            $tag->{from}
++        }
++        {<$tag->{to}>$1</$tag->{to}>}gx;
++    }
++}
++
++sub _url_links {
++    my ($self, $textref) = @_;
++
++    # deal with links with no text-label
++    $$textref =~ s{\[url\](.+?)\[/url\]}
++        {<a href="$1">$1</a>}xmsg;
++    # deal with links with a text-label
++    $$textref =~ s{
++        \[url           # start of url tag
++        \s+             # need some whitespace
++        name=&quot;     # name="
++        (.+?)           # the name
++        &quot;          # closing "
++        \s*             # optional whitespace
++        \]              # close the opening tag
++        (.+?)           # the url
++        \[/url\]        # close the URL tag
++    }
++    {<a href="$2">$1</a>}xmsg;
++}
++
++sub _images {
++    my ($self, $textref) = @_;
++
++    # deal with image tags
++    $$textref =~ s{
++        \[img
++        (.*?)
++        \]
++        (.+?)
++        \[/img\]
++    }
++    {<img src="$2"$1 />}xmsg;
++}
++
++sub _colouring {
++    my ($self, $textref) = @_;
++
++    # deal with colouring
++    $$textref =~ s{
++        \[color
++        =
++        (
++              red | orange | yellow | green | blue
++            | black | white
++            | \#[0-9a-fA-F]{3}
++            | \#[0-9a-fA-F]{6}
++        )
++        \]
++        (.+?)
++        \[/color\]
++    }
++    {<span style="color: $1">$2</span>}ixmsg;
++}
++
++sub _lists {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{
++        \[list]
++        (.+?)
++        \[/list]
++    }
++    {<li>$1</li>}xmsg;
++}
++
++sub _list_elements {
++    my ($textref);
++}
++
++1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
++
++=pod
++
++=head1 NAME
++
++Template::Plugin::ForumCode - class for "ForumCode" filter
++
++=head1 SYNOPSIS
++
++  # load the TT module
++  [% USE ForumCode %]
++
++  # ForumCodify some text
++  [% ForumCode.forumcode('[b]bold[/u] [u]underlined[/u] [i]italic[/i]') %]
++  [% ForumCode.forumcode('**bold** __underlined__') %]
++
++=head1 DESCRIPTION
++
++This module implements ForumCode, a simple markup language inspired by the
++likes of BBCode.
++
++ForumCode allows end-users (of a web-site) limited access to a set of HTML
++markup through a HTML-esque syntax.
++
++This module works by using L<Template::Plugin::HTML> to escape all HTML
++entities and markup. It then performs a series of transformations to convert
++ForumCode markup into the appropriate HTML markup.
++
++=head1 MARKUP
++
++The ForumCode plugin will perform the following transformations:
++
++=over 4
++
++=item B<[b]>...B<[/b]> or B<**>...B<**>
++
++Make the text between the markers I<bold>.
++
++=item B<[u]>...B<[/u]> or B<__>...B<___>
++
++Make the text between the markers I<underlined>.
++  
++=item B<[i]>...B<[/i]>
++
++Make the text between the markers I<italicised>.
++
++=item B<[url]>...B<[/url]>
++
++Make the text between the markers into a HTML link. If you
++would like to give the link a name, use the following format:
++
++S<[url B<name="...">]...[/url]>
++
++=back
++
++=head1 METHODS
++
++=head2 new
++
++Create a new instance of the plugin for TT usage
++
++=head2 forumcode
++
++The transformation function
++
++=head1 AUTHOR
++
++Chisel Wright C<< <pause at herlpacker.co.uk> >>
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Added: trunk/t/04_forumcode.t
+===================================================================
+--- trunk/t/04_forumcode.t	2006-01-31 13:52:46 UTC (rev 109)
++++ trunk/t/04_forumcode.t	2006-04-05 19:55:39 UTC (rev 110)
+@@ -0,0 +1,188 @@
++#!/usr/bin/perl
++use strict;
++use warnings;
++
++my @forum_tests;
++
++BEGIN {
++    # a list of tests for forumcode()
++    @forum_tests = (
++        # escaped HTML stuff
++        {
++            in  => '<b>foo</b> &',
++            out => '&lt;b&gt;foo&lt;/b&gt; &amp;',
++        },
++        {
++            in  => '#FF0000',
++            out => '#FF0000',
++        },
++
++        ## BOLD
++        # [b] tag
++        {
++            in  => '[b]foo[/b]',
++            out => '<b>foo</b>',
++        },
++        # **foo** bold magic
++        {
++            in  => '**foo**',
++            out => '<b>foo</b>',
++        },
++        # replace all bold tags
++        {
++            in  => '[b]foo[/b][b]bar[/b]**baz****quux**',
++            out => '<b>foo</b><b>bar</b><b>baz</b><b>quux</b>',
++        },
++
++        ## UNDERLINE
++        # [u] tag
++        {
++            in  => '[u]foo[/u]',
++            out => '<u>foo</u>',
++        },
++        # __foo__ underline magic
++        {
++            in  => '__foo__',
++            out => '<u>foo</u>',
++        },
++        # replace all underline tags
++        {
++            in  => '[u]foo[/u][u]bar[/u]__baz____quux__',
++            out => '<u>foo</u><u>bar</u><u>baz</u><u>quux</u>',
++        },
++
++        ## ITALIC
++        # [i] tag
++        {
++            in  => '[i]foo[/i]',
++            out => '<i>foo</i>',
++        },
++        # //foo// underline magic
++        {
++            in  => '//foo//',
++            out => '<i>foo</i>',
++        },
++        # replace all italic tags
++        {
++            in  => '[i]foo[/i][i]bar[/i]//baz////quux//',
++            out => '<i>foo</i><i>bar</i><i>baz</i><i>quux</i>',
++        },
++
++        # link testing
++        {
++            in  => '[url]http://www.google.com/[/url]',
++            out => '<a href="http://www.google.com/">http://www.google.com/</a>',
++        },
++        {
++            in  => '[url name="Google"]http://www.google.com/[/url]',
++            out => '<a href="http://www.google.com/">Google</a>',
++        },
++        {
++            in  => '[url name="Google" ]http://www.google.com/[/url]',
++            out => '<a href="http://www.google.com/">Google</a>',
++        },
++
++        # let people put odd stuff in the name if they really want
++        {
++            in  => '[url name=""""]X[/url]',
++            out => '<a href="X">&quot;&quot;</a>',
++        },
++
++        # not proper URL tags
++        {
++            in  => '[url name="]X[/url]',
++            out => '[url name=&quot;]X[/url]',
++        },
++        {
++            in  => '[url name=]X[/url]',
++            out => '[url name=]X[/url]',
++        },
++        # nothing between opening and closing tags
++        {
++            in  => '[url][/url]',
++            out => '[url][/url]',
++        },
++
++        # bold in the URL name ..
++        {
++            in  => '[url name="[b]Bold[/b]"]X[/url]',
++            out => '<a href="X"><b>Bold</b></a>',
++        },
++
++        # url with query params ...
++        # surprisingly the escaped query-string seems to be dealt with
++        # correctly (in forefox at least)
++        {
++            in      => '[url name="X"]http://google.com?q=Foo&something=Bar[/url]',
++            out     => '<a href="http://google.com?q=Foo&amp;something=Bar">X</a>',
++            diag    => 'Test this URL in browsers!',
++        },
++
++        # image tag
++        {
++            in  => '[img]http://somewhere.com/myImage.jpg[/img]',
++            out => '<img src="http://somewhere.com/myImage.jpg" />',
++        },
++        {
++            in      => q{[img alt='Foo']http://somewhere.com/myImage.jpg[/img]},
++            out     => q{<img src="http://somewhere.com/myImage.jpg" alt='Foo' />},
++            diag    => 'Test this URL in browsers!',
++        },
++        {
++            in      => q{[img alt="Foo"]http://somewhere.com/myImage.jpg[/img]},
++            out     => q{<img src="http://somewhere.com/myImage.jpg" alt=&quot;Foo&quot; />},
++            diag    => 'Test this URL in browsers!',
++        },
++
++
++        # colouring
++        {
++            in      => q{[color=red]Red Text[/color]},
++            out     => q{<span style="color: red">Red Text</span>},
++        },
++        {
++            in      => q{[color=#FF0000]Red Text[/color]},
++            out     => q{<span style="color: #FF0000">Red Text</span>},
++        },
++        {
++            in      => q{[color=#F00]Red Text[/color]},
++            out     => q{<span style="color: #F00">Red Text</span>},
++        },
++        {
++            in      => q{[color=OrAnge]OrAnge Text[/color]},
++            out     => q{<span style="color: OrAnge">OrAnge Text</span>},
++        },
++
++
++        # lists
++        # unordered
++        {
++            in      => q{[list]
++            [*]Red
++            [*]Blue
++            [*]Yellow
++            [/list]},
++            out     => q{<ul><li>Red</li><li>Blue</li><li>Yellow</li></ul>},
++        },
++    );
++
++    # test count is a fixed number of tests + the length of the @tests array
++    use Test::More;
++    plan tests => ( 3 + scalar(@forum_tests) );
++
++    use_ok( 'Template::Plugin::ForumCode' );
++};
++
++# create a new thingy
++my $tt_forum = Template::Plugin::ForumCode->new();
++isnt(undef, $tt_forum, 'Plugin object is defined');
++isa_ok($tt_forum, 'Template::Plugin::ForumCode');
++
++# now some formatting tests for forumcode()
++foreach my $test (@forum_tests) {
++    my $text = $tt_forum->forumcode($test->{in});
++    if (defined $test->{diag}) {
++        diag("$test->{out} - $test->{diag}");
++    }
++    is($text, $test->{out}, qq{forumcode('$test->{in}')});
++}
+
+
+
+From chiselwright at berlios.de  Wed Apr  5 22:07:13 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Wed, 5 Apr 2006 22:07:13 +0200
+Subject: [Parley-svn] r111 - in trunk: . root/css
+Message-ID: <200604052007.k35K7D11019529@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-05 22:07:08 +0200 (Wed, 05 Apr 2006)
+New Revision: 111
+
+Modified:
+   trunk/
+   trunk/root/css/default.css
+Log:
+ r14376 at ferrari:  chisel | 2006-04-05 21:06:03 +0100
+ / fixed height of #top
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14374
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14376
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-04-05 19:55:39 UTC (rev 110)
++++ trunk/root/css/default.css	2006-04-05 20:07:08 UTC (rev 111)
+@@ -15,9 +15,9 @@
+ #top {
+ 	background: url("images/logo.png") top left no-repeat rgb(171,121,100);
+ 	border:     0px;
+-	height:     50px; 
+ 	margin:     0px 0px 0px 0px;
+ 	padding:    10px;
++	height:     70px; 
+ }
+ #left {
+ 	background: transparent;
+
+
+
+From chiselwright at berlios.de  Wed Apr  5 22:07:21 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Wed, 5 Apr 2006 22:07:21 +0200
+Subject: [Parley-svn] r112 - in trunk: . root/css
+Message-ID: <200604052007.k35K7LQw019688@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-05 22:07:20 +0200 (Wed, 05 Apr 2006)
+New Revision: 112
+
+Modified:
+   trunk/
+   trunk/root/css/default.css
+Log:
+ r14377 at ferrari:  chisel | 2006-04-05 21:06:54 +0100
+ / used vim's retab command to eeplace tabs with spaces
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14376
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14377
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-04-05 20:07:08 UTC (rev 111)
++++ trunk/root/css/default.css	2006-04-05 20:07:20 UTC (rev 112)
+@@ -7,42 +7,42 @@
+     font-family: verdana, arial, helvetica, sans-serif;
+     margin:      0px 0px 0px 0px;
+     padding:     0px 0px 0px 0px;
+-	font-size:   12px;
++    font-size:   12px;
+ }
+ 
+ 
+ /* sections of the screen */
+ #top {
+-	background: url("images/logo.png") top left no-repeat rgb(171,121,100);
+-	border:     0px;
+-	margin:     0px 0px 0px 0px;
+-	padding:    10px;
+-	height:     70px; 
++    background: url("images/logo.png") top left no-repeat rgb(171,121,100);
++    border:     0px;
++    margin:     0px 0px 0px 0px;
++    padding:    10px;
++    height:     70px; 
+ }
+ #left {
+-	background: transparent;
+-	border:     0px;
+-	left:       0px;
+-	margin:     0px;
+-	padding-left:    10px;
+-	padding-right:    10px;
+-	position:   absolute;
+-	top:        100px;
+-	width:      150px; 
++    background: transparent;
++    border:     0px;
++    left:       0px;
++    margin:     0px;
++    padding-left:    10px;
++    padding-right:    10px;
++    position:   absolute;
++    top:        100px;
++    width:      150px; 
+ }
+ #middle {
+-	background: transparent;
+-	border:      0px;
+-	padding:     10px;
+-	top:         90px;
+-	margin-left: 170px;
+-	margin-top:  20px;
+-	margin-bottom: 0px;
++    background: transparent;
++    border:      0px;
++    padding:     10px;
++    top:         90px;
++    margin-left: 170px;
++    margin-top:  20px;
++    margin-bottom: 0px;
+ }
+ 
+ #footer {
+     border: 0px;
+-	background: transparent;
++    background: transparent;
+     margin: 0px 0px 0px 150px;
+     clear: both;
+     text-align:     right;
+@@ -61,19 +61,19 @@
+     background-color: #97b3cf;
+     background-color: rgb(213,158,128);
+ 
+-	border:        none;
++    border:        none;
+     border:        2px ridge #ccc;
+     
+     height:        1.6em;
+-	left:          0px;
+-	margin-left:   0px;
+-	margin-right:  0px;
+-	position:      absolute;
+-	right:         0px;
+-	text-align:    right;
+-	top:           70px;
+-	padding-top: 1px;
+-	padding-bottom: 1px;
++    left:          0px;
++    margin-left:   0px;
++    margin-right:  0px;
++    position:      absolute;
++    right:         0px;
++    text-align:    right;
++    top:           70px;
++    padding-top: 1px;
++    padding-bottom: 1px;
+     padding-right: 1em;
+ }
+ 
+@@ -99,24 +99,24 @@
+ 
+ /* use dl/dt/dd to make left nav */
+ dd {
+-	/* hide dd from graphical browsers, they should appear for text-only
+-	* browsers, giving a nice description of the link */
+-	display: none;
++    /* hide dd from graphical browsers, they should appear for text-only
++    * browsers, giving a nice description of the link */
++    display: none;
+ }
+ 
+ dt.nav_header {
+-	display:block;
+-	width: 140px;
++    display:block;
++    width: 140px;
+     color: black;
+ 
+     background: #ccc;
+     border: solid black 1px;
+-	border-style: outset;
++    border-style: outset;
+     font-weight: bold;
+     list-style-image: none;
+     list-style-type: none;
+     margin-top: 0.4em;
+-	padding-left: 0.5em;
++    padding-left: 0.5em;
+     padding-top: 0.2em;
+     padding-bottom: 0.2em;
+     text-decoration: none;
+@@ -124,34 +124,34 @@
+ 
+ /* class for nav stuff in left menu */
+ a.nav, a.nav:visited, a.nav:link, a.nav:active {
+-	display:block;
+-	width: 120px;
++    display:block;
++    width: 120px;
+ 
+     background: #ccc;
+     border: solid black 1px;
+-	border-style: outset;
++    border-style: outset;
+     font-weight: bold;
+     list-style-image: none;
+     list-style-type: none;
+     margin-top: 0px;
+-	margin-left: 20px;
+-	padding-left: 0.5em;
++    margin-left: 20px;
++    padding-left: 0.5em;
+     padding-top: 0.2em;
+     padding-bottom: 0.2em;
+     text-decoration: none;
+-	font-size: 0.8em;
++    font-size: 0.8em;
+ }
+ 
+ a.nav:hover {
+-	background:#000;
+-	color:#fff;
++    background:#000;
++    color:#fff;
+ }
+ 
+ a, a:link, a:visited, a:active {
+     text-decoration: none;
+     color: blue;
+     /*border-bottom: 1px dotted #bbb;*/
+-	background: transparent;
++    background: transparent;
+ }
+ 
+ table {
+@@ -170,39 +170,39 @@
+ }
+ th {
+     /*background-color: #f7f7f7;*/
+-	padding-left: 0.4em;
+-	text-align: left;
++    padding-left: 0.4em;
++    text-align: left;
+     border: 1px solid #999;
+ }
+ h1 {
+-	font-size: 1.1em;
+-	font-weight: bold;
++    font-size: 1.1em;
++    font-weight: bold;
+ }
+ h2 {
+-	font-size: 1em;
+-	font-weight: bold;
++    font-size: 1em;
++    font-weight: bold;
+ }
+ 
+ /* colour things differently if they're deleted */
+ .deleted, .deleted a {
+-	background: #622;
+-	color: #ff0;
++    background: #622;
++    color: #ff0;
+ }
+ 
+ /* colour users differently if they're not-active/usthenticated */
+ .nonauth, .nonauth a {
+-	background: orange;
+-	color: #000;
++    background: orange;
++    color: #000;
+ }
+ 
+ .right_align {
+-	text-align: right;
++    text-align: right;
+     /*background: #f00;*/
+ }
+ 
+ .header_row {
+-	background: #666;
+-	color:      #ff0;
++    background: #666;
++    color:      #ff0;
+ }
+ 
+ .codeblock {
+@@ -217,9 +217,9 @@
+         padding:        5px;
+         line-height:    1.5em;
+ 
+-		display: block;
+-		overflow: auto;
+-		white-space: pre;
++        display: block;
++        overflow: auto;
++        white-space: pre;
+ }
+ 
+ .codeblockhilite {
+@@ -234,7 +234,7 @@
+     background-color: rgb(250,180,180);
+     border: 2px inset #fff;
+     font-family: verdana, arial, helvetica, sans-serif;
+-	font-size:   0.8em;
++    font-size:   0.8em;
+ }
+ 
+ .input_text {
+@@ -243,14 +243,14 @@
+     background-color: rgb(251,215,194);
+     border: 2px inset #fff;
+     font-family: verdana, arial, helvetica, sans-serif;
+-	font-size:   1em;
++    font-size:   1em;
+ }
+ 
+ .input_button {
+     background-color: #97b3cf;
+     background-color: rgb(251,215,194);
+     font-family: verdana, arial, helvetica, sans-serif;
+-	font-size:   1em;
++    font-size:   1em;
+     border: 2px ridge #000;
+ }
+ 
+@@ -258,7 +258,7 @@
+     background-color: #97b3cf;
+     background-color: rgb(251,215,194);
+     font-family: verdana, arial, helvetica, sans-serif;
+-	font-size:   0.8em;
++    font-size:   0.8em;
+     border: 2px ridge #000;
+ }
+ 
+@@ -266,7 +266,7 @@
+     background-color: #369;
+     color: #fff;
+     font-family: verdana, arial, helvetica, sans-serif;
+-	font-size:   1em;
++    font-size:   1em;
+ }
+ 
+ .forum_link {
+@@ -335,8 +335,8 @@
+         padding:        2px;
+         font-size:      0.9em;
+ 
+-		display: block;
+-		overflow: auto;
++        display: block;
++        overflow: auto;
+ }
+ 
+ 
+
+
+
+From chiselwright at berlios.de  Wed Apr  5 22:26:42 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Wed, 5 Apr 2006 22:26:42 +0200
+Subject: [Parley-svn] r113 - trunk
+Message-ID: <200604052026.k35KQgUj023248@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-05 22:26:42 +0200 (Wed, 05 Apr 2006)
+New Revision: 113
+
+Modified:
+   trunk/
+   trunk/META.yml
+Log:
+ r14380 at ferrari:  chisel | 2006-04-05 21:15:26 +0100
+ / auto-updated META.yml file changes
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14377
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14380
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/META.yml
+===================================================================
+--- trunk/META.yml	2006-04-05 20:07:20 UTC (rev 112)
++++ trunk/META.yml	2006-04-05 20:26:42 UTC (rev 113)
+@@ -1,7 +1,7 @@
+ abstract: Catalyst Forum Application
+ author: 'Chisel Wright C<< <pause at herlpacker.co.uk> >>'
+ distribution_type: module
+-generated_by: Module::Install version 0.54
++generated_by: Module::Install version 0.61
+ license: perl
+ name: Parley
+ no_index:
+@@ -9,27 +9,30 @@
+     - inc
+     - t
+ requires:
+-  Catalyst: 5.63
++  Catalyst: 5.66
+   Catalyst::Model::DBIC: 0.13
+-  Catalyst::Plugin::Authentication: 0.05
+-  Catalyst::Plugin::Authentication::Store::DBIC: 0.04
++  Catalyst::Plugin::Authentication: 0.07
++  Catalyst::Plugin::Authentication::Store::DBIC: 0.05002
++  Catalyst::Plugin::DefaultEnd: 0.05
+   Catalyst::Plugin::Dumper: 0.000002
+   Catalyst::Plugin::Email: 0.05
+-  Catalyst::Plugin::FillInForm: 0.05
+-  Catalyst::Plugin::Session: 0.01
+-  Catalyst::Plugin::Session::State::Cookie: 0.01
+-  Catalyst::Plugin::Session::Store::FastMmap: 0.01
+-  Catalyst::Plugin::StackTrace: 0.02
+-  Catalyst::Plugin::Static::Simple: 0.12
+-  Catalyst::View::TT: 0.20
+-  DBD::Pg: 1.43
+-  DBIx::Class: 0.04001
+-  DBIx::Class::Loader: 0.14
+-  Data::FormValidator: 4.02
+-  DateTime::Format::Pg: 0.09
+-  Digest::MD5: 2.33
+-  List::MoreUtils: 0.17
++  Catalyst::Plugin::FillInForm: 0.06
++  Catalyst::Plugin::Prototype: 1.32
++  Catalyst::Plugin::Session: 0.05
++  Catalyst::Plugin::Session::State::Cookie: 0.02
++  Catalyst::Plugin::Session::Store::FastMmap: 0.02
++  Catalyst::Plugin::StackTrace: 0.04
++  Catalyst::Plugin::Static::Simple: 0.13
++  Catalyst::View::TT: 0.22
++  DBD::Pg: 1.47
++  DBIx::Class: 0.06000
++  DBIx::Class::Loader: 0.21
++  Data::FormValidator: 4.14
++  Data::SpreadPagination: 0
++  DateTime::Format::Pg: 0.11
++  Digest::MD5: 2.36
++  List::MoreUtils: 0.19
+   Readonly: 1.03
+-  Time::Piece: 1.08
+-  YAML: 0.53
+-version: 0.06
++  Time::Piece: 1.09
++  YAML: 0.58
++version: 0.09-pre
+
+
+
+From chiselwright at berlios.de  Wed Apr  5 22:26:53 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Wed, 5 Apr 2006 22:26:53 +0200
+Subject: [Parley-svn] r114 - trunk
+Message-ID: <200604052026.k35KQrIg023336@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-05 22:26:53 +0200 (Wed, 05 Apr 2006)
+New Revision: 114
+
+Modified:
+   trunk/
+   trunk/Makefile.PL
+Log:
+ r14381 at ferrari:  chisel | 2006-04-05 21:18:19 +0100
+ + update dependencies in Makefile.PL
+   I've reinstalled perl, and these are the current versions of modules that I'm
+   developing with. Since I'm not testing with older versions I can't
+   confidently say that the application works with older versions of
+   dependencies
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14380
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14381
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2006-04-05 20:26:42 UTC (rev 113)
++++ trunk/Makefile.PL	2006-04-05 20:26:53 UTC (rev 114)
+@@ -9,32 +9,32 @@
+ include('ExtUtils::AutoInstall');
+ 
+ requires(
+-    'Catalyst'                                      => '5.63',
++    'Catalyst'                                      => '5.66',
+     'Catalyst::Model::DBIC'                         => '0.13',
+-    'Catalyst::Plugin::Authentication'              => '0.05',
+-    'Catalyst::Plugin::Authentication::Store::DBIC' => '0.04',
+-    'Catalyst::Plugin::DefaultEnd'                  => '0.03',
++    'Catalyst::Plugin::Authentication'              => '0.07',
++    'Catalyst::Plugin::Authentication::Store::DBIC' => '0.05002',
++    'Catalyst::Plugin::DefaultEnd'                  => '0.05',
+     'Catalyst::Plugin::Dumper'                      => '0.000002',
+     'Catalyst::Plugin::Email'                       => '0.05',
+-    'Catalyst::Plugin::FillInForm'                  => '0.05',
++    'Catalyst::Plugin::FillInForm'                  => '0.06',
+     'Catalyst::Plugin::Prototype'                   => '1.32',
+-    'Catalyst::Plugin::Session'                     => '0.01',
+-    'Catalyst::Plugin::Session::State::Cookie'      => '0.01',
+-    'Catalyst::Plugin::Session::Store::FastMmap'    => '0.01',
+-    'Catalyst::Plugin::Static::Simple'              => '0.12',
+-    'Catalyst::Plugin::StackTrace'                  => '0.02',
+-    'Catalyst::View::TT'                            => '0.20',
++    'Catalyst::Plugin::Session'                     => '0.05',
++    'Catalyst::Plugin::Session::State::Cookie'      => '0.02',
++    'Catalyst::Plugin::Session::Store::FastMmap'    => '0.02',
++    'Catalyst::Plugin::Static::Simple'              => '0.13',
++    'Catalyst::Plugin::StackTrace'                  => '0.04',
++    'Catalyst::View::TT'                            => '0.22',
+     'Data::SpreadPagination'                        => 0,
+-    'DBD::Pg'                                       => '1.43',
+-    'DBIx::Class'                                   => '0.04001',
+-    'DBIx::Class::Loader'                           => '0.14',
+-    'Data::FormValidator'                           => '4.02',
+-    'DateTime::Format::Pg'                          => '0.09',
+-    'Digest::MD5'                                   => '2.33',
+-    'List::MoreUtils'                               => '0.17',
++    'DBD::Pg'                                       => '1.47',
++    'DBIx::Class'                                   => '0.06000',
++    'DBIx::Class::Loader'                           => '0.21',
++    'Data::FormValidator'                           => '4.14',
++    'DateTime::Format::Pg'                          => '0.11',
++    'Digest::MD5'                                   => '2.36',
++    'List::MoreUtils'                               => '0.19',
+     'Readonly'                                      => '1.03',
+-    'Time::Piece'                                   => '1.08',
+-    'YAML'                                          => '0.53',
++    'Time::Piece'                                   => '1.09',
++    'YAML'                                          => '0.58',
+ );
+ 
+ catalyst_files();
+
+
+
+From chiselwright at berlios.de  Wed Apr  5 22:27:03 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Wed, 5 Apr 2006 22:27:03 +0200
+Subject: [Parley-svn] r115 - in trunk: . lib lib/Parley/App lib/Parley/Controller root/base/forum root/base/menu root/base/shared root/base/thread
+Message-ID: <200604052027.k35KR3BL023422@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-05 22:26:59 +0200 (Wed, 05 Apr 2006)
+New Revision: 115
+
+Modified:
+   trunk/
+   trunk/Changes
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/App/Helper.pm
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/parley.yml
+   trunk/root/base/forum/view
+   trunk/root/base/menu/statusbar
+   trunk/root/base/shared/useful_tt_stuff
+   trunk/root/base/thread/view
+Log:
+ r14382 at ferrari:  chisel | 2006-04-05 21:27:11 +0100
+ - modify log-in check in auto() to use Auth::DBIC calling style
+ - use ConfigLoader plugin to load application config
+ - add authed_user() function, and alter instances of
+   $c->session->{authed_user} accordingly
+ - added new function to Parley::App::Helper - application_email_address()
+ - added Template::Plugin::ForumCode (not all BBCode functionality is
+   complete yet)
+ - use ForumCode plugin to process various display elements
+ - email from-address for emails is now set in config file
+ - new helper function application_email_address()
+ - change name of session file
+ - ammend statusbar and post-edit templating to work correctly with new
+   storage location of authed_user object
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14381
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14382
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/Changes	2006-04-05 20:26:59 UTC (rev 115)
+@@ -1,9 +1,20 @@
+ This file documents the revision history for Perl extension Forum.
+ 
+-    - added Template::Plugin::ForumCode (not all BBCode functionality is complete yet)
+-    - from-address for emails is now set in config file
++    - modify log-in check in auto() to use Auth::DBIC calling style
++    - use ConfigLoader plugin to load application config
++    - add authed_user() function, and alter instances of
++      $c->session->{authed_user} accordingly
++    - added new function to Parley::App::Helper - application_email_address()
++    - update dependencies/versions in Makefile.PL
++    - added Template::Plugin::ForumCode (not all BBCode functionality is
++      complete yet)
++    - use ForumCode plugin to process various display elements
++    - email from-address for emails is now set in config file
+     - new helper function application_email_address()
+     - small layout fixes
++    - change name of session file
++    - ammend statusbar and post-edit templating to work correctly with new
++      storage location of authed_user object
+ 
+ 0.08  Tue Jan 31 08:54:32 GMT 2006
+     - move to using uri_for(...) in redirects
+
+Modified: trunk/lib/Parley/App/Helper.pm
+===================================================================
+--- trunk/lib/Parley/App/Helper.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/App/Helper.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -2,7 +2,19 @@
+ use strict;
+ use warnings;
+ 
++sub application_email_address {
++    my ($self, $c) = @_;
+ 
++    my $address = 
++          $c->config->{alerts}{from_name}
++        . q{ <}
++        . $c->config->{alerts}{from_address}
++        . q{>}
++    ;
++
++    return $address;
++}
++
+ sub is_logged_in {
+     my ($self, $c) = @_;
+ 
+@@ -55,8 +67,8 @@
+     }
+ 
+     # for now only user #0 can lock threads
+-    $c->log->dumper( $c->session->{authed_user}->id() );
+-    return (0 == $c->session->{authed_user}->id());
++    $c->log->dumper( $c->authed_user->id() );
++    return (0 == $c->authed_user->id());
+ }
+ 
+ sub can_make_sticky {
+@@ -68,17 +80,18 @@
+     }
+ 
+     # for now only user #0 can lock threads
+-    return (0 == $c->session->{authed_user}->id());
++    return (0 == $c->authed_user->id());
+ }
+ 
+ 
+ sub user_preference_check {
+     my ($self, $c) = @_;
+ 
+-    if (not defined $c->session->{authed_user}->preference()) {
++    if (not defined $c->authed_user->preference()) {
+         $c->log->error(
+                 q{User #}
+-            . $c->session->{authed_user}->id()
++            . $c->authed_user->id()
++            #. $c->stash->{authed_user}->id()
+             . q{ doesn't have any preferences. Fixing.}
+         );
+ 
+@@ -90,8 +103,8 @@
+                 timezone => 'UTC',
+             }
+         );
+-        $c->session->{authed_user}->preference( $new_preference->id() );
+-        $c->session->{authed_user}->update();
++        $c->authed_user->preference( $new_preference->id() );
++        $c->authed_user->update();
+     }
+ }
+ 
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/My.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -33,7 +33,7 @@
+     $c->stash->{tz_categories} = $tz_categories;
+ 
+     # if the user has a timezone picked (and it's not UTC) pre-populate the menus
+-    my $user_pref = $c->session->{authed_user}->preference();
++    my $user_pref = $c->authed_user->preference();
+     if (defined (my $user_tz = $user_pref->timezone())) {
+         # deal with UTC differently
+         if ($user_tz eq 'UTC') {
+@@ -60,7 +60,7 @@
+ 
+ sub preferences_update : Path('/my/preferences/update') {
+     my ($self, $c) = @_;
+-    my $user_pref = $c->session->{authed_user}->preference();
++    my $user_pref = $c->authed_user->preference();
+     
+     # we always want to see the preferences screen
+     $c->stash->{template} = 'my/preferences';
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/Post.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -61,7 +61,7 @@
+     Parley::App::Helper->login_if_required($c, q{You must be logged in to edit your posts});
+ 
+     # you can only edit posts you've created
+-    if ($c->session->{authed_user}->id() != $c->stash->{current_post}->creator()->id()) {
++    if ($c->authed_user->id() != $c->stash->{current_post}->creator()->id()) {
+         push @messages, q{You can only edit your own posts};
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/Thread.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -196,7 +196,7 @@
+                 {
+                     forum       => $c->stash->{current_forum}->id(),
+                     subject     => $results->valid->{thread_subject},
+-                    creator     => $c->session->{authed_user}->id(),
++                    creator     => $c->authed_user->id(),
+                 }
+             );
+ 
+@@ -206,7 +206,7 @@
+                     thread      => $new_thread->id(),
+                     subject     => $results->valid->{thread_subject},
+                     message     => $results->valid->{thread_message},
+-                    creator     => $c->session->{authed_user}->id(),
++                    creator     => $c->authed_user->id(),
+                 }
+             );
+ 
+@@ -217,7 +217,7 @@
+             $self->_increase_post_count($c, $new_thread);
+ 
+             # increase the post count for the user
+-            $self->_update_person_post_info($c, $c->session->{authed_user}, $new_post);
++            $self->_update_person_post_info($c, $c->authed_user, $new_post);
+ 
+             # commit everything
+             $c->model('ParleyDB')->table('thread')->storage->txn_commit;
+@@ -271,7 +271,7 @@
+                     thread      => $c->stash->{current_thread}->id(),
+                     subject     => ($results->valid->{thread_subject} || undef),
+                     message     => $results->valid->{thread_message},
+-                    creator     => $c->session->{authed_user}->id(),
++                    creator     => $c->authed_user->id(),
+                 }
+             );
+ 
+@@ -298,7 +298,7 @@
+             $self->_increase_post_count($c, $c->stash->{current_thread});
+ 
+             # increase the post count for the user
+-            $self->_update_person_post_info($c, $c->session->{authed_user}, $new_post);
++            $self->_update_person_post_info($c, $c->authed_user, $new_post);
+ 
+             # commit everything
+             $c->model('ParleyDB')->table('post')->storage->txn_commit;
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley/Controller/User.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -319,7 +319,7 @@
+     $c->log->info('about to send an email');
+     $c->email(
+         header => [
+-            From    => q{Parley Registration <parley at herlpacker.co.uk>},
++            From    => Parley::App::Helper->application_email_address($c),
+             To      => $person->email(),
+             Subject => qq{Activate your @{[$c->config->{name}]} registration},
+         ],
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/lib/Parley.pm	2006-04-05 20:26:59 UTC (rev 115)
+@@ -14,6 +14,8 @@
+     Dumper
+     StackTrace
+ 
++    ConfigLoader
++
+     Email
+     Static::Simple
+ 
+@@ -38,28 +40,19 @@
+ #
+ # Configure the application
+ #
+-__PACKAGE__->config( YAML::LoadFile(__PACKAGE__->config->{'home'}.'/parley.yml') );
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+ 
+-=head1 NAME
++sub authed_user {
++    my ($c, $value) = @_;
+ 
+-Parley - Catalyst based application
++    if (defined $value) {
++        $c->stash->{authed_user} = $value;
++    }
+ 
+-=head1 SYNOPSIS
++    return $c->stash->{authed_user};
++}
+ 
+-    script/forum_server.pl
+-
+-=head1 DESCRIPTION
+-
+-Catalyst based application.
+-
+-=head1 METHODS
+-
+-=head2 default
+-
+-=cut
+-
+ sub auto : Private {
+     my ($self, $c) = @_;
+ 
+@@ -76,19 +69,19 @@
+     }
+ 
+     # if we have a user ... fetch some info (if we don't already have it)
+-    if ( $c->user and not defined $c->session->{authed_user} ) {
+-        $c->log->info('Fetching user information');
++    if ( $c->user and not defined $c->authed_user ) {
++        $c->log->info('Fetching user information for ' . $c->user->id);
+ 
+         # get the person info for the username
+         my $results = $c->model('ParleyDB')->table('person')->search(
+             {
+-                'authentication.username'   => $c->user->user->username(),
++                'authentication.username'   => $c->user->username(),
+             },
+             {
+                 join => 'authentication',
+             },
+         );
+-        $c->session->{authed_user} = $results->first();
++        $c->authed_user( $results->first() );
+ 
+         #####################################################################
+         # cater for database upgrades, and make sure the user has preferences
+@@ -188,7 +181,25 @@
+     # (re)populate the form
+     $c->fillform( $c->stash->{formdata} );
+ }
+-        
++
++
++
++=head1 NAME
++
++Parley - Catalyst based application
++
++=head1 SYNOPSIS
++
++    script/forum_server.pl
++
++=head1 DESCRIPTION
++
++Catalyst based application.
++
++=head1 METHODS
++
++=head2 auto
++
+ =head1 AUTHOR
+ 
+ Chisel Wright C<< <pause at herlpacker.co.uk> >>
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/parley.yml	2006-04-05 20:26:59 UTC (rev 115)
+@@ -3,6 +3,10 @@
+ name:         Parley
+ default_uri:  /forum/list
+ 
++alerts:
++    from_name:      'Parley'
++    from_address:   'parley at localhost'
++
+ #--
+ #-- LINES BELOW THIS SHOULDN'T NEED CHANGING
+ #--
+@@ -22,7 +26,7 @@
+ # session settings; perldoc Catalyst::Plugin::Session::FastMmap
+ session:
+     expires:    3600
+-    storage:    '/tmp/forum.session'
++    storage:    '/tmp/parley.session'
+ 
+ 
+ # template toolkit options
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/forum/view	2006-04-05 20:26:59 UTC (rev 115)
+@@ -26,7 +26,7 @@
+     </td>
+ 
+     <td>
+-    <a href="thread/view?thread=[% thread.id %]" class="topic_link">[% thread.subject %]</a>
++    <a href="thread/view?thread=[% thread.id %]" class="topic_link">[% ForumCode.escape(thread.subject) %]</a>
+     <br />
+     <span class="topic_creator">created by
+         <span class="post_creator">[% thread.creator.forum_name %]</span>
+@@ -39,7 +39,6 @@
+      <span class="topic_creator">posted by
+         <span class="post_creator">[% thread.last_post.creator.forum_name %]</span>
+      </span>
+-     [% IF can_lock %] [Lock] [% END %]
+     </td>
+ 
+     <td style="text-align: center;">
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/menu/statusbar	2006-04-05 20:26:59 UTC (rev 115)
+@@ -14,7 +14,7 @@
+                 </td>
+ 
+                 <td width="40%" class="right">
+-                        [% IF (authed_user = c.session.authed_user) %]
++                        [% IF (authed_user = c.authed_user) %]
+                         Logged in as <b>[% authed_user.first_name %] [% authed_user.last_name %]</b>
+                         [% UNLESS authed_user.authentication.authenticated %]
+                         (<b><i>Not Authenticated</i></b>)
+
+Modified: trunk/root/base/shared/useful_tt_stuff
+===================================================================
+--- trunk/root/base/shared/useful_tt_stuff	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/shared/useful_tt_stuff	2006-04-05 20:26:59 UTC (rev 115)
+@@ -1,11 +1,12 @@
+ [% USE HTML %]
++[% USE ForumCode %]
+ 
+ [% MACRO nicedate(d) BLOCK %]
+     [%# if a person has preferences, and there's a time_zone option set, use it to
+         set the TZ used to display the time in nicedate
+     %]
+-    [% IF c.session.authed_user.preference.timezone %]
+-    [% CALL d.set_time_zone(c.session.authed_user.preference.timezone) %]
++    [% IF c.authed_user.preference.timezone %]
++    [% CALL d.set_time_zone(c.authed_user.preference.timezone) %]
+     [% END %]
+ 
+     [% d.strftime('%A %d %B %Y at %R') %]
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2006-04-05 20:26:53 UTC (rev 114)
++++ trunk/root/base/thread/view	2006-04-05 20:26:59 UTC (rev 115)
+@@ -1,4 +1,3 @@
+-
+ <table>
+     <tr>
+         <td>
+@@ -46,13 +45,13 @@
+                         </span>
+                         <br />
+                         <span class="quoted_message">
+-                        [% FILTER html_line_break %][% HTML.escape(post.quoted_text) %][% END %]
++                        [% ForumCode.forumcode(post.quoted_text) %]
+                         </span>
+-                    [% FILTER html_line_break %][% HTML.escape(post.message) %][% END %]
++                    [% ForumCode.forumcode(post.message) %]<br />
+                     </span>
+                 [% ELSE %]
+                     <span class="post_message">
+-                    [% FILTER html_line_break %][% HTML.escape(post.message) %][% END %]
++                    [% ForumCode.forumcode(post.message) %]<br />
+                     </span>
+                 [% END %]
+                 [% IF post.edited %]
+@@ -63,7 +62,7 @@
+         [% UNLESS current_thread.locked %]
+         <tr>
+         <td style="text-align: right;">
+-            [% IF c.session.authed_user.id == post.creator.id %]
++            [% IF c.authed_user.id == post.creator.id %]
+             <form action="post/edit?post=[% post.id %]" method="POST" name="post_actions" class="inline_form">
+                 <input type="submit" value="Edit" name="edit_post" class="small_input_button" />
+             </form>
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:45:49 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:45:49 +0200
+Subject: [Parley-svn] r116 - in trunk: . lib/Parley/Controller root/base root/base/about t
+Message-ID: <200604131045.k3DAjnTP015643@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:45:45 +0200 (Thu, 13 Apr 2006)
+New Revision: 116
+
+Added:
+   trunk/lib/Parley/Controller/About.pm
+   trunk/root/base/about/
+   trunk/root/base/about/modules
+   trunk/t/controller_About.t
+Modified:
+   trunk/
+Log:
+ r14386 at ferrari:  chisel | 2006-04-06 09:29:20 +0100
+ + added about/modules, an easier way to obtain version information for loaded modules
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14382
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14386
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Added: trunk/lib/Parley/Controller/About.pm
+===================================================================
+--- trunk/lib/Parley/Controller/About.pm	2006-04-05 20:26:59 UTC (rev 115)
++++ trunk/lib/Parley/Controller/About.pm	2006-04-13 10:45:45 UTC (rev 116)
+@@ -0,0 +1,52 @@
++package Parley::Controller::About;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++sub modules : Local {
++    my ( $self, $c ) = @_;
++    my $inc_data;
++
++    my @inc_loaded = grep { s/\//::/g; s/\.pm//g; } sort keys %INC;
++
++    foreach my $module_name (@inc_loaded) {
++        eval {
++            $inc_data->{ $module_name } = $module_name->VERSION();
++        };
++        push @{$c->stash->{loaded_module_data}},
++        {
++            name    => $module_name,
++            version => $inc_data->{ $module_name },
++        };
++    }
++
++}
++
++
++=head1 NAME
++
++Parley::Controller::About - Catalyst Controller
++
++=head1 SYNOPSIS
++
++See L<Parley>
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=head1 AUTHOR
++
++Chisel Wright C< <<pause at herlpacker.co.uk>> >
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/root/base/about/modules
+===================================================================
+--- trunk/root/base/about/modules	2006-04-05 20:26:59 UTC (rev 115)
++++ trunk/root/base/about/modules	2006-04-13 10:45:45 UTC (rev 116)
+@@ -0,0 +1,39 @@
++
++<h1>Loaded modules with a version number</h1>
++<table>
++[% FOREACH module = loaded_module_data.sort('name') %]
++[% IF module.version && ! (module.version == '-1, set by base.pm') %]
++<tr>
++<td>[% module.name %]</td>
++<td>[% module.version || '<i>undefined</i>' %]</td>
++</tr>
++[% END %]
++[% END %]
++</table>
++
++
++
++<h1>Loaded modules with no version number</h1>
++<table>
++[% FOREACH module = loaded_module_data.sort('name') %]
++[% IF ! module.version %]
++<tr>
++<td>[% module.name %]</td>
++<td>[% module.version || '<i>undefined</i>' %]</td>
++</tr>
++[% END %]
++[% END %]
++</table>
++
++
++<h1>Loaded modules with version set by base.pm</h1>
++<table>
++[% FOREACH module = loaded_module_data.sort('name') %]
++[% IF module.version == '-1, set by base.pm' %]
++<tr>
++<td>[% module.name %]</td>
++<td>[% module.version || '<i>undefined</i>' %]</td>
++</tr>
++[% END %]
++[% END %]
++</table>
+
+Added: trunk/t/controller_About.t
+===================================================================
+--- trunk/t/controller_About.t	2006-04-05 20:26:59 UTC (rev 115)
++++ trunk/t/controller_About.t	2006-04-13 10:45:45 UTC (rev 116)
+@@ -0,0 +1,13 @@
++use strict;
++use warnings;
++use Test::More tests => 3;
++
++#BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::About' }
++
++#ok( request('/about')->is_success, 'Request should succeed' );
++ok (1);
++ok (1);
++ok (1);
++
++
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:46:48 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:46:48 +0200
+Subject: [Parley-svn] r117 - trunk
+Message-ID: <200604131046.k3DAkmuq015850@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:46:14 +0200 (Thu, 13 Apr 2006)
+New Revision: 117
+
+Modified:
+   trunk/
+   trunk/Changes
+Log:
+ r14387 at ferrari:  chisel | 2006-04-06 09:31:09 +0100
+ + updated Changes with about/modules message
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14386
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14387
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-04-13 10:45:45 UTC (rev 116)
++++ trunk/Changes	2006-04-13 10:46:14 UTC (rev 117)
+@@ -1,5 +1,7 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - added about/modules, an easier way to obtain version information for
++      loaded modules
+     - modify log-in check in auto() to use Auth::DBIC calling style
+     - use ConfigLoader plugin to load application config
+     - add authed_user() function, and alter instances of
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:47:13 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:47:13 +0200
+Subject: [Parley-svn] r118 - in trunk: . lib/Parley/Controller root/base/my
+Message-ID: <200604131047.k3DAlDL3015941@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:46:56 +0200 (Thu, 13 Apr 2006)
+New Revision: 118
+
+Modified:
+   trunk/
+   trunk/Changes
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/preferences
+Log:
+ r14388 at ferrari:  chisel | 2006-04-06 09:56:25 +0100
+ - added visual feedback when TZ preference is updated
+ - store the referer when visiting my/preferences making it easier to return to where we were previously
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14387
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14388
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-04-13 10:46:14 UTC (rev 117)
++++ trunk/Changes	2006-04-13 10:46:56 UTC (rev 118)
+@@ -1,5 +1,8 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - added visual feedback when TZ preference is updated
++    - store the referer when visiting my/preferences making it easier to return
++      to where we were previously
+     - added about/modules, an easier way to obtain version information for
+       loaded modules
+     - modify log-in check in auto() to use Auth::DBIC calling style
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2006-04-13 10:46:14 UTC (rev 117)
++++ trunk/lib/Parley/Controller/My.pm	2006-04-13 10:46:56 UTC (rev 118)
+@@ -29,6 +29,12 @@
+     my ($self, $c) = @_;
+     my ($tz_categories);
+ 
++    # where did we come from? it would be nice to return there when we're done
++    $c->log->info( 'We came from: ' . $c->request->referer() );
++    if ($c->request->referer() !~ m{/my/preferences/}xms) {
++        $c->session->{my_pref_came_from} = $c->request->referer();
++    }
++
+     $tz_categories = DateTime::TimeZone->categories();
+     $c->stash->{tz_categories} = $tz_categories;
+ 
+@@ -78,6 +84,7 @@
+     if ($c->request->param('use_utc')) {
+         $user_pref->timezone('UTC');
+         $user_pref->update();
++        $c->stash->{tz_message} = 'Timezone set to UTC';
+     }
+     # otherwise, we need to validate the Zone and Place, then update (if valid)
+     else {
+@@ -97,6 +104,7 @@
+         if (1 == $match_count) {
+             $user_pref->timezone( $tz_string );
+             $user_pref->update();
++            $c->stash->{tz_message} = "Timezone set to $tz_string";
+         }
+         # otherwise, we don't update, and the page reloads showing their last
+         # valid setting
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2006-04-13 10:46:14 UTC (rev 117)
++++ trunk/root/base/my/preferences	2006-04-13 10:46:56 UTC (rev 118)
+@@ -6,7 +6,14 @@
+ 
+ <form action="my/preferences/update" method="POST" name="timezone">
+     <table width="550">
++
++    [% IF tz_message %]
+     <tr>
++    <td colspan="2"><b><i>[% tz_message %]</i></b></td>
++    </tr>
++    [% END %]
++
++    <tr>
+     <td>
+     <select id="selectZone" name="selectZone">
+         <option>[ Select Zone ]</option>
+@@ -70,3 +77,7 @@
+     
+ // End -->
+ </script>
++
++[% IF c.session.my_pref_came_from %]
++<a href="[% c.session.my_pref_came_from %]">Return to the forum</a>
++[% END %]
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:48:10 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:48:10 +0200
+Subject: [Parley-svn] r119 - in trunk: . lib/Parley/Controller
+Message-ID: <200604131048.k3DAmASs016074@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:47:29 +0200 (Thu, 13 Apr 2006)
+New Revision: 119
+
+Modified:
+   trunk/
+   trunk/lib/Parley/Controller/My.pm
+Log:
+ r14389 at ferrari:  chisel | 2006-04-06 09:58:44 +0100
+ / fix small bug in preferences referrer
+ - remove debugging output
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14388
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14389
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2006-04-13 10:46:56 UTC (rev 118)
++++ trunk/lib/Parley/Controller/My.pm	2006-04-13 10:47:29 UTC (rev 119)
+@@ -30,8 +30,7 @@
+     my ($tz_categories);
+ 
+     # where did we come from? it would be nice to return there when we're done
+-    $c->log->info( 'We came from: ' . $c->request->referer() );
+-    if ($c->request->referer() !~ m{/my/preferences/}xms) {
++    if ($c->request->referer() !~ m{/my/preferences}xms) {
+         $c->session->{my_pref_came_from} = $c->request->referer();
+     }
+ 
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:49:09 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:49:09 +0200
+Subject: [Parley-svn] r120 - in trunk: . lib/Parley/Controller root/base/my
+Message-ID: <200604131049.k3DAn9DE016270@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:48:29 +0200 (Thu, 13 Apr 2006)
+New Revision: 120
+
+Modified:
+   trunk/
+   trunk/Changes
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/preferences
+Log:
+ r14390 at ferrari:  chisel | 2006-04-06 10:12:18 +0100
+ + show time formatting sample in my/preferences
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14389
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14390
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-04-13 10:47:29 UTC (rev 119)
++++ trunk/Changes	2006-04-13 10:48:29 UTC (rev 120)
+@@ -1,6 +1,7 @@
+ This file documents the revision history for Perl extension Forum.
+ 
+     - added visual feedback when TZ preference is updated
++    - show time-formatting sample in my/preferences
+     - store the referer when visiting my/preferences making it easier to return
+       to where we were previously
+     - added about/modules, an easier way to obtain version information for
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2006-04-13 10:47:29 UTC (rev 119)
++++ trunk/lib/Parley/Controller/My.pm	2006-04-13 10:48:29 UTC (rev 120)
+@@ -5,6 +5,7 @@
+ use Parley::App::Helper;
+ 
+ use DateTime::TimeZone;
++use DateTime;
+ 
+ sub auto : Private {
+     my ($self, $c) = @_;
+@@ -34,6 +35,10 @@
+         $c->session->{my_pref_came_from} = $c->request->referer();
+     }
+ 
++    # what's the current time? then we can show it in the TZ area
++    $c->stash->{current_time} = DateTime->now();
++
++    # fetch timezone categories
+     $tz_categories = DateTime::TimeZone->categories();
+     $c->stash->{tz_categories} = $tz_categories;
+ 
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2006-04-13 10:47:29 UTC (rev 119)
++++ trunk/root/base/my/preferences	2006-04-13 10:48:29 UTC (rev 120)
+@@ -14,6 +14,11 @@
+     [% END %]
+ 
+     <tr>
++        <td>Time formatting example:</td>
++        <td><i>[% nicedate(current_time) %]</i></td>
++    </tr>
++
++    <tr>
+     <td>
+     <select id="selectZone" name="selectZone">
+         <option>[ Select Zone ]</option>
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:50:06 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:50:06 +0200
+Subject: [Parley-svn] r121 - in trunk: . lib/Parley/Controller root/base/menu root/base/user root/css
+Message-ID: <200604131050.k3DAo6eB016441@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:49:32 +0200 (Thu, 13 Apr 2006)
+New Revision: 121
+
+Modified:
+   trunk/
+   trunk/Changes
+   trunk/lib/Parley/Controller/User.pm
+   trunk/root/base/menu/statusbar
+   trunk/root/base/user/login
+   trunk/root/css/default.css
+Log:
+ r14391 at ferrari:  chisel | 2006-04-13 08:56:34 +0100
+ Use a floating loginbox instead of a separate screen (as inspired by calendarhub.com)
+ 
+ + new CSS id 'loginbox', which is the <div> for the login-box
+ + added login-box to statusbar include file (we may wish to factor out the
+   login-box into it's own included file
+ / updated login link to ajax-appear the login-box
+ / modified redirection after login - if referer() and action() are different,
+   redirect to the referer() after a successful login. [This improves the
+   behaviour after login with the login-box]
+ 
+ ! if you end up at user/login the (visible) username field doesn't
+   automatically receive focus, this is because we now have the hidden login
+   form with a field having the same name/id
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14390
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14391
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-04-13 10:48:29 UTC (rev 120)
++++ trunk/Changes	2006-04-13 10:49:32 UTC (rev 121)
+@@ -1,5 +1,7 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - use a floating loginbox instead of a separate screen (as inspired by
++      calendarhub.com)
+     - added visual feedback when TZ preference is updated
+     - show time-formatting sample in my/preferences
+     - store the referer when visiting my/preferences making it easier to return
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2006-04-13 10:48:29 UTC (rev 120)
++++ trunk/lib/Parley/Controller/User.pm	2006-04-13 10:49:32 UTC (rev 121)
+@@ -91,9 +91,16 @@
+ 
+         # if we have a user we're logged in
+         if ( $login_status ) {
++            my $base    = $c->request->base();
++            my $action  = $c->request->action();
++
+             if ( $c->session->{after_login} ) {
+                 $c->response->redirect( delete $c->session->{after_login} );
+             }
++            # redirect to where we were referred from, unless our referer is our action
++            elsif ( $c->request->referer() =~ m{\A$base}xms and $c->request->referer() !~ m{$action\z}xms) {
++                $c->response->redirect( $c->request->referer() );
++            }
+             else {
+                 $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
+             }
+@@ -114,8 +121,16 @@
+     $c->logout;
+     delete $c->session->{'authed_user'};
+ 
+-    # do the 'default' action
+-    $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++    # redisplay the page we were on, or just do the 'default' action
++    my $base    = $c->request->base();
++    my $action  = $c->request->action();
++    # redirect to where we were referred from, unless our referer is our action
++    if ( $c->request->referer() =~ m{\A$base}xms and $c->request->referer() !~ m{$action\z}xms) {
++        $c->response->redirect( $c->request->referer() );
++    }
++    else {
++        $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++    }
+ }
+ 
+ sub signup : Path('/user/signup') {
+@@ -336,7 +351,6 @@
+     $c->log->info('email sent - supposedly');
+ }
+ 
+-
+ =head1 NAME
+ 
+ Parley::Controller::User - Catalyst Controller
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-04-13 10:48:29 UTC (rev 120)
++++ trunk/root/base/menu/statusbar	2006-04-13 10:49:32 UTC (rev 121)
+@@ -23,9 +23,43 @@
+                                 <a href="user/logout">Logout</a>
+                         ]</i>
+                         [% ELSE %]
+-            <i>[ <a href="user/login">Click Here To Login</a> ]</i>
++            <i>[ <a onclick="new Effect.Appear('loginbox'); $('username').focus(); return false;" href="user/login">Click Here To Login</a> ]</i>
+                         [% END %] [%# authed_user end %]
+                 </td>
++
++                <td>
++                </td>
+         </tr>
+ </table>
++
++<!-- we have to put the div outside the table, otherwise we get trapped inside it! -->
++<div id="loginbox" style="display: none">
++    <form action="user/login" method="post" name="login_form">
++        <table>
++            <tr>
++                <td>
++                    <label for="username"><b>Username:</b></label>
++                </td>
++                <td>
++                    <input type="text" id="username" name="username" style="width: 15em;" class="input_text" />
++                </td>
++            </tr>
++
++            <tr>
++                <td>
++                    <label for="password"><b>Password:</b></label>
++                </td>
++                <td>
++                    <input type="password" id="password" name="password" style="width: 15em;" class="input_text" />
++                </td>
++            </tr>
++
++            <tr>
++                <td colspan="2">
++                    <input type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>
++                </td>
++            </tr>
++        </table>
++    </form>
++</div>
+ <!-- status bar : end -->
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2006-04-13 10:48:29 UTC (rev 120)
++++ trunk/root/base/user/login	2006-04-13 10:49:32 UTC (rev 121)
+@@ -13,7 +13,7 @@
+ 
+         <tr>
+             <td>
+-                <label for="username">username:</label>
++                <label for="username"><b>Username:</b></label>
+             </td>
+             <td>
+                 <input type="text" id="username" name="username" size="40" class="input_text" />
+@@ -22,7 +22,7 @@
+ 
+         <tr>
+             <td>
+-                <label for="password">password:</label>
++                <label for="password"><b>Password:</b></label>
+             </td>
+             <td>
+                 <input type="password" id="password" name="password" size="40" class="input_text" />
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-04-13 10:48:29 UTC (rev 120)
++++ trunk/root/css/default.css	2006-04-13 10:49:32 UTC (rev 121)
+@@ -97,6 +97,17 @@
+     text-align: right;
+ }
+ 
++#loginbox {
++    border: 1px solid #ccc;
++    width: 250px;
++    float: right;
++    background-color: #f8f8f8;
++    padding: 5px;
++    margin-top: 1.5em;
++    margin-right: 3em;
++    font-size:      0.8em;
++}
++
+ /* use dl/dt/dd to make left nav */
+ dd {
+     /* hide dd from graphical browsers, they should appear for text-only
+@@ -356,3 +367,4 @@
+     font-style:     italic;
+     font-size:      0.8em;
+ }
++
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:50:52 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:50:52 +0200
+Subject: [Parley-svn] r122 - in trunk: . root/base/menu root/base/user
+Message-ID: <200604131050.k3DAoq3Y016599@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:50:17 +0200 (Thu, 13 Apr 2006)
+New Revision: 122
+
+Modified:
+   trunk/
+   trunk/root/base/menu/statusbar
+   trunk/root/base/user/login
+Log:
+ r14392 at ferrari:  chisel | 2006-04-13 09:05:10 +0100
+ / rename the form in the loginbox (so it's different from the
+   existing visible one)
+ / remove the include for shared/focus_username_js
+ + add simple javascript to fucus the specific username field
+   we're interested in
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14391
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14392
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-04-13 10:49:32 UTC (rev 121)
++++ trunk/root/base/menu/statusbar	2006-04-13 10:50:17 UTC (rev 122)
+@@ -34,7 +34,7 @@
+ 
+ <!-- we have to put the div outside the table, otherwise we get trapped inside it! -->
+ <div id="loginbox" style="display: none">
+-    <form action="user/login" method="post" name="login_form">
++    <form action="user/login" method="post" name="popup_login_form">
+         <table>
+             <tr>
+                 <td>
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2006-04-13 10:49:32 UTC (rev 121)
++++ trunk/root/base/user/login	2006-04-13 10:50:17 UTC (rev 122)
+@@ -44,5 +44,9 @@
+     </div>
+ </form>
+ 
+-[% INCLUDE shared/focus_username_js %]
+-
++<!-- put focus into the username field on the form above -->
++<script language="JavaScript">
++	<!-- Begin
++    document.forms['login_form'].elements['username'].focus();
++	// End -->
++</script>
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:51:10 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:51:10 +0200
+Subject: [Parley-svn] r123 - in trunk: . root/base/menu
+Message-ID: <200604131051.k3DApA6Z016791@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:51:00 +0200 (Thu, 13 Apr 2006)
+New Revision: 123
+
+Modified:
+   trunk/
+   trunk/root/base/menu/statusbar
+Log:
+ r14393 at ferrari:  chisel | 2006-04-13 09:12:51 +0100
+ / set fade-up duration for login-box
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14392
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14393
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-04-13 10:50:17 UTC (rev 122)
++++ trunk/root/base/menu/statusbar	2006-04-13 10:51:00 UTC (rev 123)
+@@ -23,7 +23,7 @@
+                                 <a href="user/logout">Logout</a>
+                         ]</i>
+                         [% ELSE %]
+-            <i>[ <a onclick="new Effect.Appear('loginbox'); $('username').focus(); return false;" href="user/login">Click Here To Login</a> ]</i>
++            <i>[ <a onclick="new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;" href="user/login">Click Here To Login</a> ]</i>
+                         [% END %] [%# authed_user end %]
+                 </td>
+ 
+
+
+
+From chiselwright at berlios.de  Thu Apr 13 12:51:23 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 13 Apr 2006 12:51:23 +0200
+Subject: [Parley-svn] r124 - in trunk: . root/base/menu root/css
+Message-ID: <200604131051.k3DApN8g017019@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-04-13 12:51:17 +0200 (Thu, 13 Apr 2006)
+New Revision: 124
+
+Modified:
+   trunk/
+   trunk/root/base/menu/statusbar
+   trunk/root/css/default.css
+Log:
+ r14394 at ferrari:  chisel | 2006-04-13 09:23:05 +0100
+ / alter "Click to Login" to "Login"
+ + add "Signup" link in statusbar (when not logged in)
+ / slightly reduced text size for #left and #statusbar
+ + added "Forgotten Password" link to login-box
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14393
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14394
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-04-13 10:51:00 UTC (rev 123)
++++ trunk/root/base/menu/statusbar	2006-04-13 10:51:17 UTC (rev 124)
+@@ -23,7 +23,11 @@
+                                 <a href="user/logout">Logout</a>
+                         ]</i>
+                         [% ELSE %]
+-            <i>[ <a onclick="new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;" href="user/login">Click Here To Login</a> ]</i>
++            <i>[
++            <a onclick="new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;" href="user/login">Login</a>
++            |
++            <a href="user/signup">Signup</a>
++            ]</i>
+                         [% END %] [%# authed_user end %]
+                 </td>
+ 
+@@ -59,6 +63,12 @@
+                     <input type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>
+                 </td>
+             </tr>
++
++            <tr>
++                <td colspan="2">
++                    <a href="user/password/forgotten">Forgotten Password</a>
++                </td>
++            </tr>
+         </table>
+     </form>
+ </div>
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-04-13 10:51:00 UTC (rev 123)
++++ trunk/root/css/default.css	2006-04-13 10:51:17 UTC (rev 124)
+@@ -29,6 +29,7 @@
+     position:   absolute;
+     top:        100px;
+     width:      150px; 
++    font-size: 0.9em;
+ }
+ #middle {
+     background: transparent;
+@@ -75,6 +76,8 @@
+     padding-top: 1px;
+     padding-bottom: 1px;
+     padding-right: 1em;
++
++    font-size: 0.9em;
+ }
+ 
+ #statusbar table {
+
+
+

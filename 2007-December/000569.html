@@ -1,0 +1,856 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r681 - / trunk trunk/lib/Parley/I18N	trunk/root/base/forum trunk/root/base/thread	trunk/root/base/user trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r681%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/forum%20trunk/root/base/thread%0A%09trunk/root/base/user%20trunk/root/css&In-Reply-To=%3C200712142144.lBELijB5029139%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000568.html">
+   <LINK REL="Next"  HREF="000570.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r681 - / trunk trunk/lib/Parley/I18N	trunk/root/base/forum trunk/root/base/thread	trunk/root/base/user trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r681%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/forum%20trunk/root/base/thread%0A%09trunk/root/base/user%20trunk/root/css&In-Reply-To=%3C200712142144.lBELijB5029139%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r681 - / trunk trunk/lib/Parley/I18N	trunk/root/base/forum trunk/root/base/thread	trunk/root/base/user trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Dec 14 22:44:45 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000568.html">[Parley-svn] r680 - / trunk/root/base/forum trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000570.html">[Parley-svn] r682 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#569">[ date ]</a>
+              <a href="thread.html#569">[ thread ]</a>
+              <a href="subject.html#569">[ subject ]</a>
+              <a href="author.html#569">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-14 22:44:44 +0100 (Fri, 14 Dec 2007)
+New Revision: 681
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/TODO
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/forum/view
+   trunk/root/base/thread/recent
+   trunk/root/base/thread/reply
+   trunk/root/base/thread/view
+   trunk/root/base/user/login
+   trunk/root/css/experiment.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4298 at wiggin</A>:  chisel | 2007-12-14 18:59:11 +0000
+ / i18n modifications
+ / lots of template changes to cleanup UI after using a more YUI-escue layout
+ / CSS additions for the new layout
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4295
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4298
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/Changes.i18n	2007-12-14 21:44:44 UTC (rev 681)
+@@ -11,12 +11,18 @@
+ 
+     i_default.po:
+         - added:
+-            - 'There is no current forum to view'
+-            - 'There is no current thread to view'
++            - &quot;%1 wrote:&quot;
+             - &quot;%quant(%1,reply)&quot;
+             - &quot;%quant(%1,view)&quot;
++            - &quot;created by (%1)&quot;
+             - &quot;last post by (%1)&quot;
+-            - &quot;created by (%1)&quot;
++            - &quot;Posted from %1&quot;
++            - &quot;Replying To&quot;
++            - 'There is no current forum to view'
++            - 'There is no current thread to view'
+ 
++        - removed:
++            - &quot;Posted From&quot;
++
+ 0.57
+     - initial i18n inplementation (en only)
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/TODO	2007-12-14 21:44:44 UTC (rev 681)
+@@ -1,5 +1,6 @@
+ TODO LIST
+ 
++  - post/edit; needs styling and Preview code
+   - [bug] fix email notification for thread notification emails
+   - write some sensible T&amp;Cs
+   - update avatar update response to force a No-Cache?
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/lib/Parley/I18N/i_default.po	2007-12-14 21:44:44 UTC (rev 681)
+@@ -1,3 +1,9 @@
++msgid &quot;%1 wrote:&quot;
++msgstr &quot;%1 wrote:&quot;
++
++msgid &quot;%quant(%1,post)&quot;
++msgstr &quot;%quant(%1,post,posts)&quot;
++
+ msgid &quot;%quant(%1,Reply)&quot;
+ msgstr &quot;%quant(%1,Reply,Replies)&quot;
+ 
+@@ -433,8 +439,8 @@
+ msgid &quot;posted by&quot;
+ msgstr &quot;posted by&quot;
+ 
+-msgid &quot;Posted From&quot;
+-msgstr &quot;Posted From&quot;
++msgid &quot;Posted from %1&quot;
++msgstr &quot;Posted from %1&quot;
+ 
+ msgid &quot;Posts&quot;
+ msgstr &quot;Posts&quot;
+@@ -490,6 +496,9 @@
+ msgid &quot;Reply&quot;
+ msgstr &quot;Reply&quot;
+ 
++msgid &quot;Replying To&quot;
++msgstr &quot;Replying To&quot;
++
+ msgid &quot;Reset My Password&quot;
+ msgstr &quot;Reset My Password&quot;
+ 
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/root/base/forum/view	2007-12-14 21:44:44 UTC (rev 681)
+@@ -5,85 +5,7 @@
+ &lt;table class=&quot;forum_view&quot;&gt;
+     &lt;tbody&gt;
+         [%- WHILE (thread = thread_list.next) %]
+-        [% toggler = (1 - toggler) %]
+-        &lt;tr class=&quot;row [% row_styles.$toggler %]&quot;&gt;
+-            &lt;td width=&quot;36&quot; style=&quot;padding-top:5px;&quot;&gt;
+-                &lt;!-- interesting things about the thread; sticky, locked, etc --&gt;
+-                [%- IF thread.sticky %]
+-                &lt;img src=&quot;static/images/icons/anchor.png&quot; alt=&quot;Sticky&quot; title=&quot;Sticky Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-                [%- END %]
+-                [%- IF thread.locked %]
+-                &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-                [%- END %]
+-            &lt;/td&gt;
+-
+-            &lt;td&gt;
+-                &lt;div class=&quot;thread_subject&quot;&gt;
+-                    &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% ForumCode.escape(thread.subject) |truncate(55) %]&lt;/a&gt;
+-                &lt;/div&gt;
+-                &lt;br /&gt;
+-                &lt;span class=&quot;forum_mini_pager&quot;&gt;
+-                    [%- IF authed_user || mini_pager %]
+-                    [
+-                        [%- IF authed_user %]
+-                        &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;Continue&lt;/a&gt;
+-                        [%- END %]
+-                    ]
+-                    [%- END %]
+-                &lt;/span&gt;
+-            &lt;/td&gt;
+-
+-            &lt;td&gt;
+-                &lt;div class=&quot;topic_creator&quot;&gt;
+-                    [% l('last post by ([_1])', thread.last_post.creator.forum_name) %]
+-                &lt;/div&gt;
+-                &lt;div class=&quot;thread_lastpost&quot;&gt;
+-                    [% thread.last_post.interval_ago %]
+-                    [%l('ago')%]
+-                &lt;/div&gt;
+-            &lt;/td&gt;
+-
+-            &lt;td&gt;
+-                &lt;div class=&quot;topic_creator&quot;&gt;
+-                    [% l('created by ([_1])', thread.creator.forum_name) %]
+-                &lt;/div&gt;
+-                &lt;div class=&quot;thread_lastpost&quot;&gt;
+-                    [% nicedate(thread.created) %]
+-                &lt;/div&gt;
+-            &lt;/td&gt;
+-
+-            &lt;td width=&quot;10%&quot;&gt;
+-                &lt;div class=&quot;forum_postcount&quot;&gt;
+-                    [%# number of replies is one less than the number of posts %]
+-                    [% SET tpc = (thread.post_count - 1) %]
+-                    [%l('[quant,_1,reply]',tpc)%]
+-                &lt;/div&gt;
+-                &lt;div class=&quot;forum_postcount&quot;&gt;
+-                    [%l('[quant,_1,view]',thread.post_count)%]
+-                &lt;/div&gt;
+-            &lt;/td&gt;
+-
+-            [%- IF 0 &amp;&amp; moderator %]
+-            &lt;td&gt;
+-                &lt;!-- add/remove sticky --&gt;
+-                [% IF thread.sticky %]
+-                &lt;a href=&quot;admin/sticky?thread=[% thread.id %]&amp;sticky=0&quot;&gt;{S-}&lt;/a&gt;
+-                [% ELSE %]
+-                &lt;a href=&quot;admin/sticky?thread=[% thread.id %]&quot;&gt;{S+}&lt;/a&gt;
+-                [% END %]
+-
+-                &lt;!-- add/remove locked --&gt;
+-                [% IF thread.locked %]
+-                &lt;a href=&quot;admin/lock?thread=[% thread.id %]&amp;lock=0&quot;&gt;{L-}&lt;/a&gt;
+-                [% ELSE %]
+-                &lt;a href=&quot;admin/lock?thread=[% thread.id %]&quot;&gt;{L+}&lt;/a&gt;
+-                [% END %]
+-
+-                &lt;!-- add/removed active --&gt;
+-                [% IF thread.active %]{A-}[% ELSE %]{A+}[% END %]
+-            &lt;/td&gt;
+-            [% END %]
+-        &lt;/tr&gt;
++        [% PROCESS shared/postinfo_table_row %]
+         [% END %]
+         &lt;tr&gt;
+             &lt;td colspan=&quot;5&quot;&gt;
+
+Modified: trunk/root/base/thread/recent
+===================================================================
+--- trunk/root/base/thread/recent	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/root/base/thread/recent	2007-12-14 21:44:44 UTC (rev 681)
+@@ -3,82 +3,9 @@
+ [%- IF thread_list.count &gt; 0 %]
+ [% PROCESS shared/pager_advanced %]
+ &lt;table class=&quot;recently_updated&quot;&gt;
+-[% WHILE (thread = thread_list.next) %]
+-    &lt;tr&gt;
+-        &lt;td width=&quot;36&quot;&gt;
+-        &lt;!-- interesting things about the thread; sticky, locked, etc --&gt;
+-        [%- IF thread.sticky %]
+-        &lt;img src=&quot;static/images/icons/anchor.png&quot; alt=&quot;[%l('Sticky')%]&quot; title=&quot;[%l('Sticky Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-        [%- END %]
+-        [%- IF thread.locked %]
+-        &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-        [%- END %]
+-        &lt;/td&gt;
+-
+-        &lt;td&gt;
+-        &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% ForumCode.escape(thread.subject) |truncate(45) %]&lt;/a&gt;
+-        &lt;br /&gt;
+-        &lt;span class=&quot;forum_mini_pager&quot;&gt;
+-            [%- IF authed_user || mini_pager %]
+-            [
+-                [%- IF authed_user %]
+-                &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;[%l('Continue')%]&lt;/a&gt;
+-                [%- END %]
+-            ]
+-            [%- END %]
+-        &lt;/span&gt;
+-        &lt;span class=&quot;topic_creator&quot;&gt;[%l('created by')%]
+-            &lt;span class=&quot;post_creator&quot;&gt;[% thread.creator.forum_name %]&lt;/span&gt;
+-        &lt;/span&gt;
+-        &lt;/td&gt;
+-
+-        &lt;td&gt;
+-        [% nicedate(thread.last_post.created) %]
+-        &lt;br /&gt;&lt;span class=&quot;interval_ago&quot;&gt;
+-            [% thread.last_post.interval_ago %] [%l('ago')%] 
+-            &lt;/span&gt;
+-        &lt;br /&gt;
+-        &lt;span class=&quot;topic_creator&quot;&gt;[%l('posted by')%]
+-            &lt;span class=&quot;post_creator&quot;&gt;[% thread.last_post.creator.forum_name %]&lt;/span&gt;
+-        &lt;/span&gt;
+-        &lt;/td&gt;
+-
+-        &lt;td&gt;
+-        &lt;a href=&quot;forum/view?forum=[%thread.forum.id%]&quot;&gt;[% thread.forum.name %]&lt;/a&gt;
+-        &lt;br /&gt;&nbsp;
+-        &lt;/td&gt;
+-        
+-        &lt;td align=&quot;right&quot;&gt;
+-        [% thread.view_count %] [%l('views')%]&lt;br /&gt;
+-        &lt;br /&gt;
+-        [% thread.post_count %] [%l('posts')%]&lt;br /&gt;
+-        &lt;/td&gt;
+-
+-        &lt;td&gt;
+-            [% IF 0 &amp;&amp; thread.forum_moderators.can_moderate %]
+-            &lt;!-- add/remove sticky --&gt;
+-            [% IF thread.sticky %]
+-            &lt;a href=&quot;admin/sticky?thread=[% thread.id %]&amp;sticky=0&quot;&gt;{S-}&lt;/a&gt;
+-            [% ELSE %]
+-            &lt;a href=&quot;admin/sticky?thread=[% thread.id %]&quot;&gt;{S+}&lt;/a&gt;
+-            [% END %]
+-
+-            &lt;!-- add/remove locked --&gt;
+-            [% IF thread.locked %]
+-            &lt;a href=&quot;admin/lock?thread=[% thread.id %]&amp;lock=0&quot;&gt;{L-}&lt;/a&gt;
+-            [% ELSE %]
+-            &lt;a href=&quot;admin/lock?thread=[% thread.id %]&quot;&gt;{L+}&lt;/a&gt;
+-            [% END %]
+-
+-            &lt;!-- add/removed active --&gt;
+-            [% IF thread.active %]{A-}[% ELSE %]{A+}[% END %]
+-            [% ELSE %]
+-            &nbsp;
+-            [% END %]
+-            &lt;br /&gt;
+-        &lt;/td&gt;
+-    &lt;/tr&gt;
+-[% END %]
++    [% WHILE (thread = thread_list.next) %]
++    [% PROCESS shared/postinfo_table_row %]
++    [% END %]
+ &lt;/table&gt;
+ [% ELSE %]
+ [%l('NO RECENT THREADS')%]
+
+Modified: trunk/root/base/thread/reply
+===================================================================
+--- trunk/root/base/thread/reply	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/root/base/thread/reply	2007-12-14 21:44:44 UTC (rev 681)
+@@ -2,11 +2,12 @@
+ 
+ [% PROCESS shared/loading_please_wait %]
+ 
+-&lt;h1&gt;
+-[% current_forum.name %]
+-&nbsp;:&nbsp;
+-[% current_thread.subject %]
+-&lt;/h1&gt;
++&lt;div style=&quot;margin-top:10px;&quot;&gt;&lt;/div&gt;
++&lt;div class=&quot;thread_header&quot;&gt;
++    &lt;a href=&quot;forum/view?forum=[% current_forum.id %]&quot;&gt;[% ForumCode.escape(current_forum.name) %]&lt;/a&gt;
++    &nbsp;:&nbsp;
++    [% ForumCode.escape(current_thread.subject) %]
++&lt;/div&gt;
+ 
+ [%# different action depending on whether we're adding to a thread or replying to a specific post %]
+ [% IF current_post %]
+@@ -16,7 +17,7 @@
+ [% END %]
+ 
+ &lt;!-- The post we're replying to --&gt;
+-&lt;table&gt;
++&lt;table style=&quot;margin-top:10px;&quot;&gt;
+   &lt;tr&gt;
+     &lt;td class=&quot;post_subject&quot;&gt;
+       [% responding_to_post.subject %]
+@@ -31,6 +32,7 @@
+   
+   &lt;tr&gt;
+     &lt;td colspan=&quot;3&quot; class=&quot;reply_post_message&quot;&gt;
++          [%l('Replying To')%]:
+       &lt;div class=&quot;innerpost&quot;&gt;
+       [% FILTER html_line_break %][% HTML.escape(responding_to_post.message) %][% END %]
+       &lt;/div&gt;
+@@ -49,10 +51,10 @@
+ [% END %]
+ 
+     
+-&lt;p&gt;[%l('ENTER REPLY')%]:&lt;/p&gt;
++&lt;p style=&quot;padding:10px;&quot;&gt;[%l('ENTER REPLY')%]:&lt;/p&gt;
+ 
+ 
+-&lt;table&gt;
++&lt;table class=&quot;thread_reply&quot;&gt;
+   [% IF c.config.replies_have_own_subject %]
+   &lt;tr&gt;
+     &lt;td&gt; [%l('Topic')%] &lt;/td&gt;
+@@ -77,7 +79,7 @@
+   &lt;/tr&gt;
+   [% END %]
+ 
+-  &lt;tr valign=&quot;top&quot;&gt;
++  &lt;tr&gt;
+     &lt;td&gt; [%l('Message')%] &lt;/td&gt;
+     &lt;td&gt;
+         &lt;textarea name=&quot;thread_message&quot; id=&quot;thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
+@@ -85,21 +87,24 @@
+   &lt;/tr&gt;
+ 
+   &lt;tr&gt;
+-    &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-      &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;   name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
+-      &lt;input type=&quot;submit&quot; value=&quot;[%l('Add Reply')%]&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
++    &lt;td&gt;&amp;nbsp&lt;/td&gt;
++    &lt;td colspan=&quot;1&quot; style=&quot;text-align: center;&quot;&gt;
++      &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;   accesskey=&quot;Z&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
++      &lt;input type=&quot;submit&quot; value=&quot;[%l('Add Reply')%]&quot; accesskey=&quot;X&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ 
+   [% IF moderator %]
+   &lt;tr&gt;
+-    &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
++    &lt;td&gt;&amp;nbsp&lt;/td&gt;
++    &lt;td colspan=&quot;1&quot; align=&quot;left&quot;&gt;
+         &lt;input type=&quot;checkbox&quot; name=&quot;lock_thread&quot; value=&quot;1&quot; /&gt; [%l('LOCK AFTER POSTING')%] 
+     &lt;/td&gt;
+   &lt;/tr&gt;
+   [% END %]
+   &lt;tr&gt;
+-    &lt;td colspan=&quot;2&quot; align=&quot;right&quot;&gt;
++    &lt;td&gt;&amp;nbsp&lt;/td&gt;
++    &lt;td colspan=&quot;1&quot; align=&quot;left&quot;&gt;
+         &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %]/&gt;
+         [%l('ADD THREAD WATCH')%] 
+     &lt;/td&gt;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/root/base/thread/view	2007-12-14 21:44:44 UTC (rev 681)
+@@ -1,11 +1,9 @@
+ &lt;!-- thread/view --&gt;
+-
+ [% SET dummy_value = post_list.reset %]
+ 
+ &lt;!-- thread contents --&gt;
+ &lt;table class=&quot;thread_posts&quot;&gt;
+     &lt;tbody&gt;
+-
+         &lt;tr&gt;
+             &lt;td colspan=&quot;2&quot; class=&quot;thread_header&quot;&gt;
+                 &lt;a href=&quot;forum/view?forum=[% current_forum.id %]&quot;&gt;[% ForumCode.escape(current_forum.name) %]&lt;/a&gt;
+@@ -21,7 +19,9 @@
+                     &lt;tbody&gt;
+                         &lt;tr&gt;
+                             &lt;td width=&quot;50%&quot;&gt;
+-                                [% PROCESS shared/thread_watch %]
++                                &lt;small&gt;
++                                    [%l('[quant,_1,view]',current_thread.view_count)%].
++                                &lt;/small&gt;
+                             &lt;/td&gt;
+                             &lt;td width=&quot;50%&quot; align=&quot;right&quot;&gt;
+                                 [% PROCESS shared/pager_advanced %]
+@@ -29,10 +29,7 @@
+                         &lt;/tr&gt;
+                         &lt;tr&gt;
+                             &lt;td width=&quot;50%&quot;&gt;
+-                                &lt;small&gt;
+-                                    [% current_thread.view_count %]
+-                                    [% IF current_thread.view_count == 1 %][%l('view')%][% ELSE %][%l('views')%][% END %].
+-                                &lt;/small&gt;
++                                [% PROCESS shared/thread_watch %]
+                             &lt;/td&gt;
+                             &lt;td width=&quot;50%&quot; align=&quot;right&quot;&gt;
+                                 &lt;small&gt;
+@@ -57,7 +54,7 @@
+ 
+     &lt;!-- thread posts --&gt;
+     [% WHILE (post = post_list.next) %]
+-        &lt;tr&gt;
++        &lt;tr class=&quot;thread_post_row&quot;&gt;
+             &lt;td class=&quot;user_post_info&quot;&gt;
+                 &lt;!-- user avatar --&gt;
+                 [% avatar_file = c.path_to('root') _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
+@@ -74,9 +71,7 @@
+                 &lt;a href=&quot;user/profile?user=[% post.creator.id %]&quot;&gt;[% post.creator.forum_name %]&lt;/a&gt;
+ 
+                 &lt;br /&gt;
+-                    [% post.creator.post_count %]
+-                    post[% IF (post.creator.post_count != 1) %]s[% END %]
+-                
++                [%l('[quant,_1,post]', post.creator.post_count)%]
+             &lt;/td&gt;
+ 
+             &lt;td class=&quot;post&quot;&gt;
+@@ -84,7 +79,7 @@
+                 &lt;div class=&quot;innerpost&quot;&gt;
+                     [% IF post.quoted_post %]
+                     &lt;div class=&quot;quote&quot;&gt;
+-                    &lt;strong&gt;[% post.quoted_post.creator.forum_name %] [%l('wrote')%]:&lt;/strong&gt;&lt;br&gt;
++                    &lt;strong&gt;[%l('[_1] wrote:', post.quoted_post.creator.forum_name)%]&lt;/strong&gt;&lt;br&gt;
+                     [% ForumCode.forumcode(post.quoted_text) %]&lt;br /&gt;
+                     &lt;/div&gt;
+                     &lt;br /&gt;
+@@ -94,15 +89,16 @@
+                 &lt;!-- end : the body of the post --&gt;
+ 
+                 &lt;div class=&quot;post_info&quot;&gt;
++                    [% post.interval_ago %] ago
++                    &lt;br /&gt;
+                     [% nicedate(post.created) %]
+-                    &lt;br /&gt;[% post.interval_ago %] ago
+                     [% IF post.edited %]
+                     &lt;br /&gt;&lt;span class=&quot;post_edited_alert&quot;&gt;[%l('Edited')%]: [% nicedate(post.edited) %]&lt;/span&gt;
+                     [% END %]
+                     &lt;br /&gt;
+                     [% IF post.ip_addr %]
+                         [% IF moderator %]
+-                            [%l('Posted from')%]: [% post.ip_addr %]
++                            [%l('Posted from [_1]', post.ip_addr)%]
+                         [% ELSE %]
+                            [%l('IP Logged')%] 
+                         [% END %]
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/root/base/user/login	2007-12-14 21:44:44 UTC (rev 681)
+@@ -8,10 +8,15 @@
+             [% END %]
+         &lt;/p&gt;
+         &lt;label for=&quot;username&quot; accesskey=&quot;u&quot;&gt;&lt;b&gt;[%l('Username')%]:&lt;/b&gt;&lt;/label&gt;
++        &lt;br /&gt;
+         &lt;input type=&quot;text&quot; id=&quot;login_username&quot; name=&quot;username&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; /&gt;
++        &lt;br /&gt;
++        &lt;br /&gt;
+ 
+         &lt;label for=&quot;login_password&quot; accesskey=&quot;p&quot;&gt;&lt;b&gt;[%l('Password')%]:&lt;/b&gt;&lt;/label&gt;
++        &lt;br /&gt;
+         &lt;input type=&quot;password&quot; id=&quot;login_password&quot; name=&quot;password&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; /&gt;
++        &lt;br /&gt;
+ 
+         &lt;br /&gt;
+         &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;[%l('Login')%]&lt;/button&gt;
+
+Modified: trunk/root/css/experiment.css
+===================================================================
+--- trunk/root/css/experiment.css	2007-12-05 21:20:47 UTC (rev 680)
++++ trunk/root/css/experiment.css	2007-12-14 21:44:44 UTC (rev 681)
+@@ -41,11 +41,19 @@
+ 
+ /* headers */
+ #bd h1 {
++    /*
+     font-size:          116%;
+     font-weight:        bold;
+     text-align:         left;
+     margin-top:         10px;
+     color:              #79B30B
++    */
++    font-weight:        bold;
++    background:         #666;
++    padding:            4px;
++    text-align:         left;
++    margin-top:         5px;
++    margin-bottom:      5px;
+ }
+ #bd h2 {
+     font-size:          108%;
+@@ -161,6 +169,34 @@
+     padding-right:      10px;
+ }
+ 
++.help li {
++    margin-top:         25px;
++    margin-right:       25px;
++    list-style-type:    none;
++    border-left:        2px solid #666;
++    padding-top:        5px;
++    padding-bottom:     5px;
++    padding-left:       10px;
++    background-color:   #ddd;
++}
++.help li ul li, .help li ol li{
++    margin-top:         5px;
++    margin-left:        10px;
++    list-style-type:    disc;
++    border-left:        none;
++    padding-left:       none;
++    padding-top:        none;
++    padding-bottom:     none;
++    background-color:   transparent;
++}
++
++.innerpost {
++    margin-left:        10px;
++    padding:            5px;
++    overflow:           auto;
++    font-size:          93%;
++}
++
+ .moderator_list {
+     font-size:          77%;
+     margin-bottom:      5px;
+@@ -174,24 +210,239 @@
+     margin-top:         5px;
+ }
+ 
++.post {
++    padding-top:        5px;
++    vertical-align:     top;
++    border-left:        1px solid #ddd;
++}
++
++.post_created {
++    text-align:         right;
++    font-size:          85%;
++}
++
+ .post_creator {
+     font-weight:        bold;
+     font-style:         italic;
+     font-size:          85%;
+ }
+ 
++.post_edited_alert {
++    font-weight:        bold;
++    font-style:         italic;
++}
++
++.post_info {
++    font-size:          77%;
++    line-height:        1.1em;
++    margin-top:         10px;
++    margin-bottom:      2px;
++    text-align:         right;
++}
++
++.post_subject {
++    font-weight:    bold;
++}
++
++.recently_updated  {
++    margin-left:        auto;
++    margin-right:       auto;
++    margin-top:         15px;
++    width:              100%;
++    font-size:          93%;
++}
++.recently_updated td {
++    vertical-align:     top;
++    border:             1px dashed #ddd;
++    border:             none;
++    line-height:        120%;
++    padding-left:       10px;
++    padding-right:      10px;
++}
++
++.reply_post_message {
++    width: 100%;
++    //background-color: rgb(251,215,194);
++    background-color: #ddd;
++    border: 2px inset #fff;
++}
++
++.quote {
++    background-color:   #F9FBFF;
++    border:             1px solid #333;
++    font-size:          85%;
++    margin:             0 0 2px 4px;
++    padding:            6px;
++    width:              85%;
++    overflow:           hidden;
++}
++
++.thread_header {
++    font-weight:        bold;
++    background:         #666;
++    padding:            4px;
++    text-align:         left;
++}
++.thread_header a {
++    color:              #ccc;
++}
++
++.thread_info {
++    margin:             0px;
++    width:              100%;
++    border:             none;
++    padding:            0px;
++    margin-bottom:      10px;
++}
++.thread_info td {
++    border:             none;
++    padding:            0px;
++}
++
+ .thread_lastpost {
+     font-size:          85%;
+     text-align:         right;
+ }
++
++.thread_post_row {
++    border-top:         1px solid #ddd;
++    border-bottom:      1px solid #ddd;
++}
++.thread_post_row td {
++    margin-top: 10px;
++    margin-bottom: 10px;
++}
++
++.thread_posts {
++    margin-left:        auto;
++    margin-right:       auto;
++    margin-top:         15px;
++    width:              100%;
++    font-size:          93%;
++}
++
++.thread_reply {
++    /*width:              100%;*/
++    font-size:          93%;
++}
++.thread_reply tr {
++    vertical-align:     top;
++}
++.thread_reply td {
++    padding-top:        10px;
++    padding-left:       10px;
++}
++.thread_reply textarea {
++    background-color:   transparent;
++    border:             2px inset black;
++}
++
+ .thread_subject a {
++    font-size:          93%;
+     color:              #333;
+     color:              #79B30B
+ }
+ 
++.thread_watch {
++    margin-top:         5px;
++    font-size:          77%;
++    text-align:         left;
++}
++
+ .topic_creator {
+     display:            block;
+     font-size:          85%;
+     text-align:         right;
+-    /*float:              right;*/
+ }
++
++.user_post_info {
++    background:         #ccc;
++    background:         transparent;
++    font-size:          77%;
++    margin-left:        auto;
++    margin-right:       auto;
++    text-align:         center;
++    vertical-align:     top;
++    width:              110px;
++}
++
++/* add icons to some links with CSS styling */
++
++a[href $='.jpg']{
++    padding-left: 20px;
++    background:   transparent url(/static/images/filetypes/image.png) no-repeat center left;
++}
++
++a[href $='.pdf']{
++    padding-left: 20px;
++    background:   transparent url(/static/images/filetypes/pdf.png) no-repeat center left;
++}
++
++/* YUI element styling */
++#loader_wait.yui-overlay {
++    position:           fixed;
++    float:              right;
++    top:                10px;
++    right:              10px;
++    border:             none;
++    text-align:         right;
++}
++#preview_overlay {
++    border:             1px dashed #ccc;
++    text-align:         left;
++    padding:            3px;
++}
++#thread_message {
++    font-family:        monospace;
++    text-align:         left;
++    padding:            3px;
++    background-color:   #eee;
++    font-size:          93%;
++}
++
++/* ForumCode styles */
++.forumcode_code {
++    font-family:        monospace;
++    border:             1px solid #333;
++    font-size:          85%;
++    margin:             15px 20px 15px 20px;
++    padding:            6px;
++    width:              85%;
++    overflow:           auto;
++
++    color:              #ff0;
++    background-color:   #333;
++    border:             1px solid #666;
++
++    white-space:        pre;
++}
++
++.forumcode_pre {
++    background-color:   transparent;
++    font-family:        monospace;
++    border:             1px dashed #333;
++    font-size:          85%;
++    margin:             15px 20px 15px 20px;
++    padding:            6px;
++    width:              85%;
++    overflow:           auto;
++
++    white-space:        pre;
++}
++
++.forumcode_quote {
++    background-color:   #eee;
++    font-family:        monospace;
++    font-style:         italic;
++    border:             1px dotted #333;
++    font-size:          85%;
++    margin:             15px 20px 15px 20px;
++    padding:            6px;
++    width:              85%;
++    overflow:           auto;
++}
++
++.forumcode_quoting {
++    font-weight:        bold;
++    margin-bottom:      3px;
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000568.html">[Parley-svn] r680 - / trunk/root/base/forum trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000570.html">[Parley-svn] r682 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#569">[ date ]</a>
+              <a href="thread.html#569">[ thread ]</a>
+              <a href="subject.html#569">[ subject ]</a>
+              <a href="author.html#569">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r113 - trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r113%20-%20trunk&In-Reply-To=%3C200604052026.k35KQgUj023248%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000002.html">
+   <LINK REL="Next"  HREF="000004.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r113 - trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r113%20-%20trunk&In-Reply-To=%3C200604052026.k35KQgUj023248%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r113 - trunk">chiselwright at berlios.de
+       </A><BR>
+    <I>Wed Apr  5 22:26:42 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000002.html">[Parley-svn] r112 - in trunk: . root/css
+</A></li>
+        <LI>Next message: <A HREF="000004.html">[Parley-svn] r114 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#3">[ date ]</a>
+              <a href="thread.html#3">[ thread ]</a>
+              <a href="subject.html#3">[ subject ]</a>
+              <a href="author.html#3">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-04-05 22:26:42 +0200 (Wed, 05 Apr 2006)
+New Revision: 113
+
+Modified:
+   trunk/
+   trunk/META.yml
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14380 at ferrari</A>:  chisel | 2006-04-05 21:15:26 +0100
+ / auto-updated META.yml file changes
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14377
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14380
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/META.yml
+===================================================================
+--- trunk/META.yml	2006-04-05 20:07:20 UTC (rev 112)
++++ trunk/META.yml	2006-04-05 20:26:42 UTC (rev 113)
+@@ -1,7 +1,7 @@
+ abstract: Catalyst Forum Application
+ author: 'Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt; &gt;&gt;'
+ distribution_type: module
+-generated_by: Module::Install version 0.54
++generated_by: Module::Install version 0.61
+ license: perl
+ name: Parley
+ no_index:
+@@ -9,27 +9,30 @@
+     - inc
+     - t
+ requires:
+-  Catalyst: 5.63
++  Catalyst: 5.66
+   Catalyst::Model::DBIC: 0.13
+-  Catalyst::Plugin::Authentication: 0.05
+-  Catalyst::Plugin::Authentication::Store::DBIC: 0.04
++  Catalyst::Plugin::Authentication: 0.07
++  Catalyst::Plugin::Authentication::Store::DBIC: 0.05002
++  Catalyst::Plugin::DefaultEnd: 0.05
+   Catalyst::Plugin::Dumper: 0.000002
+   Catalyst::Plugin::Email: 0.05
+-  Catalyst::Plugin::FillInForm: 0.05
+-  Catalyst::Plugin::Session: 0.01
+-  Catalyst::Plugin::Session::State::Cookie: 0.01
+-  Catalyst::Plugin::Session::Store::FastMmap: 0.01
+-  Catalyst::Plugin::StackTrace: 0.02
+-  Catalyst::Plugin::Static::Simple: 0.12
+-  Catalyst::View::TT: 0.20
+-  DBD::Pg: 1.43
+-  DBIx::Class: 0.04001
+-  DBIx::Class::Loader: 0.14
+-  Data::FormValidator: 4.02
+-  DateTime::Format::Pg: 0.09
+-  Digest::MD5: 2.33
+-  List::MoreUtils: 0.17
++  Catalyst::Plugin::FillInForm: 0.06
++  Catalyst::Plugin::Prototype: 1.32
++  Catalyst::Plugin::Session: 0.05
++  Catalyst::Plugin::Session::State::Cookie: 0.02
++  Catalyst::Plugin::Session::Store::FastMmap: 0.02
++  Catalyst::Plugin::StackTrace: 0.04
++  Catalyst::Plugin::Static::Simple: 0.13
++  Catalyst::View::TT: 0.22
++  DBD::Pg: 1.47
++  DBIx::Class: 0.06000
++  DBIx::Class::Loader: 0.21
++  Data::FormValidator: 4.14
++  Data::SpreadPagination: 0
++  DateTime::Format::Pg: 0.11
++  Digest::MD5: 2.36
++  List::MoreUtils: 0.19
+   Readonly: 1.03
+-  Time::Piece: 1.08
+-  YAML: 0.53
+-version: 0.06
++  Time::Piece: 1.09
++  YAML: 0.58
++version: 0.09-pre
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000002.html">[Parley-svn] r112 - in trunk: . root/css
+</A></li>
+	<LI>Next message: <A HREF="000004.html">[Parley-svn] r114 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#3">[ date ]</a>
+              <a href="thread.html#3">[ thread ]</a>
+              <a href="subject.html#3">[ subject ]</a>
+              <a href="author.html#3">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r859 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r859%20-%20/%20trunk&In-Reply-To=%3C200804102034.m3AKYV4x022982%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000746.html">
+   <LINK REL="Next"  HREF="000748.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r859 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r859%20-%20/%20trunk&In-Reply-To=%3C200804102034.m3AKYV4x022982%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r859 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Apr 10 22:34:31 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000746.html">[Parley-svn] r858 - / trunk/lib/Parley
+</A></li>
+        <LI>Next message: <A HREF="000748.html">[Parley-svn] r860 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/base/user trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#747">[ date ]</a>
+              <a href="thread.html#747">[ thread ]</a>
+              <a href="subject.html#747">[ subject ]</a>
+              <a href="author.html#747">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-04-10 22:34:31 +0200 (Thu, 10 Apr 2008)
+New Revision: 859
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4881 at wiggin</A>:  chisel | 2008-04-10 18:22:52 +0100
+ / tidied/cleaned-up Makefile.PL
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4871
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4881
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2008-04-10 20:34:23 UTC (rev 858)
++++ trunk/Makefile.PL	2008-04-10 20:34:31 UTC (rev 859)
+@@ -1,55 +1,64 @@
++#!/usr/bin/env perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
+ use inc::Module::Install;
+ 
+-use lib qw{lib};
++name            ('Parley');
++author          ('Chisel Wright&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt;');
++abstract        ('Message board / forum application');
++license         ('perl');
++version_from    ('lib/Parley/Version.pm');
+ 
+-name 'Parley';
+-all_from 'lib/Parley.pm';
++requires(
++    'Catalyst'                                                  =&gt; '5.008001',
++    'Catalyst::Action::RenderView'                              =&gt; 0,
++    'Catalyst::Model::DBIC::Schema'                             =&gt; 0,
++    'Catalyst::Plugin::Authentication'                          =&gt; 0,
++    'Catalyst::Plugin::Authentication::Credential::Password'    =&gt; 0,
++    'Catalyst::Plugin::Authentication::Store::DBIC'             =&gt; 0,
++    'Catalyst::Plugin::Authorization::ACL'                      =&gt; 0,
++    'Catalyst::Plugin::ConfigLoader'                            =&gt; 0,
++    'Catalyst::Plugin::Dumper'                                  =&gt; 0,
++    'Catalyst::Plugin::Email'                                   =&gt; 0,
++    'Catalyst::Plugin::FillInForm'                              =&gt; 0,
++    'Catalyst::Plugin::FormValidator'                           =&gt; 0,
++    'Catalyst::Plugin::I18N'                                    =&gt; 0,
++    'Catalyst::Plugin::Session'                                 =&gt; 0,
++    'Catalyst::Plugin::Session::State::Cookie'                  =&gt; 0,
++    'Cache::FastMmap'                                           =&gt; 0,
++    'Catalyst::Plugin::Session::Store::FastMmap'                =&gt; 0,
++    'Catalyst::Plugin::StackTrace'                              =&gt; 0,
++    'Catalyst::Plugin::Static::Simple'                          =&gt; 0,
++    'Catalyst::View::TT'                                        =&gt; 0,
++    'Data::FormValidator'                                       =&gt; '4.50',
++    'Data::SpreadPagination'                                    =&gt; 0,
++    'DateTime'                                                  =&gt; 0,
++    'DateTime::Format::Pg'                                      =&gt; 0,
++    'DateTime::TimeZone'                                        =&gt; 0,
++    'Email::Valid'                                              =&gt; 0,
++    'Graphics::Magick'                                          =&gt; 0,
++    'HTML::FillInForm'                                          =&gt; '1.07',
++    'Image::Size'                                               =&gt; 0,
++    'JSON'                                                      =&gt; 0,
++    'List::MoreUtils'                                           =&gt; 0,
++    'MIME::Lite'                                                =&gt; 0,
++    'Net::IP::Match::Regexp'                                    =&gt; 0,
++    'Perl6::Export::Attrs'                                      =&gt; 0,
++    'Proc::Daemon'                                              =&gt; 0,
++    'Proc::PID::File'                                           =&gt; 0,
++    'Readonly'                                                  =&gt; 0,
++    'Text::Context::EitherSide'                                 =&gt; 0,
++    'Time::Piece'                                               =&gt; 0,
++    'YAML'                                                      =&gt; 0,
++);
+ 
+-requires 'Catalyst' =&gt; '5.008001';
+-requires 'Catalyst::Action::RenderView';
+-requires 'Catalyst::Model::DBIC::Schema';
+-requires 'Catalyst::Plugin::Authentication';
+-requires 'Catalyst::Plugin::Authentication::Credential::Password';
+-requires 'Catalyst::Plugin::Authentication::Store::DBIC';
+-requires 'Catalyst::Plugin::Authorization::ACL';
+-requires 'Catalyst::Plugin::ConfigLoader';
+-requires 'Catalyst::Plugin::Dumper';
+-requires 'Catalyst::Plugin::Email';
+-requires 'Catalyst::Plugin::FillInForm';
+-requires 'Catalyst::Plugin::FormValidator';
+-requires 'Catalyst::Plugin::I18N';
+-requires 'Catalyst::Plugin::Session';
+-requires 'Catalyst::Plugin::Session::State::Cookie';
+-requires 'Cache::FastMmap';
+-requires 'Catalyst::Plugin::Session::Store::FastMmap';
+-requires 'Catalyst::Plugin::StackTrace';
+-requires 'Catalyst::Plugin::Static::Simple';
+-requires 'Catalyst::View::TT';
+-requires 'Data::FormValidator' =&gt; '4.50';
+-requires 'Data::SpreadPagination';
+-requires 'DateTime';
+-requires 'DateTime::Format::Pg';
+-requires 'DateTime::TimeZone';
+-requires 'Email::Valid';
+-requires 'Graphics::Magick';
+-requires 'HTML::FillInForm' =&gt; '1.07';
+-requires 'Image::Size';
+-requires 'JSON';
+-requires 'List::MoreUtils';
+-requires 'MIME::Lite';
+-requires 'Net::IP::Match::Regexp';
+-requires 'Perl6::Export::Attrs';
+-requires 'Proc::Daemon';
+-requires 'Proc::PID::File';
+-requires 'Readonly';
+-requires 'Text::Context::EitherSide';
+-requires 'Time::Piece';
+-requires 'YAML'; # This should reflect the config file format you've chosen
+-                 # See Catalyst::Plugin::ConfigLoader for supported formats
++build_requires (
++    'Test::More'                                                =&gt; 0,
++    'Test::WWW::Mechanize::Catalyst'                            =&gt; 0,
++    'Test::DBIx::Class::Schema'                                 =&gt; '0.01004',
++);
+ 
+-build_requires 'Test::More';
+-build_requires 'Test::WWW::Mechanize::Catalyst';
+-
+ catalyst;
+ 
+ install_script glob('script/*.pl');
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000746.html">[Parley-svn] r858 - / trunk/lib/Parley
+</A></li>
+	<LI>Next message: <A HREF="000748.html">[Parley-svn] r860 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/base/user trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#747">[ date ]</a>
+              <a href="thread.html#747">[ thread ]</a>
+              <a href="subject.html#747">[ subject ]</a>
+              <a href="author.html#747">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,4014 @@
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:15 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:15 +0200
+Subject: [Parley-svn] r231 - / branches/schema_based/lib
+	branches/schema_based/lib/Parley/Controller
+	branches/schema_based/root/base/thread
+Message-ID: <200609121459.k8CExF1t028203@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:15 +0200 (Tue, 12 Sep 2006)
+New Revision: 231
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+   branches/schema_based/root/base/thread/view
+Log:
+ r865 at ferrari:  chisel | 2006-08-24 17:55:05 +0100
+ + added skel for thread/reply
+ / fleshed out thread/view
+ / factored out some thread/view functionality into private methods
+ + add pager setup to thread/view
+ + added funtions related to watching threads
+ + padded out POD
+ + added app-level functions; is_logged_in() and login_if_required()
+ - removed old thread/view layout code [previously disabled with "if 0" in TT]
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:865
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:45:02 UTC (rev 230)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-09-12 14:59:15 UTC (rev 231)
+@@ -3,15 +3,29 @@
+ use strict;
+ use warnings;
+ use base 'Catalyst::Controller';
++use Data::SpreadPagination;
+ 
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub reply : Local {
++    my ($self, $c) = @_;
++
++    # make sure we're logged in
++    $c->login_if_required(q{You must be logged in before you can add a reply.});
++
++    # make sure we're authenticated
++
++    $c->stash->{error}{message} = q{This action isn't completed yet.};
++}
++
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
+-    # TODO - configure this somewhere, maybe a user preference
+-    my $rows_per_page = $c->config->{posts_per_page};
+ 
+     # page to show - either a param, or show the first
+-    my $page = $c->request->param('page') || 1;
++    $c->stash->{current_page}= $c->request->param('page') || 1;
+ 
+     # if we have a current_post, view the page with the post on it
+     if ($c->_current_post) {
+@@ -27,8 +41,8 @@
+         },
+         {
+             order_by    => 'created ASC',
+-            rows        => $rows_per_page,
+-            page        => $page,
++            rows        => $c->config->{posts_per_page},
++            page        => $c->stash->{current_page},
+         }
+     );
+ 
+@@ -51,33 +65,60 @@
+     {
+         # get the number of people watching the thread
+         $self->_thread_watch_count($c);
++
++        # setup the pager
++        $self->_thread_view_pager($c);
+     }
+ 
+     1; # return 'true'
+ }
+ 
+-sub _thread_watch_count {
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller (Private/Helper) Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _thread_view_pager {
+     my ($self, $c) = @_;
+ 
+-    # how many people are watching the current thread?
+-    $c->stash->{watcher_count} = $c->model('ParleyDB')->resultset('ThreadView')->count(
++    $c->stash->{page} = $c->stash->{post_list}->pager();
++
++    # TODO - find a better way to do this if possible
++    # set up Data::SpreadPagination
++    my $pagination = Data::SpreadPagination->new(
+         {
+-            thread  => $c->_current_thread()->id(),
+-            watched => 1,
++            totalEntries        => $c->stash->{page}->total_entries(),
++            entriesPerPage      => $c->config->{posts_per_page},
++            currentPage         => $c->stash->{current_page},
++            maxPages            => 4,
+         }
+     );
++    $c->stash->{page_range_spread} = $pagination->pages_in_spread();
+ }
+ 
++sub _thread_watch_count {
++    my ($self, $c) = @_;
+ 
++    # how many people are watching the current thread?
++    $c->stash->{watcher_count} =
++        $c->model('ParleyDB')->resultset('ThreadView')->count(
++            {
++                thread  => $c->_current_thread()->id(),
++                watched => 1,
++            }
++        )
++    ;
++}
+ 
+ sub _watching_thread {
+     my ($self, $c) = @_;
+     
+     # find out if the user is watching the thread, and store it in the stash
+-    $c->stash->{watching_thread} = $c->model('ParleyDB')->resultset('ThreadView')->watching_thread(
+-        $c->_current_thread(),
+-        $c->_authed_user(),
+-    );
++    $c->stash->{watching_thread} =
++        $c->model('ParleyDB')->resultset('ThreadView')->watching_thread(
++            $c->_current_thread(),
++            $c->_authed_user(),
++        )
++    ;
+ }
+ 
+ sub _update_thread_view {
+@@ -94,13 +135,15 @@
+     $c->log->debug( $last_post_timestamp );
+ 
+     # make a note of when the user last viewed this thread, if a record doesn't already exist
+-    my $thread_view = $c->model('ParleyDB')->resultset('ThreadView')->find_or_create(
+-        {
+-            person      => $c->_authed_user()->id(),
+-            thread      => $c->_current_thread()->id(),
+-            timestamp   => $last_post_timestamp,
+-        },
+-    );
++    my $thread_view =
++        $c->model('ParleyDB')->resultset('ThreadView')->find_or_create(
++            {
++                person      => $c->_authed_user()->id(),
++                thread      => $c->_current_thread()->id(),
++                timestamp   => $last_post_timestamp,
++            },
++        )
++    ;
+ 
+     # set the timestamp the time of the last post on the page (unless the
+     # existing time is later)
+@@ -129,6 +172,8 @@
+ 
+ =head1 ACTIONS
+ 
++=head2 reply
++
+ =head2 view
+ 
+ This action prepares data in the stash for viewing the current thread.
+@@ -137,9 +182,15 @@
+ 
+ =head2 _thread_watch_count
+ 
+-Sets C<$c-E<gt>stash-E<gt>{watcher_count}> with the number of people who have a watch
+-set for the current thread.
++Sets C<$c-E<gt>stash-E<gt>{watcher_count}> with the number of people who have a
++watch set for the current thread.
+ 
++=head2 _thread_view_pager
++
++Set-up C<$c-E<gt>stash-E<gt>{page}> and
++C<$c-E<gt>stash-E<gt>{page_range_spread}> for the current thread.
++These are used by the pager in the templates (Page X of Y, etc).
++
+ =head2 _watching_thread
+ 
+ Sets C<$c-E<gt>stash-E<gt>{watching_thread}> with a true|false value indicating
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-08-16 13:45:02 UTC (rev 230)
++++ branches/schema_based/lib/Parley.pm	2006-09-12 14:59:15 UTC (rev 231)
+@@ -66,6 +66,34 @@
+     }
+ }
+ 
++################################################################################
++
++sub is_logged_in {
++    my ($c) = @_;
++
++    if ($c->user) {
++        return 1;
++    }
++
++    return 0;
++}
++
++sub login_if_required {
++    my ($c, $message) = @_;
++
++    if( not $c->is_logged_in($c) ) {
++        # make sure we return here after a successful login
++        $c->session->{after_login} = $c->request->uri();
++        # set an informative message to display on the login screen
++        if (defined $message) {
++            $c->session->{login_message} = $message;
++        }
++        # send the user to the login screen
++        $c->response->redirect( $c->uri_for('/user/login') );
++        return;
++    }
++}
++
+ 1;
+ 
+ __END__
+@@ -84,6 +112,21 @@
+ 
+ Catalyst driven forum application
+ 
++=head1 METHODS
++
++=head2 is_logged_in
++
++Returns 1 or 0 depending on whether there is a logged-in user or not.
++
++=head2 login_if_required($message)
++
++If a user isn't logged in, send them to the login page, optionally setting the
++message for the login box.
++
++Once logged in the user should (by virtue of stored session data, and login
++magic) be redirected to wherever they were trying to view before the required
++login.
++
+ =head1 EVIL, LAZY STASH ACCESS
+ 
+ I know someone will look at this at some point and tell me this is evil, but
+
+Modified: branches/schema_based/root/base/thread/view
+===================================================================
+--- branches/schema_based/root/base/thread/view	2006-08-16 13:45:02 UTC (rev 230)
++++ branches/schema_based/root/base/thread/view	2006-09-12 14:59:15 UTC (rev 231)
+@@ -1,135 +1,3 @@
+-[% IF 0 %]
+-<table>
+-    <tr>
+-        <td>
+-            <b>Topic: [% HTML.escape(current_thread.subject) %]</b>
+-        </td>
+-
+-        <td class="right_align">
+-            <small>
+-            [% INCLUDE shared/pager_advanced %]
+-            </small>
+-        </td>
+-    </tr>
+-</table>
+-
+-[%- IF authed_user %]
+-<table>
+-    <tr>
+-        <td class="right_align">
+-            <small>
+-                <strong>[% watcher_count %] [% IF watcher_count == 1 %]person[% ELSE %]people[% END %] watching this thread.</strong>
+-
+-                [%- IF watching_thread %]
+-                    You are watching this thread.
+-                    (
+-                    <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]&watch=0">Remove Watch</a>
+-                    )
+-                [%- ELSE %]
+-                    <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]">Watch this thread</a>
+-                [%- END%]
+-            </small>
+-        </td>
+-    </tr>
+-</table>
+-[%- END %]
+-
+-[% SET dummy_value = post_list.reset %]
+-[% IF post_list.count > 0 %]
+-    [% IF current_thread.locked %]
+-    [% rowspan = 2 %]
+-    [% ELSE %]
+-    [% rowspan = 3 %]
+-    [% END %]
+-    <table>
+-    [% WHILE (post = post_list.next) %]
+-        <tr>
+-            <td rowspan="[% rowspan %]">
+-            <a name="[% post.id %]" />
+-            <span class="post_creator">
+-            [% post.creator.forum_name %]
+-            </span>
+-            <br />
+-            [% post.creator.post_count %]
+-            post[% IF (post.creator.post_count != 1) %]s[% END %]
+-            </td>
+-            <td class="post_created">
+-            Posted at <i>[% nicedate(post.created) %]</i>
+-            (#[% post.id %])
+-            </td>
+-        </tr>
+-        <tr>
+-            <td>
+-                [% IF post.quoted_post %]
+-                    <span class="post_message">
+-                        <span class="in_response_to">
+-                        [% nicedate(post.quoted_post.created) %],
+-                        [% post.quoted_post.creator.forum_name %] said:
+-                        </span>
+-                        <br />
+-                        <span class="quoted_message">
+-                        [% ForumCode.forumcode(post.quoted_text) %]
+-                        </span>
+-                    [% ForumCode.forumcode(post.message) %]<br />
+-                    </span>
+-                [% ELSE %]
+-                    <span class="post_message">
+-                    [% ForumCode.forumcode(post.message) %]<br />
+-                    </span>
+-                [% END %]
+-                [% IF post.edited %]
+-                <span class="post_edited_alert">Edited: [% nicedate(post.edited) %]</span>
+-                [% END %]
+-            </td>
+-        </tr>
+-        [% UNLESS current_thread.locked %]
+-        <tr>
+-        <td style="text-align: right;">
+-            [% IF authed_user.id == post.creator.id %]
+-            <form action="post/edit?post=[% post.id %]" method="POST" name="post_actions" class="inline_form">
+-                <input type="submit" value="Edit" name="edit_post" class="small_input_button" />
+-            </form>
+-            [% END %]
+-            <form action="thread/reply?post=[% post.id %]" method="POST" name="post_actions" class="inline_form">
+-                <input type="submit" value="Quote" name="quote_post" class="small_input_button" />
+-                <input type="submit" value="Reply" name="reply_to_post" class="small_input_button" />
+-            </form>
+-        </td>
+-        </tr>
+-        [% END %]
+-    [% END %]
+-    [% UNLESS current_thread.locked %]
+-    <form action="thread/reply?thread=[% current_thread.id %]" method="POST" name="new_thread">
+-        <tr>
+-        <td colspan="2" style="text-align: center;">
+-            <input type="submit" value="New Reply" name="reply_to_thread"    class="input_button" />
+-        </td>
+-        </tr>
+-    </form>
+-    [% END %]
+-    </table>
+-<table>
+-    <tr>
+-        <td class="right_align">
+-            <small>
+-            [% INCLUDE shared/pager_advanced %]
+-            </small>
+-        </td>
+-    </tr>
+-</table>
+-
+-
+-[% ELSE %]
+-  No active posts in this thread
+-[% END %]
+-
+-<hr />
+-<br />
+-<br />
+-<br />
+-<br />
+-[% END %]
+-
+ <style type="text/css">
+ 
+ 
+@@ -713,8 +581,8 @@
+                 [% INCLUDE shared/pager_advanced %]
+                 </small>
+                 <br />
+-                <form action="thread/reply?post=[% post.id %]" method="POST" name="post_actions" class="inline_form">
+-                    <input type="submit" value="Reply" name="reply_to_post" class="small_input_button" />
++                <form action="thread/reply?thread=[% current_thread.id %]" method="POST" name="post_actions" class="inline_form">
++                    <input type="submit" value="Reply" name="reply_to_thread" class="small_input_button" />
+                 </form>
+               </td>
+             </tr>
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:19 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:19 +0200
+Subject: [Parley-svn] r232 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200609121459.k8CExJr1028275@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:19 +0200 (Tue, 12 Sep 2006)
+New Revision: 232
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Root.pm
+Log:
+ r866 at ferrari:  chisel | 2006-09-06 09:58:59 +0100
+ / extend end() functionality to re-fill forms
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:865
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:866
+
+Modified: branches/schema_based/lib/Parley/Controller/Root.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Root.pm	2006-09-12 14:59:15 UTC (rev 231)
++++ branches/schema_based/lib/Parley/Controller/Root.pm	2006-09-12 14:59:19 UTC (rev 232)
+@@ -143,16 +143,25 @@
+ 
+ 
+ # deal with the end of the phase
+-sub end : ActionClass('RenderView') {
++sub render : ActionClass('RenderView') {
+     my ($self, $c) = @_;
+ 
+     # if we have any error(s) in the stash, automatically show the error page
+     if (defined $c->stash->{error}) {
+         $c->stash->{template} = 'error/simple';
++        $c->log->error( $c->stash->{error}{message} );
+     }
+ }
+ 
++sub end : Private {
++    my ($self, $c) = @_;
++    $c->forward('render');
+ 
++    # fill in any forms
++    $c->fillform( );
++}
++
++
+ 1;
+ 
+ __END__
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:23 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:23 +0200
+Subject: [Parley-svn] r233 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200609121459.k8CExN3I028325@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:23 +0200 (Tue, 12 Sep 2006)
+New Revision: 233
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/User.pm
+Log:
+ r867 at ferrari:  chisel | 2006-09-06 09:59:37 +0100
+ + add user/logout path action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:866
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:867
+
+Modified: branches/schema_based/lib/Parley/Controller/User.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User.pm	2006-09-12 14:59:19 UTC (rev 232)
++++ branches/schema_based/lib/Parley/Controller/User.pm	2006-09-12 14:59:23 UTC (rev 233)
+@@ -60,8 +60,27 @@
+     }
+ }
+ 
++sub logout : Path('/user/logout') {
++    my ($self, $c) = @_;
+ 
++    # session logout, and remove information we've stashed
++    $c->logout;
++    delete $c->session->{'authed_user'};
+ 
++    # redisplay the page we were on, or just do the 'default' action
++    my $base    = $c->request->base();
++    my $action  = $c->request->action();
++    # redirect to where we were referred from, unless our referer is our action
++    if ( $c->request->referer() =~ m{\A$base}xms and $c->request->referer() !~ m{$action\z}xms) {
++        $c->response->redirect( $c->request->referer() );
++    }
++    else {
++        $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++    }
++}
++
++
++
+ 1;
+ 
+ __END__
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:27 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:27 +0200
+Subject: [Parley-svn] r234 - / branches/schema_based/lib/Parley/Controller
+	branches/schema_based/t
+Message-ID: <200609121459.k8CExRCL028404@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:26 +0200 (Tue, 12 Sep 2006)
+New Revision: 234
+
+Added:
+   branches/schema_based/lib/Parley/Controller/Post.pm
+   branches/schema_based/t/controller_Post.t
+Modified:
+   /
+Log:
+ r868 at ferrari:  chisel | 2006-09-06 10:00:59 +0100
+ + added post controller + test skeleton
+ + added view() action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:867
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:868
+
+Added: branches/schema_based/lib/Parley/Controller/Post.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Post.pm	2006-09-12 14:59:23 UTC (rev 233)
++++ branches/schema_based/lib/Parley/Controller/Post.pm	2006-09-12 14:59:26 UTC (rev 234)
+@@ -0,0 +1,73 @@
++package Parley::Controller::Post;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub view : Local {
++    my ($self, $c) = @_;
++
++    # if we don't have a post param, then return with an error
++    unless (defined $c->_current_post) {
++        $c->stash->{error}{message} = q{Incomplete URL};
++        return;
++    }
++
++    # work out what page in which thread the post lives
++    my $thread = $c->_current_post->thread->id();
++    my $page_number =  $c->model('ParleyDB')->resultset('Post')->page_containing_post(
++        $c->stash->{current_post},
++        $c->config->{posts_per_page},
++    );
++
++    # build the URL to redirect to
++    my $redirect_url = $c->uri_for(
++        '/thread',
++          "view?thread=$thread"
++        . "&page=$page_number"
++        . "#" . $c->_current_post->id()
++    );
++
++    # redirect to the relevant place in the appropriate thread
++    $c->log->debug( "post/view: redirecting to $redirect_url" );
++    $c->response->redirect( $redirect_url );
++    return;
++}
++
++
++1;
++__END__
++
++=pod
++
++=head1 NAME
++
++Parley::Controller::Post - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 ACTIONS
++
++=head2 view 
++
++View a specific post, specified by the post in $c->_current_post
++
++=head1 AUTHOR
++
++Chisel Wright C<< <chisel at herlpacker.co.uk> >>
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++vim: ts=8 sts=4 et sw=4 sr sta
+
+Added: branches/schema_based/t/controller_Post.t
+===================================================================
+--- branches/schema_based/t/controller_Post.t	2006-09-12 14:59:23 UTC (rev 233)
++++ branches/schema_based/t/controller_Post.t	2006-09-12 14:59:26 UTC (rev 234)
+@@ -0,0 +1,10 @@
++use strict;
++use warnings;
++use Test::More tests => 3;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::Post' }
++
++ok( request('/post')->is_success, 'Request should succeed' );
++
++
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:32 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:32 +0200
+Subject: [Parley-svn] r235 - / branches/schema_based/lib
+Message-ID: <200609121459.k8CExWh3028457@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:32 +0200 (Tue, 12 Sep 2006)
+New Revision: 235
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+Log:
+ r869 at ferrari:  chisel | 2006-09-06 10:01:55 +0100
+ + added plugins: FormValidator, FillInForm
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:868
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:869
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-09-12 14:59:26 UTC (rev 234)
++++ branches/schema_based/lib/Parley.pm	2006-09-12 14:59:32 UTC (rev 235)
+@@ -11,6 +11,9 @@
+ 
+     ConfigLoader
+ 
++    FormValidator
++    FillInForm
++
+     Email
+     Static::Simple
+ 
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:36 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:36 +0200
+Subject: [Parley-svn] r236 - / branches/schema_based/root/base/shared
+Message-ID: <200609121459.k8CExaIq028509@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:36 +0200 (Tue, 12 Sep 2006)
+New Revision: 236
+
+Modified:
+   /
+   branches/schema_based/root/base/shared/useful_tt_stuff
+Log:
+ r870 at ferrari:  chisel | 2006-09-06 10:03:09 +0100
+ - removed "(Default)" from output for non-logged-in users in times
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:869
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:870
+
+Modified: branches/schema_based/root/base/shared/useful_tt_stuff
+===================================================================
+--- branches/schema_based/root/base/shared/useful_tt_stuff	2006-09-12 14:59:32 UTC (rev 235)
++++ branches/schema_based/root/base/shared/useful_tt_stuff	2006-09-12 14:59:36 UTC (rev 236)
+@@ -17,7 +17,7 @@
+             [% d.time_zone_short_name() %]
+         [% END %]
+     [% ELSE %]
+-        (Default) [% d.strftime('%c') %]
++        [% d.strftime('%c') %]
+         [% d.time_zone_short_name() %]
+     [% END %]
+ [% END %]
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:40 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:40 +0200
+Subject: [Parley-svn] r237 - / branches/schema_based
+Message-ID: <200609121459.k8CExeUA028563@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:39 +0200 (Tue, 12 Sep 2006)
+New Revision: 237
+
+Modified:
+   /
+   branches/schema_based/parley.yml
+Log:
+ r871 at ferrari:  chisel | 2006-09-06 10:04:14 +0100
+ / modified 'posts_per_page' from 20 to 10
+ + added new conf-var 'replies_have_own_subject'
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:870
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:871
+
+Modified: branches/schema_based/parley.yml
+===================================================================
+--- branches/schema_based/parley.yml	2006-09-12 14:59:36 UTC (rev 236)
++++ branches/schema_based/parley.yml	2006-09-12 14:59:39 UTC (rev 237)
+@@ -2,7 +2,8 @@
+ # DO NOT USE TABS FOR INDENTATION OR label/value SEPARATION!!!
+ name:         Parley
+ default_uri:  /forum/list
+-posts_per_page: 20
++posts_per_page: 10
++replies_have_own_subject: 0
+ 
+ alerts:
+     from_name:      'Parley'
+@@ -17,6 +18,11 @@
+     - 'error'
+     - 'fatal'
+ 
++
++
++
++
++
+ #--
+ #-- LINES BELOW THIS SHOULDN'T NEED CHANGING
+ #--
+@@ -47,4 +53,3 @@
+     # comment out the following line to enable Template::Timer output in your
+     # template source
+     CONTEXT:        ''
+-
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:43 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:43 +0200
+Subject: [Parley-svn] r238 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200609121459.k8CExhZJ028616@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:43 +0200 (Tue, 12 Sep 2006)
+New Revision: 238
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+Log:
+ r872 at ferrari:  chisel | 2006-09-06 10:08:57 +0100
+ + added %dfv_profile_for
+ + added actions: add, next_post, watch
+ / extended actions: reply, view
+ + added (private) methods: _add_new_reply, _add_new_thread, _get_thread_reply_post, _increase_post_count, _increase_thread_view_count, _watching_thread, _update_last_post, _update_person_post_info, _watching_thread
+ / modified (private) methods: _update_thread_view
+ + added transaction functions: _txn_add_new_reply, _txn_add_new_thread
+ + extended POD
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:871
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:872
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-09-12 14:59:39 UTC (rev 237)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-09-12 14:59:43 UTC (rev 238)
+@@ -6,9 +6,75 @@
+ use Data::SpreadPagination;
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++my %dfv_profile_for = (
++    # DFV validation profile for adding a new topic
++    new_topic => {
++        required    => [qw( thread_subject thread_message )],
++        filters     => [qw( trim )],
++        msgs => {
++            format  => q{%s},
++            missing => q{One or more required fields are missing},
++        },
++    },
++
++    # DFV validation profile for adding a reply to an existing topic
++    new_reply => {
++        required    => [qw( thread_message )],
++        optional    => [qw( thread_subject )],
++        filters     => [qw( trim )],
++    },
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Controller Actions
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++sub add : Local {
++    my ($self, $c) = @_;
++
++    # make sure we're logged in
++    $c->login_if_required(q{You must be logged in before you can add a new topic.});
++
++    # make sure we're authenticated
++    # XXX
++
++    # if we have a form POST ...
++    if (defined $c->request->method() and $c->request->method() eq 'POST') {
++        $self->_add_new_thread($c);
++    }
++    # other wise we continue merrily on our way, and simply display the
++    # thread/add page
++    else {
++        # thread/add template shown automagically
++    }
++}
++
++sub next_post : Local {
++    my ($self, $c) = @_;
++
++    # make sure we're logged in
++    $c->login_if_required(q{You must be logged in before you can use the thread continuation function});
++
++    # get the most recent post the user has seen
++    my $last_viewed_post = $c->model('ParleyDB')->resultset('Thread')->last_post_viewed_in_thread(
++        $c->_authed_user(),
++        $c->_current_thread(),
++    );
++
++    # get the post after the last one viewed, and make this the current post
++    $c->_current_post(
++        $c->model('ParleyDB')->resultset('Post')->next_post(
++            $last_viewed_post
++        )
++    );
++
++    # view the next post (now the current post)
++    $c->detach('/post/view');
++}
++
+ sub reply : Local {
+     my ($self, $c) = @_;
+ 
+@@ -16,8 +82,32 @@
+     $c->login_if_required(q{You must be logged in before you can add a reply.});
+ 
+     # make sure we're authenticated
++    # XXX
+ 
+-    $c->stash->{error}{message} = q{This action isn't completed yet.};
++    # if we have a current post, then we're performing a quoted reply
++    # (otherwise we should have the thread that we're adding a reply to)
++    # are we quoting a post that we're replying to?
++    if (defined $c->_current_post()) {
++        $c->stash->{quote_post} = $c->_current_post();
++    }
++
++    # get the post we're replying to
++    $self->_get_thread_reply_post($c);
++
++    # if we have a form POST ...
++    if (defined $c->request->method()
++            and $c->request->method() eq 'POST'
++            and defined $c->request->param('post_reply')
++    ) {
++        $c->log->debug('calling: _add_new_reply($c)');
++        $self->_add_new_reply($c);
++    }
++    # other wise we continue merrily on our way, and simply display the
++    # thread/reply page
++    else {
++        $c->log->debug('allowing fall-through to view in reply()');
++        # thread/reply template shown automagically
++    }
+ }
+ 
+ sub view : Local {
+@@ -47,6 +137,13 @@
+     );
+ 
+     ##################################################
++    # updates triggered by viewing a thread
++    ##################################################
++    {
++        $self->_increase_thread_view_count($c);
++    }
++
++    ##################################################
+     # some updates for logged in users
+     ##################################################
+     if ($c->_authed_user) {
+@@ -73,10 +170,284 @@
+     1; # return 'true'
+ }
+ 
++sub watch :Local {
++    my ($self, $c) = @_;
++
++    # the watch parameter tells us if we're adding or removing a watch
++    # if it's not specified, default action os to ADD a watch
++    my $watched = $c->request->param('watch');
++    if (not defined $watched) {
++        $watched = 1;
++    }
++
++    # need to be logged in to watch threads
++    $c->login_if_required($c, q{You must be logged in before you can watch a topic.});
++
++    # get the ThreadView so we can update it
++    my $thread_view = $c->model('ParleyDB')->resultset('ThreadView')->find(
++        {
++            person  => $c->_authed_user()->id(),
++            thread  => $c->_current_thread()->id(),
++        }
++    );
++
++    # if we couldn't find a thread view, then something odd is happening -
++    # logged in users should always have a thread_view entry
++    if (not defined $thread_view) {
++        $c->stash->{error}{message} = q{Failed to watch requested thread};
++        $c->log->error(q{User doesn't have a thread_view entry});
++        return;
++    }
++
++    # we have a threac_view entry for the user, so update it, and redirect the
++    # user back to the thread
++
++    # update the watched status
++    $thread_view->watched( $watched );
++    $thread_view->update();
++
++    # if we have a current post we can use that to return to the "right
++    # place" in the thread
++    if (defined $c->_current_post()) {
++        $c->detach('/post/view');
++    }
++    # otherwise we want to redirect back to the same page in the current
++    # thread
++    else {
++        my ($page_number, $redirect_url);
++
++        # page to show - either a param, or show the first
++        $page_number = $c->request->param('page') || 1;
++
++        # build the URL to redirect to
++        $redirect_url = $c->uri_for(
++            '/thread',
++            'view?thread='
++            . $c->_current_thread()->id()
++            . "&page=$page_number"
++        );
++
++        # redirect to the apropriate place
++        $c->response->redirect( $redirect_url );
++        return;
++    }
++}
++
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Controller (Private/Helper) Methods
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++sub _add_new_reply {
++    my ($self, $c) = @_;
++    my ($new_reply);
++
++    # validate the form data
++    $c->form(
++        $dfv_profile_for{new_reply}
++    );
++
++    # deal with missing/invalid fields
++    if ($c->form->has_missing()) {
++        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c->form->missing ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c->form->has_invalid()) {
++        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c->form->invalid ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise, the form data is ok ...
++    else {
++        # try to add the reply to the thread
++        eval {
++            $new_reply = $c->model('ParleyDB')->schema->txn_do(
++                sub { return $self->_txn_add_new_reply($c) }
++            );
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die "something terrible has happened!"  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $c->stash->{error}{message} = qq{Database transaction failed: $@};
++            $c->log->error( $@ );
++            return;
++        }
++    }
++
++    # getting here means we validated the form, and added required data for the
++    # new thread
++
++    # set the current post
++    $c->_current_post( $new_reply );
++
++    # view the "next post" in the new thread
++    $c->detach('next_post');
++}
++
++sub _add_new_thread {
++    my ($self, $c) = @_;
++    my ($new_thread);
++
++    # validate the form data
++    $c->form(
++        $dfv_profile_for{new_topic}
++    );
++
++    # deal with missing/invalid fields
++    if ($c->form->has_missing()) {
++        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c->form->missing ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c->form->has_invalid()) {
++        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c->form->invalid ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise, the form data is ok ...
++    else {
++        # try to add the thread
++        eval {
++            $new_thread = $c->model('ParleyDB')->schema->txn_do(
++                sub { return $self->_txn_add_new_thread($c) }
++            );
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die "something terrible has happened!"  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $c->stash->{error}{message} = qq{Database transaction failed: $@};
++            $c->log->error( $@ );
++            return;
++        }
++    }
++
++    # getting here means we validated the form, and added required data for the
++    # new thread
++
++    # set the current thread
++    $c->_current_thread( $new_thread );
++
++    # view the "next post" in the new thread
++    $c->detach('next_post');
++}
++
++sub _get_thread_reply_post {
++    my ($self, $c) = @_;
++    my ($posts);
++
++    # it would be good to display the relevant post in the thread, so people know
++    # what they're replying to
++    # - if adding a reply, assume the first post
++    # - if we have a post value, then that's the one we're replying to
++    if (defined $c->_current_post()) {
++        # get the specific post we're responding to
++        $posts = $c->model('ParleyDB')->resultset('Post')->search(
++            {
++                post_id     => $c->_current_post()->id(),
++            },
++            {
++                rows        => 1,
++            }
++        );
++    }
++    elsif (defined $c->_current_thread()) {
++        # get the first post in the thread
++        $posts = $c->model('ParleyDB')->resultset('Post')->search(
++            {
++                thread      => $c->_current_thread()->id(),
++            },
++            {
++                order_by    => 'created ASC',
++                rows        => 1,
++            }
++        );
++    }
++    else {
++        $c->stash->{error}{message} = q{No information for thread or post to reply to};
++        return;
++    }
++
++    # if we don't have one post, something really odd happened
++    if (1 != $posts->count()) {
++        $c->stash->{error}{message} = q{I don't know how you managed to reply to a thread with no posts};
++        return;
++    }
++
++    # save the first (and only) post from our results
++    $c->stash->{responding_to_post} = $posts->first();
++
++    # be successful
++    return 1;
++}
++
++sub _increase_post_count {
++    my ($self, $c, $thread) = @_;
++
++    # make the update in a transaction
++    eval {
++        # make sure $post_count is sane
++        my $post_count = $thread->post_count() || 0;
++
++        # increase the number of replies for the thread
++        $thread->post_count(
++            $post_count + 1
++        );
++        $thread->update();
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die "something terrible has happened!"  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c->stash->{error}{message} = qq{Database transaction failed: $@};
++        $c->log->error( $@ );
++        return;
++    }
++}
++
++
++sub _increase_thread_view_count {
++    my ($self, $c) = @_;
++
++    # do nothing if we don't have a current_thread
++    if (not defined $c->_current_thread) {
++        $c->log->error( q{Can't increase view count for undefined thread} );
++        return;
++    }
++
++    # increase the post count
++    eval {
++        $c->model('ParleyDB')->schema->txn_do(
++            sub {
++                $c->log->info( q{Increasing view count} );
++                $c->_current_thread->view_count(
++                    $c->_current_thread->view_count + 1
++                );
++                $c->_current_thread->update;
++            }
++        )
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die "something terrible has happened!"  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c->stash->{error}{message} = qq{Database transaction failed: $@};
++        $c->log->error( $@ );
++        return;
++    }
++}
++
+ sub _thread_view_pager {
+     my ($self, $c) = @_;
+ 
+@@ -109,22 +480,67 @@
+     ;
+ }
+ 
+-sub _watching_thread {
+-    my ($self, $c) = @_;
+-    
+-    # find out if the user is watching the thread, and store it in the stash
+-    $c->stash->{watching_thread} =
+-        $c->model('ParleyDB')->resultset('ThreadView')->watching_thread(
+-            $c->_current_thread(),
+-            $c->_authed_user(),
+-        )
+-    ;
++sub _update_last_post {
++    my ($self, $c, $new_post) = @_;
++
++    # do the updates in a transaction
++    eval {
++        $c->model('ParleyDB')->schema->txn_do(
++            sub {
++                # get the thread the post lives in
++                my $thread = $new_post->thread;
++
++                # get the forum the thread lives in
++                my $forum = $thread->forum;
++
++                # set the last_post for both forum and thread
++                $forum-> last_post($new_post->post_id());
++                $thread->last_post($new_post->post_id());
++                $forum ->update();
++                $thread->update();
++            }
++        );
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die "something terrible has happened!"  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c->stash->{error}{message} = qq{Database transaction failed: $@};
++        $c->log->error( $@ );
++        return;
++    }
+ }
+ 
++sub _update_person_post_info {
++    my ($self, $c, $post) = @_;
++    my $person = $c->_authed_user();
++
++    # make the update in a transaction
++    eval {
++        # increase the post count for the user
++        $person->post_count( $person->post_count() + 1 );
++        # make a note of their last post
++        $person->last_post( $post->id() );
++        # push the changes back tot the db
++        $person->update();
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die "something terrible has happened!"  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c->stash->{error}{message} = qq{Database transaction failed: $@};
++        $c->log->error( $@ );
++        return;
++    }
++}
++
+ sub _update_thread_view {
+     my ($self, $c) = @_;
++    my ($last_post, $last_post_timestamp);
+ 
+-    my ($last_post, $last_post_timestamp);
++    $c->log->info(q{called: _update_thread_view()});
+     
+     # get the last post on the page
+     $last_post = $c->model('ParleyDB')->resultset('Post')->last_post_in_list(
+@@ -132,7 +548,7 @@
+     );
+     # get the timestamp of the last post
+     $last_post_timestamp = $last_post->created();
+-    $c->log->debug( $last_post_timestamp );
++    $c->log->debug( qq{\$last_post_timestamp = $last_post_timestamp} );
+ 
+     # make a note of when the user last viewed this thread, if a record doesn't already exist
+     my $thread_view =
+@@ -156,6 +572,122 @@
+     $thread_view->update;
+ }
+ 
++sub _watching_thread {
++    my ($self, $c) = @_;
++    
++    # find out if the user is watching the thread, and store it in the stash
++    $c->stash->{watching_thread} =
++        $c->model('ParleyDB')->resultset('ThreadView')->watching_thread(
++            $c->_current_thread(),
++            $c->_authed_user(),
++        )
++    ;
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Functions for database transactions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _txn_add_new_reply {
++    my ($self, $c) = @_;
++    $c->log->info( q{_txn_add_new_reply} );
++
++    my ($new_post);
++
++    # make sure we have a current thread
++    if(not $c->_current_thread) {
++        die q{No current thread in _txn_add_new_reply()};
++    }
++
++    # create a new post in the current thread
++    $new_post = $c->model('ParleyDB')->resultset('Post')->create(
++        {
++            thread      => $c->_current_thread()->id(),
++            subject     => $c->form->valid->{thread_subject},
++            message     => $c->form->valid->{thread_message},
++            creator     => $c->_authed_user->id(),
++        }
++    );
++
++    # if we have current post information, then the post is in reply to another
++    # post (i.e. quoted reply, not just reply-to-thread)
++    if (defined $c->_current_post()) {
++        # mark what the new post is in reply-to
++        $new_post->reply_to( $c->_current_post()->id() );
++    }
++
++    # do we have a quoted post? if we do we need to store the
++    # (potentially ammended) quoted text, and the actual post being
++    # quoted (so we can get author, date, etc)
++    if (defined $c->request->param('have_quoted_post')) {
++        $new_post->quoted_post( $c->_current_post()->id() );
++        $new_post->quoted_text( $c->req->param('quote_message') );
++    }
++
++    # the thread's last post is the one we just created
++    $c->_current_thread()->last_post( $new_post->id );
++
++    # we've got one post in our new thread
++    $self->_increase_post_count($c, $c->_current_thread());
++
++    # update information about the most recent forum/thread post
++    $self->_update_last_post($c, $new_post);
++
++    # update information about the poster (count, etc)
++    $self->_update_person_post_info($c, $new_post);
++
++    # update the records
++    $new_post->update;
++
++    # return the new topic/thread
++    return $new_post;
++}
++
++sub _txn_add_new_thread {
++    my ($self, $c) = @_;
++    $c->log->info( q{_txn_add_new_thread} );
++    
++    my ($new_thread, $new_post);
++
++    # create a new thread
++    $new_thread = $c->model('ParleyDB')->resultset('Thread')->create(
++        {
++            forum       => $c->_current_forum->id(),
++            subject     => $c->form->valid->{thread_subject},
++            creator     => $c->_authed_user->id(),
++        }
++    );
++
++    # create a new post in the new thread
++    $new_post = $c->model('ParleyDB')->resultset('Post')->create(
++        {
++            thread      => $new_thread->id(),
++            subject     => $c->form->valid->{thread_subject},
++            message     => $c->form->valid->{thread_message},
++            creator     => $c->_authed_user->id(),
++        }
++    );
++
++    # the thread's last post is the one we just created
++    $new_thread->last_post( $new_post->id );
++
++    # we've got one post in our new thread
++    $new_thread->post_count( 1 );
++
++    # update information about the most recent forum/thread post
++    $self->_update_last_post($c, $new_post);
++
++    # update information about the poster (count, etc)
++    $self->_update_person_post_info($c, $new_post);
++
++    # update the records
++    $new_thread->update;
++    $new_post->update;
++
++    # return the new topic/thread
++    return $new_thread;
++}
++
+ 1;
+ 
+ __END__
+@@ -172,25 +704,72 @@
+ 
+ =head1 ACTIONS
+ 
++=head2 add
++
++Adds a new thread to a specified forum
++
++=head2 next_post
++
++Take the logged-in user to the post after the last one they have viewed. If
++they haven't viewed any posts they should be taken to the first in the thread.
++If the last post they saw was the last in the thread they should be taken to
++the last post in the thread.
++
+ =head2 reply
+ 
++Reply to a post in an existing thread.
++
+ =head2 view
+ 
+ This action prepares data in the stash for viewing the current thread.
+ 
++=head2
++
++This action is used to add/remove a watch for a given thread
++
+ =head1 PRIVATE METHODS
+ 
+-=head2 _thread_watch_count
++=head2 _add_new_reply($self,$c)
+ 
+-Sets C<$c-E<gt>stash-E<gt>{watcher_count}> with the number of people who have a
+-watch set for the current thread.
++The guts of the process to add a new reply to an existing thread
+ 
+-=head2 _thread_view_pager
++=head2 _add_new_thread($self,$c)
+ 
++The guts of the process to add a new thread/topic to a forum
++
++=head2 _get_thread_reply_post($self,$c)
++
++Returns the post being replied to in a thread.
++
++=head2 _increase_post_count($self,$c,$thread)
++
++Increase the number of posts (by one) for a given thread
++
++=head2 _increase_thread_view_count($self,$c)
++
++Inside a transaction, increase the number of views a thread has by one.
++
++=head2 _thread_view_pager($self,$c)
++
+ Set-up C<$c-E<gt>stash-E<gt>{page}> and
+ C<$c-E<gt>stash-E<gt>{page_range_spread}> for the current thread.
+ These are used by the pager in the templates (Page X of Y, etc).
+ 
++=head2 _thread_watch_count($self,$c)
++
++Sets C<$c-E<gt>stash-E<gt>{watcher_count}> with the number of people who have a
++watch set for the current thread.
++
++=head2 _update_last_post($self,$c,$new_post)
++
++Given a (new) post, update the values for the last post in the relevant thread
++and forum.
++
++=head2 _update_person_post_info($self,$c,$post)
++
++Called when someone makes a new post, increments the total number of posts made
++by the user, and updates the record of the last post they made.
++
+ =head2 _watching_thread
+ 
+ Sets C<$c-E<gt>stash-E<gt>{watching_thread}> with a true|false value indicating
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:47 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:47 +0200
+Subject: [Parley-svn] r239 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200609121459.k8CExlYc028677@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:47 +0200 (Tue, 12 Sep 2006)
+New Revision: 239
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Schema/Post.pm
+Log:
+ r873 at ferrari:  chisel | 2006-09-06 10:11:05 +0100
+ / fixed [offset in] last_post_in_list()
+ - removed some debug output
+ - removed test function(s): my_damn_function
+ + added methods: next_post, page_containing_post, thread_position
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:872
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:873
+
+Modified: branches/schema_based/lib/Parley/Schema/Post.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Post.pm	2006-09-12 14:59:43 UTC (rev 238)
++++ branches/schema_based/lib/Parley/Schema/Post.pm	2006-09-12 14:59:47 UTC (rev 239)
+@@ -99,30 +99,82 @@
+     my ($self, $post_list) = @_;
+ 
+     my $posts_in_list = $post_list->count();
+-    warn "posts_in_list:   $posts_in_list\n";
+-    my $splice_position = $posts_in_list - 2;
+-    warn "splice_position: $splice_position\n";
++    my $splice_position = $posts_in_list - 1;
+ 
+     # get the last post on the page
+     my $slice = $post_list->slice(
+         $splice_position,
+         $splice_position,
+     );
+-    warn "posts_in_slice:   " . $slice->count() . "\n";
+-    warn (ref($slice));
+ 
+     if (defined $slice->first()) {
+-        warn "first in slice is defined\n";
+-        warn $slice->first()->created();
+         return $slice->first();
+     }
+ 
+-    warn "return naff all\n";
+     return;
+ }
+ 
+-sub my_damn_function {
++
++sub next_post :ResultSet {
++    my ($self, $post) = @_;
++    my $next_post;
++
++    # we want to find the next post after the one we've been given, based on
++    # creation time
++    # if for some reason there are no matches, just return the post we were passed
++    $next_post = $self->search(
++        {
++            created => { '>' => DateTime::Format::Pg->format_datetime($post->created()) },
++            thread  => $post->thread()->id(),
++        },
++        {
++            rows    => 1,
++        }
++    );
++
++    if (defined $next_post->first()) {
++        return $next_post->first();
++    }
++
++    return $post;
+ }
+ 
++
++sub page_containing_post : ResultSet {
++    my ($self, $post, $posts_per_page) = @_;
++
++    my $position_in_thread = $self->thread_position($post);
++
++    # work out what page the Nth post is on
++    my $page_number = int(($position_in_thread - 1) / $posts_per_page) + 1;
++
++    return $page_number;
++}
++
++
++sub thread_position : ResultSet {
++    my ($self, $post) = @_;
++
++    if (not defined $post) {
++        warn('$post id undefined in call to Parley::Model::ParleyDB::Post->thread_position()');
++        return;
++    }
++
++    # explicitly 'deflate' the creation time, as DBIx::Class (<=v0.06003) doesn't deflate on search()
++    my $position = $self->count(
++        {
++            thread  => $post->thread()->id(),
++            created => {
++                '<='   => DateTime::Format::Pg->format_datetime($post->created())
++            },
++        }
++    );
++
++    return $position;
++}
++
++
+ 1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
+ 
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:51 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:51 +0200
+Subject: [Parley-svn] r240 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200609121459.k8CExpmZ028735@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:51 +0200 (Tue, 12 Sep 2006)
+New Revision: 240
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Schema/Thread.pm
+Log:
+ r874 at ferrari:  chisel | 2006-09-06 10:13:03 +0100
+ + added method: last_post_viewed_in_thread
+ / depreacted old last_post_viewed_in_thread() to _last_post_viewed_in_thread()
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:873
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:874
+
+Modified: branches/schema_based/lib/Parley/Schema/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Thread.pm	2006-09-12 14:59:47 UTC (rev 239)
++++ branches/schema_based/lib/Parley/Schema/Thread.pm	2006-09-12 14:59:51 UTC (rev 240)
+@@ -83,8 +83,162 @@
+     });
+ }
+ 
++# This is slightly complicated; the way we find the last post a user has seen
++# in a thread is:
++#
++# - If there is a thread_view entry for person-thread then find the last post
++#    made on or before that time
++# - If there is no thread_view entry, then the user has never seen the thread
++#   before, in which case the last post viewed is considered to be the
++#   first post in the thread
++sub last_post_viewed_in_thread :ResultSet {
++    my ($self, $person, $thread) = @_;
++    my ($last_viewed, $last_post) = @_;
+ 
++    my $schema = $self->result_source()->schema();
+ 
++    # we need to be careful that we haven't deleted/hidden the post that
++    # matches the exact timestamp of last_viewed for a thread - this is why we
++    # use <= and not ==, since we can just return the latest undeleted post
+ 
++    # get the entry (if any) for person-thread from the thread_view table
++    $last_viewed = $schema->resultset('ThreadView')->find(
++        {
++            person  => $person->id(),
++            thread  => $thread->id(),
++        }
++    );
++
++    warn q{$last_viewed->timestamp TIME IS: } . $last_viewed->timestamp();
++
++    # if we don't have a $last_viewed, then return the thread's first post
++    if (not defined $last_viewed) {
++        warn "thread has never been viewed - returning first post in thread";
++
++        # get all the posts in the thread, oldest first
++        my $posts_in_thread = $schema->resultset('Post')->search(
++            {
++                thread  => $thread->id(),
++            },
++            {
++                rows        => 1,
++                order_by    => 'created ASC',
++            }
++        );
++
++        # set the first post
++        $last_post = $posts_in_thread->first();
++    }
++
++    # otherwise, find the most recent post made on or before the timestamp in
++    # $last_viewed
++    else {
++        warn q{looking for a post on or before } . $last_viewed->timestamp();
++
++        # get a list of posts created on or before our last-post time, newest
++        # first
++        my $list_of_posts = $schema->resultset('Post')->search(
++            {
++                created => {
++                    '<=',
++                    DateTime::Format::Pg->format_datetime(
++                        $last_viewed->timestamp()
++                    )
++                },
++                thread  => $thread->id(),
++            },
++            {
++                rows        => 1,
++                order_by    => 'created DESC',
++            }
++        );
++
++        # the most recent post is the first (and only) post in our list
++        $last_post = $list_of_posts->first();
++    }
++
++    # we should now have a Post object in $last_post
++    if (not defined $last_post) {
++        warn q{$last_post is undefined in last_post_viewed_in_thread()};
++        return;
++    }
++
++    # return the last post ..
++    return $last_post;
++}
++
++sub _last_post_viewed_in_thread :ResultSet {
++    my ($self, $person, $thread) = @_;
++    my ($last_viewed, $last_post);
++
++    my $schema = $self->result_source()->schema();
++
++    # we need to be careful that we haven't deleted/hidden the post that
++    # matches the exact timestamp of last_viewed for a thread - this is why we
++    # use <= and not ==, since we can just return the latest undeleted post
++
++    # get the "last_viewed" value from thread_view
++    $last_viewed = $schema->resultset('ThreadView')->search(
++        {
++            person  => $person->id(),
++            thread  => $thread->id(),
++        },
++        {
++            rows => 1,
++        }
++    );
++
++    # if last_viewed isn't defined, it should mean the user has never viewed
++    # this thread
++    if (not defined $last_viewed) {
++        warn "thread has never been viewed - returning first post in thread";
++
++        $last_post = $schema->resultset('Post')->search(
++            {
++                thread  => $thread->id(),
++            },
++            {
++                rows        => 1,
++                order_by    => 'created ASC',
++            }
++        );
++
++        return $last_post->first();
++    }
++        
++    #die dump(ref $last_viewed);
++    if (not $last_viewed->count()) {
++        warn "no matches for 'last viewed' in last_post_viewed_in_thread()";
++        return;
++    }
++
++    # now get the last post made on or before our timestamp for when we last
++    # viewed the thread
++    $last_post = $schema->resultset('Post')->search(
++        {
++            created => {
++                '<=', 
++                DateTime::Format::Pg->format_datetime($last_viewed->timestamp())
++            },
++            thread  => $thread->id(),
++        },
++        {
++            rows        => 1,
++            order_by    => 'created DESC',
++        }
++    );
++
++    # return the first result (if we have any)
++    if ($last_post->count()) {
++        return $last_post->first();
++    }
++
++    # oh well, we didn't get anything
++    # XXX this might cause problems in the future, but we'll see
++    return;
++}
++
++
+ 1;
+-
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:54 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:54 +0200
+Subject: [Parley-svn] r241 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200609121459.k8CExskn028785@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:54 +0200 (Tue, 12 Sep 2006)
+New Revision: 241
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Schema/ThreadView.pm
+Log:
+ r875 at ferrari:  chisel | 2006-09-06 10:14:06 +0100
+ / reformatted some of the generated content in add_columns(...)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:874
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:875
+
+Modified: branches/schema_based/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-09-12 14:59:51 UTC (rev 240)
++++ branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-09-12 14:59:54 UTC (rev 241)
+@@ -10,38 +10,45 @@
+ __PACKAGE__->load_components('ResultSetManager', "PK::Auto", "Core");
+ __PACKAGE__->table("thread_view");
+ __PACKAGE__->add_columns(
+-  "watched",
+-  {
++  "watched" => {
+     data_type => "boolean",
+     default_value => "false",
+     is_nullable => 0,
+     size => 1,
+   },
+-  "thread_view_id",
+-  {
++
++  "thread_view_id" => {
+     data_type => "integer",
+     default_value => "nextval('thread_view_thread_view_id_seq'::regclass)",
+     is_nullable => 0,
+     size => 4,
+   },
+-  "last_notified",
+-  {
++
++  "last_notified" => {
+     data_type => "timestamp with time zone",
+     default_value => undef,
+     is_nullable => 1,
+     size => 8,
+   },
+-  "thread",
+-  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
+-  "timestamp",
+-  {
++
++  "thread" => {
++    data_type => "integer",
++    default_value => undef,
++    is_nullable => 0,
++    size => 4
++  },
++  "timestamp" => {
+     data_type => "timestamp with time zone",
+     default_value => "now()",
+     is_nullable => 0,
+     size => 8,
+   },
+-  "person",
+-  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "person" => {
++    data_type => "integer",
++    default_value => undef,
++    is_nullable => 0,
++    size => 4
++  },
+ );
+ __PACKAGE__->set_primary_key("thread_view_id");
+ __PACKAGE__->add_unique_constraint("thread_view_person_key", ["person", "thread"]);
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 16:59:58 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 16:59:58 +0200
+Subject: [Parley-svn] r242 - / branches/schema_based/root/base/thread
+Message-ID: <200609121459.k8CExwMs028836@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 16:59:58 +0200 (Tue, 12 Sep 2006)
+New Revision: 242
+
+Modified:
+   /
+   branches/schema_based/root/base/thread/add
+Log:
+ r876 at ferrari:  chisel | 2006-09-06 10:15:11 +0100
+ + updated [%IF%] block for erorr messages
+ / altered the form action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:875
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:876
+
+Modified: branches/schema_based/root/base/thread/add
+===================================================================
+--- branches/schema_based/root/base/thread/add	2006-09-12 14:59:54 UTC (rev 241)
++++ branches/schema_based/root/base/thread/add	2006-09-12 14:59:58 UTC (rev 242)
+@@ -1,15 +1,16 @@
+ <h1>Start A New Topic</h1>
+ 
+-[% IF messages %]
++[% IF view.error.message %]
++    [% view.error.message %]
+     <ul>
+-        [% FOREACH message IN messages %]
++        [% FOREACH message IN view.error.messages %]
+             <li>[% message %]</li>
+         [% END %]
+     </ul>
+ [% END %]
+ 
+ 
+-<form action="thread/post?forum=[% current_forum.id %]" method="POST" name="new_thread">
++<form action="thread/add?forum=[% current_forum.id %]" method="POST" name="new_thread">
+ 
+ <table>
+ 
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:07 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:07 +0200
+Subject: [Parley-svn] r243 - / branches/schema_based/root/base/thread
+Message-ID: <200609121500.k8CF075P028982@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:07 +0200 (Tue, 12 Sep 2006)
+New Revision: 243
+
+Modified:
+   /
+   branches/schema_based/root/base/thread/reply
+Log:
+ r877 at ferrari:  chisel | 2006-09-06 10:16:49 +0100
+ / alter form action
+ + on;y show thread_subject input if replies_have_own_subject (from yml config) is true
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:876
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:877
+
+Modified: branches/schema_based/root/base/thread/reply
+===================================================================
+--- branches/schema_based/root/base/thread/reply	2006-09-12 14:59:58 UTC (rev 242)
++++ branches/schema_based/root/base/thread/reply	2006-09-12 15:00:07 UTC (rev 243)
+@@ -4,9 +4,9 @@
+ 
+ [%# different action depending on whether we're adding to a thread or replying to a specific post %]
+ [% IF current_post %]
+-<form action="thread/post?post=[% current_post.id %]" method="POST" name="new_thread">
++<form action="thread/reply?post=[% current_post.id %]" method="POST" name="new_thread">
+ [% ELSE %]
+-<form action="thread/post?thread=[% current_thread.id %]" method="POST" name="new_thread">
++<form action="thread/reply?thread=[% current_thread.id %]" method="POST" name="new_thread">
+ [% END %]
+ 
+ <!-- The post we're replying to -->
+@@ -44,12 +44,14 @@
+ 
+ 
+ <table>
++  [% IF c.config.replies_have_own_subject %]
+   <tr>
+     <td> Topic </td>
+     <td>
+       <input type="text" name="thread_subject" size="60" class="input_text" value="[% current_thread.subject %]" />
+     </td>
+   </tr>
++  [% END %]
+ 
+   [% IF quote_post %]
+   <input type="hidden" name="have_quoted_post" value="1" />
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:11 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:11 +0200
+Subject: [Parley-svn] r244 - / branches/schema_based/root/base/thread
+Message-ID: <200609121500.k8CF0BIp029066@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:10 +0200 (Tue, 12 Sep 2006)
+New Revision: 244
+
+Modified:
+   /
+   branches/schema_based/root/base/thread/view
+Log:
+ r878 at ferrari:  chisel | 2006-09-06 10:19:42 +0100
+ / changed Reply/Quote form submits to standard links
+ + experimented with user avatar
+ - removed ModelMayhem Photographer/Model image link
+ + set an <a name> for each post
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:877
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:878
+
+Modified: branches/schema_based/root/base/thread/view
+===================================================================
+--- branches/schema_based/root/base/thread/view	2006-09-12 15:00:07 UTC (rev 243)
++++ branches/schema_based/root/base/thread/view	2006-09-12 15:00:10 UTC (rev 244)
+@@ -581,9 +581,7 @@
+                 [% INCLUDE shared/pager_advanced %]
+                 </small>
+                 <br />
+-                <form action="thread/reply?thread=[% current_thread.id %]" method="POST" name="post_actions" class="inline_form">
+-                    <input type="submit" value="Reply" name="reply_to_thread" class="small_input_button" />
+-                </form>
++                <a href="thread/reply?thread=[% current_thread.id %]">Reply</a>
+               </td>
+             </tr>
+             
+@@ -612,26 +610,28 @@
+                     <tr>
+                       <td align="center">
+                         <a href="">
+-                          <img class="picborder" src="posts_files/42939_t.jpg" border="0" width="90">
++                          <img class="picborder" src="/static/user_file/[% post.creator.id %]/avatar.jpg" border="0" width="100" height="100" alt="Avatar" />
+                         </a>
+                       </td>
+                     </tr>
+                     <tr>
+                       <td align="center" bgcolor="#ffffff">
+-                        <img src="posts_files/2.gif">
++                        <!-- <img src="posts_files/2.gif" width="1" height="1" alt="2.gif" /> -->
+                       </td>
+                     </tr>
+                   </tbody>
+                 </table>
+                 
+                 <strong>
+-                  <a href="">[% post.creator.forum_name %]</a>
++                  <a name="xx[% post.id %]"></a>
++                  <a href="" name="[% post.id %]">[% post.creator.forum_name %]</a>
+                 </strong>
+                 <br />
+                 Posts: 
+                 [% post.creator.post_count %]
+                 post[% IF (post.creator.post_count != 1) %]s[% END %]
+                 <br />
++                [% post.id %]
+                 <br />
+               </td>
+               
+@@ -654,9 +654,7 @@
+                 <span class="small">[% nicedate(post.created) %]</span>
+                 <span class="small_link">
+                   <strong>
+-                    <form action="thread/reply?post=[% post.id %]" method="POST" name="post_actions" class="inline_form">
+-                        <input type="submit" value="Quote" name="quote_post" class="small_input_button" />
+-                    </form>
++                    <a href="thread/reply?post=[% post.id %]">Quote</a>
+                   </strong>
+                 </span>
+               </td>
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:14 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:14 +0200
+Subject: [Parley-svn] r245 - / branches/schema_based/db
+Message-ID: <200609121500.k8CF0EsA029162@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:14 +0200 (Tue, 12 Sep 2006)
+New Revision: 245
+
+Modified:
+   /
+   branches/schema_based/db/parley.psql
+Log:
+ r1182 at ferrari:  chisel | 2006-09-12 09:53:09 +0100
+ + added missing table (password_reset); it's in a patch file, but not in the main schema
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:878
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1182
+
+Modified: branches/schema_based/db/parley.psql
+===================================================================
+--- branches/schema_based/db/parley.psql	2006-09-12 15:00:10 UTC (rev 244)
++++ branches/schema_based/db/parley.psql	2006-09-12 15:00:14 UTC (rev 245)
+@@ -71,6 +71,14 @@
+     expires         date
+ );
+ 
++-- new table used during forgotten password process
++CREATE TABLE password_reset (
++    password_reset_id       text        primary key,
++    recipient               integer     not null
++                            references person,
++    expires                 timestamp
++);
++
+ CREATE TABLE forum (
+     forum_id        SERIAL      primary key,
+     name            text        not null,
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:18 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:18 +0200
+Subject: [Parley-svn] r246 - / branches/schema_based
+Message-ID: <200609121500.k8CF0In4029240@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:18 +0200 (Tue, 12 Sep 2006)
+New Revision: 246
+
+Modified:
+   /
+   branches/schema_based/parley.yml
+Log:
+ r1183 at ferrari:  chisel | 2006-09-12 09:54:23 +0100
+ + added settings for Catalyst::Plugin::Email
+ / changed option 'view' to 'default_view'
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1182
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1183
+
+Modified: branches/schema_based/parley.yml
+===================================================================
+--- branches/schema_based/parley.yml	2006-09-12 15:00:14 UTC (rev 245)
++++ branches/schema_based/parley.yml	2006-09-12 15:00:18 UTC (rev 246)
+@@ -20,15 +20,18 @@
+ 
+ 
+ 
++# emails; perldoc Catalyst::Plugin::Email
++# this passes options as an array :(
++email:
++    - SMTP
++    - localhost
+ 
+-
+-
+ #--
+ #-- LINES BELOW THIS SHOULDN'T NEED CHANGING
+ #--
+ 
+ # the default view to use
+-view:         'Parley::View::TT'
++default_view:         'TT'
+ 
+ # authentiation settings; perldoc Catalyst::Plugin::Authentication::Store::DBIC
+ authentication:
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:22 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:22 +0200
+Subject: [Parley-svn] r247 - / branches/schema_based/lib/Parley/Controller
+	branches/schema_based/lib/Parley/Controller/User
+Message-ID: <200609121500.k8CF0M9L029297@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:21 +0200 (Tue, 12 Sep 2006)
+New Revision: 247
+
+Added:
+   branches/schema_based/lib/Parley/Controller/User/
+   branches/schema_based/lib/Parley/Controller/User/LostPassword.pm
+   branches/schema_based/lib/Parley/Controller/User/SignUp.pm
+Modified:
+   /
+Log:
+ r1184 at ferrari:  chisel | 2006-09-12 09:55:18 +0100
+ + re-implemented Lost Password and Sign-Up functionality
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1183
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1184
+
+Added: branches/schema_based/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User/LostPassword.pm	2006-09-12 15:00:18 UTC (rev 246)
++++ branches/schema_based/lib/Parley/Controller/User/LostPassword.pm	2006-09-12 15:00:21 UTC (rev 247)
+@@ -0,0 +1,464 @@
++package Parley::Controller::User::LostPassword;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use List::MoreUtils qw{ uniq };
++use Digest::MD5 qw{ md5_hex };
++use Readonly;
++use Time::Piece;
++use Time::Seconds;
++
++# used by DFV
++sub _dfv_constraint_confirm_equal {
++    my $dfv  = shift;
++    my $val1 = shift;
++    my $val2 = shift;
++
++    return ( $val1 eq $val2 );
++}
++
++sub _dfv_constraint_valid_email {
++    my $dfv   = shift;
++    my $email = shift;
++
++    return Email::Valid->address($email);
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Readonly my $LIFETIME => Time::Seconds::ONE_HOUR;
++
++my %dfv_profile_for = (
++    'password_reset' => {
++        require_some => {
++            user_details => [
++                1,
++                qw/ username email /
++            ],
++        },
++
++        filters => [qw(trim)],
++
++        constraint_methods => {
++            email => {
++                name => 'email',
++                constraint_method => \&_dfv_constraint_valid_email,
++                params      => [qw( email )],
++            },
++        },
++
++        msgs => {
++            constraints => {
++                email => q{You must enter a valid email address},
++            },
++            missing => q{One or more required fields are missing},
++            format => '%s',
++        },
++    },
++
++    'set_new_password' => {
++        required => [
++            qw/
++                reset_username
++                new_password
++                confirm_password
++            /
++        ],
++
++        filters => [qw(trim)],
++
++        constraint_methods => {
++            confirm_password => {
++                name => 'confirm_password',
++                constraint  => \&_dfv_constraint_confirm_equal,
++                params      => [qw( new_password confirm_password )],
++            },
++        },
++
++        msgs => {
++            constraints => {
++                confirm_password => q{The passwords do not match},
++            },
++            missing => q{One or more required fields are missing},
++            format => '%s',
++        },
++    }
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++
++# nice and easy - catch the url to display the lost password page
++# if we have a form submit, deal with it
++sub lost_password : Path('/user/password/forgotten') {
++    my ($self, $c) = @_;
++    my ($results, @messages);
++
++    if (defined $c->request->method()
++            and $c->request->method() eq 'POST'
++            and defined $c->request->param('pwd_reset_submit')
++    ) {
++        @messages = $self->_user_reset($c);
++
++        # if we have any validation errors ...
++        if (scalar @messages) {
++            $c->stash->{messages} = \@messages;
++        }
++
++        # no messages, means that all should be well, so head off to the
++        # "details in the post" page
++        else {
++            $c->stash->{template} = 'user/lostpassword/lost_password_details_sent';
++        }
++    }
++}
++
++
++# this action uses the uid in the URL to work out who's password we are
++# resetting, after a little validation, we can use the new choice of password
++# for the user
++sub reset : Path('/user/password/reset') {
++    my ($self, $c, $reset_uid) = @_;
++    my ($results, @messages);
++
++
++    # we should have the reset UID in the URL
++    if (not defined $reset_uid) {
++        $c->stash->{error}{message} = q{Incomplete password reset URL};
++        return;
++    }
++
++    # fetch the info from the database
++    my $pwd_reset = $c->model('ParleyDB')->resultset('PasswordReset')->find(
++        {
++            password_reset_id => $reset_uid,
++        }
++    );
++
++    # if we don't have any matches then the id was bogus
++    if (not defined $pwd_reset) {
++        $c->stash->{error}{message} = q{Bogus password reset ID};
++        return;
++    }
++
++    # put the reset_uid into the stash
++    $c->stash->{reset_uid} = $reset_uid;
++
++    # make user available to template
++    $c->stash->{reset_user} = $pwd_reset->recipient();
++
++    # deal with a form submission
++    if (defined $c->request->method()
++            and $c->request->method() eq 'POST'
++            and defined $c->request->param('reset_password')
++    ) {
++        @messages = $self->_reset_password($c, $pwd_reset);
++
++        # if we have any validation errors ...
++        if (scalar @messages) {
++            $c->stash->{messages} = \@messages;
++        }
++
++        # no messages, means that all should be well, so head off to the
++        # "details in the post" page
++        else {
++            $c->stash->{template} = 'user/lostpassword/reset_success';
++        }
++    }
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller (Private/Helper) Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _reset_password {
++    my ($self, $c, $pwd_reset) = @_;
++    my (@messages);
++
++    # validate form data
++    $c->form(
++        $dfv_profile_for{set_new_password}
++    );
++
++    # deal with missing/invalid fields
++    if ($c->form->has_missing()) {
++        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c->form->missing ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c->form->has_invalid()) {
++        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c->form->invalid ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise the form data is ok...
++    else {
++        # less typing ..
++        my $reset_username = $pwd_reset->recipient()->authentication()->username;
++
++        # make sure the username matches
++        if ($reset_username eq $c->form->valid->{reset_username}) {
++            # perform everything in a transaction
++            eval {
++                $c->model('ParleyDB')->schema->txn_do(
++                    sub { return $self->_txn_user_password_update($c, $pwd_reset); }
++                );
++            };
++            # deal with any transaction errors
++            if ($@) {                                   # Transaction failed
++                die "something terrible has happened!"  #
++                    if ($@ =~ /Rollback failed/);       # Rollback failed
++
++                $c->stash->{error}{message} = qq{Database transaction failed: $@};
++                $c->log->error( $@ );
++                return;
++            }
++        }
++        else {
++            # incorrect username
++            push @messages, 'Incorrect username supplied';
++        }
++    }
++
++    return uniq(sort @messages);
++}
++
++sub _send_username_reminder {
++    my ($self, $c, $person) = @_;
++    my ($send_status);
++    
++    # send the email
++    $send_status = $c->send_email(
++        {
++            template    => q{username_reminder.eml},
++            person      => $person,
++            headers => {
++                from    => $c->application_email_address(),
++                subject => qq{Your @{[$c->config->{name}]} username},
++            },
++        }
++    );
++}
++
++sub _user_password_reset {
++    my ($self, $c, $person) = @_;
++    my ($pwd_reset, $send_status);
++
++    # make the update in a transaction
++    eval {
++        $pwd_reset = $c->model('ParleyDB')->schema->txn_do(
++            sub { return $self->_txn_password_reset($c, $person) }
++        );
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die "something terrible has happened!"  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c->stash->{error}{message} = qq{Database transaction failed: $@};
++        $c->log->error( $@ );
++        return;
++    }
++
++    # getting here means that we've created a new password_reset entry,
++    # zapped the current password, and set authenticated=f for the person
++
++    # now send the user an email
++    # send an email off to the (new) user
++    $send_status = $c->send_email(
++        {
++            template    => q{password_reset.eml},
++            person      => $person,
++            headers => {
++                from    => $c->application_email_address(),
++                subject => qq{Reset your @{[$c->config->{name}]} password},
++            },
++            template_data => {
++                pwd_reset => $pwd_reset,
++            },
++        }
++    );
++
++    return $send_status;
++}
++
++sub _user_reset {
++    my ($self, $c) = @_;
++    my ($results, @messages, $email_send_status, $send_username_reminder);
++
++    # validate the form data
++    $c->form(
++        $dfv_profile_for{password_reset}
++    );
++
++    # deal with missing/invalid fields
++    if ($c->form->has_missing()) {
++        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c->form->missing ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c->form->has_invalid()) {
++        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c->form->invalid ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise the form data is ok...
++    else {
++        my ($criteria, $matches, $person);
++
++        # make sure we can match user/email supplied
++        if (defined $c->form->valid->{username}) {
++            $criteria->{'authentication.username'}
++                = $c->form->valid->{username};
++
++            # make sure we don't send a username reminder
++            $send_username_reminder = 0;
++        }
++        elsif (defined $c->form->valid->{email}) {
++            $criteria->{'email'}
++                = $c->form->valid->{email};
++
++            # assume the user used their email address because they couldn't
++            # remember their username, and send them a username reminder email
++            $send_username_reminder = 1;
++        }
++        else {
++            push @messages, q{Missing criteria in the database lookup};
++            $c->log->error(q{Lookup criteria missing in _user_reset()});
++            return uniq(sort @messages);
++        }
++        $matches = $c->model('ParleyDB')->resultset('Person')->search(
++            $criteria,
++            {
++                join => 'authentication',
++            }
++        );
++
++        # make sure we don't have too many matches
++        if ($matches->count > 1) {
++            push @messages, q{Database lookup returned too many records};
++            $c->log->error(q{Looks like the SQL for password reset is a bit borked});
++            $c->log->error(
++                  q{Lookup returned }
++                . $matches->count
++                . q{ record(s)}
++            );
++            $c->log->dumper($criteria);
++            return uniq(sort @messages);
++        }
++
++        # make sure we don't have too few matches
++        elsif ($matches->count < 1) {
++            push @messages, q{There are no users matching that information};
++            $c->log->debug(' NO MATCHES ');
++        }
++
++        # otherwise, do the work
++        else {
++            # get the first (and should be only) match
++            $person = $matches->first();
++            $c->log->dumper( $person->{_column_data}, 'COLUMN_DATA' );
++
++            # if required, send a username reminder
++            if ($send_username_reminder) {
++                $self->_send_username_reminder($c, $person);
++            }
++
++            # do the actual password reset
++            $email_send_status = $self->_user_password_reset($c, $person);
++            if (not $email_send_status) {
++                push @messages, q{Failed to send password reset email};
++            }
++        }
++    }
++
++    return uniq(sort @messages);
++}
++
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Functions for database transactions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _txn_password_reset {
++    my ($self, $c, $person) = @_;
++    my ($random, $pwd_reset);
++
++    $c->log->dumper( ref $self,     'REF_SELF' );
++    $c->log->dumper( ref $c,        'REF_C' );
++    $c->log->dumper( ref $person,   'REF_PERSON' );
++
++    # if it's good enough for Cozens, it's good enough for me :-)
++    $random = md5_hex(time.(0+{}).$$.rand);
++
++    # create an invitation
++    $pwd_reset = $c->model('ParleyDB')->resultset('PasswordReset')->create(
++        {
++            'password_reset_id' => $random,
++            'recipient'		=> $person->person_id,
++            'expires'		=> Time::Piece->new(time + $LIFETIME)->datetime,
++        }
++    );
++
++    # as far as I know, no md5_hex value is 'X', so set the hexed password to X
++    # to prevent anyone logging in after a reset request
++    $person->authentication->password('X');
++    # the person is no longer authenticated
++    $person->authentication->authenticated(0);
++    # update the person's record
++    $person->authentication->update();
++
++    # return the new entry in password_reset so it ca be used back up the
++    # chain, e.g. in the email to the user
++    return $pwd_reset;
++}
++
++sub _txn_user_password_update {
++    my ($self, $c, $pwd_reset) = @_;
++
++    # less typing
++    my $authentication = $pwd_reset->recipient()->authentication();
++
++    # update the user's password
++    $authentication->password(
++        md5_hex( $c->form->valid->{new_password} )
++    );
++
++    # set the user as authenticated
++    $authentication->authenticated( 1 );
++
++    # update authentication information
++    $authentication->update();
++
++    # delete all outstanding reset URLs for the user
++    $c->model('ParleyDB')->resultset('PasswordReset')->search(
++        {
++            recipient => $pwd_reset->recipient()->id()
++        }
++    ) ->delete;
++}
++
++1;
++__END__
++
++=pod
++
++=head1 NAME
++
++Parley::Controller::User::LostPassword
++
++=cut
++
++vim: ts=8 sts=4 et sw=4 sr sta
+
+Added: branches/schema_based/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User/SignUp.pm	2006-09-12 15:00:18 UTC (rev 246)
++++ branches/schema_based/lib/Parley/Controller/User/SignUp.pm	2006-09-12 15:00:21 UTC (rev 247)
+@@ -0,0 +1,370 @@
++package Parley::Controller::User::SignUp;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use List::MoreUtils qw{ uniq };
++use Digest::MD5 qw{ md5_hex };
++use Email::Valid;
++use Readonly;
++use Time::Piece;
++use Time::Seconds;
++
++#use Data::FormValidator 4.02;
++#use Data::FormValidator::Constraints qw(:closures);
++
++# used by DFV
++sub _dfv_constraint_confirm_equal {
++    my $dfv  = shift;
++    my $val1 = shift;
++    my $val2 = shift;
++
++    return ( $val1 eq $val2 );
++}
++
++sub _dfv_constraint_valid_email {
++    my $dfv   = shift;
++    my $email = shift;
++
++    return Email::Valid->address($email);
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Readonly my $LIFETIME => Time::Seconds::ONE_WEEK;
++
++my %dfv_profile_for = (
++    'signup' => {
++        required => [ qw(
++                username password confirm_password email confirm_email
++                first_name last_name forum_name
++        ) ],
++
++        filters => [qw(trim)],
++
++        constraint_methods => {
++            confirm_password => {
++                name => 'confirm_password',
++                constraint  => \&_dfv_constraint_confirm_equal,
++                params      => [qw( password confirm_password )],
++            },
++            email => {
++                name => 'email',
++                constraint_method => \&_dfv_constraint_valid_email,
++                params      => [qw( email )],
++            },
++            Xconfirm_email => {
++                name => 'Xconfirm_email',
++                constraint  => \&_dfv_constraint_confirm_equal,
++                params      => [qw( email confirm_email )],
++            },
++
++            confirm_email => {
++                name        => q{confirm_email},
++                constraint  => \&_dfv_constraint_confirm_equal,
++                params      => [qw( email confirm_email )],
++            },
++
++        },
++
++        msgs => {
++            constraints => {
++                confirm_password => q{The passwords do not match},
++                confirm_email => q{The email addresses do not match},
++                email => q{You must enter a valid email address},
++            },
++            missing => q{One or more required fields are missing},
++            format => '%s',
++        },
++    },
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub authenticate : Path('/user/authenticate') {
++    my ($self, $c, $auth_id) = @_;
++
++    # we should have an auth-id in the url
++    if (not defined $auth_id) {
++        $c->stash->{error}{message} = q{Incomplete authentication URL};
++        return;
++    }
++
++    # fetch the info from the database
++    my $regauth = $c->model('ParleyDB')->resultset('RegistrationAuthentication')->find(
++        {
++            registration_authentication_id => $auth_id,
++        }
++    );
++
++    # if we don't have any matches then the id was bogus
++    if (not defined $regauth) {
++        $c->stash->{error}{message} = q{Bogus authentication ID};
++        return;
++    }
++
++    # TODO
++    # if we get this far, we've got a valid ID, so we can yank out their details,
++    # and to be safe we'll finish the process by asking them for their password
++    #
++    # for now, we assume the link clicking is good enough, and we mark them
++    # as authenticated
++
++    # get the person matching the ID
++    $c->stash->{signup_user} = $c->model('ParleyDB')->resultset('Person')->find(
++        {
++            person_id => $regauth->recipient->person_id(),
++        }
++    );
++
++    # get the first (and should be only) match
++    $c->log->dumper($c->stash->{signup_user}->{_column_data});
++
++    # mark the person as authenticated
++    $c->stash->{signup_user}->authentication->authenticated(1);
++    $c->stash->{signup_user}->authentication->update();
++
++    # delete registration_authentication record
++    $regauth->delete;
++
++    # set a suitable success template
++    $c->stash->{template} = 'user/auth_success';
++}
++
++
++sub signup : Path('/user/signup') {
++    my ( $self, $c ) = @_;
++    my (@messages);
++
++    # deal with form submissions
++    if (defined $c->request->method()
++            and $c->request->method() eq 'POST'
++            and defined $c->request->param('form_submit')
++    ) {
++        @messages = $self->_user_signup($c);
++    }
++
++    if (scalar @messages) {
++        $c->stash->{messages} = \@messages;
++    }
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller (Private/Helper) Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _add_new_user {
++    my ($self, $c) = @_;
++    my ($valid_results, @messages, $new_user);
++
++    # less typing
++    $valid_results = $c->form->valid;
++
++    # is the requested username already in use?
++    if ($self->_username_exists($c, $valid_results->{username})) {
++        push @messages, q{The username you have chosen is already in use. Please try a different one.};
++    }
++    # is the requested email address already in use?
++    if ($self->_email_exists($c, $valid_results->{email})) {
++        push @messages, q{The email address you have chosen is already in use.<br />Please try a different one, or use the <a href="user/password/forgotten">Forgotten Password</a> page.};
++    }
++    # is the requested forum name already in use?
++    if ($self->_forumname_exists($c, $valid_results->{forum_name})) {
++        push @messages, q{The forum name you have chosen is already in use. Please try a different one.};
++    }
++
++    # if we DON'T have any messages, then there were no errors, so we can try
++    # to add the new user
++    if (not scalar @messages) {
++        # make the new user inside a transaction
++        eval {
++            $new_user = $c->model('ParleyDB')->schema->txn_do(
++                sub { return $self->_txn_add_new_user($c) }
++            );
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die "something terrible has happened!"  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $c->stash->{error}{message} = qq{Database transaction failed: $@};
++            $c->log->error( $@ );
++            return;
++        }
++    }
++
++
++    # return our error messages (if any)
++    return sort(@messages);
++}
++
++sub _create_regauth {
++    my ($self, $c, $person) = @_;
++    my ($random, $invitation);
++
++    # if it's good enough for Cozens, it's good enough for me
++    $random = md5_hex(time.(0+{}).$$.rand);
++
++    # create an invitation
++    $invitation = $c->model('ParleyDB')->resultset('RegistrationAuthentication')->create(
++        {
++            'registration_authentication_id'	=> $random,
++            'recipient'				=> $person->person_id,
++            'expires'				=> Time::Piece->new(time + $LIFETIME)->datetime,
++        }
++    );
++
++    return $invitation;
++}
++
++sub _email_exists {
++    my ($self, $c, $email) = @_;
++    # look for the specified email
++    $c->log->info("Looking for: $email");
++    my $match_count = $c->model('ParleyDB')->resultset('Person')->count(
++        email => $email,
++    );
++    # return the number of matches
++    return $match_count;
++}
++
++sub _forumname_exists {
++    my ($self, $c, $forum_name) = @_;
++    # look for the specified forum_name
++    $c->log->info("Looking for: $forum_name");
++    my $match_count = $c->model('ParleyDB')->resultset('Person')->count(
++        forum_name => $forum_name,
++    );
++    # return the number of matches
++    return $match_count;
++}
++
++sub _new_user_authentication_email {
++    my ($self, $c, $person) = @_;
++    my ($invitation, $send_status);
++
++    # create a new reg-auth entry
++    $invitation = $self->_create_regauth($c, $person);
++
++    # send an email off to the (new) user
++    $send_status = $c->send_email(
++        {
++            template    => q{authentication_email.eml},
++            person      => $person,
++            headers => {
++                from    => $c->application_email_address(),
++                subject => qq{Activate your @{[$c->config->{name}]} registration},
++            },
++            template_data => {
++                regauth => $invitation,
++            },
++        }
++    );
++
++    return $send_status;
++}
++
++sub _user_signup {
++    my ($self, $c) = @_;
++    my ($results, @messages);
++
++    # validate the form data
++    $c->form(
++        $dfv_profile_for{signup}
++    );
++
++    # deal with missing/invalid fields
++    if ($c->form->has_missing()) {
++        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c->form->missing ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c->form->has_invalid()) {
++        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c->form->invalid ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise the form data is ok...
++    else {
++        @messages = $self->_add_new_user($c, $results);
++    }
++
++    return (uniq(sort @messages));
++}
++
++sub _username_exists {
++    my ($self, $c, $username) = @_;
++    # look for the specified username
++    $c->log->info("Looking for: $username");
++    my $match_count = $c->model('ParleyDB')->resultset('Authentication')->count(
++        username => $username,
++    );
++    # return the number of matches
++    return $match_count;
++}
++
++
++# send notification email
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Functions for database transactions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _txn_add_new_user {
++    my ($self, $c) = @_;
++    my ($valid_results, $new_auth, $new_person, $status_ok);
++
++    # less typing
++    $valid_results = $c->form->valid;
++
++    # add authentication record
++    $new_auth = $c->model('ParleyDB')->resultset('Authentication')->create(
++        {
++            username => $c->form->valid->{username},
++            password => md5_hex( $c->form->valid->{password} ),
++        }
++    );
++
++    # add new person
++    $new_person = $c->model('ParleyDB')->resultset('Person')->create(
++        {
++            first_name      => $valid_results->{first_name},
++            last_name       => $valid_results->{last_name},
++            forum_name      => $valid_results->{forum_name},
++            email           => $valid_results->{email},
++            authentication  => $new_auth->id(),
++        }
++    );
++
++    # send an authentication email
++    $status_ok = $self->_new_user_authentication_email( $c, $new_person );
++
++    # if we sent the email OK take them off to a "it worked" type screen
++    if ($status_ok) {
++        $c->stash->{newdata}  = $new_person;
++        $c->stash->{template} = q{user/auth_emailed};
++    }
++}
++
++
++
++1;
++__END__
++
++=pod
++
++=head1 NAME
++
++Parley::Controller::User::SignUp
++
++=cut
++
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:25 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:25 +0200
+Subject: [Parley-svn] r248 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200609121500.k8CF0P0D029347@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:25 +0200 (Tue, 12 Sep 2006)
+New Revision: 248
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Schema/Thread.pm
+Log:
+ r1185 at ferrari:  chisel | 2006-09-12 09:55:54 +0100
+ - removed debugging message
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1184
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1185
+
+Modified: branches/schema_based/lib/Parley/Schema/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Thread.pm	2006-09-12 15:00:21 UTC (rev 247)
++++ branches/schema_based/lib/Parley/Schema/Thread.pm	2006-09-12 15:00:25 UTC (rev 248)
+@@ -109,8 +109,6 @@
+         }
+     );
+ 
+-    warn q{$last_viewed->timestamp TIME IS: } . $last_viewed->timestamp();
+-
+     # if we don't have a $last_viewed, then return the thread's first post
+     if (not defined $last_viewed) {
+         warn "thread has never been viewed - returning first post in thread";
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:33 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:33 +0200
+Subject: [Parley-svn] r249 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200609121500.k8CF0XvA029398@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:29 +0200 (Tue, 12 Sep 2006)
+New Revision: 249
+
+Added:
+   branches/schema_based/lib/Parley/Schema/PasswordReset.pm
+Modified:
+   /
+Log:
+ r1186 at ferrari:  chisel | 2006-09-12 09:56:27 +0100
+ + new schema module for password_reset table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1185
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1186
+
+Added: branches/schema_based/lib/Parley/Schema/PasswordReset.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/PasswordReset.pm	2006-09-12 15:00:25 UTC (rev 248)
++++ branches/schema_based/lib/Parley/Schema/PasswordReset.pm	2006-09-12 15:00:29 UTC (rev 249)
+@@ -0,0 +1,35 @@
++package Parley::Schema::PasswordReset;
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("password_reset");
++__PACKAGE__->add_columns(
++
++  password_reset_id => {
++    data_type => "integer",
++    is_nullable => 0,
++    size => undef,
++  },
++
++  recipient => {
++    data_type => "integer",
++    default_value => undef,
++    is_nullable => 0,
++    size => 4
++  },
++
++  expires => {
++    data_type => "timestamp without time zone",
++    is_nullable => 1,
++    size => 8,
++  },
++);
++
++__PACKAGE__->set_primary_key("password_reset_id");
++
++__PACKAGE__->belongs_to("recipient", "Person", { person_id => "recipient" });
++
++1;
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:00:37 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:00:37 +0200
+Subject: [Parley-svn] r250 - / branches/schema_based/lib/Parley/View
+Message-ID: <200609121500.k8CF0bQs029449@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:00:36 +0200 (Tue, 12 Sep 2006)
+New Revision: 250
+
+Added:
+   branches/schema_based/lib/Parley/View/Plain.pm
+Modified:
+   /
+Log:
+ r1187 at ferrari:  chisel | 2006-09-12 09:57:46 +0100
+ + added a view that doesn't automatically prepen/append head and footer files (for sending plain text, email rendering, AJAX responses, etc)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1186
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1187
+
+Added: branches/schema_based/lib/Parley/View/Plain.pm
+===================================================================
+--- branches/schema_based/lib/Parley/View/Plain.pm	2006-09-12 15:00:29 UTC (rev 249)
++++ branches/schema_based/lib/Parley/View/Plain.pm	2006-09-12 15:00:36 UTC (rev 250)
+@@ -0,0 +1,29 @@
++package Parley::View::Plain;
++
++use strict;
++use base 'Catalyst::View::TT';
++
++=head1 NAME
++
++Parley::View::Plain - Catalyst TT View
++
++=head1 SYNOPSIS
++
++See L<Parley>
++
++=head1 DESCRIPTION
++
++Catalyst TT View.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:47:16 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:47:16 +0200
+Subject: [Parley-svn] r251 - / branches/schema_based/lib
+Message-ID: <200609121547.k8CFlGEV002206@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:47:16 +0200 (Tue, 12 Sep 2006)
+New Revision: 251
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+Log:
+ r1208 at ferrari:  chisel | 2006-09-12 16:22:19 +0100
+ + added application_email_address() and send_email()
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1187
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1208
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-09-12 15:00:36 UTC (rev 250)
++++ branches/schema_based/lib/Parley.pm	2006-09-12 15:47:16 UTC (rev 251)
+@@ -71,6 +71,21 @@
+ 
+ ################################################################################
+ 
++
++sub application_email_address {
++    my ($c) = @_;
++
++    my $address = 
++          $c->config->{alerts}{from_name}
++        . q{ <}
++        . $c->config->{alerts}{from_address}
++        . q{>}
++    ;
++
++    return $address;
++}
++
++
+ sub is_logged_in {
+     my ($c) = @_;
+ 
+@@ -97,6 +112,50 @@
+     }
+ }
+ 
++sub send_email {
++    my ($c, $options) = @_;
++
++    # send an email off to the new user
++    my $email_status = $c->email(
++        header => [
++            To      => $options->{person}->email(),
++            From    => $options->{headers}{from}      || q{Missing From <chisel at somewhere.com>},
++            Subject => $options->{headers}{subject}   || q{Subject Line Missing},
++        ],
++
++        body => $c->view('Plain')->render(
++            $c,
++            $options->{template},
++            {
++                additional_template_paths => [ $c->config->{root} . q{/email_templates}],
++
++                # automatically make the person data available
++                person => $options->{person},
++
++                # pass through extra TT data
++                %{ $options->{template_data} || {} },
++            }
++        ),
++    );
++
++    # did we get "Message sent" from the email send?
++    if ($email_status eq q{Message sent}) {
++        $c->log->info(
++              q{send_email(}
++            . $options->{person}->email()
++            . q{): }
++            . $email_status
++        );
++
++        return 1;
++    }
++    else {
++        $c->log->error( $email_status );
++        $c->stash->{error}{message} = q{Sorry, we are currently unable to store your information. Please try again later.};
++        return 0;
++    }
++}
++
+ 1;
+ 
+ __END__
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:47:19 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:47:19 +0200
+Subject: [Parley-svn] r252 - / branches/schema_based/root
+	branches/schema_based/root/email_templates
+Message-ID: <200609121547.k8CFlJ1k002257@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:47:19 +0200 (Tue, 12 Sep 2006)
+New Revision: 252
+
+Added:
+   branches/schema_based/root/email_templates/
+   branches/schema_based/root/email_templates/authentication_email.eml
+   branches/schema_based/root/email_templates/password_reset.eml
+   branches/schema_based/root/email_templates/username_reminder.eml
+Modified:
+   /
+Log:
+ r1209 at ferrari:  chisel | 2006-09-12 16:26:52 +0100
+ + added templates for email messages
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1208
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1209
+
+Added: branches/schema_based/root/email_templates/authentication_email.eml
+===================================================================
+--- branches/schema_based/root/email_templates/authentication_email.eml	2006-09-12 15:47:16 UTC (rev 251)
++++ branches/schema_based/root/email_templates/authentication_email.eml	2006-09-12 15:47:19 UTC (rev 252)
+@@ -0,0 +1,12 @@
++[% person.first_name %],
++
++Thanks for registering with [% c.config.name %]
++To complete your registration please click on the link below.
++
++  [% c.request.base %]user/authenticate/[% regauth.id %]
++
++and follow the on-screen instructions.
++
++Regards,
++
++The [% c.config.name %] team.
+
+Added: branches/schema_based/root/email_templates/password_reset.eml
+===================================================================
+--- branches/schema_based/root/email_templates/password_reset.eml	2006-09-12 15:47:16 UTC (rev 251)
++++ branches/schema_based/root/email_templates/password_reset.eml	2006-09-12 15:47:19 UTC (rev 252)
+@@ -0,0 +1,11 @@
++[% person.first_name %],
++
++To reset your account password please click on the link below.
++
++  [% c.request.base %]user/password/reset/[% pwd_reset.id %]
++
++and follow the on-screen instructions.
++
++Regards,
++
++The [% c.config.name %] team.
+
+Added: branches/schema_based/root/email_templates/username_reminder.eml
+===================================================================
+--- branches/schema_based/root/email_templates/username_reminder.eml	2006-09-12 15:47:16 UTC (rev 251)
++++ branches/schema_based/root/email_templates/username_reminder.eml	2006-09-12 15:47:19 UTC (rev 252)
+@@ -0,0 +1,13 @@
++[% person.first_name %],
++
++Your username for [% c.config.name %] is:
++
++  [% person.authentication.username %]
++
++You can visit [% c.config.name %] at:
++
++  [% c.request.base %]
++
++Regards,
++
++The [% c.config.name %] team.
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:47:23 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:47:23 +0200
+Subject: [Parley-svn] r253 - / branches/schema_based/t
+Message-ID: <200609121547.k8CFlN0v002310@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:47:23 +0200 (Tue, 12 Sep 2006)
+New Revision: 253
+
+Added:
+   branches/schema_based/t/view_Plain.t
+Modified:
+   /
+Log:
+ r1210 at ferrari:  chisel | 2006-09-12 16:27:58 +0100
+ + added test for new view added in earlier commit
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1209
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1210
+
+Added: branches/schema_based/t/view_Plain.t
+===================================================================
+--- branches/schema_based/t/view_Plain.t	2006-09-12 15:47:19 UTC (rev 252)
++++ branches/schema_based/t/view_Plain.t	2006-09-12 15:47:23 UTC (rev 253)
+@@ -0,0 +1,6 @@
++use strict;
++use warnings;
++use Test::More tests => 1;
++
++BEGIN { use_ok 'Parley::View::Plain' }
++
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:47:28 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:47:28 +0200
+Subject: [Parley-svn] r254 - /
+	branches/schema_based/root/base/user/lostpassword
+Message-ID: <200609121547.k8CFlSUC002365@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:47:27 +0200 (Tue, 12 Sep 2006)
+New Revision: 254
+
+Modified:
+   /
+   branches/schema_based/root/base/user/lostpassword/reset
+   branches/schema_based/root/base/user/lostpassword/reset_success
+Log:
+ r1211 at ferrari:  chisel | 2006-09-12 16:30:30 +0100
+ + tweaks for lost-password rewrite
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1210
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1211
+
+Modified: branches/schema_based/root/base/user/lostpassword/reset
+===================================================================
+--- branches/schema_based/root/base/user/lostpassword/reset	2006-09-12 15:47:23 UTC (rev 253)
++++ branches/schema_based/root/base/user/lostpassword/reset	2006-09-12 15:47:27 UTC (rev 254)
+@@ -27,7 +27,7 @@
+         <input type="password" name="confirm_password" id="confirm_password" size="40" tabindex="4" />
+ 
+         <br />
+-        <button type="submit" class="input_button" tabindex="5" />reset my password</button>
++        <button type="submit" class="input_button" tabindex="5" name="reset_password" />reset my password</button>
+ 
+     </fieldset>
+ </form>
+
+Modified: branches/schema_based/root/base/user/lostpassword/reset_success
+===================================================================
+--- branches/schema_based/root/base/user/lostpassword/reset_success	2006-09-12 15:47:23 UTC (rev 253)
++++ branches/schema_based/root/base/user/lostpassword/reset_success	2006-09-12 15:47:27 UTC (rev 254)
+@@ -1,3 +1,2 @@
+ Your password has been set to the value you entered. You may now 
+-
+-<a onclick="new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;" href="user/login">login</a>.
++<a href="javascript:;" onclick="showLoginBox(this)">login</a>
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:47:33 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:47:33 +0200
+Subject: [Parley-svn] r255 - / branches/schema_based/root/base/thread
+Message-ID: <200609121547.k8CFlXkC002422@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:47:32 +0200 (Tue, 12 Sep 2006)
+New Revision: 255
+
+Modified:
+   /
+   branches/schema_based/root/base/thread/view
+Log:
+ r1212 at ferrari:  chisel | 2006-09-12 16:32:57 +0100
+ / link tweaks
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1211
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1212
+
+Modified: branches/schema_based/root/base/thread/view
+===================================================================
+--- branches/schema_based/root/base/thread/view	2006-09-12 15:47:27 UTC (rev 254)
++++ branches/schema_based/root/base/thread/view	2006-09-12 15:47:32 UTC (rev 255)
+@@ -581,7 +581,7 @@
+                 [% INCLUDE shared/pager_advanced %]
+                 </small>
+                 <br />
+-                <a href="thread/reply?thread=[% current_thread.id %]">Reply</a>
++                <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
+               </td>
+             </tr>
+             
+@@ -654,7 +654,7 @@
+                 <span class="small">[% nicedate(post.created) %]</span>
+                 <span class="small_link">
+                   <strong>
+-                    <a href="thread/reply?post=[% post.id %]">Quote</a>
++                    <a class="button" href="thread/reply?post=[% post.id %]">Quote</a>
+                   </strong>
+                 </span>
+               </td>
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:47:37 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:47:37 +0200
+Subject: [Parley-svn] r256 - / branches/schema_based/root/base/user/signup
+Message-ID: <200609121547.k8CFlbFt002485@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:47:37 +0200 (Tue, 12 Sep 2006)
+New Revision: 256
+
+Modified:
+   /
+   branches/schema_based/root/base/user/signup/signup
+Log:
+ r1213 at ferrari:  chisel | 2006-09-12 16:46:44 +0100
+ / tweaks to error message display area
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1212
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1213
+
+Modified: branches/schema_based/root/base/user/signup/signup
+===================================================================
+--- branches/schema_based/root/base/user/signup/signup	2006-09-12 15:47:32 UTC (rev 255)
++++ branches/schema_based/root/base/user/signup/signup	2006-09-12 15:47:37 UTC (rev 256)
+@@ -1,5 +1,14 @@
+ <h1>User Signup</h1>
+ 
++[% IF view.error.message %]
++    [% view.error.message %]
++    <ul>
++        [% FOREACH message IN view.error.messages %]
++            <li>[% message %]</li>
++        [% END %]
++    </ul>
++[% END %]
++
+ <table>
+ 	<form action="user/signup" method="POST" name="signup_form">
+ 		<tr>
+
+
+
+From chiselwright at mail.berlios.de  Tue Sep 12 17:47:41 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 12 Sep 2006 17:47:41 +0200
+Subject: [Parley-svn] r257 - / branches/schema_based/root/css
+Message-ID: <200609121547.k8CFlfC0002543@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-12 17:47:41 +0200 (Tue, 12 Sep 2006)
+New Revision: 257
+
+Modified:
+   /
+   branches/schema_based/root/css/default.css
+Log:
+ r1214 at ferrari:  chisel | 2006-09-12 16:47:10 +0100
+ + added button class
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1213
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1214
+
+Modified: branches/schema_based/root/css/default.css
+===================================================================
+--- branches/schema_based/root/css/default.css	2006-09-12 15:47:37 UTC (rev 256)
++++ branches/schema_based/root/css/default.css	2006-09-12 15:47:41 UTC (rev 257)
+@@ -523,3 +523,16 @@
+     margin-right: auto;
+     display: block;
+ }
++
++
++a.button:visited, a.button:link, a.button:active, .button, a.button {
++    border:             2px solid;
++    border-color:       #FC9 #630 #330 #F96;
++    padding:            2px 7px 2px 7px;
++    font:               bold 0.8em verdana,sans-serif;
++    color:              #000;
++    background:         #ccc;
++    text-decoration:    none;
++    margin:             0;
++}
++
+
+
+
+From chiselwright at mail.berlios.de  Thu Sep 14 13:12:44 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Thu, 14 Sep 2006 13:12:44 +0200
+Subject: [Parley-svn] r258 - / branches/schema_based/lib
+Message-ID: <200609141112.k8EBCiPF027795@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-09-14 13:12:44 +0200 (Thu, 14 Sep 2006)
+New Revision: 258
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+Log:
+ r1222 at ferrari:  chisel | 2006-09-14 09:04:21 +0100
+ / tweaked send_email() to use ->{template}{text}
+ + updated and extended POD
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1214
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-09-12 15:47:41 UTC (rev 257)
++++ branches/schema_based/lib/Parley.pm	2006-09-14 11:12:44 UTC (rev 258)
+@@ -27,7 +27,7 @@
+ /;
+ 
+ 
+-our $VERSION = '0.10-pre';
++our $VERSION = '0.50-pre';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+@@ -115,6 +115,19 @@
+ sub send_email {
+     my ($c, $options) = @_;
+ 
++    # preparing for future expansion, where we intend to build multipart emails
++    # and we'll be using ->{template}{text} and ->{template}{html}
++    if (            exists $options->{template}
++            and not exists $options->{template}{text}
++    ) {
++        $c->log->warn(
++              $options->{template}{text}
++            . q{: plain-text template name should be stored in }
++            . q{->{template}{text} instead of ->{template}}
++        );
++        $options->{template}{text} = $options->{template};
++    }
++
+     # send an email off to the new user
+     my $email_status = $c->email(
+         header => [
+@@ -125,7 +138,7 @@
+ 
+         body => $c->view('Plain')->render(
+             $c,
+-            $options->{template},
++            $options->{template}{text},
+             {
+                 additional_template_paths => [ $c->config->{root} . q{/email_templates}],
+ 
+@@ -176,12 +189,35 @@
+ 
+ =head1 METHODS
+ 
+-=head2 is_logged_in
++=head2 application_email_address($c)
+ 
++=over 4
++
++B<Return Value:> $string
++
++=back
++
++Returns the email address string for the application built from the
++I<from_name> and I<from_address> in the alerts section of parley.yml
++
++=head2 is_logged_in($c)
++
++=over 4
++
++B<Return Value:> 0 or 1
++
++=back
++
+ Returns 1 or 0 depending on whether there is a logged-in user or not.
+ 
+-=head2 login_if_required($message)
++=head2 login_if_required($c,$message)
+ 
++=over 4
++
++B<Return Value:> Void Context
++
++=back
++
+ If a user isn't logged in, send them to the login page, optionally setting the
+ message for the login box.
+ 
+@@ -189,6 +225,42 @@
+ magic) be redirected to wherever they were trying to view before the required
+ login.
+ 
++=head2 send_email($c,\%options)
++
++=over 4
++
++B<Return Value:> 0 or 1
++
++=back
++
++Send an email using the render() method in the TT view. \%options should
++contain the following keys:
++
++=over 4
++
++=item headers
++
++Header fields to be passed though to the call to L<Catalyst::Plugin::Email>.
++
++=item person
++
++A Parley::Schema::Person object for the intended recipient of the message.
++
++Or, any object with an email() method, and methods to match
++"S<[% person.foo() %]>"
++methods called in the email template(s).
++
++=item template
++
++Used to store the name of the email template(s) to be sent. I<Currently the
++application only sends plain-text emails, so only one file is specified.>
++
++The text template name should be passed in ->{template}{text}.
++
++The html template name should be passed in ->{template}{html}. (I<Not Implemented>)
++
++=back
++
+ =head1 EVIL, LAZY STASH ACCESS
+ 
+ I know someone will look at this at some point and tell me this is evil, but
+@@ -224,7 +296,7 @@
+ 
+ =head1 SEE ALSO
+ 
+-L<Parley::Controller::Root>, L<Catalyst>
++L<Parley::Controller::Root>, L<Catalyst::Plugin::Email>, L<Catalyst>
+ 
+ =head1 AUTHOR
+ 
+
+
+

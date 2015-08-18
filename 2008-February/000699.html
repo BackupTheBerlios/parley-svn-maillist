@@ -1,0 +1,490 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r811 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/static/css trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r811%20-%20/%20trunk%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base%20trunk/root/base/site%0A%09trunk/root/static/css%20trunk/t/schema&In-Reply-To=%3C200802270944.m1R9it7b010790%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000698.html">
+   <LINK REL="Next"  HREF="000700.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r811 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/static/css trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r811%20-%20/%20trunk%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base%20trunk/root/base/site%0A%09trunk/root/static/css%20trunk/t/schema&In-Reply-To=%3C200802270944.m1R9it7b010790%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r811 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/static/css trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Feb 27 10:44:55 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000698.html">[Parley-svn] r810 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000700.html">[Parley-svn] r812 - / trunk/lib/Parley/ResultSet	trunk/root/base/site
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#699">[ date ]</a>
+              <a href="thread.html#699">[ thread ]</a>
+              <a href="subject.html#699">[ subject ]</a>
+              <a href="author.html#699">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-27 10:44:54 +0100 (Wed, 27 Feb 2008)
+New Revision: 811
+
+Modified:
+   /
+   trunk/TODO
+   trunk/db/patch_0.58_to_0.59.psql
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/Schema/Role.pm
+   trunk/root/base/header
+   trunk/root/base/site/users
+   trunk/root/static/css/parley.css
+   trunk/t/schema/role.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4702 at wiggin</A>:  chisel | 2008-02-27 08:41:49 +0000
+ / TODO update
+ + add idx field to role table, and assign in role INSERTs
+ + add site/user URI, to view/manage user access/permissions
+ + add site/users_autocomplete, to support site/users autocomplete field
+ + fixed Schema::Role to reflect columns in table
+ + add ResultSet::Role, with role_list() method
+ / UI/CSS changes for evolving user management screens
+ + added new tests to schema/role.t
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4701
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4702
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/TODO	2008-02-27 09:44:54 UTC (rev 811)
+@@ -1,5 +1,6 @@
+ TODO LIST
+ 
++  - Parley::Version (a la SVK)
+   - &quot;Cancel&quot; from post/edit
+   - &quot;Cancel&quot; from thread/reply
+   - fix &lt;ul&gt;/&lt;ol&gt; CSS
+
+Modified: trunk/db/patch_0.58_to_0.59.psql
+===================================================================
+--- trunk/db/patch_0.58_to_0.59.psql	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/db/patch_0.58_to_0.59.psql	2008-02-27 09:44:54 UTC (rev 811)
+@@ -22,23 +22,28 @@
+ 
+ CREATE TABLE role (
+     id          serial      primary key,
++    idx         integer     not null default 9999,
+     name        varchar(30) not null unique,
+     description text
+ );
+ -- a couple of roles
+-INSERT INTO role (name, description) VALUES (
++INSERT INTO role (idx, name, description) VALUES (
++    0,
+     'site_moderator',
+     'Site Moderator (aka Da Boss)'
+ );
+-INSERT INTO role (name, description) VALUES (
++INSERT INTO role (idx, name, description) VALUES (
++    100,
+     'ip_ban_posting',
+     'Restrict Posting by IP'
+ );
+-INSERT INTO role (name, description) VALUES (
++INSERT INTO role (idx, name, description) VALUES (
++    100,
+     'ip_ban_signup',
+     'Restrict Sign-Up by IP'
+ );
+-INSERT INTO role (name, description) VALUES (
++INSERT INTO role (idx, name, description) VALUES (
++    100,
+     'ip_ban_login',
+     'Restrict Login by IP'
+ );
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/lib/Parley/Controller/Site.pm	2008-02-27 09:44:54 UTC (rev 811)
+@@ -4,6 +4,7 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++use JSON;
+ use Proc::Daemon;
+ use Proc::PID::File;
+ 
+@@ -51,10 +52,57 @@
+     $c-&gt;stash-&gt;{users_with_roles} =
+         $c-&gt;model('ParleyDB::Person')-&gt;users_with_roles()
+     ;
++}
+ 
+-    $c-&gt;log-&gt;debug(
+-        ref($c-&gt;stash-&gt;{users_with_roles})
++sub user : Local {
++    my ($self, $c) = @_;
++    my $pid = $c-&gt;request-&gt;param('pid');
++
++    if (defined $pid &amp;&amp; $pid =~ m{\A\d+\z}xms) {
++        $c-&gt;stash-&gt;{person} =
++            $c-&gt;model('ParleyDB::Person')-&gt;find($pid)
++        ;
++
++        $c-&gt;stash-&gt;{roles} =
++            $c-&gt;model('ParleyDB::Role')-&gt;role_list();
++    }
++    else {
++        $c-&gt;response-&gt;redirect(
++            $c-&gt;uri_for('/site/users/')
++        );
++        return;
++    }
++}
++
++sub users_autocomplete : Local {
++    my ($self, $c) = @_;
++    my @results;
++
++    my $stuff = $c-&gt;model('ParleyDB::Person')-&gt;search(
++        {
++            forum_name =&gt; { -ilike =&gt; $c-&gt;request-&gt;param('query') . q{%} },
++        },
++        {
++            'order_by' =&gt; 'forum_name',
++            columns =&gt; [qw/id forum_name first_name last_name/],
++        }
+     );
++
++    while (my $person = $stuff-&gt;next) {
++        my %data = $person-&gt;get_columns;
++        push @results, \%data;
++    }
++
++    $c-&gt;response-&gt;body(
++        to_json( 
++            {
++                ResultSet =&gt; {
++                    person =&gt; \@results,
++                }
++            }
++        )
++    );
++    return;
+ }
+ 
+ =head1 NAME
+
+Modified: trunk/lib/Parley/Schema/Role.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Role.pm	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/lib/Parley/Schema/Role.pm	2008-02-27 09:44:54 UTC (rev 811)
+@@ -11,12 +11,14 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;role&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  id    =&gt; { },
+-  name  =&gt; { },
++  id            =&gt; { },
++  idx           =&gt; { },
++  name          =&gt; { },
++  description   =&gt; { },
+ );
+ 
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+-#__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Role');
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Role');
+ 
+ __PACKAGE__-&gt;has_many(
+     map_user_role =&gt; 'Parley::Schema::UserRole',
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/root/base/header	2008-02-27 09:44:54 UTC (rev 811)
+@@ -31,40 +31,24 @@
+ 
+         &lt;!-- YUI ajax magick --&gt;
+ 
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot;
+-            href=&quot;[%c.request.base%]/static/yui/fonts/fonts-min.css&quot; /&gt;
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot;
+-            href=&quot;[%c.request.base%]/static/yui/treeview/assets/skins/sam/treeview.css&quot; /&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/yahoo/yahoo.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/event/event.js&quot;&gt;&lt;/script&gt;
+-
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/treeview/treeview.js&quot;&gt;&lt;/script&gt;
+-
+-
+-&lt;!--begin custom header content for this example--&gt;
+-&lt;!--bring in the folder-style CSS for the TreeView Control--&gt;
+-&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/treeview/assets/treeview-menu.css&quot; /&gt;
+-
+-
+         &lt;!-- CSS --&gt;
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/fonts/fonts-min.css&quot; /&gt;
++        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.uri_for('/static/yui/fonts/fonts-min.css')%]&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/reset-fonts-grids/reset-fonts-grids.css&quot; /&gt;
+ 
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/button/assets/skins/sam/button.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/container/assets/skins/sam/container.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css&quot; /&gt; 
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/tabview/assets/skins/sam/tabview.css&quot; /&gt;
+-        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/logger/assets/skins/sam/logger.css&quot; /&gt;
++        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.uri_for('/static/yui/autocomplete/assets/skins/sam/autocomplete.css')%]&quot; /&gt;
+ 
+         &lt;!-- Dependency source files --&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/yahoo-dom-event/yahoo-dom-event.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container_core-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container-min.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/utilities/utilities.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/yui/utilities/utilities.js')%]&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/button/button-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/menu/menu-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/tabview/tabview-min.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/logger/logger-min.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.uri_for('/static/yui/autocomplete/autocomplete-min.js')%]&quot;&gt;&lt;/script&gt;
+ 
+ 
+         &lt;!-- defined styles for parley --&gt;
+
+Modified: trunk/root/base/site/users
+===================================================================
+--- trunk/root/base/site/users	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/root/base/site/users	2008-02-27 09:44:54 UTC (rev 811)
+@@ -2,83 +2,72 @@
+ 
+ &lt;h2&gt;Administration Rights&lt;/h2&gt;
+ 
+-&lt;!-- markup for expand/contract links --&gt;
+-&lt;!--
+-&lt;div id=&quot;expandcontractdiv&quot;&gt;
+-	&lt;a id=&quot;collapse&quot; href=&quot;#&quot;&gt;Collapse all&lt;/a&gt;
+-&lt;/div&gt;
+---&gt;
+ 
+-&lt;div id=&quot;treeDiv1&quot;&gt;&lt;/div&gt;
++&lt;form action=&quot;[%c.uri_for('/site/user/')%]&quot; onsubmit=&quot;return YAHOO.example.ACJson.validateForm();&quot;&gt;
++    &lt;div id=&quot;ysearch&quot;&gt;
++		&lt;label&gt;User Search: &lt;/label&gt;
++		&lt;input id=&quot;ysearchinput&quot; type=&quot;text&quot;&gt;
++		&lt;input id=&quot;ac_personid&quot; type=&quot;hidden&quot; value=&quot;zx&quot; name=&quot;pid&quot;&gt;
++		&lt;input id=&quot;ysearchsubmit&quot; type=&quot;submit&quot; value=&quot;Submit Query&quot;&gt;
++		&lt;div id=&quot;ysearchcontainer&quot;&gt;&lt;/div&gt;
++    &lt;/div&gt;
++&lt;/form&gt;
+ 
+ &lt;h2&gt;Restrictions, Bans and Suspensions&lt;/h2&gt;
+ 
++&lt;script type=&quot;text/javascript&quot;&gt;
++YAHOO.example.ACJson = new function(){
++    // Instantiate an XHR DataSource and define schema as an array:
++    //     [&quot;Multi-depth.object.notation.to.find.a.single.result.item&quot;,
++    //     &quot;Query Key&quot;,
++    //     &quot;Additional Param Name 1&quot;,
++    //     ...
++    //     &quot;Additional Param Name n&quot;]
++    this.oACDS = new YAHOO.widget.DS_XHR(&quot;/site/users_autocomplete/&quot;, [&quot;ResultSet.person&quot;,&quot;forum_name&quot;]);
++    this.oACDS.queryMatchContains = true;
++    this.oACDS.forceSelection = true;
++    this.oACDS.typeAhead = true;
++    this.oACDS.animSpeed = 0.1;
++    //this.oACDS.scriptQueryAppend = &quot;output=json&amp;results=100&quot;; // Needed for YWS
+ 
+-&lt;hr /&gt;
++    // Instantiate AutoComplete
++    this.oAutoComp = new YAHOO.widget.AutoComplete(&quot;ysearchinput&quot;,&quot;ysearchcontainer&quot;, this.oACDS);
++    this.oAutoComp.useShadow = true;
++    this.oAutoComp.formatResult = function(oResultItem, sQuery) {
++        return oResultItem[1].forum_name
++            + &quot; (&quot;
++            + oResultItem[1].first_name
++            + &quot; &quot;
++            + oResultItem[1].last_name
++            + &quot;)&quot;;
++    };
++    this.oAutoComp.doBeforeExpandContainer = function(oTextbox, oContainer, sQuery, aResults) {
++        var pos = YAHOO.util.Dom.getXY(oTextbox);
++        pos[1] += YAHOO.util.Dom.get(oTextbox).offsetHeight + 2;
++        YAHOO.util.Dom.setXY(oContainer,pos);
++        return true;
++    };
+ 
+-&lt;!-- Some custom style for the expand/contract section--&gt;
+-&lt;style type=&quot;text/css&quot;&gt;
+-#expandcontractdiv {border:1px dotted #dedede; background-color:#EBE4F2; margin:0 0 .5em 0; padding:0.4em;}
+-#treeDiv1 { background: #fff; padding:1em; margin-top:1em; }
+-&lt;/style&gt;
++    this.oAutoComp.itemSelectEvent.subscribe(
++        function(oSelf, elItem, oData) {
++            console.log(elItem[2][1]);
+ 
++            YAHOO.util.Dom.get('ac_personid').value = elItem[2][1].id;
+ 
++            try {
++                console.log( YAHOO.util.Dom.get('ac_personid') );
++            }
++            catch(e) { console.log(e); }
+ 
+-&lt;!--BEGIN SOURCE CODE FOR EXAMPLE =============================== --&gt;
++        },
++        this,
++        false
++    );
+ 
+-
+-&lt;script type=&quot;text/javascript&quot;&gt;
+-//an anonymous function wraps our code to keep our variables
+-//in function scope rather than in the global namespace:
+-(function() {
+-	var tree; //will hold our TreeView instance
+-	
+-	function treeInit() {
+-		
+-		YAHOO.log(&quot;Example's treeInit function firing.&quot;, &quot;info&quot;, &quot;example&quot;);
+-		
+-		//Hand off ot a method that randomly generates tree nodes:
+-		buildRandomTextNodeTree();
+-		
+-		//handler for collapsing all nodes
+-		YAHOO.util.Event.on(&quot;collapse&quot;, &quot;click&quot;, function(e) {
+-			YAHOO.log(&quot;Collapsing all TreeView  nodes.&quot;, &quot;info&quot;, &quot;example&quot;);
+-			tree.collapseAll();
+-			YAHOO.util.Event.preventDefault(e);
+-		});
+-	}
+-	
+-	function buildRandomTextNodeTree() {
+-		//instantiate the tree:
+-		tree = new YAHOO.widget.TreeView(&quot;treeDiv1&quot;);
+-		
+-		//create top-level nodes
+-        [% dummy_value = users_with_roles.reset %]
+-        [% WHILE (person = users_with_roles.next) %]
+-			var tmpNode = new YAHOO.widget.MenuNode(&quot;[%person.forum_name%]&quot;, tree.getRoot(), false);
+-            console.log('Person: ', &quot;[%person.forum_name%]&quot;);
+-            console.log('Roles:  ', &quot;[%person.roles||'noroles?'%]&quot;);
+-
+-            [% pRoles = person.roles %]
+-            [% WHILE (role = pRoles.next) %]
+-                console.log('Role: ', '[%role.name%]');
+-				var roleNode = new YAHOO.widget.MenuNode(&quot;[%role.name%]&quot;, tmpNode, false);
+-            [% END %]
+-        [% END %]
+-		
+-		//once it's all built out, we need to render
+-		//our TreeView instance:
+-		tree.draw();
+-	}
+-	
+-	//When the DOM is done loading, we can initialize our TreeView
+-	//instance:
+-	YAHOO.util.Event.onDOMReady(treeInit);
+-	
+-})();//anonymous function wrapper closed; () notation executes function
+-
++    // Stub for form validation
++    this.validateForm = function() {
++        // Validation code goes here
++        return true;
++    };
++};
+ &lt;/script&gt;
+-
+-&lt;!--END SOURCE CODE FOR EXAMPLE =============================== --&gt;
+-
+-
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/root/static/css/parley.css	2008-02-27 09:44:54 UTC (rev 811)
+@@ -531,6 +531,18 @@
+     width:              450px;
+ }
+ 
++#ysearch {
++    text-align:         center;
++}
++#ysearchinput {
++    position:           static;
++    width:              20em;
++} /* to center, set static and explicit width: */
++#ysearchcontainer {
++    text-align:         left;
++    width:              20em;
++} /* to center, set left-align and explicit width: */
++
+ /* ForumCode styles */
+ .forumcode_code {
+     font-family:        monospace;
+
+Modified: trunk/t/schema/role.t
+===================================================================
+--- trunk/t/schema/role.t	2008-02-27 09:44:39 UTC (rev 810)
++++ trunk/t/schema/role.t	2008-02-27 09:44:54 UTC (rev 811)
+@@ -20,7 +20,9 @@
+         columns =&gt; [
+             qw[
+                 id
++                idx
+                 name
++                description
+             ]
+         ],
+ 
+@@ -37,6 +39,7 @@
+ 
+         resultsets =&gt; [
+             qw[
++                role_list
+             ]
+         ],
+     }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000698.html">[Parley-svn] r810 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000700.html">[Parley-svn] r812 - / trunk/lib/Parley/ResultSet	trunk/root/base/site
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#699">[ date ]</a>
+              <a href="thread.html#699">[ thread ]</a>
+              <a href="subject.html#699">[ subject ]</a>
+              <a href="author.html#699">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

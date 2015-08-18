@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r355 - / trunk/db trunk/lib/Parley/Schema	trunk/root/base/my trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r355%20-%20/%20trunk/db%20trunk/lib/Parley/Schema%0A%09trunk/root/base/my%20trunk/root/css&In-Reply-To=%3C200706191931.l5JJVsU1029029%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000242.html">
+   <LINK REL="Next"  HREF="000244.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r355 - / trunk/db trunk/lib/Parley/Schema	trunk/root/base/my trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r355%20-%20/%20trunk/db%20trunk/lib/Parley/Schema%0A%09trunk/root/base/my%20trunk/root/css&In-Reply-To=%3C200706191931.l5JJVsU1029029%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r355 - / trunk/db trunk/lib/Parley/Schema	trunk/root/base/my trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jun 19 21:31:54 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000242.html">[Parley-svn] r354 - / trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000244.html">[Parley-svn] r356 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#243">[ date ]</a>
+              <a href="thread.html#243">[ thread ]</a>
+              <a href="subject.html#243">[ subject ]</a>
+              <a href="author.html#243">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-06-19 21:31:53 +0200 (Tue, 19 Jun 2007)
+New Revision: 355
+
+Added:
+   trunk/root/base/my/tab_notifications
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/db/patch_0.52_to_0.53.psql
+   trunk/lib/Parley/Schema/Preference.pm
+   trunk/root/base/my/preferences
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3380 at wiggin</A>:  chisel | 2007-06-19 19:30:08 +0100
+ + schema, template and code changes for our first toe-dip into notification preferences
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3379
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3380
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/db/parley.psql	2007-06-19 19:31:53 UTC (rev 355)
+@@ -45,7 +45,9 @@
+     timezone        text        not null
+             default 'UTC',
+     time_format     integer     references preference_time_string,
+-    show_tz         boolean     default True
++    show_tz         boolean     default True,
++
++    notify_thread_watch     boolean     default False
+ );
+ 
+ CREATE TABLE person (
+
+Modified: trunk/db/patch_0.52_to_0.53.psql
+===================================================================
+--- trunk/db/patch_0.52_to_0.53.psql	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/db/patch_0.52_to_0.53.psql	2007-06-19 19:31:53 UTC (rev 355)
+@@ -19,6 +19,11 @@
+     ADD COLUMN  ip_addr     inet
+ ;
+ 
++-- new fields in preference table
++ALTER TABLE preference
++    ADD COLUMN  notify_thread_watch boolean default False
++;
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+Modified: trunk/lib/Parley/Schema/Preference.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Preference.pm	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/lib/Parley/Schema/Preference.pm	2007-06-19 19:31:53 UTC (rev 355)
+@@ -36,6 +36,12 @@
+     default_value =&gt; 'true',
+     size =&gt; 1,
+   },
++
++  'notify_thread_watch' =&gt; {
++    data_type =&gt; 'boolean',
++    default_value =&gt; 'false',
++    size =&gt; 1,
++  },
+ );
+ __PACKAGE__-&gt;set_primary_key(&quot;preference_id&quot;);
+ __PACKAGE__-&gt;has_many(
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/root/base/my/preferences	2007-06-19 19:31:53 UTC (rev 355)
+@@ -22,6 +22,10 @@
+     &lt;div id=&quot;tab_watch&quot; dojoType=&quot;ContentPane&quot; label=&quot;Thread Watches&quot;&gt;
+         [% PROCESS my/tab_watch %]
+     &lt;/div&gt;
++
++    &lt;div id=&quot;tab_notify&quot; dojoType=&quot;ContentPane&quot; label=&quot;Notifications&quot;&gt;
++        [% PROCESS my/tab_notifications %]
++    &lt;/div&gt;
+ &lt;/div&gt;
+ 
+ [% IF c.session.my_pref_came_from %]
+
+Added: trunk/root/base/my/tab_notifications
+===================================================================
+--- trunk/root/base/my/tab_notifications	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/root/base/my/tab_notifications	2007-06-19 19:31:53 UTC (rev 355)
+@@ -0,0 +1,13 @@
++&lt;!-- preferences : notification tab --&gt;
++
++&lt;table class=&quot;prefs_notification&quot;&gt;
++    &lt;tbody&gt;
++        &lt;tr&gt;
++            &lt;td&gt;
++                &lt;input type=&quot;checkbox&quot; name=&quot;notify_thread_watch&quot; /&gt;
++                Email notification for watched threads
++            &lt;/td&gt;
++        &lt;/tr&gt;
++    &lt;/tbody&gt;
++&lt;/table&gt;
++&lt;!-- (end) preferences : notification tab --&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-06-19 19:31:48 UTC (rev 354)
++++ trunk/root/css/common.css	2007-06-19 19:31:53 UTC (rev 355)
+@@ -224,6 +224,12 @@
+     width:              500px;
+ }
+ 
++.prefs_notification {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
+ .user_profile_key {
+     font-weight:        bold;
+     text-align:         right;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000242.html">[Parley-svn] r354 - / trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000244.html">[Parley-svn] r356 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#243">[ date ]</a>
+              <a href="thread.html#243">[ thread ]</a>
+              <a href="subject.html#243">[ subject ]</a>
+              <a href="author.html#243">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

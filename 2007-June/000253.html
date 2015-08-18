@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r365 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r365%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200706252210.l5PMAe8i025404%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000252.html">
+   <LINK REL="Next"  HREF="000254.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r365 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r365%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200706252210.l5PMAe8i025404%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r365 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jun 26 00:10:40 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000252.html">[Parley-svn] r364 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+        <LI>Next message: <A HREF="000254.html">[Parley-svn] r366 - / trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#253">[ date ]</a>
+              <a href="thread.html#253">[ thread ]</a>
+              <a href="subject.html#253">[ subject ]</a>
+              <a href="author.html#253">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-06-26 00:10:40 +0200 (Tue, 26 Jun 2007)
+New Revision: 365
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3412 at wiggin</A>:  chisel | 2007-06-21 09:26:08 +0100
+ / refactored _process_form_time_format()
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3411
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3412
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:34 UTC (rev 364)
++++ trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:40 UTC (rev 365)
+@@ -181,6 +181,7 @@
+         $c-&gt;flash-&gt;{show_pref_tab} = 'tab_time';
+ 
+         $self-&gt;_process_form_time_format( $c );
++        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
+     }
+     # are we updating notification preferences?
+     elsif ('notifications' eq $form_name) {
+@@ -189,6 +190,7 @@
+         $c-&gt;flash-&gt;{show_pref_tab} = 'tab_notify';
+ 
+         $self-&gt;_process_form_notifications( $c );
++        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
+     }
+ 
+     # otherwise we haven't decided how to handle the specified form ...
+@@ -250,6 +252,7 @@
+     # store changes
+     $c-&gt;_authed_user()-&gt;preference()-&gt;update;
+ 
++    #$c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
+     return;
+ }
+ 
+@@ -257,54 +260,40 @@
+ sub _process_form_time_format {
+     my ($self, $c) = @_;
+ 
+-    # deal with missing/invalid fields
+-    if ($c-&gt;form-&gt;has_missing()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
+-        foreach my $f ( $c-&gt;form-&gt;missing ) {
+-            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+-        }
++    if (not $self-&gt;_form_data_valid($c)) {
++        return;
+     }
+-    elsif ($c-&gt;form-&gt;has_invalid()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
+-        foreach my $f ( $c-&gt;form-&gt;invalid ) {
+-            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+-        }
+-    }
+ 
+-    # otherwise, the form data is ok ...
++    $c-&gt;log-&gt;debug(
++        ref($c-&gt;_authed_user()-&gt;preference())
++    );
++
++    # tz preference value
++    if ($c-&gt;form-&gt;valid('use_utc')) {
++        $c-&gt;_authed_user()-&gt;preference()-&gt;timezone('UTC');
++    }
+     else {
+-        $c-&gt;log-&gt;debug(
+-            ref($c-&gt;_authed_user()-&gt;preference())
++        $c-&gt;_authed_user()-&gt;preference()-&gt;timezone(
++            $c-&gt;form-&gt;valid('selectZone')
+         );
+-
+-        # tz preference value
+-        if ($c-&gt;form-&gt;valid('use_utc')) {
+-            $c-&gt;_authed_user()-&gt;preference()-&gt;timezone('UTC');
+-        }
+-        else {
+-            $c-&gt;_authed_user()-&gt;preference()-&gt;timezone(
+-                $c-&gt;form-&gt;valid('selectZone')
+-            );
+-        }
+-        # time_format preference
+-        if (defined $c-&gt;form-&gt;valid('time_format')) {
+-            $c-&gt;_authed_user()-&gt;preference()-&gt;time_format(
+-                $c-&gt;form-&gt;valid('time_format')
+-            )
+-        }
+-        else {
+-            $c-&gt;_authed_user()-&gt;preference()-&gt;time_format( undef );
+-        }
+-        # show_tz
+-        $c-&gt;_authed_user()-&gt;preference()-&gt;show_tz(
+-            ($c-&gt;form-&gt;valid('show_tz') || 0)
+-        );
+-        # store changes
+-        $c-&gt;_authed_user()-&gt;preference()-&gt;update();
+-
+-        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
+     }
++    # time_format preference
++    if (defined $c-&gt;form-&gt;valid('time_format')) {
++        $c-&gt;_authed_user()-&gt;preference()-&gt;time_format(
++            $c-&gt;form-&gt;valid('time_format')
++        )
++    }
++    else {
++        $c-&gt;_authed_user()-&gt;preference()-&gt;time_format( undef );
++    }
++    # show_tz
++    $c-&gt;_authed_user()-&gt;preference()-&gt;show_tz(
++        ($c-&gt;form-&gt;valid('show_tz') || 0)
++    );
++    # store changes
++    $c-&gt;_authed_user()-&gt;preference()-&gt;update();
+ 
++    #$c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
+     return;
+ }
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000252.html">[Parley-svn] r364 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+	<LI>Next message: <A HREF="000254.html">[Parley-svn] r366 - / trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#253">[ date ]</a>
+              <a href="thread.html#253">[ thread ]</a>
+              <a href="subject.html#253">[ subject ]</a>
+              <a href="author.html#253">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

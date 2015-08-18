@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r288 - / trunk/lib/Parley/Controller trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r288%20-%20/%20trunk/lib/Parley/Controller%20trunk/t&In-Reply-To=%3C200704132022.l3DKMBDI029143%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000175.html">
+   <LINK REL="Next"  HREF="000177.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r288 - / trunk/lib/Parley/Controller trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r288%20-%20/%20trunk/lib/Parley/Controller%20trunk/t&In-Reply-To=%3C200704132022.l3DKMBDI029143%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r288 - / trunk/lib/Parley/Controller trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Apr 13 22:22:11 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000175.html">[Parley-svn] r287 - / trunk/db
+</A></li>
+        <LI>Next message: <A HREF="000177.html">[Parley-svn] r289 - / trunk/db trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#176">[ date ]</a>
+              <a href="thread.html#176">[ thread ]</a>
+              <a href="subject.html#176">[ subject ]</a>
+              <a href="author.html#176">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-13 22:22:10 +0200 (Fri, 13 Apr 2007)
+New Revision: 288
+
+Added:
+   trunk/lib/Parley/Controller/Admin.pm
+   trunk/t/controller_Admin.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3136 at wiggin</A>:  chisel | 2007-04-13 19:17:29 +0100
+ + added some admin functionality (lock/stick)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3135
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3136
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/Controller/Admin.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Admin.pm	2007-04-13 20:21:56 UTC (rev 287)
++++ trunk/lib/Parley/Controller/Admin.pm	2007-04-13 20:22:10 UTC (rev 288)
+@@ -0,0 +1,106 @@
++package Parley::Controller::Admin;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c-&gt;response-&gt;body('Matched Parley::Controller::Admin in Admin.');
++}
++
++sub auto : Private {
++    my ($self, $c) = @_;
++    $c-&gt;log-&gt;debug( 'Admin::auto()' );
++
++    # if we're not a moderator, bounce back to where we came from
++    if (not $c-&gt;stash-&gt;{moderator}) {
++        $c-&gt;log-&gt;debug( 'not a moderator' );
++        $c-&gt;response-&gt;redirect( $c-&gt;request-&gt;referer() );
++        return 0;
++    }
++
++    # succeed
++    $c-&gt;log-&gt;debug( 'a moderator' );
++    return 1;
++}
++
++sub lock :Local {
++    my ($self, $c) = @_;
++
++    # the 'lock' parameter tells us if we're adding or removing a lock
++    # if it's not specified, default action os to ADD a lock
++    my $locked = $c-&gt;request-&gt;param('lock');
++    if (not defined $locked) {
++        $locked = 1;
++    }
++    $c-&gt;log-&gt;debug( qq{lock: $locked} );
++
++    # we should already have the thread we're locking, but let's check anyway
++    if (not defined $c-&gt;_current_thread()) {
++        $c-&gt;stash-&gt;{error}{message} = q{You must specify the thread to lock};
++        $c-&gt;log-&gt;error( q{You must specify the thread to lock} );
++        return;
++    }
++
++    # update the lock status
++    $c-&gt;_current_thread()-&gt;locked( $locked );
++    $c-&gt;_current_thread()-&gt;update();
++
++    # go back to where we came from
++    $c-&gt;response-&gt;redirect( $c-&gt;request-&gt;referer() );
++    return;
++}
++
++sub sticky :Local {
++    my ($self, $c) = @_;
++
++    # the 'sticky' parameter tells us if we're adding or removing a sticky
++    # if it's not specified, default action os to ADD a sticky
++    my $sticky = $c-&gt;request-&gt;param('sticky');
++    if (not defined $sticky) {
++        $sticky = 1;
++    }
++    $c-&gt;log-&gt;debug( qq{sticky: $sticky} );
++
++    # we should already have the thread we're sticking, but let's check anyway
++    if (not defined $c-&gt;_current_thread()) {
++        $c-&gt;stash-&gt;{error}{message} = q{You must specify the thread to stick};
++        $c-&gt;log-&gt;error( q{You must specify the thread to stick} );
++        return;
++    }
++
++    # update the stick status
++    $c-&gt;_current_thread()-&gt;sticky( $sticky );
++    $c-&gt;_current_thread()-&gt;update();
++
++    # go back to where we came from
++    $c-&gt;response-&gt;redirect( $c-&gt;request-&gt;referer() );
++    return;
++}
++
++=head1 NAME
++
++Parley::Controller::Admin - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=head2 index 
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at berlios.de</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/t/controller_Admin.t
+===================================================================
+--- trunk/t/controller_Admin.t	2007-04-13 20:21:56 UTC (rev 287)
++++ trunk/t/controller_Admin.t	2007-04-13 20:22:10 UTC (rev 288)
+@@ -0,0 +1,10 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 3;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::Admin' }
++
++ok( request('/admin')-&gt;is_success, 'Request should succeed' );
++
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000175.html">[Parley-svn] r287 - / trunk/db
+</A></li>
+	<LI>Next message: <A HREF="000177.html">[Parley-svn] r289 - / trunk/db trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#176">[ date ]</a>
+              <a href="thread.html#176">[ thread ]</a>
+              <a href="subject.html#176">[ subject ]</a>
+              <a href="author.html#176">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r821 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/site
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r821%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/root/base/site&In-Reply-To=%3C200802282232.m1SMW8r9030390%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000708.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r821 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/site</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r821%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/root/base/site&In-Reply-To=%3C200802282232.m1SMW8r9030390%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r821 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/site">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Feb 28 23:32:08 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000708.html">[Parley-svn] r820 - / trunk/lib/Parley/Controller	trunk/root/base/site trunk/root/static/images
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#709">[ date ]</a>
+              <a href="thread.html#709">[ thread ]</a>
+              <a href="subject.html#709">[ subject ]</a>
+              <a href="author.html#709">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-28 23:32:08 +0100 (Thu, 28 Feb 2008)
+New Revision: 821
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/site/user
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4721 at wiggin</A>:  chisel | 2008-02-28 22:31:30 +0000
+ / i18n-ise recent additions (.it translations missing)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4720
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4721
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-02-28 22:31:57 UTC (rev 820)
++++ trunk/Changes.i18n	2008-02-28 22:32:08 UTC (rev 821)
+@@ -15,6 +15,10 @@
+             - &quot;Post Edited By&quot;
+             - &quot;Manage&quot;
+             - &quot;Users&quot;
++            - &quot;User Roles&quot;
++            - &quot;We're not in Kansas any more&quot;
++            - &quot;Invalid %1&quot;
++            - &quot;Invalid requested value&quot;
+ 
+     it.po:
+         - added:
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-02-28 22:31:57 UTC (rev 820)
++++ trunk/lib/Parley/Controller/Site.pm	2008-02-28 22:32:08 UTC (rev 821)
+@@ -121,13 +121,16 @@
+ 
+     # check incoming values
+     if (not defined $person_id or $person_id !~ m{\A\d+\z}) {
+-        $return_data-&gt;{error}{message} = 'Invalid user-id';
++        $return_data-&gt;{error}{message} =
++            $c-&gt;localize('Invalid %1', 'user-id');
+     }
+     elsif (not defined $role_id or $role_id !~ m{\A\d+\z}) {
+-        $return_data-&gt;{error}{message} = 'Invalid role-id';
++        $return_data-&gt;{error}{message} =
++            $c-&gt;localize('Invalid %1', 'role-id');
+     }
+     elsif (not defined $value or $value !~ m{\A[01]}) {
+-        $return_data-&gt;{error}{message} = 'Invalid requested value';
++        $return_data-&gt;{error}{message} =
++            $c-&gt;localize('Invalid requested value');
+     }
+ 
+     # remove the role?
+@@ -189,7 +192,8 @@
+ 
+     # else ... um, how did we end up here?
+     else {
+-        $return_data-&gt;{error}{message} = q{We're not in Kansas any more};
++        $return_data-&gt;{error}{message} =
++            $c-&gt;localize(q{We're not in Kansas any more});
+     }
+ 
+     # return some JSON
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-02-28 22:31:57 UTC (rev 820)
++++ trunk/lib/Parley/I18N/i_default.po	2008-02-28 22:32:08 UTC (rev 821)
+@@ -239,6 +239,13 @@
+ msgid &quot;Incomplete URL&quot;
+ msgstr &quot;Incomplete URL&quot;
+ 
++# e.g. Invalid user-id
++msgid &quot;Invalid %1&quot;
++msgstr &quot;Invalid %1&quot;
++
++msgid &quot;Invalid requested value&quot;
++msgstr &quot;Invalid requested value&quot;
++
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Logged&quot;
+ 
+@@ -734,6 +741,9 @@
+ msgid &quot;Users&quot;
+ msgstr &quot;Users&quot;
+ 
++msgid &quot;User Roles&quot;
++msgstr &quot;User Roles&quot;
++
+ msgid &quot;View&quot;
+ msgstr &quot;View&quot;
+ 
+@@ -755,6 +765,12 @@
+ msgid &quot;watching this thread&quot;
+ msgstr &quot;watching this thread&quot;
+ 
++msgid &quot;We're not in Kansas any more&quot;
++msgstr &quot;We're not in Kansas any more&quot;
++
++msgid &quot;Users&quot;
++msgstr &quot;Users&quot;
++
+ msgid &quot;wrote&quot;
+ msgstr &quot;wrote&quot;
+ 
+
+Modified: trunk/root/base/site/user
+===================================================================
+--- trunk/root/base/site/user	2008-02-28 22:31:57 UTC (rev 820)
++++ trunk/root/base/site/user	2008-02-28 22:32:08 UTC (rev 821)
+@@ -1,4 +1,4 @@
+-&lt;h1&gt;User Stuff&lt;/h1&gt;
++&lt;h1&gt;[%l('User Roles')%]&lt;/h1&gt;
+ 
+ &lt;h2&gt;[% person.forum_name %] ([%person.first_name%] [%person.last_name%])&lt;/h2&gt;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000708.html">[Parley-svn] r820 - / trunk/lib/Parley/Controller	trunk/root/base/site trunk/root/static/images
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#709">[ date ]</a>
+              <a href="thread.html#709">[ thread ]</a>
+              <a href="subject.html#709">[ subject ]</a>
+              <a href="author.html#709">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

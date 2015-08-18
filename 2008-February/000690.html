@@ -1,0 +1,450 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r802 - / trunk trunk/db trunk/lib trunk/lib/Parley	trunk/lib/Parley/Schema trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r802%20-%20/%20trunk%20trunk/db%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/Schema%20trunk/t/schema&In-Reply-To=%3C200802142112.m1ELCSrn016537%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000689.html">
+   <LINK REL="Next"  HREF="000691.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r802 - / trunk trunk/db trunk/lib trunk/lib/Parley	trunk/lib/Parley/Schema trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r802%20-%20/%20trunk%20trunk/db%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/Schema%20trunk/t/schema&In-Reply-To=%3C200802142112.m1ELCSrn016537%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r802 - / trunk trunk/db trunk/lib trunk/lib/Parley	trunk/lib/Parley/Schema trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Feb 14 22:12:28 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000689.html">[Parley-svn] r801 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000691.html">[Parley-svn] r803 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#690">[ date ]</a>
+              <a href="thread.html#690">[ thread ]</a>
+              <a href="subject.html#690">[ subject ]</a>
+              <a href="author.html#690">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-14 22:12:26 +0100 (Thu, 14 Feb 2008)
+New Revision: 802
+
+Added:
+   trunk/lib/Parley/Schema/Role.pm
+   trunk/lib/Parley/Schema/UserRole.pm
+   trunk/t/schema/role.t
+   trunk/t/schema/user_role.t
+Modified:
+   /
+   trunk/db/patch_0.58_to_0.59.psql
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Schema.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/parley.yml
+   trunk/t/schema/person.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4665 at wiggin</A>:  chisel | 2008-02-14 21:10:52 +0000
+ + allow user accounts to be flagged as suspended
+ + add role and user_roles tablr to schema
+ / ::Schema changes for basic roles support
+ + tests for role changes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4662
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4665
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/patch_0.58_to_0.59.psql
+===================================================================
+--- trunk/db/patch_0.58_to_0.59.psql	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/db/patch_0.58_to_0.59.psql	2008-02-14 21:12:26 UTC (rev 802)
+@@ -5,6 +5,7 @@
+ -- Description:
+ --  add flagging of posts edited by admin
+ --  lock posts (so they can't be changed after being edited by admin)
++--  allow user accounts to be suspended
+ 
+ BEGIN;
+ 
+@@ -12,9 +13,53 @@
+ 
+ ALTER TABLE post
+     ADD COLUMN admin_editor_id integer references person(id),
+-    ADD COLUMN locked boolean default False
++    ADD COLUMN locked boolean not null default False
+ ;
+ 
++ALTER TABLE person
++    ADD COLUMN suspended boolean not null default False
++;
++
++CREATE TABLE role (
++    id          serial      primary key,
++    name        varchar(30) not null unique,
++    description text
++);
++-- a couple of roles
++INSERT INTO role (name, description) VALUES (
++    'site_moderator',
++    'Site Moderator (aka Da Boss)'
++);
++INSERT INTO role (name, description) VALUES (
++    'ip_ban_posting',
++    'Restrict Posting by IP'
++);
++INSERT INTO role (name, description) VALUES (
++    'ip_ban_signup',
++    'Restrict Sign-Up by IP'
++);
++INSERT INTO role (name, description) VALUES (
++    'ip_ban_login',
++    'Restrict Login by IP'
++);
++
++CREATE TABLE user_roles (
++    id          serial      primary key,
++    person_id   integer     not null
++                            references person(id),
++    role_id     integer     not null
++                            references role(id),
++    UNIQUE (person_id, role_id)
++);
++
++-- make topdog a site_moderator
++INSERT INTO user_roles
++    (person_id, role_id)
++VALUES (
++    0,
++    (SELECT id FROM role WHERE name='site_moderator')
++);
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/lib/Parley/Schema/Person.pm	2008-02-14 21:12:26 UTC (rev 802)
+@@ -107,4 +107,7 @@
+   { &quot;foreign.recipient&quot; =&gt; &quot;self.id&quot; },
+ );
+ 
++__PACKAGE__-&gt;has_many(map_user_role =&gt; 'Parley::Schema::UserRole', 'person_id');
++
++
+ 1;
+
+Added: trunk/lib/Parley/Schema/Role.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Role.pm	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/lib/Parley/Schema/Role.pm	2008-02-14 21:12:26 UTC (rev 802)
+@@ -0,0 +1,27 @@
++package Parley::Schema::Role;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++use DateTime::Format::Pg;
++
++use Parley::App::DateTime qw( :interval );
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;role&quot;);
++__PACKAGE__-&gt;add_columns(
++  id    =&gt; { },
++  name  =&gt; { },
++);
++
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++#__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Role');
++
++__PACKAGE__-&gt;has_many(
++    map_user_role =&gt; 'Parley::Schema::UserRole',
++    'role_id'
++);
++
++
++1;
+
+Added: trunk/lib/Parley/Schema/UserRole.pm
+===================================================================
+--- trunk/lib/Parley/Schema/UserRole.pm	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/lib/Parley/Schema/UserRole.pm	2008-02-14 21:12:26 UTC (rev 802)
+@@ -0,0 +1,43 @@
++package Parley::Schema::UserRole;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use base qw/DBIx::Class/;
++
++# Load required DBIC stuff
++__PACKAGE__-&gt;load_components(qw/PK::Auto Core/);
++# Set the table name
++__PACKAGE__-&gt;table('user_roles');
++# Set columns in table
++__PACKAGE__-&gt;add_columns(qw/id person_id role_id/);
++# Set the primary key for the table
++__PACKAGE__-&gt;set_primary_key(qw/id/);
++
++#
++# Set relationships:
++#
++
++# belongs_to():
++#   args:
++#     1) Name of relationship, DBIC will create accessor with this name
++#     2) Name of the model class referenced by this relationship
++#     3) Column name in *this* table
++__PACKAGE__-&gt;belongs_to(person =&gt; 'Parley::Schema::Person', 'person_id');
++
++# belongs_to():
++#   args:
++#     1) Name of relationship, DBIC will create accessor with this name
++#     2) Name of the model class referenced by this relationship
++#     3) Column name in *this* table
++__PACKAGE__-&gt;belongs_to(role =&gt; 'Parley::Schema::Role', 'role_id');
++
++
++__PACKAGE__-&gt;add_unique_constraint(
++    'userroles_person_role_key',
++    ['person_id', 'role_id']
++);
++
++
++
++1;
+
+Modified: trunk/lib/Parley/Schema.pm
+===================================================================
+--- trunk/lib/Parley/Schema.pm	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/lib/Parley/Schema.pm	2008-02-14 21:12:26 UTC (rev 802)
+@@ -18,10 +18,12 @@
+         'Preference',
+         'PreferenceTimeString',
+         'RegistrationAuthentication',
++        'Role',
+         'TermsAgreed',
+         'Terms',
+         'Thread',
+         'ThreadView',
++        'UserRole',
+     ]
+ );
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/lib/Parley.pm	2008-02-14 21:12:26 UTC (rev 802)
+@@ -26,6 +26,8 @@
+     Authentication::Store::DBIC
+     Authentication::Credential::Password
+ 
++    Authorization::Roles
++
+     I18N
+ /;
+ 
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/parley.yml	2008-02-14 21:12:26 UTC (rev 802)
+@@ -46,12 +46,20 @@
+ # authentiation settings; perldoc Catalyst::Plugin::Authentication::Store::DBIC
+ authentication:
+     dbic:
+-        user_class:         'Parley::Model::ParleyDB::Authentication'
++        user_class:         'ParleyDB::Authentication'
+         user_field:         'username'
+         password_field:     'password'
+         password_type:      'hashed'
+         password_hash_type: 'MD5'
+ 
++authorization:
++    dbic:
++        role_class:             'ParleyDB::Role'
++        role_field:             'name'
++        role_rel:               'map_user_role'
++        user_role_user_field:   'person_id'
++
++
+ # session settings; perldoc Catalyst::Plugin::Session::FastMmap
+ session:
+     expires:    3600
+
+Modified: trunk/t/schema/person.t
+===================================================================
+--- trunk/t/schema/person.t	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/t/schema/person.t	2008-02-14 21:12:26 UTC (rev 802)
+@@ -40,6 +40,7 @@
+                 last_post
+                 authentication
+                 registration_authentications
++                map_user_role
+             ]
+         ],
+ 
+
+Added: trunk/t/schema/role.t
+===================================================================
+--- trunk/t/schema/role.t	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/t/schema/role.t	2008-02-14 21:12:26 UTC (rev 802)
+@@ -0,0 +1,45 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'Role',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                name
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                map_user_role
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/role.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/user_role.t
+===================================================================
+--- trunk/t/schema/user_role.t	2008-02-13 09:36:33 UTC (rev 801)
++++ trunk/t/schema/user_role.t	2008-02-14 21:12:26 UTC (rev 802)
+@@ -0,0 +1,47 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'UserRole',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                person_id
++                role_id
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                person
++                role
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/user_role.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000689.html">[Parley-svn] r801 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000691.html">[Parley-svn] r803 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#690">[ date ]</a>
+              <a href="thread.html#690">[ thread ]</a>
+              <a href="subject.html#690">[ subject ]</a>
+              <a href="author.html#690">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r663 - / trunk/lib trunk/root/base trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r663%20-%20/%20trunk/lib%20trunk/root/base%20trunk/root/css&In-Reply-To=%3C200711121950.lACJo84f022339%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000550.html">
+   <LINK REL="Next"  HREF="000552.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r663 - / trunk/lib trunk/root/base trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r663%20-%20/%20trunk/lib%20trunk/root/base%20trunk/root/css&In-Reply-To=%3C200711121950.lACJo84f022339%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r663 - / trunk/lib trunk/root/base trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Nov 12 20:50:08 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000550.html">[Parley-svn] r662 - / trunk/lib trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+</A></li>
+        <LI>Next message: <A HREF="000552.html">[Parley-svn] r664 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#551">[ date ]</a>
+              <a href="thread.html#551">[ thread ]</a>
+              <a href="subject.html#551">[ subject ]</a>
+              <a href="author.html#551">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-12 20:50:07 +0100 (Mon, 12 Nov 2007)
+New Revision: 663
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/root/base/footer
+   trunk/root/css/layout27.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4184 at wiggin</A>:  chisel | 2007-11-12 09:15:18 +0000
+ / bump version to _03
+ + add appname and version number to footer
+ / tweak CSS so that &lt;a&gt;'s are more visile in the footer
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4183
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4184
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-11-12 19:49:27 UTC (rev 662)
++++ trunk/lib/Parley.pm	2007-11-12 19:50:07 UTC (rev 663)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.58_02';
++our $VERSION = '0.58_03';
+ 
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-11-12 19:49:27 UTC (rev 662)
++++ trunk/root/base/footer	2007-11-12 19:50:07 UTC (rev 663)
+@@ -12,7 +12,11 @@
+             &lt;/div&gt;&lt;!-- extra div --&gt;
+ 
+             &lt;div id=&quot;footer&quot;&gt;
+-                &lt;p&gt;&copy; Chisel Wright 2006-2007. [%l('All Rights Reserved')%].&lt;/p&gt;
++                &lt;span style=&quot;text-align:right;display:block;&quot;&gt;
++                &lt;a href=&quot;<A HREF="http://developer.berlios.de/projects/parley">http://developer.berlios.de/projects/parley</A>&quot;&gt;Parley&lt;/a&gt;
++                version ([%c.config.version%])
++                &copy; Chisel Wright 2006-2007. [%l('All Rights Reserved')%].
++                &lt;/span&gt;
+             &lt;/div&gt;&lt;!-- footer div --&gt;
+ 
+ 
+
+Modified: trunk/root/css/layout27.css
+===================================================================
+--- trunk/root/css/layout27.css	2007-11-12 19:49:27 UTC (rev 662)
++++ trunk/root/css/layout27.css	2007-11-12 19:50:07 UTC (rev 663)
+@@ -8,8 +8,10 @@
+ div#content p{line-height:1.4}
+ div#navigation{background:transparent}
+ div#extra{background:transparent}
+-div#footer{background: #333;color: #FFF}
++div#footer{background: #333;color: #FFF; font-size: 80%;}
+ div#footer p{margin:0;padding:5px 10px}
++div#footer span{margin:0;padding:5px 10px}
++div#footer a{color: #ccc};
+ 
+ div#navigation{float:left;width:50%}
+ div#extra{float:left;width:49.9%}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000550.html">[Parley-svn] r662 - / trunk/lib trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+</A></li>
+	<LI>Next message: <A HREF="000552.html">[Parley-svn] r664 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#551">[ date ]</a>
+              <a href="thread.html#551">[ thread ]</a>
+              <a href="subject.html#551">[ subject ]</a>
+              <a href="author.html#551">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

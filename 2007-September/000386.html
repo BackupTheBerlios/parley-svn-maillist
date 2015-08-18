@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r498 - / trunk trunk/root/base/thread trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r498%20-%20/%20trunk%20trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200709270857.l8R8vlwq018187%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000385.html">
+   <LINK REL="Next"  HREF="000387.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r498 - / trunk trunk/root/base/thread trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r498%20-%20/%20trunk%20trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200709270857.l8R8vlwq018187%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r498 - / trunk trunk/root/base/thread trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Sep 27 10:57:47 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000385.html">[Parley-svn] r497 - / trunk/root/base/thread
+</A></li>
+        <LI>Next message: <A HREF="000387.html">[Parley-svn] r499 - / trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#386">[ date ]</a>
+              <a href="thread.html#386">[ thread ]</a>
+              <a href="subject.html#386">[ subject ]</a>
+              <a href="author.html#386">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-27 10:57:46 +0200 (Thu, 27 Sep 2007)
+New Revision: 498
+
+Modified:
+   /
+   trunk/TODO
+   trunk/root/base/thread/view
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3846 at wiggin</A>:  chisel | 2007-09-25 19:03:05 +0100
+ / mark a TODO item as Done
+ + add clickable &quot;forum name&quot; info to top of page
+ + add CSS for &lt;a /&gt; tags in thread_header so they appear better
+ / convert buttons to YUI styled buttons
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3845
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3846
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-09-27 08:57:40 UTC (rev 497)
++++ trunk/TODO	2007-09-27 08:57:46 UTC (rev 498)
+@@ -1,9 +1,10 @@
+ TODO LIST
+ 
++  - update avatar update response to force a No-Cache?
+   - show more forum/thread information
+   - see if it's possible to display the forum-name as the first
+     entry for the popup menu
+-  - show more info in the recently update threads page; number of views/posts
++D - show more info in the recently update threads page; number of views/posts
+   - Minimising clicks - After password reset
+     &quot;After the password reset has been accepted a page indicating that change
+     was successful appears with link to login. How about triggering the usual
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-09-27 08:57:40 UTC (rev 497)
++++ trunk/root/base/thread/view	2007-09-27 08:57:46 UTC (rev 498)
+@@ -8,6 +8,8 @@
+ 
+         &lt;tr&gt;
+             &lt;td colspan=&quot;2&quot; class=&quot;thread_header&quot;&gt;
++                &lt;a href=&quot;forum/view?forum=[% current_forum.id %]&quot;&gt;[% ForumCode.escape(current_forum.name) %]&lt;/a&gt;
++                &nbsp;:&nbsp;
+                 [% ForumCode.escape(current_thread.subject) %]
+             &lt;/td&gt;
+         &lt;/tr&gt;
+@@ -38,7 +40,11 @@
+                                     Thread Locked
+                                     &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+                                 [% ELSE %]
+-                                    &lt;a class=&quot;button&quot; href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++                                    &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
++                                        &lt;span class=&quot;first-child&quot;&gt;
++                                            &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++                                        &lt;/span&gt;
++                                    &lt;/span&gt;
+                                 [% END %]
+                                 &lt;/small&gt;
+                             &lt;/td&gt;
+@@ -105,10 +111,22 @@
+                         &lt;br /&gt;
+                         &lt;br /&gt;
+                         [% IF authed_user.id == post.creator.id %]
+-                        &lt;a class=&quot;button&quot; href=&quot;post/edit?post=[% post.id %]&quot;&gt;Edit&lt;/a&gt;
++                        &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
++                            &lt;span class=&quot;first-child&quot;&gt;
++                                &lt;a href=&quot;post/edit?post=[% post.id %]&quot;&gt;Edit&lt;/a&gt;
++                            &lt;/span&gt;
++                        &lt;/span&gt;
+                         [% END %]
+-                        &lt;a class=&quot;button&quot; href=&quot;thread/reply?post=[% post.id %]&quot;&gt;Quote&lt;/a&gt;
+-                        &lt;a class=&quot;button&quot; href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++                        &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
++                            &lt;span class=&quot;first-child&quot;&gt;
++                                &lt;a href=&quot;thread/reply?post=[% post.id %]&quot;&gt;Quote&lt;/a&gt;
++                            &lt;/span&gt;
++                        &lt;/span&gt;
++                        &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
++                            &lt;span class=&quot;first-child&quot;&gt;
++                                &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++                            &lt;/span&gt;
++                        &lt;/span&gt;
+                     [% END %]
+                 &lt;/div&gt;
+             &lt;/td&gt;
+@@ -143,7 +161,11 @@
+                                     Thread Locked
+                                     &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+                                 [% ELSE %]
+-                                    &lt;a class=&quot;button&quot; href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++                                    &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
++                                        &lt;span class=&quot;first-child&quot;&gt;
++                                            &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++                                        &lt;/span&gt;
++                                    &lt;/span&gt;
+                                 [% END %]
+                                 &lt;/small&gt;
+                             &lt;/td&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-09-27 08:57:40 UTC (rev 497)
++++ trunk/root/css/common.css	2007-09-27 08:57:46 UTC (rev 498)
+@@ -245,6 +245,10 @@
+     padding:            4px;
+ }
+ 
++.thread_header a {
++    color:              #ccc;
++}
++
+ .forum_list {
+     margin-left:        auto;
+     margin-right:       auto;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000385.html">[Parley-svn] r497 - / trunk/root/base/thread
+</A></li>
+	<LI>Next message: <A HREF="000387.html">[Parley-svn] r499 - / trunk/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#386">[ date ]</a>
+              <a href="thread.html#386">[ thread ]</a>
+              <a href="subject.html#386">[ subject ]</a>
+              <a href="author.html#386">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

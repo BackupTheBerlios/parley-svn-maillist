@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r141 - / trunk trunk/root/base/menu trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r141%20-%20/%20trunk%20trunk/root/base/menu%20trunk/root/css&In-Reply-To=%3C200605111951.k4BJpFRN023621%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000037.html">
+   <LINK REL="Next"  HREF="000028.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r141 - / trunk trunk/root/base/menu trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r141%20-%20/%20trunk%20trunk/root/base/menu%20trunk/root/css&In-Reply-To=%3C200605111951.k4BJpFRN023621%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r141 - / trunk trunk/root/base/menu trunk/root/css">chiselwright at berlios.de
+       </A><BR>
+    <I>Thu May 11 21:51:15 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000037.html">[Parley-svn] r140 - / trunk/root/base/user trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000028.html">[Parley-svn] r142 - / trunk/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#42">[ date ]</a>
+              <a href="thread.html#42">[ thread ]</a>
+              <a href="subject.html#42">[ subject ]</a>
+              <a href="author.html#42">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-05-11 21:51:15 +0200 (Thu, 11 May 2006)
+New Revision: 141
+
+Modified:
+   /
+   trunk/Changes
+   trunk/root/base/menu/statusbar
+   trunk/root/css/default.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14405 at ferrari</A>:  chisel | 2006-04-19 09:22:07 +0100
+ / change popup_login_form to use a fieldset for layout, moving away from a table-layout
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14404
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14405
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-05-11 19:51:10 UTC (rev 140)
++++ trunk/Changes	2006-05-11 19:51:15 UTC (rev 141)
+@@ -1,5 +1,6 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - start moving towards use of &lt;fieldset&gt; instead of &lt;table&gt; for form layout
+     - use a floating loginbox instead of a separate screen (as inspired by
+       calendarhub.com)
+     - added visual feedback when TZ preference is updated
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-05-11 19:51:10 UTC (rev 140)
++++ trunk/root/base/menu/statusbar	2006-05-11 19:51:15 UTC (rev 141)
+@@ -38,38 +38,16 @@
+ 
+ &lt;!-- we have to put the div outside the table, otherwise we get trapped inside it! --&gt;
+ &lt;div id=&quot;loginbox&quot; style=&quot;display: none&quot;&gt;
+-    &lt;form action=&quot;user/login&quot; method=&quot;post&quot; name=&quot;popup_login_form&quot;&gt;
+-        &lt;table&gt;
+-            &lt;tr&gt;
+-                &lt;td&gt;
+-                    &lt;label for=&quot;username&quot;&gt;&lt;b&gt;Username:&lt;/b&gt;&lt;/label&gt;
+-                &lt;/td&gt;
+-                &lt;td&gt;
+-                    &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
+-                &lt;/td&gt;
+-            &lt;/tr&gt;
+-
+-            &lt;tr&gt;
+-                &lt;td&gt;
+-                    &lt;label for=&quot;password&quot;&gt;&lt;b&gt;Password:&lt;/b&gt;&lt;/label&gt;
+-                &lt;/td&gt;
+-                &lt;td&gt;
+-                    &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
+-                &lt;/td&gt;
+-            &lt;/tr&gt;
+-
+-            &lt;tr&gt;
+-                &lt;td colspan=&quot;2&quot;&gt;
+-                    &lt;input type=&quot;submit&quot; value=&quot;log in&quot; class=&quot;input_button&quot; style=&quot;margin-left: 170px;&quot;/&gt;
+-                &lt;/td&gt;
+-            &lt;/tr&gt;
+-
+-            &lt;tr&gt;
+-                &lt;td colspan=&quot;2&quot;&gt;
+-                    &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt;
+-                &lt;/td&gt;
+-            &lt;/tr&gt;
+-        &lt;/table&gt;
++    &lt;form action=&quot;user/login&quot; method=&quot;post&quot; name=&quot;login_form&quot; class=&quot;loginbox&quot;&gt;
++        &lt;fieldset&gt;
++            &lt;label for=&quot;username&quot;&gt;&lt;b&gt;Username:&lt;/b&gt;&lt;/label&gt;
++            &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
++            &lt;br /&gt;
++            &lt;label for=&quot;password&quot;&gt;&lt;b&gt;Password:&lt;/b&gt;&lt;/label&gt;
++            &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
++            &lt;br /&gt;
++            &lt;button type=&quot;submit&quot; value=&quot;log in&quot; class=&quot;input_button&quot; style=&quot;margin-left: 170px;&quot;/&gt;log in&lt;/button&gt;
++        &lt;/fieldset&gt;
+     &lt;/form&gt;
+ &lt;/div&gt;
+ &lt;!-- status bar : end --&gt;
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-05-11 19:51:10 UTC (rev 140)
++++ trunk/root/css/default.css	2006-05-11 19:51:15 UTC (rev 141)
+@@ -374,9 +374,7 @@
+ 
+ 
+ 
+-
+ form {  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
+-  font:100% verdana,arial,sans-serif;
+   margin: 0;
+   padding: 0;
+   min-width: 500px;
+@@ -440,3 +438,17 @@
+ form br {
+ 	clear:left; /* setting clear on inputs didn't work consistently, so brs added for degrade */
+ }
++
++
++
++form.loginbox {
++    min-width: 0px;
++    max-width: 250px;
++}
++form.loginbox fieldset label, form.loginbox fieldset input{  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
++    padding: 0px;
++    margin: 5px 0 0 10px;
++    width: 8em;
++}
++
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000037.html">[Parley-svn] r140 - / trunk/root/base/user trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000028.html">[Parley-svn] r142 - / trunk/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#42">[ date ]</a>
+              <a href="thread.html#42">[ thread ]</a>
+              <a href="subject.html#42">[ subject ]</a>
+              <a href="author.html#42">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

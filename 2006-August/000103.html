@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r215 - / branches/schema_based/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r215%20-%20/%20branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200608161343.k7GDhfV3018915%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000102.html">
+   <LINK REL="Next"  HREF="000104.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r215 - / branches/schema_based/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r215%20-%20/%20branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200608161343.k7GDhfV3018915%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r215 - / branches/schema_based/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:43:41 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000102.html">[Parley-svn] r214 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000104.html">[Parley-svn] r216 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#103">[ date ]</a>
+              <a href="thread.html#103">[ thread ]</a>
+              <a href="subject.html#103">[ subject ]</a>
+              <a href="author.html#103">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:43:40 +0200 (Wed, 16 Aug 2006)
+New Revision: 215
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5130 at ferrari</A>:  chisel | 2006-08-11 18:24:17 +0100
+ + added thred/view action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5129
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5130
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:43:34 UTC (rev 214)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:43:40 UTC (rev 215)
+@@ -10,6 +10,34 @@
+     $c-&gt;response-&gt;body('Matched Parley::Controller::Thread in Thread.');
+ }
+ 
++sub view : Local {
++    my ($self, $c) = @_;
++
++    # TODO - configure this somewhere, maybe a user preference
++    my $rows_per_page = $c-&gt;config-&gt;{posts_per_page};
++
++    # page to show - either a param, or show the first
++    my $page = $c-&gt;request-&gt;param('page') || 1;
++
++    # if we have a current_post, view the page with the post on it
++    if ($c-&gt;_current_post) {
++        $c-&gt;detach('/post/view');
++    }
++
++    # get all the posts in the thread
++    $c-&gt;stash-&gt;{post_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
++        {
++            thread =&gt; $c-&gt;_current_thread-&gt;id(),
++        },
++        {
++            order_by    =&gt; 'created ASC',
++            rows        =&gt; $rows_per_page,
++            page        =&gt; $page,
++        }
++    );
++
++}
++
+ 1;
+ 
+ __END__
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000102.html">[Parley-svn] r214 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000104.html">[Parley-svn] r216 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#103">[ date ]</a>
+              <a href="thread.html#103">[ thread ]</a>
+              <a href="subject.html#103">[ subject ]</a>
+              <a href="author.html#103">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

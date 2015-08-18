@@ -1,0 +1,5275 @@
+From chiselwright at mail.berlios.de  Wed Aug 16 15:40:20 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:40:20 +0200
+Subject: [Parley-svn] r187 - / trunk/root/base/forum
+Message-ID: <200608161340.k7GDeKR7014460@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:40:19 +0200 (Wed, 16 Aug 2006)
+New Revision: 187
+
+Modified:
+   /
+   trunk/root/base/forum/view
+Log:
+ r4921 at ferrari:  chisel | 2006-07-19 18:51:36 +0100
+ + testing a pop-up search box
+ / changed [% %] TT markup to [%- %]
+ + added mini-pager div, with Continue link
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4893
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4921
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2006-07-19 16:22:03 UTC (rev 186)
++++ trunk/root/base/forum/view	2006-08-16 13:40:19 UTC (rev 187)
+@@ -1,10 +1,23 @@
+ <h1>[% current_forum.name %] : List Of Active Threads</h1>
+ 
+-<p>
++<p style="font-size: small;">
+ <a href="thread/add?forum=[% current_forum.id %]">[Start A New Topic]</a>
++
++<a onclick="new Effect.Appear('searchbox', { duration:0.2 }); $('username').focus(); return false;" href="forum/search">[Search]</a>
+ </p>
++<!-- we have to put the div outside the table, otherwise we get trapped inside it! -->
++<div id="searchbox" style="display: none">
++    <form action="user/login" method="post" name="search_form" class="searchbox">
++        <fieldset>
++            <label for="search"><b>Find:</b></label>
++            <input type="text" id="search" name="search" class="input_text" />
++            <button type="submit" value="search" class="input_button" />search</button>
++        </fieldset>
++    </form>
++</div>
++<!-- status bar : end -->
+ 
+-[% IF thread_list.count > 0 %]
++[%- IF thread_list.count > 0 %]
+ <table>
+   <tr>
+     <th>&nbsp;</th>
+@@ -13,21 +26,30 @@
+     <th>Replies</th>
+     <th>Views</th>
+   </tr>
+-  [% WHILE (thread = thread_list.next) %]
++  [%- WHILE (thread = thread_list.next) %]
+   <tr>
+     <td width="36">
+     <!-- interesting things about the thread; sticky, locked, etc -->
+-    [% IF thread.sticky %]
++    [%- IF thread.sticky %]
+     <img src="static/images/sticky.png" alt="Sticky" title="Sticky Topic" width="16" height="16" />
+-    [% END %]
+-    [% IF thread.locked %]
++    [%- END %]
++    [%- IF thread.locked %]
+     <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
+-    [% END %]
++    [%- END %]
+     </td>
+ 
+     <td>
+     <a href="thread/view?thread=[% thread.id %]" class="topic_link">[% ForumCode.escape(thread.subject) %]</a>
+     <br />
++    <span class="forum_mini_pager">
++        [%- IF authed_user || mini_pager %]
++        [
++            [%- IF authed_user %]
++            <a href="thread/next_post?thread=[% thread.id %]">Continue</a>
++            [%- END %]
++        ]
++        [%- END %]
++    </span>
+     <span class="topic_creator">created by
+         <span class="post_creator">[% thread.creator.forum_name %]</span>
+     </span>
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:40:27 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:40:27 +0200
+Subject: [Parley-svn] r188 - / trunk/root/base
+Message-ID: <200608161340.k7GDeQMd014594@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:40:23 +0200 (Wed, 16 Aug 2006)
+New Revision: 188
+
+Modified:
+   /
+   trunk/root/base/header
+Log:
+ r4922 at ferrari:  chisel | 2006-07-19 18:52:40 +0100
+ + include dojo magic
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4921
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4922
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2006-08-16 13:40:19 UTC (rev 187)
++++ trunk/root/base/header	2006-08-16 13:40:23 UTC (rev 188)
+@@ -35,6 +35,14 @@
+         <script type="text/javascript" src="controls.js"></script>
+         <script type="text/javascript" src="effects.js"></script>
+         <script type="text/javascript" src="dragdrop.js"></script>
++
++        <!-- Dojo Magic -->
++        <script type="text/javascript" src="static/magic/dojo.js"></script>
++        <script type="text/javascript">
++            dojo.require("dojo.lfx.*");         // animations and eye candy
++            dojo.require("dojo.widget.Dialog");
++            dojo.require("dojo.widget.Button");
++        </script>
+ 	</head>
+ 
+ 	<div id="top">
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:40:31 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:40:31 +0200
+Subject: [Parley-svn] r189 - / trunk/root/base/thread
+Message-ID: <200608161340.k7GDeVr9014711@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:40:30 +0200 (Wed, 16 Aug 2006)
+New Revision: 189
+
+Modified:
+   /
+   trunk/root/base/thread/view
+Log:
+ r4923 at ferrari:  chisel | 2006-07-19 18:53:58 +0100
+ + add thread watch section
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4922
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4923
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2006-08-16 13:40:23 UTC (rev 188)
++++ trunk/root/base/thread/view	2006-08-16 13:40:30 UTC (rev 189)
+@@ -12,6 +12,27 @@
+     </tr>
+ </table>
+ 
++[%- IF authed_user %]
++<table>
++    <tr>
++        <td class="right_align">
++            <small>
++                <strong>[% watcher_count %] [% IF watcher_count == 1 %]person[% ELSE %]people[% END %] watching this thread.</strong>
++
++                [%- IF watching_thread %]
++                    You are watching this thread.
++                    (
++                    <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]&watch=0">Remove Watch</a>
++                    )
++                [%- ELSE %]
++                    <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]">Watch this thread</a>
++                [%- END%]
++            </small>
++        </td>
++    </tr>
++</table>
++[%- END %]
++
+ [% SET dummy_value = post_list.reset %]
+ [% IF post_list.count > 0 %]
+     [% IF current_thread.locked %]
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:40:34 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:40:34 +0200
+Subject: [Parley-svn] r190 - / trunk/root/css
+Message-ID: <200608161340.k7GDeYbR014808@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:40:34 +0200 (Wed, 16 Aug 2006)
+New Revision: 190
+
+Modified:
+   /
+   trunk/root/css/default.css
+Log:
+ r4924 at ferrari:  chisel | 2006-07-19 18:56:11 +0100
+ + added: .forum_mini_pager
+ / modified #loginbox to work with dojo
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4923
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4924
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-08-16 13:40:30 UTC (rev 189)
++++ trunk/root/css/default.css	2006-08-16 13:40:34 UTC (rev 190)
+@@ -18,7 +18,6 @@
+     margin:     0px 0px 0px 0px;
+     padding:    10px;
+     height:     70px; 
+-	height:     70px; 
+ }
+ #left {
+     background: transparent;
+@@ -287,8 +286,15 @@
+ .topic_creator {
+     display:        block;
+     font-size:      0.8em;
+-    text-align:     right;
++    /*text-align:     right;*/
++    float: right;
+ }
++.forum_mini_pager {
++    display:        block;
++    font-size:      0.8em;
++    /*text-align:     right;*/
++    float: left;
++}
+ .topic_last_post {
+     font-size:      0.8em;
+ }
+@@ -431,7 +437,7 @@
+ }
+ 
+ 
+-#loginbox {
++#Xloginbox {
+     border: 1px solid #ccc;
+     width: 250px;
+     float: right;
+@@ -442,6 +448,20 @@
+     font-size:      0.8em;
+ }
+ 
++#loginbox {
++    position : absolute;
++    left : 200px;
++    top : 100px;
++    display : none;
++
++    border: 1px solid #000;
++    width: 250px;
++    font-size:      0.8em;
++    background-color: #f8f8f8;
++    background-color: #ccc;
++    padding: 5px;
++}
++
+ #searchbox {
+     border: 1px solid #ccc;
+     /*width: 400px;*/
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:40:40 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:40:40 +0200
+Subject: [Parley-svn] r191 - / trunk/t
+Message-ID: <200608161340.k7GDee8T014929@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:40:38 +0200 (Wed, 16 Aug 2006)
+New Revision: 191
+
+Modified:
+   /
+   trunk/t/model_Parley-Post.t
+Log:
+ r4925 at ferrari:  chisel | 2006-07-19 18:57:11 +0100
+ + added can_ok() tests
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4924
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4925
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/t/model_Parley-Post.t
+===================================================================
+--- trunk/t/model_Parley-Post.t	2006-08-16 13:40:34 UTC (rev 190)
++++ trunk/t/model_Parley-Post.t	2006-08-16 13:40:38 UTC (rev 191)
+@@ -1,4 +1,4 @@
+-use Test::More tests => 4;
++use Test::More tests => 5;
+ 
+ BEGIN {
+     # use modules
+@@ -20,6 +20,17 @@
+     Parley->model('ParleyDB')->table('post')->storage->txn_rollback;
+ }
+ 
++can_ok($post_table, qw
++    [
++        thread_post_count
++        thread_position
++        page_containing_post
++        last_post_in_list
++        next_post
++    ]
++);
++
++
+ my $pg_time = q{1974-10-02 09:17:52.855649000+01};
+ 
+ # create a new thread to add post(s) to
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:40:45 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:40:45 +0200
+Subject: [Parley-svn] r192 - / trunk/root/base/menu
+Message-ID: <200608161340.k7GDejt3015039@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:40:44 +0200 (Wed, 16 Aug 2006)
+New Revision: 192
+
+Modified:
+   /
+   trunk/root/base/menu/statusbar
+Log:
+ r4926 at ferrari:  chisel | 2006-07-19 18:59:07 +0100
+ / switch from Prototype to Dojo loginbox
+ + dojo dialog experimentation
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4925
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4926
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-08-16 13:40:38 UTC (rev 191)
++++ trunk/root/base/menu/statusbar	2006-08-16 13:40:44 UTC (rev 192)
+@@ -1,4 +1,20 @@
+ <!-- status bar : start -->
++
++<style type="text/css">
++</style>
++
++<script type="text/javascript">
++	function showLoginBox(start){
++        var popUp = dojo.lfx.explode(start, 'loginbox', 250, function(n) {
++            /* there's a timing issue here I think as the focus() only works if we have an alert() before it */
++            var something = dojo.byId('username');
++            something.focus();
++        });
++        popUp.play();
++	}
++</script>
++
++
+ <table width="100%">
+         <tr>
+                 <td width="60%" class="left">
+@@ -24,11 +40,33 @@
+                         ]</i>
+                         [% ELSE %]
+             <i>[
+-            <a onclick="new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;" href="user/login">Login</a>
++
++            <!-- loginbox -->
++            <div id="loginbox">
++                <form action="user/login" method="post" name="login_form" class="loginbox">
++                    <fieldset>
++                        <label for="username"><b>Username:</b></label>
++                        <input type="text" id="username" name="username" style="width: 15em;" class="input_text" />
++                        <br />
++                        <label for="password"><b>Password:</b></label>
++                        <input type="password" id="password" name="password" style="width: 15em;" class="input_text" />
++                        <br />
++                        <button type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>log in</button>
++
++                        <p>
++                        <a href="user/password/forgotten">Forgotten Password</a>
++                        </p>
++                    </fieldset>
++                </form>
++            </div>
++            <a href="javascript:;" onclick="showLoginBox(this)">Login</a>
++            <!-- loginbox -->
+             |
+             <a href="user/signup">Signup</a>
+             ]</i>
+                         [% END %] [%# authed_user end %]
++
++
+                 </td>
+ 
+                 <td>
+@@ -36,22 +74,22 @@
+         </tr>
+ </table>
+ 
+-<!-- we have to put the div outside the table, otherwise we get trapped inside it! -->
+-<div id="loginbox" style="display: none">
+-    <form action="user/login" method="post" name="login_form" class="loginbox">
+-        <fieldset>
+-            <label for="username"><b>Username:</b></label>
+-            <input type="text" id="username" name="username" style="width: 15em;" class="input_text" />
+-            <br />
+-            <label for="password"><b>Password:</b></label>
+-            <input type="password" id="password" name="password" style="width: 15em;" class="input_text" />
+-            <br />
+-            <button type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>log in</button>
++<!-- status bar : end -->
+ 
+-            <p>
+-            <a href="user/password/forgotten">Forgotten Password</a>
+-            </p>
+-        </fieldset>
+-    </form>
++<!--
++<script type="text/javascript">
++var dlg0, dlg1, dlg2, dlg3;
++function init(e) {
++	dlg1 = dojo.widget.byId("dialog1");
++	var timer = document.getElementById("timer1");
++	dlg1.setTimerNode(timer);
++	var btn = document.getElementById("hider1");
++	dlg1.setCloseControl(btn);
++}
++dojo.addOnLoad(init);
++</script>
++
++<div dojoType="dialog" id="dialog1" bgColor="red" bgOpacity="0.1" toggle="fade" toggleDuration="250" lifetime="5000">
++	Disappearing in <span id="timer1">3</span>... <a id="hider1" href="#">[X]</a>
+ </div>
+-<!-- status bar : end -->
++-->
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:40:59 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:40:59 +0200
+Subject: [Parley-svn] r193 - / trunk
+Message-ID: <200608161340.k7GDex0f015202@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:40:49 +0200 (Wed, 16 Aug 2006)
+New Revision: 193
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r4927 at ferrari:  chisel | 2006-07-19 19:00:59 +0100
+ / update DBIx::Class dependency (find_or_create() problem just vanished after upgrading)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4926
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4927
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2006-08-16 13:40:44 UTC (rev 192)
++++ trunk/Makefile.PL	2006-08-16 13:40:49 UTC (rev 193)
+@@ -26,7 +26,7 @@
+     'Catalyst::View::TT'                            => '0.22',
+     'Data::SpreadPagination'                        => 0,
+     'DBD::Pg'                                       => '1.47',
+-    'DBIx::Class'                                   => '0.06000',
++    'DBIx::Class'                                   => '0.06999',
+     'DBIx::Class::Loader'                           => '0.21',
+     'Data::FormValidator'                           => '4.14',
+     'DateTime::Format::Pg'                          => '0.11',
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:06 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:06 +0200
+Subject: [Parley-svn] r194 - / trunk
+Message-ID: <200608161341.k7GDf6Ao015337@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:05 +0200 (Wed, 16 Aug 2006)
+New Revision: 194
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r4928 at ferrari:  chisel | 2006-07-19 19:01:24 +0100
+ updating Changes file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4927
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4928
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-08-16 13:40:49 UTC (rev 193)
++++ trunk/Changes	2006-08-16 13:41:05 UTC (rev 194)
+@@ -1,5 +1,11 @@
+ This file documents the revision history for Parley.
+ 
++    - thread/add: start work on new message notification
++    - thread/watch: set/remove a watch on a thread (in preparation for
++      notification emails)
++    - thread/next_post: continue reading a thread from where you last saw it
++    - thread/view: if logged in keep track of thread viewing progress
++    - started moving from Prototype to Dojo
+     - added thread_post_count(), thread_position() and page_containing_post()
+       to Post model class
+     - added /post/view action, used to redirect to a thread page containing the
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:10 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:10 +0200
+Subject: [Parley-svn] r195 - /
+Message-ID: <200608161341.k7GDfAXx015447@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:10 +0200 (Wed, 16 Aug 2006)
+New Revision: 195
+
+Added:
+   branches/
+Modified:
+   /
+Log:
+ r5110 at ferrari:  chisel | 2006-08-10 09:01:34 +0100
+ + new directory for branched development
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4928
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5110
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:15 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:15 +0200
+Subject: [Parley-svn] r196 - / branches
+Message-ID: <200608161341.k7GDfF5q015563@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:13 +0200 (Wed, 16 Aug 2006)
+New Revision: 196
+
+Added:
+   branches/schema_based/
+Modified:
+   /
+Log:
+ r5111 at ferrari:  chisel | 2006-08-10 09:04:22 +0100
+ Directory for svk import.
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5110
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5111
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:20 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:20 +0200
+Subject: [Parley-svn] r197 - / branches/schema_based
+	branches/schema_based/lib branches/schema_based/lib/Parley
+	branches/schema_based/lib/Parley/Controller
+	branches/schema_based/root branches/schema_based/root/static
+	branches/schema_based/root/static/images
+	branches/schema_based/script branches/schema_based/t
+Message-ID: <200608161341.k7GDfKOM015663@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:19 +0200 (Wed, 16 Aug 2006)
+New Revision: 197
+
+Added:
+   branches/schema_based/Changes
+   branches/schema_based/Makefile.PL
+   branches/schema_based/README
+   branches/schema_based/lib/
+   branches/schema_based/lib/Parley.pm
+   branches/schema_based/lib/Parley/
+   branches/schema_based/lib/Parley/Controller/
+   branches/schema_based/lib/Parley/Controller/Root.pm
+   branches/schema_based/lib/Parley/Model/
+   branches/schema_based/lib/Parley/View/
+   branches/schema_based/parley.yml
+   branches/schema_based/root/
+   branches/schema_based/root/favicon.ico
+   branches/schema_based/root/static/
+   branches/schema_based/root/static/images/
+   branches/schema_based/root/static/images/btn_120x50_built.png
+   branches/schema_based/root/static/images/btn_120x50_built_shadow.png
+   branches/schema_based/root/static/images/btn_120x50_powered.png
+   branches/schema_based/root/static/images/btn_120x50_powered_shadow.png
+   branches/schema_based/root/static/images/btn_88x31_built.png
+   branches/schema_based/root/static/images/btn_88x31_built_shadow.png
+   branches/schema_based/root/static/images/btn_88x31_powered.png
+   branches/schema_based/root/static/images/btn_88x31_powered_shadow.png
+   branches/schema_based/root/static/images/catalyst_logo.png
+   branches/schema_based/script/
+   branches/schema_based/script/parley_cgi.pl
+   branches/schema_based/script/parley_create.pl
+   branches/schema_based/script/parley_fastcgi.pl
+   branches/schema_based/script/parley_server.pl
+   branches/schema_based/script/parley_test.pl
+   branches/schema_based/t/
+   branches/schema_based/t/01app.t
+   branches/schema_based/t/02pod.t
+   branches/schema_based/t/03podcoverage.t
+Modified:
+   /
+Log:
+ r5112 at ferrari:  chisel | 2006-08-10 09:04:53 +0100
+ + run: catalyst.pl Parley
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5111
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5112
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/Changes
+===================================================================
+--- branches/schema_based/Changes	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/Changes	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,4 @@
++This file documents the revision history for Perl extension Parley.
++
++0.01  2006-08-10 09:03:12
++        - initial revision, generated by Catalyst
+
+Added: branches/schema_based/Makefile.PL
+===================================================================
+--- branches/schema_based/Makefile.PL	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/Makefile.PL	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,16 @@
++use inc::Module::Install;
++
++name 'Parley';
++all_from 'lib/Parley.pm';
++
++requires 'Catalyst' => '5.7001';
++requires 'Catalyst::Plugin::ConfigLoader';
++requires 'Catalyst::Plugin::Static::Simple';
++requires 'Catalyst::Action::RenderView';
++requires 'YAML'; # This should reflect the config file format you've chosen
++                 # See Catalyst::Plugin::ConfigLoader for supported formats
++catalyst;
++
++install_script glob('script/*.pl');
++auto_install;
++WriteAll;
+
+Added: branches/schema_based/README
+===================================================================
+--- branches/schema_based/README	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/README	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1 @@
++Run script/parley_server.pl to test the application.
+
+Added: branches/schema_based/lib/Parley/Controller/Root.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,55 @@
++package Parley::Controller::Root;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++#
++# Sets the actions in this controller to be registered with no prefix
++# so they function identically to actions created in MyApp.pm
++#
++__PACKAGE__->config->{namespace} = '';
++
++=head1 NAME
++
++Parley::Controller::Root - Root Controller for Parley
++
++=head1 DESCRIPTION
++
++[enter your description here]
++
++=head1 METHODS
++
++=cut
++
++=head2 default
++
++=cut
++
++sub default : Private {
++    my ( $self, $c ) = @_;
++
++    # Hello World
++    $c->response->body( $c->welcome_message );
++}
++
++=head2 end
++
++Attempt to render a view, if needed.
++
++=cut 
++
++sub end : ActionClass('RenderView') {}
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/lib/Parley.pm	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,62 @@
++package Parley;
++
++use strict;
++use warnings;
++
++use Catalyst::Runtime '5.70';
++
++# Set flags and add plugins for the application
++#
++#         -Debug: activates the debug mode for very useful log messages
++#   ConfigLoader: will load the configuration from a YAML file in the
++#                 application's home directory
++# Static::Simple: will serve static files from the application's root 
++#                 directory
++
++use Catalyst qw/-Debug ConfigLoader Static::Simple/;
++
++our $VERSION = '0.01';
++
++# Configure the application. 
++#
++# Note that settings in Parley.yml (or other external
++# configuration file that you set up manually) take precedence
++# over this when using ConfigLoader. Thus configuration
++# details given here can function as a default configuration,
++# with a external configuration file acting as an override for
++# local deployment.
++
++__PACKAGE__->config( name => 'Parley' );
++
++# Start the application
++__PACKAGE__->setup;
++
++
++=head1 NAME
++
++Parley - Catalyst based application
++
++=head1 SYNOPSIS
++
++    script/parley_server.pl
++
++=head1 DESCRIPTION
++
++[enter your description here]
++
++=head1 SEE ALSO
++
++L<Parley::Controller::Root>, L<Catalyst>
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/parley.yml
+===================================================================
+--- branches/schema_based/parley.yml	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/parley.yml	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,2 @@
++---
++name: Parley
+
+Added: branches/schema_based/root/favicon.ico
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/favicon.ico
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: branches/schema_based/root/static/images/btn_120x50_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_120x50_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/btn_120x50_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_120x50_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/btn_120x50_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_120x50_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/btn_120x50_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_120x50_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/btn_88x31_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_88x31_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/btn_88x31_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_88x31_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/btn_88x31_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_88x31_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/btn_88x31_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/btn_88x31_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/root/static/images/catalyst_logo.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: branches/schema_based/root/static/images/catalyst_logo.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: branches/schema_based/script/parley_cgi.pl
+===================================================================
+--- branches/schema_based/script/parley_cgi.pl	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/script/parley_cgi.pl	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,37 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'CGI' }
++
++use strict;
++use warnings;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++use Parley;
++
++Parley->run;
++
++1;
++
++=head1 NAME
++
++parley_cgi.pl - Catalyst CGI
++
++=head1 SYNOPSIS
++
++See L<Catalyst::Manual>
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as a cgi script.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++
++=head1 COPYRIGHT
++
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: branches/schema_based/script/parley_cgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: branches/schema_based/script/parley_create.pl
+===================================================================
+--- branches/schema_based/script/parley_create.pl	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/script/parley_create.pl	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,74 @@
++#!/usr/bin/perl -w
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use Catalyst::Helper;
++
++my $force = 0;
++my $mech  = 0;
++my $help  = 0;
++
++GetOptions(
++    'nonew|force'    => \$force,
++    'mech|mechanize' => \$mech,
++    'help|?'         => \$help
++ );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++my $helper = Catalyst::Helper->new( { '.newfiles' => !$force, mech => $mech } );
++
++pod2usage(1) unless $helper->mk_component( 'Parley', @ARGV );
++
++1;
++
++=head1 NAME
++
++parley_create.pl - Create a new Catalyst Component
++
++=head1 SYNOPSIS
++
++parley_create.pl [options] model|view|controller name [helper] [options]
++
++ Options:
++   -force        don't create a .new file where a file to be created exists
++   -mechanize    use Test::WWW::Mechanize::Catalyst for tests if available
++   -help         display this help and exits
++
++ Examples:
++   parley_create.pl controller My::Controller
++   parley_create.pl -mechanize controller My::Controller
++   parley_create.pl view My::View
++   parley_create.pl view MyView TT
++   parley_create.pl view TT TT
++   parley_create.pl model My::Model
++   parley_create.pl model SomeDB DBIC::Schema MyApp::Schema create=dynamic\
++   dbi:SQLite:/tmp/my.db
++   parley_create.pl model AnotherDB DBIC::Schema MyApp::Schema create=static\
++   dbi:Pg:dbname=foo root 4321
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Create a new Catalyst Component.
++
++Existing component files are not overwritten.  If any of the component files
++to be created already exist the file will be written with a '.new' suffix.
++This behavior can be suppressed with the C<-force> option.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: branches/schema_based/script/parley_create.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: branches/schema_based/script/parley_fastcgi.pl
+===================================================================
+--- branches/schema_based/script/parley_fastcgi.pl	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/script/parley_fastcgi.pl	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,76 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'FastCGI' }
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++use Parley;
++
++my $help = 0;
++my ( $listen, $nproc, $pidfile, $manager, $detach );
++ 
++GetOptions(
++    'help|?'      => \$help,
++    'listen|l=s'  => \$listen,
++    'nproc|n=i'   => \$nproc,
++    'pidfile|p=s' => \$pidfile,
++    'manager|M=s' => \$manager,
++    'daemon|d'    => \$detach,
++);
++
++pod2usage(1) if $help;
++
++Parley->run( 
++    $listen, 
++    {   nproc   => $nproc,
++        pidfile => $pidfile, 
++        manager => $manager,
++        detach  => $detach,
++    }
++);
++
++1;
++
++=head1 NAME
++
++parley_fastcgi.pl - Catalyst FastCGI
++
++=head1 SYNOPSIS
++
++parley_fastcgi.pl [options]
++ 
++ Options:
++   -? -help      display this help and exits
++   -l -listen    Socket path to listen on
++                 (defaults to standard input)
++                 can be HOST:PORT, :PORT or a
++                 filesystem path
++   -n -nproc     specify number of processes to keep
++                 to serve requests (defaults to 1,
++                 requires -listen)
++   -p -pidfile   specify filename for pid file
++                 (requires -listen)
++   -d -daemon    daemonize (requires -listen)
++   -M -manager   specify alternate process manager
++                 (FCGI::ProcManager sub-class)
++                 or empty string to disable
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as fastcgi.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: branches/schema_based/script/parley_fastcgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: branches/schema_based/script/parley_server.pl
+===================================================================
+--- branches/schema_based/script/parley_server.pl	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/script/parley_server.pl	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,110 @@
++#!/usr/bin/perl -w
++
++BEGIN { 
++    $ENV{CATALYST_ENGINE} ||= 'HTTP';
++    $ENV{CATALYST_SCRIPT_GEN} = 28;
++}  
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++
++my $debug             = 0;
++my $fork              = 0;
++my $help              = 0;
++my $host              = undef;
++my $port              = 3000;
++my $keepalive         = 0;
++my $restart           = 0;
++my $restart_delay     = 1;
++my $restart_regex     = '\.yml$|\.yaml$|\.pm$';
++my $restart_directory = undef;
++
++my @argv = @ARGV;
++
++GetOptions(
++    'debug|d'             => \$debug,
++    'fork'                => \$fork,
++    'help|?'              => \$help,
++    'host=s'              => \$host,
++    'port=s'              => \$port,
++    'keepalive|k'         => \$keepalive,
++    'restart|r'           => \$restart,
++    'restartdelay|rd=s'   => \$restart_delay,
++    'restartregex|rr=s'   => \$restart_regex,
++    'restartdirectory=s'  => \$restart_directory,
++);
++
++pod2usage(1) if $help;
++
++if ( $restart ) {
++    $ENV{CATALYST_ENGINE} = 'HTTP::Restarter';
++}
++if ( $debug ) {
++    $ENV{CATALYST_DEBUG} = 1;
++}
++
++# This is require instead of use so that the above environment
++# variables can be set at runtime.
++require Parley;
++
++Parley->run( $port, $host, {
++    argv              => \@argv,
++    'fork'            => $fork,
++    keepalive         => $keepalive,
++    restart           => $restart,
++    restart_delay     => $restart_delay,
++    restart_regex     => qr/$restart_regex/,
++    restart_directory => $restart_directory,
++} );
++
++1;
++
++=head1 NAME
++
++parley_server.pl - Catalyst Testserver
++
++=head1 SYNOPSIS
++
++parley_server.pl [options]
++
++ Options:
++   -d -debug          force debug mode
++   -f -fork           handle each request in a new process
++                      (defaults to false)
++   -? -help           display this help and exits
++      -host           host (defaults to all)
++   -p -port           port (defaults to 3000)
++   -k -keepalive      enable keep-alive connections
++   -r -restart        restart when files get modified
++                      (defaults to false)
++   -rd -restartdelay  delay between file checks
++   -rr -restartregex  regex match files that trigger
++                      a restart when modified
++                      (defaults to '\.yml$|\.yaml$|\.pm$')
++   -restartdirectory  the directory to search for
++                      modified files
++                      (defaults to '../')
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst Testserver for this application.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: branches/schema_based/script/parley_server.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: branches/schema_based/script/parley_test.pl
+===================================================================
+--- branches/schema_based/script/parley_test.pl	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/script/parley_test.pl	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,54 @@
++#!/usr/bin/perl -w
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++use Catalyst::Test 'Parley';
++
++my $help = 0;
++
++GetOptions( 'help|?' => \$help );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++print request($ARGV[0])->content . "\n";
++
++1;
++
++=head1 NAME
++
++parley_test.pl - Catalyst Test
++
++=head1 SYNOPSIS
++
++parley_test.pl [options] uri
++
++ Options:
++   -help    display this help and exits
++
++ Examples:
++   parley_test.pl http://localhost/some_action
++   parley_test.pl /some_action
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst action from the command line.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: branches/schema_based/script/parley_test.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: branches/schema_based/t/01app.t
+===================================================================
+--- branches/schema_based/t/01app.t	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/t/01app.t	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,7 @@
++use strict;
++use warnings;
++use Test::More tests => 2;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++
++ok( request('/')->is_success, 'Request should succeed' );
+
+Added: branches/schema_based/t/02pod.t
+===================================================================
+--- branches/schema_based/t/02pod.t	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/t/02pod.t	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval "use Test::Pod 1.14";
++plan skip_all => 'Test::Pod 1.14 required' if $@;
++plan skip_all => 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_files_ok();
+
+Added: branches/schema_based/t/03podcoverage.t
+===================================================================
+--- branches/schema_based/t/03podcoverage.t	2006-08-16 13:41:13 UTC (rev 196)
++++ branches/schema_based/t/03podcoverage.t	2006-08-16 13:41:19 UTC (rev 197)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval "use Test::Pod::Coverage 1.04";
++plan skip_all => 'Test::Pod::Coverage 1.04 required' if $@;
++plan skip_all => 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_coverage_ok();
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:25 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:25 +0200
+Subject: [Parley-svn] r198 - / branches/schema_based branches/schema_based/db
+Message-ID: <200608161341.k7GDfPhW015779@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:23 +0200 (Wed, 16 Aug 2006)
+New Revision: 198
+
+Added:
+   branches/schema_based/db/
+   branches/schema_based/db/parley.psql
+   branches/schema_based/db/patch.skel
+   branches/schema_based/db/patch_0.06_to_0.07.psql
+   branches/schema_based/db/patch_0.07_to_0.08.psql
+   branches/schema_based/db/patch_0.08_to_0.09.psql
+   branches/schema_based/db/patch_0.09_to_0.10.psql
+Modified:
+   /
+Log:
+ r5113 at ferrari:  chisel | 2006-08-10 09:06:17 +0100
+ + copied over db/ from trunk/
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5112
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5113
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/db/parley.psql
+===================================================================
+--- branches/schema_based/db/parley.psql	2006-08-16 13:41:19 UTC (rev 197)
++++ branches/schema_based/db/parley.psql	2006-08-16 13:41:23 UTC (rev 198)
+@@ -0,0 +1,183 @@
++-- Phorum schema
++
++-- to get your user and database:
++--  createuser -A -d parley
++--  createdb -U parley -E UTF8 parley
++--  psql -U parley -d parley -f db/parley.psql
++
++\set QUIET 'on'
++
++-- wrap it all in a transaction
++BEGIN;
++
++-- we have authentication
++CREATE TABLE authentication (
++    authentication_id       SERIAL          not null        primary key,
++    username                text            not null,
++    password                text            not null,
++    authenticated           boolean         NOT NULL        default False,
++
++    UNIQUE (username)
++);
++
++CREATE TABLE preference (
++    preference_id   SERIAL      primary key,
++
++    timezone        text        not null
++            default 'UTC'
++);
++
++CREATE TABLE person (
++    person_id       SERIAL      primary key,
++    
++    first_name      text        not null,
++    last_name       text        not null,
++    email           text        not null,
++    
++    forum_name      text        not null,
++
++    preference      integer
++                    references preference,
++
++    authentication  integer
++                    references authentication,
++
++    UNIQUE(forum_name),
++    UNIQUE(email)
++);
++
++CREATE TABLE registration_authentication (
++    registration_authentication_id  text  primary key,
++    recipient       integer     not null
++                    references person,
++    expires         date
++);
++
++CREATE TABLE forum (
++    forum_id        SERIAL      primary key,
++    name            text        not null,
++    description     text,
++
++    active          boolean     not null    default True,
++
++    post_count      integer     not null    default 0,
++
++    UNIQUE(name)
++);
++
++CREATE TABLE thread (
++    thread_id       SERIAL      primary key,
++    forum           integer     not null
++                    references forum,
++
++    subject         text        not null,
++    
++    created         timestamp with time zone
++                    default CURRENT_TIMESTAMP,
++    creator         integer     not null
++                    references person,
++    post_count      integer     not null    default 0,
++    view_count      integer     not null    default 0,
++
++    active          boolean     not null    default True,
++
++    sticky          boolean     not null    default False,
++    locked          boolean     not null    default False
++);
++
++CREATE TABLE post (
++    post_id         SERIAL      primary key,
++    thread          integer     not null
++                    references thread,
++
++    subject         text,
++    message         text        not null,
++
++    created         timestamp with time zone
++                    default CURRENT_TIMESTAMP,
++    creator         integer     not null
++                    references person
++);
++
++-- add ReplyTo information for post
++ALTER TABLE post ADD COLUMN reply_to
++    integer references post
++;
++-- deal with quoted replies
++ALTER TABLE post
++ADD COLUMN quoted_post
++integer REFERENCES post;
++
++ALTER TABLE post
++ADD COLUMN quoted_text text;
++
++-- add LastPost information
++ALTER TABLE thread ADD COLUMN last_post
++    integer references post
++;
++ALTER TABLE forum ADD COLUMN last_post
++    integer references post
++;
++
++-- person posting information
++ALTER TABLE person ADD COLUMN last_post
++    integer references post
++;
++ALTER TABLE person ADD COLUMN post_count
++    integer NOT NULL default 0
++;
++
++-- post edited time (if any)
++ALTER TABLE post
++    ADD COLUMN
++        edited  timestamp with time zone
++;
++
++
++-- when a user last viewed a thread
++CREATE TABLE thread_view (
++    thread_view_id      SERIAL      not null        primary key,
++    person              integer     not null        references person,
++    thread              integer     not null        references thread,
++    timestamp           timestamp with time zone    not null
++                        default CURRENT_TIMESTAMP,
++
++    watched             boolean     not null        default False,
++    last_notified       timestamp with time zone
++                        default NULL,
++
++    unique(person, thread)
++);
++
++
++
++--
++-- some default stuff
++--
++
++-- #0 authentication
++INSERT INTO authentication
++(authentication_id, username, password, authenticated)
++VALUES
++(0, 'topdog', md5('k1tt3n'), true);
++
++-- #0 preference
++INSERT INTO preference
++(preference_id, timezone)
++VALUES
++(0, 'UTC');
++
++-- #0 person info
++INSERT INTO person
++(person_id,first_name, last_name, email, forum_name, authentication, preference)
++VALUES
++(0, 'Top','Dog','topdog at herlpacker.co.uk','TopDog', 0, 0);
++
++INSERT INTO forum (forum_id, name, description) VALUES (0, 'Off-Topic', 'General off-topic discussion');
++INSERT INTO forum (name, description) VALUES ('Suggestions', 'Things you think should be added');
++INSERT INTO forum (name, description) VALUES ('Bugs', 'If you find anything broken, report it here');
++
++-- commit our schema
++COMMIT;
++
++-- vim:ft=sql
+
+Added: branches/schema_based/db/patch.skel
+===================================================================
+--- branches/schema_based/db/patch.skel	2006-08-16 13:41:19 UTC (rev 197)
++++ branches/schema_based/db/patch.skel	2006-08-16 13:41:23 UTC (rev 198)
+@@ -0,0 +1,16 @@
++-- Patch:
++--   From: a.bb
++--   To:   x.yy
++--
++-- Description:
++--   [outline the purpose of the patch]
++
++BEGIN;
++
++-- update the schema version stored in the database
++UPDATE _schema_info_ SET version='x.yy';
++
++-- patch starts here --
++-- patch ends   here --
++
++COMMIT;
+
+Added: branches/schema_based/db/patch_0.06_to_0.07.psql
+===================================================================
+--- branches/schema_based/db/patch_0.06_to_0.07.psql	2006-08-16 13:41:19 UTC (rev 197)
++++ branches/schema_based/db/patch_0.06_to_0.07.psql	2006-08-16 13:41:23 UTC (rev 198)
+@@ -0,0 +1,58 @@
++-- Patch:
++--   From: 0.06
++--   To:   0.07
++--
++-- Description:
++--   + add preferences table
++--   + add new preference column to person table as FK to preference
++--   + give user #0 a preference
++
++BEGIN;
++
++-- patch starts here --
++
++CREATE TABLE preference (
++    preference_id   SERIAL      primary key,
++
++    timezone        text        not null
++            default 'UTC'
++);
++ALTER TABLE person ADD COLUMN preference
++    integer references preference
++;
++
++INSERT INTO preference
++(preference_id, timezone)
++VALUES
++(0, 'UTC');
++
++UPDATE person
++SET preference=0
++WHERE person_id=0
++
++
++-- add ReplyTo information for post
++ALTER TABLE post ADD COLUMN reply_to
++    integer references post
++;
++
++-- person posting information
++ALTER TABLE person ADD COLUMN last_post
++    integer references post
++;
++ALTER TABLE person ADD COLUMN post_count
++    integer NOT NULL default 0
++;
++
++-- deal with quoted replies
++ALTER TABLE post
++ADD COLUMN quoted_post
++integer REFERENCES post;
++
++ALTER TABLE post
++ADD COLUMN quoted_text text;
++
++
++-- patch ends here --
++
++COMMIT;
+
+Added: branches/schema_based/db/patch_0.07_to_0.08.psql
+===================================================================
+--- branches/schema_based/db/patch_0.07_to_0.08.psql	2006-08-16 13:41:19 UTC (rev 197)
++++ branches/schema_based/db/patch_0.07_to_0.08.psql	2006-08-16 13:41:23 UTC (rev 198)
+@@ -0,0 +1,21 @@
++-- Patch:
++--   From: 0.07
++--   To:   0.08
++--
++-- Description:
++--   add 'edited' column to post table
++
++BEGIN;
++
++-- patch starts here --
++
++
++ALTER TABLE post
++    ADD COLUMN
++        edited  timestamp with time zone
++;
++
++
++-- patch ends here --
++
++COMMIT;
+
+Added: branches/schema_based/db/patch_0.08_to_0.09.psql
+===================================================================
+--- branches/schema_based/db/patch_0.08_to_0.09.psql	2006-08-16 13:41:19 UTC (rev 197)
++++ branches/schema_based/db/patch_0.08_to_0.09.psql	2006-08-16 13:41:23 UTC (rev 198)
+@@ -0,0 +1,32 @@
++-- Patch:
++--   From: 0.08
++--   To:   0.09
++--
++-- Description:
++--   new table for password_reset requests
++
++BEGIN;
++
++-- patch starts here --
++
++-- new table used during forgotten password process
++CREATE TABLE password_reset (
++    password_reset_id       text        primary key,
++    recipient               integer     not null
++                            references person,
++    expires                 timestamp
++);
++
++-- email address should be unique
++-- you may run into trouble here if you've got non-unique values here already
++-- SORRY!
++
++-- a nasty, evil option would be:
++--  update person set email = forum_name || '-' || email where person_id > 0;
++ALTER TABLE person
++  ADD UNIQUE(email)
++;
++
++-- patch ends here --
++
++COMMIT;
+
+Added: branches/schema_based/db/patch_0.09_to_0.10.psql
+===================================================================
+--- branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:41:19 UTC (rev 197)
++++ branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:41:23 UTC (rev 198)
+@@ -0,0 +1,47 @@
++-- Patch:
++--   From: 0.09
++--   To:   0.10
++--
++-- Description:
++--  new table for tracking when a viewer has last viewed a thread
++
++BEGIN;
++
++-- patch starts here --
++
++CREATE TABLE thread_view (
++    thread_view_id      SERIAL      not null        primary key,
++    person              integer     not null        references person,
++    thread              integer     not null        references thread,
++    timestamp           timestamp with time zone    not null
++                        default CURRENT_TIMESTAMP,
++
++    watched             boolean     not null        default False,
++    last_notified       timestamp with time zone
++                        default NULL,
++
++    unique(person, thread)
++);
++
++
++-- overall it's better to queue outgoing emails, and have a separate process
++-- deal with them
++CREATE TABLE email_queue (
++    email_queue_id      SERIAL      not null        primary key,
++    queued              timestamp with time zone    not null
++                        default CURRENT_TIMESTAMP,
++
++    recipient           integer     not null        references person,
++
++    subject             text        not null,
++    text_content        text        not null,
++    html_content        text,
++
++    -- delivery statuses
++    attempted_delivery  boolean     not null        default False
++
++);
++
++-- patch ends here --
++
++COMMIT;
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:29 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:29 +0200
+Subject: [Parley-svn] r199 - / branches/schema_based
+Message-ID: <200608161341.k7GDfT8m015875@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:28 +0200 (Wed, 16 Aug 2006)
+New Revision: 199
+
+Modified:
+   /
+   branches/schema_based/parley.yml
+Log:
+ r5114 at ferrari:  chisel | 2006-08-10 09:06:38 +0100
+ / copied parley.yml from trunk
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5113
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5114
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/parley.yml
+===================================================================
+--- branches/schema_based/parley.yml	2006-08-16 13:41:23 UTC (rev 198)
++++ branches/schema_based/parley.yml	2006-08-16 13:41:28 UTC (rev 199)
+@@ -1,2 +1,50 @@
+----
+-name: Parley
++--- #YAML:1.0
++# DO NOT USE TABS FOR INDENTATION OR label/value SEPARATION!!!
++name:         Parley
++default_uri:  /forum/list
++posts_per_page: 20
++
++alerts:
++    from_name:      'Parley'
++    from_address:   'parley at localhost'
++
++# comment out any log levels you don't want to see in your logs
++# 'info' and 'debug' are common choices for suppresing in a live environment
++log_levels:
++    - 'info'
++    - 'debug'
++    - 'warn'
++    - 'error'
++    - 'fatal'
++
++#--
++#-- LINES BELOW THIS SHOULDN'T NEED CHANGING
++#--
++
++# the default view to use
++view:         'Parley::View::TT'
++
++# authentiation settings; perldoc Catalyst::Plugin::Authentication::Store::DBIC
++authentication:
++    dbic:
++        user_class:         'Parley::Model::ParleyDB::Authentication'
++        user_field:         'username'
++        password_field:     'password'
++        password_type:      'hashed'
++        password_hash_type: 'MD5'
++
++# session settings; perldoc Catalyst::Plugin::Session::FastMmap
++session:
++    expires:    3600
++    storage:    '/tmp/parley.session'
++
++
++# template toolkit options
++template:
++    EVAL_PERL:      '0'
++    PRE_PROCESS:    'header'
++    POST_PROCESS:   'footer'
++    # comment out the following line to enable Template::Timer output in your
++    # template source
++    CONTEXT:        ''
++
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:39 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:39 +0200
+Subject: [Parley-svn] r200 - / branches/schema_based/lib/Parley/View
+	branches/schema_based/t
+Message-ID: <200608161341.k7GDfdhr016047@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:34 +0200 (Wed, 16 Aug 2006)
+New Revision: 200
+
+Added:
+   branches/schema_based/lib/Parley/View/TT.pm
+   branches/schema_based/t/view_TT.t
+Modified:
+   /
+Log:
+ r5115 at ferrari:  chisel | 2006-08-10 09:10:00 +0100
+ + added TT view
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5114
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5115
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Parley/View/TT.pm
+===================================================================
+--- branches/schema_based/lib/Parley/View/TT.pm	2006-08-16 13:41:28 UTC (rev 199)
++++ branches/schema_based/lib/Parley/View/TT.pm	2006-08-16 13:41:34 UTC (rev 200)
+@@ -0,0 +1,29 @@
++package Parley::View::TT;
++
++use strict;
++use base 'Catalyst::View::TT';
++
++=head1 NAME
++
++Parley::View::TT - Catalyst TT View
++
++=head1 SYNOPSIS
++
++See L<Parley>
++
++=head1 DESCRIPTION
++
++Catalyst TT View.
++
++=head1 AUTHOR
++
++Chisel Wright C<< <chisel at herlpacker.co.uk> >>
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/t/view_TT.t
+===================================================================
+--- branches/schema_based/t/view_TT.t	2006-08-16 13:41:28 UTC (rev 199)
++++ branches/schema_based/t/view_TT.t	2006-08-16 13:41:34 UTC (rev 200)
+@@ -0,0 +1,6 @@
++use strict;
++use warnings;
++use Test::More tests => 1;
++
++BEGIN { use_ok 'Parley::View::TT' }
++
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:41:55 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:41:55 +0200
+Subject: [Parley-svn] r201 - / branches/schema_based/lib/Parley
+	branches/schema_based/lib/Parley/Model
+	branches/schema_based/lib/Parley/Schema branches/schema_based/t
+Message-ID: <200608161341.k7GDft6S016361@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:41:45 +0200 (Wed, 16 Aug 2006)
+New Revision: 201
+
+Added:
+   branches/schema_based/lib/Parley/Model/ParleyDB.pm
+   branches/schema_based/lib/Parley/Schema.pm
+   branches/schema_based/lib/Parley/Schema/
+   branches/schema_based/lib/Parley/Schema/Authentication.pm
+   branches/schema_based/lib/Parley/Schema/EmailQueue.pm
+   branches/schema_based/lib/Parley/Schema/Forum.pm
+   branches/schema_based/lib/Parley/Schema/Person.pm
+   branches/schema_based/lib/Parley/Schema/Post.pm
+   branches/schema_based/lib/Parley/Schema/Preference.pm
+   branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm
+   branches/schema_based/lib/Parley/Schema/Thread.pm
+   branches/schema_based/lib/Parley/Schema/ThreadView.pm
+   branches/schema_based/t/model_ParleyDB.t
+Modified:
+   /
+Log:
+ r5116 at ferrari:  chisel | 2006-08-10 09:13:38 +0100
+ run:  ./script/parley_create.pl model ParleyDB DBIC::Schema Parley::Schema create=static dbi:Pg:dbname=parley parley
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5115
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5116
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Parley/Model/ParleyDB.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Model/ParleyDB.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Model/ParleyDB.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,37 @@
++package Parley::Model::ParleyDB;
++
++use strict;
++use base 'Catalyst::Model::DBIC::Schema';
++
++__PACKAGE__->config(
++    schema_class => 'Parley::Schema',
++    connect_info => [
++        'dbi:Pg:dbname=parley',
++        'parley',
++        
++    ],
++);
++
++=head1 NAME
++
++Parley::Model::ParleyDB - Catalyst DBIC Schema Model
++=head1 SYNOPSIS
++
++See L<Parley>
++
++=head1 DESCRIPTION
++
++L<Catalyst::Model::DBIC::Schema> Model using schema L<Parley::Schema>
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/lib/Parley/Schema/Authentication.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Authentication.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Authentication.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,51 @@
++package Parley::Schema::Authentication;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("authentication");
++__PACKAGE__->add_columns(
++  "authentication_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('authentication_authentication_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++  "password",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "authenticated",
++  {
++    data_type => "boolean",
++    default_value => "false",
++    is_nullable => 0,
++    size => 1,
++  },
++  "username",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++);
++__PACKAGE__->set_primary_key("authentication_id");
++__PACKAGE__->add_unique_constraint("authentication_username_key", ["username"]);
++__PACKAGE__->has_many(
++  "people",
++  "Person",
++  { "foreign.authentication" => "self.authentication_id" },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/EmailQueue.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/EmailQueue.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/EmailQueue.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,62 @@
++package Parley::Schema::EmailQueue;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("email_queue");
++__PACKAGE__->add_columns(
++  "recipient",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "subject",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "html_content",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 1,
++    size => undef,
++  },
++  "email_queue_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('email_queue_email_queue_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++  "attempted_delivery",
++  {
++    data_type => "boolean",
++    default_value => "false",
++    is_nullable => 0,
++    size => 1,
++  },
++  "text_content",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "queued",
++  {
++    data_type => "timestamp with time zone",
++    default_value => "now()",
++    is_nullable => 0,
++    size => 8,
++  },
++);
++__PACKAGE__->set_primary_key("email_queue_id");
++__PACKAGE__->belongs_to("recipient", "Person", { person_id => "recipient" });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Forum.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Forum.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,52 @@
++package Parley::Schema::Forum;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("forum");
++__PACKAGE__->add_columns(
++  "last_post",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "post_count",
++  { data_type => "integer", default_value => 0, is_nullable => 0, size => 4 },
++  "forum_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('forum_forum_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++  "active",
++  {
++    data_type => "boolean",
++    default_value => "true",
++    is_nullable => 0,
++    size => 1,
++  },
++  "name",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "description",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 1,
++    size => undef,
++  },
++);
++__PACKAGE__->set_primary_key("forum_id");
++__PACKAGE__->add_unique_constraint("forum_name_key", ["name"]);
++__PACKAGE__->has_many("threads", "Thread", { "foreign.forum" => "self.forum_id" });
++__PACKAGE__->belongs_to("last_post", "Post", { post_id => "last_post" });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Person.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Person.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Person.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,86 @@
++package Parley::Schema::Person;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("person");
++__PACKAGE__->add_columns(
++  "person_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('person_person_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++  "authentication",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "last_name",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "email",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "forum_name",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "preference",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "last_post",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "post_count",
++  { data_type => "integer", default_value => 0, is_nullable => 0, size => 4 },
++  "first_name",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++);
++__PACKAGE__->set_primary_key("person_id");
++__PACKAGE__->add_unique_constraint("person_forum_name_key", ["forum_name"]);
++__PACKAGE__->add_unique_constraint("person_email_key", ["email"]);
++__PACKAGE__->has_many("threads", "Thread", { "foreign.creator" => "self.person_id" });
++__PACKAGE__->has_many(
++  "email_queues",
++  "EmailQueue",
++  { "foreign.recipient" => "self.person_id" },
++);
++__PACKAGE__->has_many("posts", "Post", { "foreign.creator" => "self.person_id" });
++__PACKAGE__->has_many(
++  "thread_views",
++  "ThreadView",
++  { "foreign.person" => "self.person_id" },
++);
++__PACKAGE__->belongs_to("preference", "Preference", { preference_id => "preference" });
++__PACKAGE__->belongs_to("last_post", "Post", { post_id => "last_post" });
++__PACKAGE__->belongs_to(
++  "authentication",
++  "Authentication",
++  { authentication_id => "authentication" },
++);
++__PACKAGE__->has_many(
++  "registration_authentications",
++  "RegistrationAuthentication",
++  { "foreign.recipient" => "self.person_id" },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Post.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,84 @@
++package Parley::Schema::Post;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("post");
++__PACKAGE__->add_columns(
++  "creator",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "subject",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 1,
++    size => undef,
++  },
++  "quoted_post",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "message",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "quoted_text",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 1,
++    size => undef,
++  },
++  "created",
++  {
++    data_type => "timestamp with time zone",
++    default_value => "now()",
++    is_nullable => 1,
++    size => 8,
++  },
++  "thread",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "reply_to",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "post_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('post_post_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++  "edited",
++  {
++    data_type => "timestamp with time zone",
++    default_value => undef,
++    is_nullable => 1,
++    size => 8,
++  },
++);
++__PACKAGE__->set_primary_key("post_id");
++__PACKAGE__->has_many("threads", "Thread", { "foreign.last_post" => "self.post_id" });
++__PACKAGE__->has_many("forums", "Forum", { "foreign.last_post" => "self.post_id" });
++__PACKAGE__->belongs_to("creator", "Person", { person_id => "creator" });
++__PACKAGE__->belongs_to("reply_to", "Post", { post_id => "reply_to" });
++__PACKAGE__->has_many(
++  "post_reply_toes",
++  "Post",
++  { "foreign.reply_to" => "self.post_id" },
++);
++__PACKAGE__->belongs_to("thread", "Thread", { thread_id => "thread" });
++__PACKAGE__->belongs_to("quoted_post", "Post", { post_id => "quoted_post" });
++__PACKAGE__->has_many(
++  "post_quoted_posts",
++  "Post",
++  { "foreign.quoted_post" => "self.post_id" },
++);
++__PACKAGE__->has_many("people", "Person", { "foreign.last_post" => "self.post_id" });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Preference.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Preference.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Preference.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,36 @@
++package Parley::Schema::Preference;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("preference");
++__PACKAGE__->add_columns(
++  "timezone",
++  {
++    data_type => "text",
++    default_value => "'UTC'::text",
++    is_nullable => 0,
++    size => undef,
++  },
++  "preference_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('preference_preference_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++);
++__PACKAGE__->set_primary_key("preference_id");
++__PACKAGE__->has_many(
++  "people",
++  "Person",
++  { "foreign.preference" => "self.preference_id" },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/RegistrationAuthentication.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,29 @@
++package Parley::Schema::RegistrationAuthentication;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("registration_authentication");
++__PACKAGE__->add_columns(
++  "recipient",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "registration_authentication_id",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "expires",
++  { data_type => "date", default_value => undef, is_nullable => 1, size => 4 },
++);
++__PACKAGE__->set_primary_key("registration_authentication_id");
++__PACKAGE__->belongs_to("recipient", "Person", { person_id => "recipient" });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,78 @@
++package Parley::Schema::Thread;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("thread");
++__PACKAGE__->add_columns(
++  "thread_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('thread_thread_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++  "locked",
++  {
++    data_type => "boolean",
++    default_value => "false",
++    is_nullable => 0,
++    size => 1,
++  },
++  "creator",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "subject",
++  {
++    data_type => "text",
++    default_value => undef,
++    is_nullable => 0,
++    size => undef,
++  },
++  "active",
++  {
++    data_type => "boolean",
++    default_value => "true",
++    is_nullable => 0,
++    size => 1,
++  },
++  "forum",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "created",
++  {
++    data_type => "timestamp with time zone",
++    default_value => "now()",
++    is_nullable => 1,
++    size => 8,
++  },
++  "last_post",
++  { data_type => "integer", default_value => undef, is_nullable => 1, size => 4 },
++  "sticky",
++  {
++    data_type => "boolean",
++    default_value => "false",
++    is_nullable => 0,
++    size => 1,
++  },
++  "post_count",
++  { data_type => "integer", default_value => 0, is_nullable => 0, size => 4 },
++  "view_count",
++  { data_type => "integer", default_value => 0, is_nullable => 0, size => 4 },
++);
++__PACKAGE__->set_primary_key("thread_id");
++__PACKAGE__->belongs_to("creator", "Person", { person_id => "creator" });
++__PACKAGE__->belongs_to("last_post", "Post", { post_id => "last_post" });
++__PACKAGE__->belongs_to("forum", "Forum", { forum_id => "forum" });
++__PACKAGE__->has_many("posts", "Post", { "foreign.thread" => "self.thread_id" });
++__PACKAGE__->has_many(
++  "thread_views",
++  "ThreadView",
++  { "foreign.thread" => "self.thread_id" },
++);
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,52 @@
++package Parley::Schema::ThreadView;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("thread_view");
++__PACKAGE__->add_columns(
++  "watched",
++  {
++    data_type => "boolean",
++    default_value => "false",
++    is_nullable => 0,
++    size => 1,
++  },
++  "thread_view_id",
++  {
++    data_type => "integer",
++    default_value => "nextval('thread_view_thread_view_id_seq'::regclass)",
++    is_nullable => 0,
++    size => 4,
++  },
++  "last_notified",
++  {
++    data_type => "timestamp with time zone",
++    default_value => undef,
++    is_nullable => 1,
++    size => 8,
++  },
++  "thread",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++  "timestamp",
++  {
++    data_type => "timestamp with time zone",
++    default_value => "now()",
++    is_nullable => 0,
++    size => 8,
++  },
++  "person",
++  { data_type => "integer", default_value => undef, is_nullable => 0, size => 4 },
++);
++__PACKAGE__->set_primary_key("thread_view_id");
++__PACKAGE__->add_unique_constraint("thread_view_person_key", ["person", "thread"]);
++__PACKAGE__->belongs_to("thread", "Thread", { thread_id => "thread" });
++__PACKAGE__->belongs_to("person", "Person", { person_id => "person" });
++
++1;
++
+
+Added: branches/schema_based/lib/Parley/Schema.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema.pm	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/lib/Parley/Schema.pm	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,13 @@
++package Parley::Schema;
++
++# Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
++
++use strict;
++use warnings;
++
++use base 'DBIx::Class::Schema';
++
++__PACKAGE__->load_classes;
++
++1;
++
+
+Added: branches/schema_based/t/model_ParleyDB.t
+===================================================================
+--- branches/schema_based/t/model_ParleyDB.t	2006-08-16 13:41:34 UTC (rev 200)
++++ branches/schema_based/t/model_ParleyDB.t	2006-08-16 13:41:45 UTC (rev 201)
+@@ -0,0 +1,6 @@
++use strict;
++use warnings;
++use Test::More tests => 1;
++
++BEGIN { use_ok 'Parley::Model::ParleyDB' }
++
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:27 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:27 +0200
+Subject: [Parley-svn] r203 - / branches/schema_based/lib
+	branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161342.k7GDgR60016919@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:24 +0200 (Wed, 16 Aug 2006)
+New Revision: 203
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+   branches/schema_based/lib/Parley/Controller/Root.pm
+Log:
+ r5118 at ferrari:  chisel | 2006-08-11 08:59:57 +0100
+ + previous check-in contained changes to these two files as well ... I acidentally checked them in at the same time.
+ The two files have basic functionality needed to build the rest of the application from.
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5117
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5118
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Root.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:42:00 UTC (rev 202)
++++ branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:42:24 UTC (rev 203)
+@@ -153,6 +153,7 @@
+ 
+ __END__
+ 
++
+ =pod
+ 
+ =head1 NAME
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-08-16 13:42:00 UTC (rev 202)
++++ branches/schema_based/lib/Parley.pm	2006-08-16 13:42:24 UTC (rev 203)
+@@ -70,6 +70,7 @@
+     }
+ }
+ 
++
+ =head1 NAME
+ 
+ Parley - Catalyst based application
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:31 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:31 +0200
+Subject: [Parley-svn] r204 - / branches/schema_based/lib
+Message-ID: <200608161342.k7GDgVho017030@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:30 +0200 (Wed, 16 Aug 2006)
+New Revision: 204
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+Log:
+ r5119 at ferrari:  chisel | 2006-08-11 09:01:15 +0100
+ / tweak pod section
+ + add: vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5118
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5119
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-08-16 13:42:24 UTC (rev 203)
++++ branches/schema_based/lib/Parley.pm	2006-08-16 13:42:30 UTC (rev 204)
+@@ -70,7 +70,12 @@
+     }
+ }
+ 
++1;
+ 
++__END__
++
++=pod
++
+ =head1 NAME
+ 
+ Parley - Catalyst based application
+@@ -131,4 +136,4 @@
+ 
+ =cut
+ 
+-1;
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:35 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:35 +0200
+Subject: [Parley-svn] r205 - / branches/schema_based/lib/Parley/Controller
+	branches/schema_based/t
+Message-ID: <200608161342.k7GDgZ41017124@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:34 +0200 (Wed, 16 Aug 2006)
+New Revision: 205
+
+Added:
+   branches/schema_based/lib/Parley/Controller/Forum.pm
+   branches/schema_based/t/controller_Forum.t
+Modified:
+   /
+Log:
+ r5120 at ferrari:  chisel | 2006-08-11 09:02:45 +0100
+ + added Forum controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5119
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5120
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Parley/Controller/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:30 UTC (rev 204)
++++ branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:34 UTC (rev 205)
+@@ -0,0 +1,42 @@
++package Parley::Controller::Forum;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++=head1 NAME
++
++Parley::Controller::Forum - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=cut
++
++
++=head2 index 
++
++=cut
++
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c->response->body('Matched Parley::Controller::Forum in Forum.');
++}
++
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/t/controller_Forum.t
+===================================================================
+--- branches/schema_based/t/controller_Forum.t	2006-08-16 13:42:30 UTC (rev 204)
++++ branches/schema_based/t/controller_Forum.t	2006-08-16 13:42:34 UTC (rev 205)
+@@ -0,0 +1,10 @@
++use strict;
++use warnings;
++use Test::More tests => 3;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::Forum' }
++
++ok( request('/forum')->is_success, 'Request should succeed' );
++
++
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:39 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:39 +0200
+Subject: [Parley-svn] r206 - / branches/schema_based
+	branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161342.k7GDgd5P017206@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:38 +0200 (Wed, 16 Aug 2006)
+New Revision: 206
+
+Modified:
+   /
+   branches/schema_based/Changes
+   branches/schema_based/lib/Parley/Controller/Forum.pm
+Log:
+ r5121 at ferrari:  chisel | 2006-08-11 09:06:57 +0100
+ / copy Changes/ from trunk and add new information
+ / tweak generated Forum controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5120
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5121
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/Changes
+===================================================================
+--- branches/schema_based/Changes	2006-08-16 13:42:34 UTC (rev 205)
++++ branches/schema_based/Changes	2006-08-16 13:42:38 UTC (rev 206)
+@@ -1,4 +1,96 @@
+-This file documents the revision history for Perl extension Parley.
++This file documents the revision history for Parley.
+ 
+-0.01  2006-08-10 09:03:12
++    - re-implement, starting from a fresh call to catalyst.pl
++    - use Schema based model
++    - general tidy-up of existing methods
++
++    - thread/add: start work on new message notification
++    - thread/watch: set/remove a watch on a thread (in preparation for
++      notification emails)
++    - thread/next_post: continue reading a thread from where you last saw it
++    - thread/view: if logged in keep track of thread viewing progress
++    - started moving from Prototype to Dojo
++    - added thread_post_count(), thread_position() and page_containing_post()
++      to Post model class
++    - added /post/view action, used to redirect to a thread page containing the
++      specified post
++    - /thread/view now detach()es to /post/view if we have a current_post in
++      the stash
++
++0.09  Thu May 11 17:50:07 BST 2006
++    - make email column unique
++      ** this may cause problems if you already have a large amount of user data **
++    - added lost password functionality in Controller::User::LostPassword
++    - factored signup functionality out into Controller::User::SignUp
++    - start moving towards use of <fieldset> instead of <table> for form layout
++    - use a floating loginbox instead of a separate screen (as inspired by
++      calendarhub.com)
++    - added visual feedback when TZ preference is updated
++    - show time-formatting sample in my/preferences
++    - store the referer when visiting my/preferences making it easier to return
++      to where we were previously
++    - added about/modules, an easier way to obtain version information for
++      loaded modules
++    - modify log-in check in auto() to use Auth::DBIC calling style
++    - use ConfigLoader plugin to load application config
++    - add authed_user() function, and alter instances of
++      $c->session->{authed_user} accordingly
++    - added new function to Parley::App::Helper - application_email_address()
++    - update dependencies/versions in Makefile.PL
++    - added Template::Plugin::ForumCode (not all BBCode functionality is
++      complete yet)
++    - use ForumCode plugin to process various display elements
++    - email from-address for emails is now set in config file
++    - new helper function application_email_address()
++    - small layout fixes
++    - change name of session file
++    - ammend statusbar and post-edit templating to work correctly with new
++      storage location of authed_user object
++
++0.08  Tue Jan 31 08:54:32 GMT 2006
++    - move to using uri_for(...) in redirects
++    - hide per-post actions in a locked thread
++    - allow users to edit their own posts
++    - show if a post has been edited
++    - added paging for long threads (fixed to 10 posts/thread for the moment)
++    - if we have a post when viewing thread, go to last page in thread
++      [ideally we'd like to go to the page containing the post, but we don't
++      know how to work this out yet]
++
++0.07  Thu Jan 26 08:49:19 GMT 2006
++    - added preference table to main schema
++    - added patch file for moving from 0.06 to 0.07 db schema
++    - nicedate() sets timezone to value in user's preference
++    - added my/preferences page, to allow setting of timezone area
++    - fixed behaviour with login_if_required() in auto()
++    - store updated and valid timezone prefs
++    - update schema to include new columns (post.reply_to, person.last_post,
++      person.post_count)
++    - update person.count after a new post or reply
++    - alter thread view layout and include post count for person
++    - store user's last post (not sure why we might want this, it just feels
++      useful)
++    - make "reply to post" button work as expected
++    - allow users to quote a previous reply, and display quoted text with post
++      in thread view
++
++0.06  Sun Jan 22 23:14:31 GMT 2006
++    - added and updated module dependencies in Makefile.PL
++    - added application warning if using known 'bad version' of
++      DBIx::Class::Loader
++    - display thread's first post on reply screen
++    - re-copied end() feom DefaultEnd plugin, and applied local additions
++      This fixed an unexplained bug when logging out
++    - removed / from form actions in login and signup
++    - remove signup table width to avoid IE 100% bug
++    - warn if using buggy DBIx::Class::Loader
++    - fixed authed_user info fetch to use joins
++    - added sticky and locked columns to thread table
++    - order thread list to show sticky threads first
++    - don't show Reply row if a thread is locked
++    
++    There's no interface method for setting a thread sticky/locked yet
++
++
++0.01  Wed Jan  4 09:39:38 2006
+         - initial revision, generated by Catalyst
+
+Modified: branches/schema_based/lib/Parley/Controller/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:34 UTC (rev 205)
++++ branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:38 UTC (rev 206)
+@@ -4,6 +4,18 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c->response->body('Matched Parley::Controller::Forum in Forum.');
++}
++
++1;
++
++__END__
++
++=pod
++
+ =head1 NAME
+ 
+ Parley::Controller::Forum - Catalyst Controller
+@@ -14,23 +26,11 @@
+ 
+ =head1 METHODS
+ 
+-=cut
+-
+-
+ =head2 index 
+ 
+-=cut
+-
+-sub index : Private {
+-    my ( $self, $c ) = @_;
+-
+-    $c->response->body('Matched Parley::Controller::Forum in Forum.');
+-}
+-
+-
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C<< <chisel at herlpacker.co.uk> >>
+ 
+ =head1 LICENSE
+ 
+@@ -39,4 +39,4 @@
+ 
+ =cut
+ 
+-1;
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:43 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:43 +0200
+Subject: [Parley-svn] r207 - / branches/schema_based/lib
+	branches/schema_based/lib/Template
+	branches/schema_based/lib/Template/Plugin
+Message-ID: <200608161342.k7GDgh3v017318@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:42 +0200 (Wed, 16 Aug 2006)
+New Revision: 207
+
+Added:
+   branches/schema_based/lib/Template/
+   branches/schema_based/lib/Template/Plugin/
+   branches/schema_based/lib/Template/Plugin/ForumCode.pm
+Modified:
+   /
+Log:
+ r5122 at ferrari:  chisel | 2006-08-11 09:10:35 +0100
+ + copied Template/ from trunk/lib/
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5121
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5122
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- branches/schema_based/lib/Template/Plugin/ForumCode.pm	2006-08-16 13:42:38 UTC (rev 206)
++++ branches/schema_based/lib/Template/Plugin/ForumCode.pm	2006-08-16 13:42:42 UTC (rev 207)
+@@ -0,0 +1,228 @@
++package Template::Plugin::ForumCode;
++use strict;
++use warnings;
++
++use base qw{ Template::Plugin };
++use base qw{ Template::Plugin::HTML };
++
++our $VERSION = '0.01_01';
++
++sub new {
++    my ($class, $context, @args) = @_;
++
++    my $new_obj = bless {}, $class;
++
++    # simple [x][/x] --> <x></x> tags
++    $new_obj->{simple_tags} = [qw{
++        b
++        u
++        i
++    }];
++    # replacements; e.g. __x__ --> <u>x</u>
++    $new_obj->{replacements} = [
++        {   from => '__',       to => 'u'   },
++        {   from => '\*\*',     to => 'b'   },
++        {   from => '\/\/',     to => 'i'   },
++    ];
++
++    return $new_obj;
++}
++
++sub forumcode {
++    my ($self, $text) = @_;
++
++    # first of all ESCAPE EVERYTHING!
++    $text = Template::Plugin::HTML->escape($text);
++
++    # turn newlines into <br /> tags
++    $self->_preserve_newlines(\$text );
++
++    $self->_simple_tags     ( \$text );
++    $self->_replacements    ( \$text );
++    $self->_colouring       ( \$text );
++    $self->_lists           ( \$text );
++    $self->_url_links       ( \$text );
++    $self->_images          ( \$text );
++    
++    return $text;
++}
++
++sub _preserve_newlines {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{\n}{<br />}xmsg;
++}
++
++sub _simple_tags {
++    my ($self, $textref) = @_;
++
++    # deal with acceptable [x]...[/x] markup
++    foreach my $tag (@{ $self->{simple_tags} }) {
++        # we should be able to combine these two into one
++        $$textref =~ s{\[$tag\]}{<$tag>}g;
++        $$textref =~ s{\[/$tag\]}{</$tag>}g;
++    }
++}
++
++sub _replacements {
++    my ($self, $textref) = @_;
++
++    # now deal with replacements
++    foreach my $tag (@{ $self->{replacements} }) {
++        $$textref =~ s{
++            $tag->{from}
++            (.+?)
++            $tag->{from}
++        }
++        {<$tag->{to}>$1</$tag->{to}>}gx;
++    }
++}
++
++sub _url_links {
++    my ($self, $textref) = @_;
++
++    # deal with links with no text-label
++    $$textref =~ s{\[url\](.+?)\[/url\]}
++        {<a href="$1">$1</a>}xmsg;
++    # deal with links with a text-label
++    $$textref =~ s{
++        \[url           # start of url tag
++        \s+             # need some whitespace
++        name=&quot;     # name="
++        (.+?)           # the name
++        &quot;          # closing "
++        \s*             # optional whitespace
++        \]              # close the opening tag
++        (.+?)           # the url
++        \[/url\]        # close the URL tag
++    }
++    {<a href="$2">$1</a>}xmsg;
++}
++
++sub _images {
++    my ($self, $textref) = @_;
++
++    # deal with image tags
++    $$textref =~ s{
++        \[img
++        (.*?)
++        \]
++        (.+?)
++        \[/img\]
++    }
++    {<img src="$2"$1 />}xmsg;
++}
++
++sub _colouring {
++    my ($self, $textref) = @_;
++
++    # deal with colouring
++    $$textref =~ s{
++        \[color
++        =
++        (
++              red | orange | yellow | green | blue
++            | black | white
++            | \#[0-9a-fA-F]{3}
++            | \#[0-9a-fA-F]{6}
++        )
++        \]
++        (.+?)
++        \[/color\]
++    }
++    {<span style="color: $1">$2</span>}ixmsg;
++}
++
++sub _lists {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{
++        \[list]
++        (.+?)
++        \[/list]
++    }
++    {<li>$1</li>}xmsg;
++}
++
++sub _list_elements {
++    my ($textref);
++}
++
++1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
++
++=pod
++
++=head1 NAME
++
++Template::Plugin::ForumCode - class for "ForumCode" filter
++
++=head1 SYNOPSIS
++
++  # load the TT module
++  [% USE ForumCode %]
++
++  # ForumCodify some text
++  [% ForumCode.forumcode('[b]bold[/u] [u]underlined[/u] [i]italic[/i]') %]
++  [% ForumCode.forumcode('**bold** __underlined__') %]
++
++=head1 DESCRIPTION
++
++This module implements ForumCode, a simple markup language inspired by the
++likes of BBCode.
++
++ForumCode allows end-users (of a web-site) limited access to a set of HTML
++markup through a HTML-esque syntax.
++
++This module works by using L<Template::Plugin::HTML> to escape all HTML
++entities and markup. It then performs a series of transformations to convert
++ForumCode markup into the appropriate HTML markup.
++
++=head1 MARKUP
++
++The ForumCode plugin will perform the following transformations:
++
++=over 4
++
++=item B<[b]>...B<[/b]> or B<**>...B<**>
++
++Make the text between the markers I<bold>.
++
++=item B<[u]>...B<[/u]> or B<__>...B<___>
++
++Make the text between the markers I<underlined>.
++  
++=item B<[i]>...B<[/i]>
++
++Make the text between the markers I<italicised>.
++
++=item B<[url]>...B<[/url]>
++
++Make the text between the markers into a HTML link. If you
++would like to give the link a name, use the following format:
++
++S<[url B<name="...">]...[/url]>
++
++=back
++
++=head1 METHODS
++
++=head2 new
++
++Create a new instance of the plugin for TT usage
++
++=head2 forumcode
++
++The transformation function
++
++=head1 AUTHOR
++
++Chisel Wright C<< <pause at herlpacker.co.uk> >>
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:47 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:47 +0200
+Subject: [Parley-svn] r208 - / branches/schema_based
+Message-ID: <200608161342.k7GDglR6017440@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:47 +0200 (Wed, 16 Aug 2006)
+New Revision: 208
+
+Modified:
+   /
+   branches/schema_based/parley.yml
+Log:
+ r5123 at ferrari:  chisel | 2006-08-11 09:12:31 +0100
+ / after learning about 'View::TT' style labins to configure components, change the 'template' section accordingly. This now applies TT options to View::TT without the need for modifying View/TT.pm first.
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5122
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5123
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/parley.yml
+===================================================================
+--- branches/schema_based/parley.yml	2006-08-16 13:42:42 UTC (rev 207)
++++ branches/schema_based/parley.yml	2006-08-16 13:42:47 UTC (rev 208)
+@@ -40,7 +40,7 @@
+ 
+ 
+ # template toolkit options
+-template:
++View::TT:
+     EVAL_PERL:      '0'
+     PRE_PROCESS:    'header'
+     POST_PROCESS:   'footer'
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:52 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:52 +0200
+Subject: [Parley-svn] r209 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161342.k7GDgqHQ017585@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:51 +0200 (Wed, 16 Aug 2006)
+New Revision: 209
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Forum.pm
+Log:
+ r5124 at ferrari:  chisel | 2006-08-11 09:12:43 +0100
+ + add forum/list action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5123
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5124
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:47 UTC (rev 208)
++++ branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:51 UTC (rev 209)
+@@ -4,10 +4,18 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
+-sub index : Private {
+-    my ( $self, $c ) = @_;
++sub list : Local {
++    my ($self, $c) = @_;
+ 
+-    $c->response->body('Matched Parley::Controller::Forum in Forum.');
++    # get a list of (active) forums
++    $c->stash->{forum_list} = $c->model('ParleyDB')->resultset('Forum')->search(
++        {
++            active => 1,
++        },
++        {
++            'order_by'  => 'forum_id ASC',
++        }
++    );
+ }
+ 
+ 1;
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:42:55 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:42:55 +0200
+Subject: [Parley-svn] r210 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161342.k7GDgtXq017719@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:55 +0200 (Wed, 16 Aug 2006)
+New Revision: 210
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Root.pm
+Log:
+ r5125 at ferrari:  chisel | 2006-08-11 09:17:02 +0100
+ / fix auto-population of _current_*
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5124
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5125
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Root.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:42:51 UTC (rev 209)
++++ branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:42:55 UTC (rev 210)
+@@ -87,7 +87,7 @@
+ 
+         # get the matching thread
+         $c->_current_thread(
+-            $c->model('ParleyDB')->resultset('thread')->find(
++            $c->model('ParleyDB')->resultset('Thread')->find(
+                 thread_id  => $c->request->param('thread'),
+             )
+         );
+@@ -111,7 +111,7 @@
+ 
+         # get the matching forum
+         $c->_current_forum(
+-            $c->model('ParleyDB')->table('forum')->find(
++            $c->model('ParleyDB')->resultset('Forum')->find(
+                 forum_id  => $c->request->param('forum'),
+             )
+         );
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:07 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:07 +0200
+Subject: [Parley-svn] r211 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161343.k7GDh7He017987@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:42:59 +0200 (Wed, 16 Aug 2006)
+New Revision: 211
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Forum.pm
+Log:
+ r5126 at ferrari:  chisel | 2006-08-11 09:17:18 +0100
+ + added forum/view action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5125
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5126
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:55 UTC (rev 210)
++++ branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:42:59 UTC (rev 211)
+@@ -18,6 +18,23 @@
+     );
+ }
+ 
++sub view : Local {
++    my ($self, $c) = @_;
++
++    # get a list of (active) threads in a given forum
++    $c->stash->{thread_list} = $c->model('ParleyDB')->resultset('Thread')->search(
++        {
++            forum       => $c->stash->{current_forum}->id(),
++            active      => 1,
++        },
++        {
++            join        => 'last_post',
++            order_by    => 'sticky DESC, last_post.created DESC',
++        }
++    );
++}
++
++
+ 1;
+ 
+ __END__
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:15 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:15 +0200
+Subject: [Parley-svn] r212 - / branches/schema_based/lib/Parley/Controller
+	branches/schema_based/t
+Message-ID: <200608161343.k7GDhFsw018253@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:43:14 +0200 (Wed, 16 Aug 2006)
+New Revision: 212
+
+Added:
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+   branches/schema_based/t/controller_Thread.t
+Modified:
+   /
+Log:
+ r5127 at ferrari:  chisel | 2006-08-11 09:18:49 +0100
+ + new Thread controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5126
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5127
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:42:59 UTC (rev 211)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:43:14 UTC (rev 212)
+@@ -0,0 +1,42 @@
++package Parley::Controller::Thread;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++=head1 NAME
++
++Parley::Controller::Thread - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=cut
++
++
++=head2 index 
++
++=cut
++
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c->response->body('Matched Parley::Controller::Thread in Thread.');
++}
++
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/t/controller_Thread.t
+===================================================================
+--- branches/schema_based/t/controller_Thread.t	2006-08-16 13:42:59 UTC (rev 211)
++++ branches/schema_based/t/controller_Thread.t	2006-08-16 13:43:14 UTC (rev 212)
+@@ -0,0 +1,10 @@
++use strict;
++use warnings;
++use Test::More tests => 3;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::Thread' }
++
++ok( request('/thread')->is_success, 'Request should succeed' );
++
++
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:28 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:28 +0200
+Subject: [Parley-svn] r213 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161343.k7GDhSJH018507@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:43:27 +0200 (Wed, 16 Aug 2006)
+New Revision: 213
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+Log:
+ r5128 at ferrari:  chisel | 2006-08-11 09:20:18 +0100
+ / Tweaked generated controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5127
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5128
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:43:14 UTC (rev 212)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:43:27 UTC (rev 213)
+@@ -4,6 +4,18 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c->response->body('Matched Parley::Controller::Thread in Thread.');
++}
++
++1;
++
++__END__
++
++=pod
++
+ =head1 NAME
+ 
+ Parley::Controller::Thread - Catalyst Controller
+@@ -14,23 +26,11 @@
+ 
+ =head1 METHODS
+ 
+-=cut
+-
+-
+ =head2 index 
+ 
+-=cut
+-
+-sub index : Private {
+-    my ( $self, $c ) = @_;
+-
+-    $c->response->body('Matched Parley::Controller::Thread in Thread.');
+-}
+-
+-
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C<< <chisel at herlpacker.co.uk> >>
+ 
+ =head1 LICENSE
+ 
+@@ -39,4 +39,4 @@
+ 
+ =cut
+ 
+-1;
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:35 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:35 +0200
+Subject: [Parley-svn] r214 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161343.k7GDhZwX018736@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:43:34 +0200 (Wed, 16 Aug 2006)
+New Revision: 214
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Forum.pm
+Log:
+ r5129 at ferrari:  chisel | 2006-08-11 18:23:32 +0100
+ Switched from "$c->stash->{current_forum}->id()" to "$c->_current_forum->id()"
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5128
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5129
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Forum.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:43:27 UTC (rev 213)
++++ branches/schema_based/lib/Parley/Controller/Forum.pm	2006-08-16 13:43:34 UTC (rev 214)
+@@ -24,7 +24,7 @@
+     # get a list of (active) threads in a given forum
+     $c->stash->{thread_list} = $c->model('ParleyDB')->resultset('Thread')->search(
+         {
+-            forum       => $c->stash->{current_forum}->id(),
++            forum       => $c->_current_forum->id(),
+             active      => 1,
+         },
+         {
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:41 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:41 +0200
+Subject: [Parley-svn] r215 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161343.k7GDhfV3018915@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:43:40 +0200 (Wed, 16 Aug 2006)
+New Revision: 215
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+Log:
+ r5130 at ferrari:  chisel | 2006-08-11 18:24:17 +0100
+ + added thred/view action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5129
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5130
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:43:34 UTC (rev 214)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:43:40 UTC (rev 215)
+@@ -10,6 +10,34 @@
+     $c->response->body('Matched Parley::Controller::Thread in Thread.');
+ }
+ 
++sub view : Local {
++    my ($self, $c) = @_;
++
++    # TODO - configure this somewhere, maybe a user preference
++    my $rows_per_page = $c->config->{posts_per_page};
++
++    # page to show - either a param, or show the first
++    my $page = $c->request->param('page') || 1;
++
++    # if we have a current_post, view the page with the post on it
++    if ($c->_current_post) {
++        $c->detach('/post/view');
++    }
++
++    # get all the posts in the thread
++    $c->stash->{post_list} = $c->model('ParleyDB')->resultset('Post')->search(
++        {
++            thread => $c->_current_thread->id(),
++        },
++        {
++            order_by    => 'created ASC',
++            rows        => $rows_per_page,
++            page        => $page,
++        }
++    );
++
++}
++
+ 1;
+ 
+ __END__
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:46 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:46 +0200
+Subject: [Parley-svn] r216 - / branches/schema_based/lib/Parley/Controller
+	branches/schema_based/t
+Message-ID: <200608161343.k7GDhkK7019054@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:43:45 +0200 (Wed, 16 Aug 2006)
+New Revision: 216
+
+Added:
+   branches/schema_based/lib/Parley/Controller/User.pm
+   branches/schema_based/t/controller_User.t
+Modified:
+   /
+Log:
+ r5131 at ferrari:  chisel | 2006-08-11 18:25:33 +0100
+ added User controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5130
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5131
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Parley/Controller/User.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User.pm	2006-08-16 13:43:40 UTC (rev 215)
++++ branches/schema_based/lib/Parley/Controller/User.pm	2006-08-16 13:43:45 UTC (rev 216)
+@@ -0,0 +1,42 @@
++package Parley::Controller::User;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++=head1 NAME
++
++Parley::Controller::User - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=cut
++
++
++=head2 index 
++
++=cut
++
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c->response->body('Matched Parley::Controller::User in User.');
++}
++
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: branches/schema_based/t/controller_User.t
+===================================================================
+--- branches/schema_based/t/controller_User.t	2006-08-16 13:43:40 UTC (rev 215)
++++ branches/schema_based/t/controller_User.t	2006-08-16 13:43:45 UTC (rev 216)
+@@ -0,0 +1,10 @@
++use strict;
++use warnings;
++use Test::More tests => 3;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::User' }
++
++ok( request('/user')->is_success, 'Request should succeed' );
++
++
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:51 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:51 +0200
+Subject: [Parley-svn] r217 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161343.k7GDhpte019191@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:43:51 +0200 (Wed, 16 Aug 2006)
+New Revision: 217
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/User.pm
+Log:
+ r5132 at ferrari:  chisel | 2006-08-11 18:32:39 +0100
+ / tweaked generated User controller
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5131
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5132
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/User.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User.pm	2006-08-16 13:43:45 UTC (rev 216)
++++ branches/schema_based/lib/Parley/Controller/User.pm	2006-08-16 13:43:51 UTC (rev 217)
+@@ -4,6 +4,10 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++1;
++
++__END__
++
+ =head1 NAME
+ 
+ Parley::Controller::User - Catalyst Controller
+@@ -14,23 +18,9 @@
+ 
+ =head1 METHODS
+ 
+-=cut
+-
+-
+-=head2 index 
+-
+-=cut
+-
+-sub index : Private {
+-    my ( $self, $c ) = @_;
+-
+-    $c->response->body('Matched Parley::Controller::User in User.');
+-}
+-
+-
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C<< <chisel at herlpacker.co.uk> >>
+ 
+ =head1 LICENSE
+ 
+@@ -39,4 +29,4 @@
+ 
+ =cut
+ 
+-1;
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:43:57 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:43:57 +0200
+Subject: [Parley-svn] r218 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200608161343.k7GDhvd3019328@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:43:56 +0200 (Wed, 16 Aug 2006)
+New Revision: 218
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Schema/Post.pm
+   branches/schema_based/lib/Parley/Schema/Thread.pm
+   branches/schema_based/lib/Parley/Schema/ThreadView.pm
+Log:
+ r5139 at ferrari:  chisel | 2006-08-14 18:55:13 +0100
+ / add inflate_column() to classes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5132
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5139
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Schema/Post.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:43:51 UTC (rev 217)
++++ branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:43:56 UTC (rev 218)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use DateTime::Format::Pg;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__->load_components("PK::Auto", "Core");
+@@ -80,5 +82,17 @@
+ );
+ __PACKAGE__->has_many("people", "Person", { "foreign.last_post" => "self.post_id" });
+ 
++
++
++
++foreach my $datecol (qw/created/) {
++    __PACKAGE__->inflate_column($datecol, {
++        inflate => sub { DateTime::Format::Pg->parse_datetime(shift); },
++        deflate => sub { DateTime::Format::Pg->format_datetime(shift); },
++    });
++}
++
++
++
+ 1;
+ 
+
+Modified: branches/schema_based/lib/Parley/Schema/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:43:51 UTC (rev 217)
++++ branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:43:56 UTC (rev 218)
+@@ -74,5 +74,16 @@
+   { "foreign.thread" => "self.thread_id" },
+ );
+ 
++
++
++foreach my $datecol (qw/created/) {
++    __PACKAGE__->inflate_column($datecol, {
++        inflate => sub { DateTime::Format::Pg->parse_datetime(shift); },
++        deflate => sub { DateTime::Format::Pg->format_datetime(shift); },
++    });
++}
++
++
++
+ 1;
+ 
+
+Modified: branches/schema_based/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:43:51 UTC (rev 217)
++++ branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:43:56 UTC (rev 218)
+@@ -48,5 +48,16 @@
+ __PACKAGE__->belongs_to("thread", "Thread", { thread_id => "thread" });
+ __PACKAGE__->belongs_to("person", "Person", { person_id => "person" });
+ 
++
++
++
++foreach my $datecol (qw/timestamp/) {
++    __PACKAGE__->inflate_column($datecol, {
++        inflate => sub { DateTime::Format::Pg->parse_datetime(shift); },
++        deflate => sub { DateTime::Format::Pg->format_datetime(shift); },
++    });
++}
++
++
+ 1;
+ 
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:04 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:04 +0200
+Subject: [Parley-svn] r219 - / branches/schema_based/root/base/menu
+	branches/schema_based/root/base/shared
+	branches/schema_based/root/base/thread
+Message-ID: <200608161344.k7GDi4II019472@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:03 +0200 (Wed, 16 Aug 2006)
+New Revision: 219
+
+Modified:
+   /
+   branches/schema_based/root/base/menu/statusbar
+   branches/schema_based/root/base/shared/useful_tt_stuff
+   branches/schema_based/root/base/thread/view
+Log:
+ r5140 at ferrari:  chisel | 2006-08-14 18:56:11 +0100
+ / tidy up c.authed / authed usage in [% %] tags
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5139
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5140
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/root/base/menu/statusbar
+===================================================================
+--- branches/schema_based/root/base/menu/statusbar	2006-08-16 13:43:56 UTC (rev 218)
++++ branches/schema_based/root/base/menu/statusbar	2006-08-16 13:44:03 UTC (rev 219)
+@@ -14,7 +14,6 @@
+ 	}
+ </script>
+ 
+-
+ <table width="100%">
+         <tr>
+                 <td width="60%" class="left">
+@@ -30,7 +29,7 @@
+                 </td>
+ 
+                 <td width="40%" class="right">
+-                        [% IF (authed_user = c.authed_user) %]
++                        [% IF (authed_user) %]
+                         Logged in as <b>[% authed_user.first_name %] [% authed_user.last_name %]</b>
+                         [% UNLESS authed_user.authentication.authenticated %]
+                         (<b><i>Not Authenticated</i></b>)
+
+Modified: branches/schema_based/root/base/shared/useful_tt_stuff
+===================================================================
+--- branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:43:56 UTC (rev 218)
++++ branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:44:03 UTC (rev 219)
+@@ -5,8 +5,8 @@
+     [%# if a person has preferences, and there's a time_zone option set, use it to
+         set the TZ used to display the time in nicedate
+     %]
+-    [% IF c.authed_user.preference.timezone %]
+-    [% CALL d.set_time_zone(c.authed_user.preference.timezone) %]
++    [% IF authed_user.preference.timezone %]
++    [% CALL d.set_time_zone(authed_user.preference.timezone) %]
+     [% END %]
+ 
+     [% d.strftime('%A %d %B %Y at %R') %]
+
+Modified: branches/schema_based/root/base/thread/view
+===================================================================
+--- branches/schema_based/root/base/thread/view	2006-08-16 13:43:56 UTC (rev 218)
++++ branches/schema_based/root/base/thread/view	2006-08-16 13:44:03 UTC (rev 219)
+@@ -85,7 +85,7 @@
+         [% UNLESS current_thread.locked %]
+         <tr>
+         <td style="text-align: right;">
+-            [% IF c.authed_user.id == post.creator.id %]
++            [% IF authed_user.id == post.creator.id %]
+             <form action="post/edit?post=[% post.id %]" method="POST" name="post_actions" class="inline_form">
+                 <input type="submit" value="Edit" name="edit_post" class="small_input_button" />
+             </form>
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:09 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:09 +0200
+Subject: [Parley-svn] r220 - / branches/schema_based/lib
+Message-ID: <200608161344.k7GDi9sS019613@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:09 +0200 (Wed, 16 Aug 2006)
+New Revision: 220
+
+Modified:
+   /
+   branches/schema_based/lib/Parley.pm
+Log:
+ r5141 at ferrari:  chisel | 2006-08-14 18:56:59 +0100
+ - remove (currently) unneeded plugins
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5140
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5141
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley.pm
+===================================================================
+--- branches/schema_based/lib/Parley.pm	2006-08-16 13:44:03 UTC (rev 219)
++++ branches/schema_based/lib/Parley.pm	2006-08-16 13:44:09 UTC (rev 220)
+@@ -21,10 +21,6 @@
+     Authentication
+     Authentication::Store::DBIC
+     Authentication::Credential::Password
+-
+-    Prototype
+-    FillInForm
+-    DefaultEnd
+ /;
+ 
+ 
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:14 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:14 +0200
+Subject: [Parley-svn] r221 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161344.k7GDiEZX019706@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:13 +0200 (Wed, 16 Aug 2006)
+New Revision: 221
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Root.pm
+Log:
+ r5142 at ferrari:  chisel | 2006-08-14 18:57:42 +0100
+ / fix some stupid/small syntax errors
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5141
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5142
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Root.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:44:09 UTC (rev 220)
++++ branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:44:13 UTC (rev 221)
+@@ -21,11 +21,11 @@
+     ############################################################
+     # if we have a user ... fetch some info (if we don't already have it)
+     ############################################################
+-    if ( $c->user and not defined $c->authed_user ) {
++    if ( $c->user and not defined $c->_authed_user ) {
+         $c->log->info('Fetching user information for ' . $c->user->id);
+ 
+         # get the person info for the username
+-        my $row = $c->model('ParleyDB')->resultset('person')->find(
++        my $row = $c->model('ParleyDB')->resultset('Person')->find(
+             {
+                 'authentication.username'   => $c->user->username(),
+             },
+@@ -88,7 +88,9 @@
+         # get the matching thread
+         $c->_current_thread(
+             $c->model('ParleyDB')->resultset('Thread')->find(
+-                thread_id  => $c->request->param('thread'),
++                {
++                    thread_id  => $c->request->param('thread'),
++                }
+             )
+         );
+ 
+@@ -112,7 +114,9 @@
+         # get the matching forum
+         $c->_current_forum(
+             $c->model('ParleyDB')->resultset('Forum')->find(
+-                forum_id  => $c->request->param('forum'),
++                {
++                    forum_id  => $c->request->param('forum'),
++                }
+             )
+         );
+     }
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:18 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:18 +0200
+Subject: [Parley-svn] r222 - / branches/schema_based/lib/Parley/Controller
+Message-ID: <200608161344.k7GDiIMH019797@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:17 +0200 (Wed, 16 Aug 2006)
+New Revision: 222
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/User.pm
+Log:
+ r5143 at ferrari:  chisel | 2006-08-14 18:58:32 +0100
+ + add /user/login Path action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5142
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5143
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/User.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/User.pm	2006-08-16 13:44:13 UTC (rev 221)
++++ branches/schema_based/lib/Parley/Controller/User.pm	2006-08-16 13:44:17 UTC (rev 222)
+@@ -4,6 +4,64 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++# deal with user login requests on user/login
++sub login : Path('/user/login') {
++    my ( $self, $c ) = @_;
++
++    # default form message
++    $c->stash->{'message'} = 'Please enter your username and password';
++    # if we have a custom message to use ..
++    $c->stash->{'login_message'} = delete( $c->session->{login_message} );
++
++    # if we have a username, try to log the user in
++    if ( $c->request->param('username') ) {
++        # try to log the user in
++        my $login_status = $c->login(
++            $c->request->param('username'),
++            $c->request->param('password'),
++        );
++
++        # if we have a user we're logged in
++        if ( $login_status ) {
++            my $base    = $c->request->base();
++            my $action  = $c->request->action();
++
++            $c->log->debug("base:   $base");
++            $c->log->debug("action: $action");
++
++            # if we've stored somewhere to go after we log-in, got there now
++            if ( $c->session->{after_login} ) {
++                $c->response->redirect( delete $c->session->{after_login} );
++            }
++
++            # (else) if we've just been through Forgotten Password, don't go back there
++            elsif ($c->request->referer() =~ m{user/password/}) {
++                # go to the default app URL
++                $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++            }
++
++            # (else) redirect to where we were referred from, unless our referer is our action
++            elsif ( $c->request->referer() =~ m{\A$base}xms and $c->request->referer() !~ m{$action\z}xms) {
++                # go to where we came from
++                $c->response->redirect( $c->request->referer() );
++            }
++
++            # (else) if all else fails go to the application's default_uri
++            else {
++                $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++            }
++        }
++
++        # otherwise we failed to login, try again!
++        else {
++            $c->stash->{'message'}
++                = 'Unable to authenticate the login details supplied';
++        }
++    }
++}
++
++
++
+ 1;
+ 
+ __END__
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:22 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:22 +0200
+Subject: [Parley-svn] r223 - / branches/schema_based/root/base/shared
+Message-ID: <200608161344.k7GDiMmB019885@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:22 +0200 (Wed, 16 Aug 2006)
+New Revision: 223
+
+Modified:
+   /
+   branches/schema_based/root/base/shared/useful_tt_stuff
+Log:
+ r5144 at ferrari:  chisel | 2006-08-14 19:00:35 +0100
+ + if no timezone preference, use UTC (when displaying times)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5143
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5144
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/root/base/shared/useful_tt_stuff
+===================================================================
+--- branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:44:17 UTC (rev 222)
++++ branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:44:22 UTC (rev 223)
+@@ -7,6 +7,8 @@
+     %]
+     [% IF authed_user.preference.timezone %]
+     [% CALL d.set_time_zone(authed_user.preference.timezone) %]
++    [% ELSE %]
++    [% CALL d.set_time_zone('UTC') %]
+     [% END %]
+ 
+     [% d.strftime('%A %d %B %Y at %R') %]
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:29 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:29 +0200
+Subject: [Parley-svn] r224 - / branches/schema_based/db
+Message-ID: <200608161344.k7GDiTIQ020021@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:27 +0200 (Wed, 16 Aug 2006)
+New Revision: 224
+
+Modified:
+   /
+   branches/schema_based/db/parley.psql
+   branches/schema_based/db/patch_0.09_to_0.10.psql
+Log:
+ r5145 at ferrari:  chisel | 2006-08-15 09:01:21 +0100
+ + add preference_time_string table (with values)
+ + add show_tz and time_format columns to preference table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5144
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5145
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/db/parley.psql
+===================================================================
+--- branches/schema_based/db/parley.psql	2006-08-16 13:44:22 UTC (rev 223)
++++ branches/schema_based/db/parley.psql	2006-08-16 13:44:27 UTC (rev 224)
+@@ -20,11 +20,26 @@
+     UNIQUE (username)
+ );
+ 
++
++-- a table of acceptable TZ strings
++CREATE TABLE preference_time_string (
++    preference_time_string_id     SERIAL      primary key,
++    time_string                   text        not null,
++    comment                       text
++);
++-- some TZ strings
++INSERT INTO preference_time_string (time_string) VALUES ('%A %d %B %Y at %R');
++INSERT INTO preference_time_string (time_string) VALUES ('%F %T');
++INSERT INTO preference_time_string (time_string, comment) VALUES ('%c','locale\'s date and time (e.g., Thu Mar  3 23:05:25 2005)'); 
++
++
+ CREATE TABLE preference (
+     preference_id   SERIAL      primary key,
+ 
+     timezone        text        not null
+-            default 'UTC'
++            default 'UTC',
++    time_format     integer     references preference_time_string,
++    show_tz         boolean     default True
+ );
+ 
+ CREATE TABLE person (
+
+Modified: branches/schema_based/db/patch_0.09_to_0.10.psql
+===================================================================
+--- branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:44:22 UTC (rev 223)
++++ branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:44:27 UTC (rev 224)
+@@ -42,6 +42,27 @@
+ 
+ );
+ 
++-- a table of acceptable TZ strings
++CREATE TABLE preference_time_string (
++    preference_time_string_id     SERIAL      primary key,
++    time_string                   text        not null,
++    comment                       text
++);
++-- some TZ strings
++INSERT INTO preference_time_string (time_string) VALUES ('%A %d %B %Y at %R');
++INSERT INTO preference_time_string (time_string) VALUES ('%F %T');
++INSERT INTO preference_time_string (time_string, comment) VALUES ('%c','locale\'s date and time (e.g., Thu Mar  3 23:05:25 2005)'); 
++
++-- add time_format_string to user preferences
++ALTER TABLE preference
++ADD COLUMN time_format integer
++    references preference_time_string
++;
++ALTER TABLE preference
++ADD COLUMN show_tz boolean
++    default True
++;
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:34 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:34 +0200
+Subject: [Parley-svn] r225 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200608161344.k7GDiYUj020143@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:33 +0200 (Wed, 16 Aug 2006)
+New Revision: 225
+
+Added:
+   branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm
+Modified:
+   /
+   branches/schema_based/lib/Parley/Schema/Preference.pm
+Log:
+ r5146 at ferrari:  chisel | 2006-08-15 09:02:58 +0100
+ + added schema class for Perference::Time::String (preference_time_string table)
+ + updated schema class for preference table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5145
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5146
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Schema/Preference.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Preference.pm	2006-08-16 13:44:27 UTC (rev 224)
++++ branches/schema_based/lib/Parley/Schema/Preference.pm	2006-08-16 13:44:33 UTC (rev 225)
+@@ -17,6 +17,7 @@
+     is_nullable => 0,
+     size => undef,
+   },
++
+   "preference_id",
+   {
+     data_type => "integer",
+@@ -24,6 +25,17 @@
+     is_nullable => 0,
+     size => 4,
+   },
++
++  'time_format' => {
++    data_type => 'integer',
++    size => 4,
++  },
++
++  'show_tz' => {
++    data_type => 'boolean',
++    default_value => 'true',
++    size => 1,
++  },
+ );
+ __PACKAGE__->set_primary_key("preference_id");
+ __PACKAGE__->has_many(
+@@ -32,5 +44,8 @@
+   { "foreign.preference" => "self.preference_id" },
+ );
+ 
++__PACKAGE__->belongs_to("time_format", "PreferenceTimeString", { preference_time_string_id => "time_format" });
++
++
+ 1;
+ 
+
+Added: branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm	2006-08-16 13:44:27 UTC (rev 224)
++++ branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm	2006-08-16 13:44:33 UTC (rev 225)
+@@ -0,0 +1,28 @@
++package Parley::Schema::PreferenceTimeString;
++use strict;
++use warnings;
++use base 'DBIx::Class';
++
++__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->table("preference_time_string");
++__PACKAGE__->add_columns(
++    preference_time_string_id => {
++        data_type => "integer",
++        default_value => "nextval('preference_time_string_preference_time_string_id_seq'::regclass)",
++        is_nullable => 0,
++        size => 4,
++    },
++    time_string => {
++        data_type => "text",
++        is_nullable => 0,
++        size => undef,
++    },
++    comment => {
++        data_type => "text",
++        is_nullable => 1,
++        size => undef,
++    },
++);
++__PACKAGE__->set_primary_key("preference_time_string_id");
++
++1;
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:40 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:40 +0200
+Subject: [Parley-svn] r226 - / branches/schema_based/root/base/shared
+Message-ID: <200608161344.k7GDienN020252@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:39 +0200 (Wed, 16 Aug 2006)
+New Revision: 226
+
+Modified:
+   /
+   branches/schema_based/root/base/shared/useful_tt_stuff
+Log:
+ r5147 at ferrari:  chisel | 2006-08-15 09:03:37 +0100
+ + updated/improved time output and formatting - uses user prefs (if any)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5146
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5147
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/root/base/shared/useful_tt_stuff
+===================================================================
+--- branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:44:33 UTC (rev 225)
++++ branches/schema_based/root/base/shared/useful_tt_stuff	2006-08-16 13:44:39 UTC (rev 226)
+@@ -1,17 +1,24 @@
+ [% USE HTML %]
+ [% USE ForumCode %]
+ 
+-[% MACRO nicedate(d) BLOCK %]
+-    [%# if a person has preferences, and there's a time_zone option set, use it to
++[%- MACRO nicedate(d) BLOCK %]
++    [%# if a person has preferences, and there's a timezone option set, use it to
+         set the TZ used to display the time in nicedate
+     %]
+     [% IF authed_user.preference.timezone %]
+-    [% CALL d.set_time_zone(authed_user.preference.timezone) %]
++        [% CALL d.set_time_zone(authed_user.preference.timezone) %]
+     [% ELSE %]
+-    [% CALL d.set_time_zone('UTC') %]
++        [% CALL d.set_time_zone('UTC') %]
+     [% END %]
+ 
+-    [% d.strftime('%A %d %B %Y at %R') %]
+-    [% d.time_zone_short_name() %]
++    [% IF authed_user.preference.time_format %]
++        [% d.strftime(authed_user.preference.time_format.time_string) %]
++        [% IF authed_user.preference.show_tz %]
++            [% d.time_zone_short_name() %]
++        [% END %]
++    [% ELSE %]
++        (Default) [% d.strftime('%c') %]
++        [% d.time_zone_short_name() %]
++    [% END %]
+ [% END %]
+ 
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:45 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:45 +0200
+Subject: [Parley-svn] r227 - / branches/schema_based/db
+Message-ID: <200608161344.k7GDijKr020348@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:44 +0200 (Wed, 16 Aug 2006)
+New Revision: 227
+
+Modified:
+   /
+   branches/schema_based/db/parley.psql
+   branches/schema_based/db/patch_0.09_to_0.10.psql
+Log:
+ r5148 at ferrari:  chisel | 2006-08-15 09:37:19 +0100
+ / tweaked preference_time_string schema
+ + added more time formats
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5147
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5148
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/db/parley.psql
+===================================================================
+--- branches/schema_based/db/parley.psql	2006-08-16 13:44:39 UTC (rev 226)
++++ branches/schema_based/db/parley.psql	2006-08-16 13:44:44 UTC (rev 227)
+@@ -23,14 +23,17 @@
+ 
+ -- a table of acceptable TZ strings
+ CREATE TABLE preference_time_string (
+-    preference_time_string_id     SERIAL      primary key,
+-    time_string                   text        not null,
+-    comment                       text
++    preference_time_string_id       SERIAL      primary key,
++    time_string                     text        not null,
++    sample                          text        not null,
++    comment                         text
+ );
+ -- some TZ strings
+-INSERT INTO preference_time_string (time_string) VALUES ('%A %d %B %Y at %R');
+-INSERT INTO preference_time_string (time_string) VALUES ('%F %T');
+-INSERT INTO preference_time_string (time_string, comment) VALUES ('%c','locale\'s date and time (e.g., Thu Mar  3 23:05:25 2005)'); 
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%A %d %B %Y at %R', 'Thursday 13 July 2006 at 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%F %T', '2006-07-13 18:15:00');
++INSERT INTO preference_time_string (time_string, sample, comment) VALUES ('%c','Thu 13 Jul 2006 18:15:00 BST','locale\'s date and time'); 
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%A at %R', 'Thursday at 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
+ 
+ 
+ CREATE TABLE preference (
+
+Modified: branches/schema_based/db/patch_0.09_to_0.10.psql
+===================================================================
+--- branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:44:39 UTC (rev 226)
++++ branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:44:44 UTC (rev 227)
+@@ -46,12 +46,15 @@
+ CREATE TABLE preference_time_string (
+     preference_time_string_id     SERIAL      primary key,
+     time_string                   text        not null,
++    sample                        text        not null,
+     comment                       text
+ );
+ -- some TZ strings
+-INSERT INTO preference_time_string (time_string) VALUES ('%A %d %B %Y at %R');
+-INSERT INTO preference_time_string (time_string) VALUES ('%F %T');
+-INSERT INTO preference_time_string (time_string, comment) VALUES ('%c','locale\'s date and time (e.g., Thu Mar  3 23:05:25 2005)'); 
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%A %d %B %Y at %R', 'Thursday 13 July 2006 at 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%F %T', '2006-07-13 18:15:00');
++INSERT INTO preference_time_string (time_string, sample, comment) VALUES ('%c','Thu 13 Jul 2006 18:15:00 BST','locale\'s date and time'); 
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%A at %R', 'Thursday at 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
+ 
+ -- add time_format_string to user preferences
+ ALTER TABLE preference
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:49 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:49 +0200
+Subject: [Parley-svn] r228 - / branches/schema_based/script
+Message-ID: <200608161344.k7GDinZ5020463@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:49 +0200 (Wed, 16 Aug 2006)
+New Revision: 228
+
+Added:
+   branches/schema_based/script/time_string_sample.pl
+Modified:
+   /
+Log:
+ r5149 at ferrari:  chisel | 2006-08-15 09:39:58 +0100
+ This script contains a list of strftime format strings, which are looped
+ through and output in an insert statement containing the format string and a
+ sample for a fixed date
+ These can then be used/added to the schema file(s) for Parleys DB schema
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5148
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5149
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/script/time_string_sample.pl
+===================================================================
+--- branches/schema_based/script/time_string_sample.pl	2006-08-16 13:44:44 UTC (rev 227)
++++ branches/schema_based/script/time_string_sample.pl	2006-08-16 13:44:49 UTC (rev 228)
+@@ -0,0 +1,17 @@
++#!/usr/bin/perl
++use strict;
++use warnings;
++
++use POSIX 'strftime';
++
++my @time_formats = (
++    q{%A %d %B %Y at %R},
++    q{%F %T},
++    q{%c},
++    q{%A at %R},
++    q{%a, %d %b; %R},
++);
++
++foreach my $tf (@time_formats) {
++    printf(qq{INSERT INTO preference_time_string (time_string, sample) VALUES ('%s', '%s');\n}, $tf, strftime($tf, 0, 15, 18, 13, 6, 106));
++}
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:44:57 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:44:57 +0200
+Subject: [Parley-svn] r229 - / branches/schema_based/lib/Parley/Schema
+Message-ID: <200608161344.k7GDiv3I020583@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:44:56 +0200 (Wed, 16 Aug 2006)
+New Revision: 229
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm
+Log:
+ r5150 at ferrari:  chisel | 2006-08-15 09:42:15 +0100
+ + updated schema class to recognise new 'sample' column
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5149
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5150
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm	2006-08-16 13:44:49 UTC (rev 228)
++++ branches/schema_based/lib/Parley/Schema/PreferenceTimeString.pm	2006-08-16 13:44:56 UTC (rev 229)
+@@ -17,6 +17,11 @@
+         is_nullable => 0,
+         size => undef,
+     },
++    sample => {
++        data_type => "text",
++        is_nullable => 0,
++        size => undef,
++    },
+     comment => {
+         data_type => "text",
+         is_nullable => 1,
+
+
+
+From chiselwright at mail.berlios.de  Wed Aug 16 15:45:03 2006
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Wed, 16 Aug 2006 15:45:03 +0200
+Subject: [Parley-svn] r230 - / branches/schema_based/lib/Parley/Controller
+	branches/schema_based/lib/Parley/Schema
+Message-ID: <200608161345.k7GDj3gU020719@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-08-16 15:45:02 +0200 (Wed, 16 Aug 2006)
+New Revision: 230
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+   branches/schema_based/lib/Parley/Schema/Post.pm
+   branches/schema_based/lib/Parley/Schema/Thread.pm
+   branches/schema_based/lib/Parley/Schema/ThreadView.pm
+Log:
+ r5151 at ferrari:  chisel | 2006-08-16 10:01:47 +0100
+ + additions & changes to include thread/view functionality
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5150
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -4,12 +4,6 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
+-sub index : Private {
+-    my ( $self, $c ) = @_;
+-
+-    $c->response->body('Matched Parley::Controller::Thread in Thread.');
+-}
+-
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
+@@ -24,7 +18,9 @@
+         $c->detach('/post/view');
+     }
+ 
++    ##################################################
+     # get all the posts in the thread
++    ##################################################
+     $c->stash->{post_list} = $c->model('ParleyDB')->resultset('Post')->search(
+         {
+             thread => $c->_current_thread->id(),
+@@ -36,8 +32,87 @@
+         }
+     );
+ 
++    ##################################################
++    # some updates for logged in users
++    ##################################################
++    if ($c->_authed_user) {
++        $c->log->debug('thread view by authed user');
++
++        # update thread_view for user
++        $self->_update_thread_view($c);
++
++        # store thread watch status info
++        $self->_watching_thread($c);
++    }
++
++    ##################################################
++    # general information for all viewers
++    ##################################################
++    {
++        # get the number of people watching the thread
++        $self->_thread_watch_count($c);
++    }
++
++    1; # return 'true'
+ }
+ 
++sub _thread_watch_count {
++    my ($self, $c) = @_;
++
++    # how many people are watching the current thread?
++    $c->stash->{watcher_count} = $c->model('ParleyDB')->resultset('ThreadView')->count(
++        {
++            thread  => $c->_current_thread()->id(),
++            watched => 1,
++        }
++    );
++}
++
++
++
++sub _watching_thread {
++    my ($self, $c) = @_;
++    
++    # find out if the user is watching the thread, and store it in the stash
++    $c->stash->{watching_thread} = $c->model('ParleyDB')->resultset('ThreadView')->watching_thread(
++        $c->_current_thread(),
++        $c->_authed_user(),
++    );
++}
++
++sub _update_thread_view {
++    my ($self, $c) = @_;
++
++    my ($last_post, $last_post_timestamp);
++    
++    # get the last post on the page
++    $last_post = $c->model('ParleyDB')->resultset('Post')->last_post_in_list(
++        $c->stash->{post_list}
++    );
++    # get the timestamp of the last post
++    $last_post_timestamp = $last_post->created();
++    $c->log->debug( $last_post_timestamp );
++
++    # make a note of when the user last viewed this thread, if a record doesn't already exist
++    my $thread_view = $c->model('ParleyDB')->resultset('ThreadView')->find_or_create(
++        {
++            person      => $c->_authed_user()->id(),
++            thread      => $c->_current_thread()->id(),
++            timestamp   => $last_post_timestamp,
++        },
++    );
++
++    # set the timestamp the time of the last post on the page (unless the
++    # existing time is later)
++    if ($thread_view->timestamp() < $last_post_timestamp) {
++        $c->log->debug('thread view time is less than last_post time');
++        $thread_view->timestamp( $last_post_timestamp );
++    }
++
++    # update/store the thread_view record
++    $thread_view->update;
++}
++
+ 1;
+ 
+ __END__
+@@ -52,10 +127,35 @@
+ 
+ Catalyst Controller.
+ 
+-=head1 METHODS
++=head1 ACTIONS
+ 
+-=head2 index 
++=head2 view
+ 
++This action prepares data in the stash for viewing the current thread.
++
++=head1 PRIVATE METHODS
++
++=head2 _thread_watch_count
++
++Sets C<$c-E<gt>stash-E<gt>{watcher_count}> with the number of people who have a watch
++set for the current thread.
++
++=head2 _watching_thread
++
++Sets C<$c-E<gt>stash-E<gt>{watching_thread}> with a true|false value indicating
++whether the current authenticated user is watching the current thread.
++
++Sets 
++
++=head2 _update_thread_view
++
++This method updates an existing record in the thread_view table, or creates a
++new one if it doesn't exist.
++
++The timestamp value for the record (keyed on I<person-thread>) is updated to
++the timestamp of the creation time for the last post on the page - unless the
++user has already viewed a page containing later posts.
++
+ =head1 AUTHOR
+ 
+ Chisel Wright C<< <chisel at herlpacker.co.uk> >>
+
+Modified: branches/schema_based/lib/Parley/Schema/Post.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -9,7 +9,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->load_components("ResultSetManager", "PK::Auto", "Core");
+ __PACKAGE__->table("post");
+ __PACKAGE__->add_columns(
+   "creator",
+@@ -94,5 +94,35 @@
+ 
+ 
+ 
++
++sub last_post_in_list : ResultSet {
++    my ($self, $post_list) = @_;
++
++    my $posts_in_list = $post_list->count();
++    warn "posts_in_list:   $posts_in_list\n";
++    my $splice_position = $posts_in_list - 2;
++    warn "splice_position: $splice_position\n";
++
++    # get the last post on the page
++    my $slice = $post_list->slice(
++        $splice_position,
++        $splice_position,
++    );
++    warn "posts_in_slice:   " . $slice->count() . "\n";
++    warn (ref($slice));
++
++    if (defined $slice->first()) {
++        warn "first in slice is defined\n";
++        warn $slice->first()->created();
++        return $slice->first();
++    }
++
++    warn "return naff all\n";
++    return;
++}
++
++sub my_damn_function {
++}
++
+ 1;
+ 
+
+Modified: branches/schema_based/lib/Parley/Schema/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -7,7 +7,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->load_components('ResultSetManager', "PK::Auto", "Core");
+ __PACKAGE__->table("thread");
+ __PACKAGE__->add_columns(
+   "thread_id",
+@@ -85,5 +85,6 @@
+ 
+ 
+ 
++
+ 1;
+ 
+
+Modified: branches/schema_based/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -7,7 +7,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__->load_components("PK::Auto", "Core");
++__PACKAGE__->load_components('ResultSetManager', "PK::Auto", "Core");
+ __PACKAGE__->table("thread_view");
+ __PACKAGE__->add_columns(
+   "watched",
+@@ -59,5 +59,27 @@
+ }
+ 
+ 
++sub watching_thread : ResultSet {
++    my ($self, $thread, $person) = @_;
++
++    if (not defined $thread) {
++        warn 'undefined value passed as $thread in watching_thread()';
++        return;
++    }
++    if (not defined $person) {
++        warn 'undefined value passed as $person in watching_thread()';
++        return;
++    }
++
++    my $thread_view = $self->find(
++        {
++            person  => $person->id(),
++            thread  => $thread->id(),
++        }
++    );
++
++    return $thread_view->watched();
++}
++
+ 1;
+ 
+
+
+

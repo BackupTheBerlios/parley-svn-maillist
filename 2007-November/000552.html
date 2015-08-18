@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r664 - / trunk/root/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r664%20-%20/%20trunk/root/base&In-Reply-To=%3C200711121950.lACJoJCV022433%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000551.html">
+   <LINK REL="Next"  HREF="000553.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r664 - / trunk/root/base</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r664%20-%20/%20trunk/root/base&In-Reply-To=%3C200711121950.lACJoJCV022433%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r664 - / trunk/root/base">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Nov 12 20:50:19 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000551.html">[Parley-svn] r663 - / trunk/lib trunk/root/base trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000553.html">[Parley-svn] r665 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#552">[ date ]</a>
+              <a href="thread.html#552">[ thread ]</a>
+              <a href="subject.html#552">[ subject ]</a>
+              <a href="author.html#552">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-12 20:50:19 +0100 (Mon, 12 Nov 2007)
+New Revision: 664
+
+Modified:
+   /
+   trunk/root/base/header
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4185 at wiggin</A>:  chisel | 2007-11-12 09:24:09 +0000
+ / used as manu -min.js YUI files as possible
+ / moved Parley CSS includes to *after* the YUI js &amp; css
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4184
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4185
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-11-12 19:50:07 UTC (rev 663)
++++ trunk/root/base/header	2007-11-12 19:50:19 UTC (rev 664)
+@@ -6,7 +6,7 @@
+ &lt;!-- Header : Start --&gt;
+ &lt;html&gt;
+     &lt;head&gt;
+-        &lt;base href=&quot;[% c.req.base %]&quot; /&gt;
++        &lt;base href=&quot;[% c.request.base %]&quot; /&gt;
+         &lt;title&gt;
+             [% c.config.name %]
+ 
+@@ -28,13 +28,14 @@
+         &lt;/title&gt;
+         &lt;meta name=&quot;author&quot; content=&quot;Chisel Wright&quot; /&gt;
+         &lt;link rel=&quot;shortcut icon&quot; href=&quot;[% c.request.base %]/favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
+-        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/common.css&quot; /&gt;
+-        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/layout27.css&quot; /&gt;
+ 
+         &lt;!-- YUI ajax magick --&gt;
+ 
+         &lt;!-- CSS --&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/fonts/fonts-min.css&quot; /&gt;
++        &lt;!--&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot;
++            href=&quot;[%c.request.base%]/static/yui/reset-fonts-grids/reset-fonts-grids.css&quot;
++            /&gt;--&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/button/assets/skins/sam/button.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/container/assets/skins/sam/container.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css&quot; /&gt; 
+@@ -43,14 +44,18 @@
+ 
+         &lt;!-- Dependency source files --&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/yahoo-dom-event/yahoo-dom-event.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container_core.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container_core-min.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/utilities/utilities.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/button/button-beta.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/menu/menu.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/tabview/tabview.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/button/button-beta-min.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/menu/menu-min.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/tabview/tabview-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/logger/logger-min.js&quot;&gt;&lt;/script&gt;
++
++
++        &lt;!-- defined styles for parley --&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/common.css&quot; /&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/layout27.css&quot; /&gt;
+     &lt;/head&gt;
+ 
+     &lt;body class=&quot;yui-skin-sam&quot;&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000551.html">[Parley-svn] r663 - / trunk/lib trunk/root/base trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000553.html">[Parley-svn] r665 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#552">[ date ]</a>
+              <a href="thread.html#552">[ thread ]</a>
+              <a href="subject.html#552">[ subject ]</a>
+              <a href="author.html#552">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,688 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r561 - / trunk/lib/Parley/I18N trunk/root/base/post	trunk/root/base/search trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r561%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/post%0A%09trunk/root/base/search%20trunk/root/base/shared%0A%09trunk/root/base/site%20trunk/root/base/terms&In-Reply-To=%3C200710141419.l9EEJlvm021300%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000448.html">
+   <LINK REL="Next"  HREF="000450.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r561 - / trunk/lib/Parley/I18N trunk/root/base/post	trunk/root/base/search trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r561%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/post%0A%09trunk/root/base/search%20trunk/root/base/shared%0A%09trunk/root/base/site%20trunk/root/base/terms&In-Reply-To=%3C200710141419.l9EEJlvm021300%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r561 - / trunk/lib/Parley/I18N trunk/root/base/post	trunk/root/base/search trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sun Oct 14 16:19:47 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000448.html">[Parley-svn] r560 - / trunk/lib/Parley/I18N trunk/root/base/error	trunk/root/base/my
+</A></li>
+        <LI>Next message: <A HREF="000450.html">[Parley-svn] r562 - / trunk/lib/Parley/I18N trunk/root/base/terms	trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#449">[ date ]</a>
+              <a href="thread.html#449">[ thread ]</a>
+              <a href="subject.html#449">[ subject ]</a>
+              <a href="author.html#449">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-14 16:19:46 +0200 (Sun, 14 Oct 2007)
+New Revision: 561
+
+Modified:
+   /
+   trunk/lib/Parley/I18N/en.po
+   trunk/root/base/post/edit
+   trunk/root/base/search/forum
+   trunk/root/base/shared/pager_advanced
+   trunk/root/base/shared/search_dialog
+   trunk/root/base/shared/thread_watch
+   trunk/root/base/shared/user_avatar
+   trunk/root/base/shared/user_status
+   trunk/root/base/site/services
+   trunk/root/base/terms/accept
+   trunk/root/base/terms/add
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3982 at wiggin</A>:  chisel | 2007-10-14 15:03:17 +0100
+ + added more i18n to templates
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3980
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3982
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/lib/Parley/I18N/en.po	2007-10-14 14:19:46 UTC (rev 561)
+@@ -1,6 +1,12 @@
+ msgid &quot;404 Not Found&quot;
+ msgstr &quot;404 Not Found&quot;
+ 
++msgid &quot;ACCEPT TERMS&quot;
++msgstr &quot;You need to accept the Terms and Conditions below to continue using the site&quot;
++
++msgid &quot;Active&quot;
++msgstr &quot;Active&quot;
++
+ msgid &quot;Add Reply&quot;
+ msgstr &quot;Add Reply&quot;
+ 
+@@ -10,6 +16,9 @@
+ msgid &quot;Add Watch&quot;
+ msgstr &quot;Add Watch&quot;
+ 
++msgid &quot;All Forums&quot;
++msgstr &quot;All Forums&quot;
++
+ msgid &quot;All Rights Reserved&quot;
+ msgstr &quot;All Rights Reserved&quot;
+ 
+@@ -25,6 +34,9 @@
+ msgid &quot;Close&quot;
+ msgstr &quot;Close&quot;
+ 
++msgid &quot;Comment&quot;
++msgstr &quot;Comment&quot;
++
+ msgid &quot;Contents&quot;
+ msgstr &quot;Contents&quot;
+ 
+@@ -40,6 +52,9 @@
+ msgid &quot;Current Avatar&quot;
+ msgstr &quot;Current Avatar&quot;
+ 
++msgid &quot;Current Forum&quot;
++msgstr &quot;Current Forum&quot;
++
+ msgid &quot;Current User&quot;
+ msgstr &quot;Current User&quot;
+ 
+@@ -55,6 +70,12 @@
+ msgid &quot;Email Address&quot;
+ msgstr &quot;Email Address&quot;
+ 
++msgid &quot;Email Engine&quot;
++msgstr &quot;Email Engine&quot;
++
++msgid &quot;First&quot;
++msgstr &quot;First&quot;
++
+ msgid &quot;First Name&quot;
+ msgstr &quot;First Name&quot;
+ 
+@@ -64,6 +85,9 @@
+ msgid &quot;Forum&quot;
+ msgstr &quot;Forum&quot;
+ 
++msgid &quot;Forums&quot;
++msgstr &quot;Forums&quot;
++
+ msgid &quot;Forum List&quot;
+ msgstr &quot;Forum List&quot;
+ 
+@@ -76,6 +100,9 @@
+ msgid &quot;Forum Summary&quot;
+ msgstr &quot;Forum Summary&quot;
+ 
++msgid &quot;General&quot;
++msgstr &quot;General&quot;
++
+ msgid &quot;Guest User&quot;
+ msgstr &quot;Guest User&quot;
+ 
+@@ -88,6 +115,9 @@
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Logged&quot;
+ 
++msgid &quot;Last&quot;
++msgstr &quot;Last&quot;
++
+ msgid &quot;Last Modified&quot;
+ msgstr &quot;Last Modified&quot;
+ 
+@@ -112,6 +142,9 @@
+ msgid &quot;Locked Topic&quot;
+ msgstr &quot;Locked Topic&quot;
+ 
++msgid &quot;Logged in as&quot;
++msgstr &quot;Logged in as&quot;
++
+ msgid &quot;Login&quot;
+ msgstr &quot;Login&quot;
+ 
+@@ -136,9 +169,24 @@
+ msgid &quot;My Watched Threads&quot;
+ msgstr &quot;My Watched Threads&quot;
+ 
++msgid &quot;Next&quot;
++msgstr &quot;Next&quot;
++
++msgid &quot;No&quot;
++msgstr &quot;No&quot;
++
+ msgid &quot;No posts&quot;
+ msgstr &quot;No posts&quot;
+ 
++msgid &quot;NO SEARCH RESULTS&quot;
++msgstr &quot;No results found matching specified terms&quot;
++
++msgid &quot;NO SITE TERMS&quot;
++msgstr &quot;This site has no Terms and Conditions to view&quot;
++
++msgid &quot;No User Avatar&quot;
++msgstr &quot;No User Avatar&quot;
++
+ msgid &quot;non-integer post id passed&quot;
+ msgstr &quot;Non-integer post id passed&quot;
+ 
+@@ -154,6 +202,15 @@
+ msgid &quot;Notifications&quot;
+ msgstr &quot;Notifications&quot;
+ 
++msgid &quot;Not Authenticated&quot;
++msgstr &quot;Not Authenticated&quot;
++
++msgid &quot;of&quot;
++msgstr &quot;of&quot;
++
++msgid &quot;Page&quot;
++msgstr &quot;Page&quot;
++
+ msgid &quot;Password&quot;
+ msgstr &quot;Password&quot;
+ 
+@@ -163,12 +220,18 @@
+ msgid &quot;Password Reminder&quot;
+ msgstr &quot;Password Reminder&quot;
+ 
++msgid &quot;person&quot;
++msgstr &quot;person&quot;
++
+ msgid &quot;Please enter your information&quot;
+ msgstr &quot;Please enter your information&quot;
+ 
+ msgid &quot;Please enter your username and password&quot;
+ msgstr &quot;Please enter your username and password&quot;
+ 
++msgid &quot;people&quot;
++msgstr &quot;people&quot;
++
+ msgid &quot;posted by&quot;
+ msgstr &quot;posted by&quot;
+ 
+@@ -187,6 +250,15 @@
+ msgid &quot;PREFS EMAIL NOTIFICATION&quot;
+ msgstr &quot;Receive email notification for watched threads&quot;
+ 
++msgid &quot;Preview&quot;
++msgstr &quot;Preview&quot;
++
++msgid &quot;Previous&quot;
++msgstr &quot;Previous&quot;
++
++msgid &quot;Post New Terms&quot;
++msgstr &quot;Post New Terms&quot;
++
+ msgid &quot;Quote&quot;
+ msgstr &quot;Quote&quot;
+ 
+@@ -211,24 +283,60 @@
+ msgid &quot;Search&quot;
+ msgstr &quot;Search&quot;
+ 
++msgid &quot;Search For&quot;
++msgstr &quot;Search For&quot;
++
++msgid &quot;Search Results&quot;
++msgstr &quot;Search Results&quot;
++
++msgid &quot;Searching for&quot;
++msgstr &quot;Searching for&quot;
++
+ msgid &quot;Select Zone&quot;
+ msgstr &quot;Select Zone&quot;
+ 
++msgid &quot;Service&quot;
++msgstr &quot;Service&quot;
++
+ msgid &quot;Services&quot;
+ msgstr &quot;Services&quot;
+ 
+ msgid &quot;Show timezone&quot;
+ msgstr &quot;Show timezone&quot;
+ 
++msgid &quot;Signup&quot;
++msgstr &quot;Signup&quot;
++
+ msgid &quot;Site&quot;
+ msgstr &quot;Site&quot;
+ 
++msgid &quot;Snippet&quot;
++msgstr &quot;Snippet&quot;
++
++msgid &quot;Start&quot;
++msgstr &quot;Start&quot;
++
+ msgid &quot;Stick Thread&quot;
+ msgstr &quot;Stick Thread&quot;
+ 
++msgid &quot;Stop&quot;
++msgstr &quot;Stop&quot;
++
+ msgid &quot;Subject&quot;
+ msgstr &quot;Subject&quot;
+ 
++msgid &quot;Summary of Changes&quot;
++msgstr &quot;Summary of Changes&quot;
++
++msgid &quot;TERMS ADD NEW&quot;
++msgstr &quot;Add New Site Terms &amp; Conditions&quot;
++
++msgid &quot;TERMS AGREE&quot;
++msgstr &quot;I AGREE to the terms above&quot;
++
++msgid &quot;TERMS REJECT&quot;
++msgstr &quot;I DO NOT agree to the terms above&quot;
++
+ msgid &quot;Terms and Conditions&quot;
+ msgstr &quot;Terms &amp; Conditions&quot;
+ 
+@@ -262,6 +370,9 @@
+ msgid &quot;Update&quot;
+ msgstr &quot;Update&quot;
+ 
++msgid &quot;Update Reply&quot;
++msgstr &quot;Update Reply&quot;
++
+ msgid &quot;Upload&quot;
+ msgstr &quot;Upload&quot;
+ 
+@@ -271,6 +382,9 @@
+ msgid &quot;Username&quot;
+ msgstr &quot;Username&quot;
+ 
++msgid &quot;View&quot;
++msgstr &quot;View&quot;
++
+ msgid &quot;view&quot;
+ msgstr &quot;view&quot;
+ 
+@@ -283,12 +397,24 @@
+ msgid &quot;View Threads&quot;
+ msgstr &quot;View Threads&quot;
+ 
++msgid &quot;Watch this thread&quot;
++msgstr &quot;Watch this thread&quot;
++
++msgid &quot;watching this thread&quot;
++msgstr &quot;watching this thread&quot;
++
+ msgid &quot;wrote&quot;
+ msgstr &quot;wrote&quot;
+ 
++msgid &quot;Yes&quot;
++msgstr &quot;Yes&quot;
++
+ msgid &quot;You are not watching any threads&quot;
+ msgstr &quot;You are not watching any threads&quot;
+ 
++msgid &quot;You are watching this thread&quot;
++msgstr &quot;You are watching this thread&quot;
++
+ msgid &quot;Your Details&quot;
+ msgstr &quot;Your Details&quot;
+ 
+
+Modified: trunk/root/base/post/edit
+===================================================================
+--- trunk/root/base/post/edit	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/post/edit	2007-10-14 14:19:46 UTC (rev 561)
+@@ -18,7 +18,7 @@
+ 
+         &lt;tr&gt;
+             &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-                &lt;input type=&quot;submit&quot; value=&quot;Update Reply&quot; name=&quot;post_update&quot;    class=&quot;input_button&quot; /&gt;
++                &lt;input type=&quot;submit&quot; value=&quot;[%l('Update Reply')%]&quot; name=&quot;post_update&quot;    class=&quot;input_button&quot; /&gt;
+             &lt;/td&gt;
+         &lt;/tr&gt;
+     &lt;/table&gt;
+
+Modified: trunk/root/base/search/forum
+===================================================================
+--- trunk/root/base/search/forum	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/search/forum	2007-10-14 14:19:46 UTC (rev 561)
+@@ -1,13 +1,13 @@
+-&lt;h1&gt;Search Results&lt;/h1&gt;
++&lt;h1&gt;[%l('Search Results')%]&lt;/h1&gt;
+ 
+-&lt;h2&gt;Searching for &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% search_forum.name || 'all forums' %]&lt;/em&gt;&lt;/h2&gt;
++&lt;h2&gt;[%l('Searching for')%] &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% search_forum.name || 'all forums' %]&lt;/em&gt;&lt;/h2&gt;
+ 
+ [% IF search_results %]
+ 
+     &lt;table class=&quot;search_results&quot;&gt;
+     &lt;tr&gt;
+-        &lt;th&gt;Subject&lt;/th&gt;
+-        &lt;th&gt;Snippet&lt;/th&gt;
++        &lt;th&gt;[%l('Subject')%]&lt;/th&gt;
++        &lt;th&gt;[%l('Snippet')%]&lt;/th&gt;
+     &lt;/tr&gt;
+ 
+     [% WHILE (result = search_results.next) %]
+@@ -39,5 +39,5 @@
+     &lt;/tr&gt;
+     &lt;/table&gt;
+ [% ELSE %]
+-No results found matching specified terms.
++[%l('No results found matching specified terms')%].
+ [% END %]
+
+Modified: trunk/root/base/shared/pager_advanced
+===================================================================
+--- trunk/root/base/shared/pager_advanced	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/shared/pager_advanced	2007-10-14 14:19:46 UTC (rev 561)
+@@ -6,15 +6,15 @@
+     [% url_extra_args = '&amp;forum=' _ current_forum.id %]
+     [% END %]
+ 
+-    Page [% page.current_page %] of [% page.last_page %]
++    [%l('Page')%] [% page.current_page %] [%l('of')%] [% page.last_page %]
+     [% IF page.last_page &gt; 1 %]
+     [
+         [% UNLESS page.current_page == page.first_page %]
+-        &lt;a href=&quot;[% c.req.path %]?page=[% page.first_page %][% url_extra_args %]&quot;&gt;First&lt;/a&gt; |
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.first_page %][% url_extra_args %]&quot;&gt;[%l('First')%]&lt;/a&gt; |
+         [% END %]
+ 
+         [% IF page.previous_page %]
+-        &lt;a href=&quot;[% c.req.path %]?page=[% page.previous_page %][% url_extra_args %]&quot;&gt;Previous&lt;/a&gt;
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.previous_page %][% url_extra_args %]&quot;&gt;[%l('Previous')%]&lt;/a&gt;
+         |
+         [% END %]
+ 
+@@ -33,12 +33,12 @@
+ 
+         [% IF page.next_page %]
+         |
+-        &lt;a href=&quot;[% c.req.path %]?page=[% page.next_page %][% url_extra_args %]&quot;&gt;Next&lt;/a&gt;
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.next_page %][% url_extra_args %]&quot;&gt;[%l('Next')%]&lt;/a&gt;
+         [% END %]
+ 
+         [% UNLESS page.current_page == page.last_page %]
+         |
+-        &lt;a href=&quot;[% c.req.path %]?page=[% page.last_page %][% url_extra_args %]&quot;&gt;Last&lt;/a&gt;
++        &lt;a href=&quot;[% c.req.path %]?page=[% page.last_page %][% url_extra_args %]&quot;&gt;[%l('Last')%]&lt;/a&gt;
+         [% END %]
+     ]
+     [% END %]
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/shared/search_dialog	2007-10-14 14:19:46 UTC (rev 561)
+@@ -56,11 +56,11 @@
+ &lt;/script&gt;
+ 
+ &lt;div id=&quot;search_dialog&quot;&gt;
+-&lt;div class=&quot;hd&quot;&gt;Search&lt;/div&gt;
++&lt;div class=&quot;hd&quot;&gt;[%l('Search')%]&lt;/div&gt;
+ &lt;div class=&quot;bd&quot;&gt;
+     &lt;form action=&quot;search/forum&quot; method=&quot;post&quot; name=&quot;search_form&quot; class=&quot;search_dialog_form&quot;&gt;
+         &lt;fieldset&gt;
+-            &lt;label for=&quot;search_terms&quot;&gt;&lt;b&gt;Search For:&lt;/b&gt;&lt;/label&gt;
++            &lt;label for=&quot;search_terms&quot;&gt;&lt;b&gt;[%l('Search For')%]:&lt;/b&gt;&lt;/label&gt;
+             &lt;input type=&quot;text&quot; id=&quot;search_terms&quot; name=&quot;search_terms&quot; style=&quot;width: 25em;&quot; class=&quot;input_text&quot; /&gt;
+             &lt;br /&gt;
+         &lt;/fieldset&gt;
+@@ -68,13 +68,13 @@
+         &lt;fieldset&gt;
+             &lt;label for=&quot;search_forum&quot;&gt;&lt;em&gt;in:&lt;/em&gt;&lt;/label&gt;
+             &lt;select id=&quot;search_forum&quot; name=&quot;search_forum&quot;&gt;
+-                &lt;optgroup label=&quot;General&quot;&gt;
+-                    [% IF current_forum %]&lt;option value=&quot;[% current_forum.id %]&quot;&gt;Current Forum&lt;/option&gt;[% END %]
+-                    &lt;option value=&quot;&quot;&gt;All Forums&lt;/option&gt;
++                &lt;optgroup label=&quot;[%l('General')%]&quot;&gt;
++                    [% IF current_forum %]&lt;option value=&quot;[% current_forum.id %]&quot;&gt;[%l('Current Forum')%]&lt;/option&gt;[% END %]
++                    &lt;option value=&quot;&quot;&gt;[%l('All Forums')%]&lt;/option&gt;
+                 &lt;/optgroup&gt;
+                 [% IF available_forums %]
+                 [% SET dummy=available_forums.reset %]
+-                &lt;optgroup label=&quot;Forums&quot;&gt;
++                &lt;optgroup label=&quot;[%l('Forums')%]&quot;&gt;
+                 [% WHILE (forum = available_forums.next) %]
+                 &lt;option value=&quot;[% forum.id %]&quot;&gt;[% forum.name %]&lt;/option&gt;
+                 [% END %]
+
+Modified: trunk/root/base/shared/thread_watch
+===================================================================
+--- trunk/root/base/shared/thread_watch	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/shared/thread_watch	2007-10-14 14:19:46 UTC (rev 561)
+@@ -1,16 +1,16 @@
+ &lt;!-- shared/thread_watch --&gt;
+ [%- IF authed_user %]
+ &lt;div class=&quot;thread_watch&quot;&gt;
+-    &lt;strong&gt;[% watcher_count %] [% IF watcher_count == 1 %]person[% ELSE %]people[% END %] watching this thread.&lt;/strong&gt;
++    &lt;strong&gt;[% watcher_count %] [% IF watcher_count == 1 %][%l('person')%][% ELSE %][%l('people')%][% END %] [%l('watching this thread')%].&lt;/strong&gt;
+     &lt;br /&gt;
+ 
+     [%- IF watching_thread %]
+-        You are watching this thread.
++        [%l('You are watching this thread')%].
+         (
+-        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0&quot;&gt;Remove Watch&lt;/a&gt;
++        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0&quot;&gt;[%l('Remove Watch')%]&lt;/a&gt;
+         )
+     [%- ELSE %]
+-        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&quot;&gt;Watch this thread&lt;/a&gt;
++        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&quot;&gt;[%l('Watch this thread')%]&lt;/a&gt;
+     [%- END%]
+ &lt;/div&gt;
+ [%- END %] [%# authed_user block %]
+
+Modified: trunk/root/base/shared/user_avatar
+===================================================================
+--- trunk/root/base/shared/user_avatar	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/shared/user_avatar	2007-10-14 14:19:46 UTC (rev 561)
+@@ -3,9 +3,9 @@
+ [% TRY %]
+     [% USE avatar = Image(avatar_file) %]
+     [% tmp = avatar.attr %]
+-    &lt;img class=&quot;picborder&quot; src=&quot;/static/user_file/[% person.id %]/avatar.jpg&quot; border=&quot;0&quot; [% avatar.attr %] alt=&quot;Avatar&quot; /&gt;
++    &lt;img class=&quot;picborder&quot; src=&quot;/static/user_file/[% person.id %]/avatar.jpg&quot; border=&quot;0&quot; [% avatar.attr %] alt=&quot;[%l('Avatar')%]&quot; /&gt;
+     &lt;br /&gt;
+ [% CATCH %]
+-    No User Avatar
++   [%l('No User Avatar')%] 
+ [% END %]
+ &lt;!-- end : user avatar --&gt;
+
+Modified: trunk/root/base/shared/user_status
+===================================================================
+--- trunk/root/base/shared/user_status	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/shared/user_status	2007-10-14 14:19:46 UTC (rev 561)
+@@ -1,18 +1,18 @@
+ &lt;!-- shared/user_status --&gt;
+ &lt;p&gt;
+     [% IF (authed_user) %]
+-        Logged in as &lt;b&gt;[% authed_user.first_name %] [% authed_user.last_name %]&lt;/b&gt;
++        [%l('Logged in as')%] &lt;b&gt;[% authed_user.first_name %] [% authed_user.last_name %]&lt;/b&gt;
+         [% UNLESS authed_user.authentication.authenticated %]
+-            (&lt;b&gt;&lt;i&gt;Not Authenticated&lt;/i&gt;&lt;/b&gt;)
++            (&lt;b&gt;&lt;i&gt;[%l('Not Authenticated')%]&lt;/i&gt;&lt;/b&gt;)
+         [% END %]
+         &lt;i&gt;&lt;br /&gt;[
+-        &lt;a href=&quot;user/logout&quot;&gt;Logout&lt;/a&gt;
++        &lt;a href=&quot;user/logout&quot;&gt;[%l('Logout')%]&lt;/a&gt;
+         ]&lt;/i&gt;
+     [% ELSE %]
+         &lt;i&gt;[
+-        &lt;a href=&quot;javascript:;&quot; onclick=&quot;javascript:YAHOO.parley.login.login_dialog.show(); return false;&quot;&gt;Login&lt;/a&gt;
++        &lt;a href=&quot;javascript:;&quot; onclick=&quot;javascript:YAHOO.parley.login.login_dialog.show(); return false;&quot;&gt;[%l('Login')%]&lt;/a&gt;
+         |
+-        &lt;a href=&quot;user/signup&quot;&gt;Signup&lt;/a&gt;
++        &lt;a href=&quot;user/signup&quot;&gt;[%l('Signup')%]&lt;/a&gt;
+         ]&lt;/i&gt;
+     [% END %] [%# authed_user end %]
+ &lt;/p&gt;
+
+Modified: trunk/root/base/site/services
+===================================================================
+--- trunk/root/base/site/services	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/site/services	2007-10-14 14:19:46 UTC (rev 561)
+@@ -1,23 +1,23 @@
+-&lt;h1&gt;Services&lt;/h1&gt;
++&lt;h1&gt;[%l('Services')%]&lt;/h1&gt;
+ 
+ &lt;table class=&quot;site_services&quot;&gt;
+     &lt;thead&gt;
+         &lt;tr&gt;
+-            &lt;th&gt;Service&lt;/th&gt;
+-            &lt;th&gt;Active&lt;/th&gt;
+-            &lt;th&gt;Comment&lt;/th&gt;
+-            &lt;th&gt;Start/Stop&lt;/th&gt;
++            &lt;th&gt;[%l('Service')%]&lt;/th&gt;
++            &lt;th&gt;[%l('Active')%]&lt;/th&gt;
++            &lt;th&gt;[%l('Comment')%]&lt;/th&gt;
++            &lt;th&gt;[%l('Start')%]/[%l('Stop')%]&lt;/th&gt;
+         &lt;/tr&gt;
+     &lt;/thead&gt;
+ 
+     &lt;tbody&gt;
+         &lt;tr&gt;
+-            &lt;td&gt;Email Engine&lt;/td&gt;
++            &lt;td&gt;[%l('Email Engine')%]&lt;/td&gt;
+             &lt;td&gt;
+                 [% IF email_engine.pid %]
+-                Yes
++                [%l('Yes')%] 
+                 [% ELSE %]
+-                No
++                [%l('No')%] 
+                 [% END %]
+             &lt;/td&gt;
+             &lt;td&gt;
+
+Modified: trunk/root/base/terms/accept
+===================================================================
+--- trunk/root/base/terms/accept	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/terms/accept	2007-10-14 14:19:46 UTC (rev 561)
+@@ -1,18 +1,18 @@
+-&lt;h1&gt;Terms and Conditions&lt;/h1&gt;
++&lt;h1&gt;[%l('Terms and Conditions')%]&lt;/h1&gt;
+ 
+ &lt;p&gt;
+-You need to accept the Terms and Conditions below to continue using the site:
++[%l('ACCEPT TERMS')%]:
+ &lt;/p&gt;
+ 
+ &lt;div class=&quot;site_terms&quot;&gt;
+     [% ForumCode.forumcode(latest_terms.content) %]
+     &lt;div style=&quot;text-align: right;&quot;&gt;
+-    Last Modified: [% nicedate(latest_terms.created) %]
++    [%l('Last Modified')%]: [% nicedate(latest_terms.created) %]
+     &lt;/div&gt;
+ &lt;/div&gt;
+ 
+ [% IF latest_terms.change_summary %]
+-&lt;h1&gt;Summary of Changes&lt;/h1&gt;
++&lt;h1&gt;[%l('Summary of Changes')%]&lt;/h1&gt;
+ &lt;div class=&quot;site_terms&quot;&gt;
+     [% ForumCode.forumcode(latest_terms.change_summary) %]
+ &lt;/div&gt;
+@@ -21,9 +21,9 @@
+ &lt;div class=&quot;site_terms&quot; style=&quot;border: none; text-align: center;&quot;&gt;
+     &lt;form method=&quot;post&quot; action=&quot;terms/accept&quot; /&gt;
+ 
+-    &lt;input type=&quot;submit&quot; name=&quot;terms_accept&quot; value=&quot;I AGREE to the terms above&quot; /&gt;
++    &lt;input type=&quot;submit&quot; name=&quot;terms_accept&quot; value=&quot;[%l('TERMS AGREE')%]&quot; /&gt;
+     &lt;br /&gt;
+-    &lt;input type=&quot;submit&quot; name=&quot;terms_reject&quot; value=&quot;I DO NOT agree to the terms above&quot; /&gt;
++    &lt;input type=&quot;submit&quot; name=&quot;terms_reject&quot; value=&quot;[%l('TERMS REJECT')%]&quot; /&gt;
+ 
+     &lt;/form&gt;
+ &lt;/div&gt;
+
+Modified: trunk/root/base/terms/add
+===================================================================
+--- trunk/root/base/terms/add	2007-10-13 14:01:48 UTC (rev 560)
++++ trunk/root/base/terms/add	2007-10-14 14:19:46 UTC (rev 561)
+@@ -1,4 +1,4 @@
+-&lt;h1&gt;Add New Site Terms &amp; Conditions&lt;/h1&gt;
++&lt;h1&gt;[%l('TERMS ADD NEW')%]&lt;/h1&gt;
+ 
+ &lt;form action=&quot;terms/add&quot; method=&quot;POST&quot; name=&quot;new_terms&quot;&gt;
+ &lt;table&gt;
+@@ -10,8 +10,8 @@
+ 
+   &lt;tr&gt;
+     &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-      &lt;input type=&quot;button&quot; value=&quot;Preview&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
+-      &lt;input type=&quot;submit&quot; value=&quot;Post New Terms&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
++      &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
++      &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Terms')%]&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ &lt;/table&gt;
+@@ -68,7 +68,7 @@
+ 
+ 
+                     // update the button
+-                    obj.trigger.value = 'Edit';
++                    obj.trigger.value = '[%l('Edit')%]';
+ 
+                     YU.Event.removeListener( obj.trigger, 'click' );
+                     YU.Event.addListener(
+@@ -87,7 +87,7 @@
+ 
+             this.edit = function() {
+                 // update the button
+-                this.trigger.value = 'Preview';
++                this.trigger.value = '[%l('Preview')%]';
+ 
+                 this.user_input.style.visibility     = 'visible';
+                 this.preview_overlay.destroy();
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000448.html">[Parley-svn] r560 - / trunk/lib/Parley/I18N trunk/root/base/error	trunk/root/base/my
+</A></li>
+	<LI>Next message: <A HREF="000450.html">[Parley-svn] r562 - / trunk/lib/Parley/I18N trunk/root/base/terms	trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#449">[ date ]</a>
+              <a href="thread.html#449">[ thread ]</a>
+              <a href="subject.html#449">[ subject ]</a>
+              <a href="author.html#449">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

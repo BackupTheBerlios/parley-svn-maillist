@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r828 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r828%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/user&In-Reply-To=%3C200803131233.m2DCXgfm020674%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000715.html">
+   <LINK REL="Next"  HREF="000717.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r828 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r828%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/user&In-Reply-To=%3C200803131233.m2DCXgfm020674%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r828 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Mar 13 13:33:42 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000715.html">[Parley-svn] r827 - / trunk trunk/lib/Parley/I18N
+</A></li>
+        <LI>Next message: <A HREF="000717.html">[Parley-svn] r829 - / trunk/lib/Parley/Controller	trunk/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#716">[ date ]</a>
+              <a href="thread.html#716">[ thread ]</a>
+              <a href="subject.html#716">[ subject ]</a>
+              <a href="author.html#716">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-13 13:33:42 +0100 (Thu, 13 Mar 2008)
+New Revision: 828
+
+Modified:
+   /
+   trunk/Changes
+   trunk/Changes.i18n
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/user/profile
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4737 at wiggin</A>:  chisel | 2008-03-11 18:45:50 +0000
+ / updated Changes
+ + another i_defualt i18n phrase
+ + show if a user is suspended (in the public section of the profile)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4732
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4737
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-03-11 11:19:37 UTC (rev 827)
++++ trunk/Changes	2008-03-13 12:33:42 UTC (rev 828)
+@@ -1,6 +1,8 @@
+ This file documents the revision history for Parley.
+ 
+ 0.59 (UNDER DEVELOPMENT)
++    - user roles can now be assigned and removed
++    - users can have their &quot;suspended&quot; flag set and removed
+ 
+ 0.58    Fri Feb  8 07:47:31 GMT 2008
+     - re-work the UI design to be cleaner
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-03-11 11:19:37 UTC (rev 827)
++++ trunk/Changes.i18n	2008-03-13 12:33:42 UTC (rev 828)
+@@ -24,6 +24,7 @@
+             - &quot;Please enter suspension information&quot;
+             - &quot;Reason for suspension&quot;
+             - &quot;You don't have the required privileges to do that&quot;
++            - &quot;Suspended&quot;
+ 
+     it.po:
+         - added:
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-03-11 11:19:37 UTC (rev 827)
++++ trunk/lib/Parley/I18N/i_default.po	2008-03-13 12:33:42 UTC (rev 828)
+@@ -654,6 +654,9 @@
+ msgid &quot;Suspend Account&quot;
+ msgstr &quot;Suspend Account&quot;
+ 
++msgid &quot;Suspended&quot;
++msgstr &quot;Suspended&quot;
++
+ msgid &quot;TERMS ADD NEW&quot;
+ msgstr &quot;Add New Site Terms &amp; Conditions&quot;
+ 
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2008-03-11 11:19:37 UTC (rev 827)
++++ trunk/root/base/user/profile	2008-03-13 12:33:42 UTC (rev 828)
+@@ -16,8 +16,19 @@
+                 &lt;/div&gt;
+             &lt;/div&gt;
+ 
++            [% IF profiled_user.suspended %]
+             &lt;div class=&quot;yui-gf top_padded&quot;&gt;
+                 &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                &nbsp;
++                &lt;/div&gt;
++                &lt;div class=&quot;yui-u&quot;&gt;
++                    [%l('Suspended')%]
++                &lt;/div&gt;
++            &lt;/div&gt;
++            [% END %]
++
++            &lt;div class=&quot;yui-gf top_padded&quot;&gt;
++                &lt;div class=&quot;yui-u first align_right&quot;&gt;
+                     [%l('Posts Made')%]:
+                 &lt;/div&gt;
+                 &lt;div class=&quot;yui-u&quot;&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000715.html">[Parley-svn] r827 - / trunk trunk/lib/Parley/I18N
+</A></li>
+	<LI>Next message: <A HREF="000717.html">[Parley-svn] r829 - / trunk/lib/Parley/Controller	trunk/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#716">[ date ]</a>
+              <a href="thread.html#716">[ thread ]</a>
+              <a href="subject.html#716">[ subject ]</a>
+              <a href="author.html#716">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

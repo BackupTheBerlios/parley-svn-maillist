@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r172 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r172%20-%20/%20trunk&In-Reply-To=%3C200606291055.k5TAt0rc010328%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000060.html">
+   <LINK REL="Next"  HREF="000061.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r172 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r172%20-%20/%20trunk&In-Reply-To=%3C200606291055.k5TAt0rc010328%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r172 - / trunk">chiselwright at berlios.de
+       </A><BR>
+    <I>Thu Jun 29 12:55:00 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000060.html">[Parley-svn] r171 - / trunk/issues/search_deflate
+</A></li>
+        <LI>Next message: <A HREF="000061.html">[Parley-svn] r173 - / trunk/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#63">[ date ]</a>
+              <a href="thread.html#63">[ thread ]</a>
+              <a href="subject.html#63">[ subject ]</a>
+              <a href="author.html#63">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-06-29 12:54:57 +0200 (Thu, 29 Jun 2006)
+New Revision: 172
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r15760 at ferrari</A>:  chisel | 2006-06-28 08:47:00 +0100
+ Updated Changes file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15759
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15760
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-06-29 10:54:48 UTC (rev 171)
++++ trunk/Changes	2006-06-29 10:54:57 UTC (rev 172)
+@@ -1,5 +1,12 @@
+ This file documents the revision history for Parley.
+ 
++    - added thread_post_count(), thread_position() and page_containing_post()
++      to Post model class
++    - added /post/view action, used to redirect to a thread page containing the
++      specified post
++    - /thread/view now detach()es to /post/view if we have a current_post in
++      the stash
++
+ 0.09  Thu May 11 17:50:07 BST 2006
+     - make email column unique
+       ** this may cause problems if you already have a large amount of user data **
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000060.html">[Parley-svn] r171 - / trunk/issues/search_deflate
+</A></li>
+	<LI>Next message: <A HREF="000061.html">[Parley-svn] r173 - / trunk/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#63">[ date ]</a>
+              <a href="thread.html#63">[ thread ]</a>
+              <a href="subject.html#63">[ subject ]</a>
+              <a href="author.html#63">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

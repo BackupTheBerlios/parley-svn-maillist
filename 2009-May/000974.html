@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1093 - / trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1093%20-%20/%20trunk/script&In-Reply-To=%3C200905012105.n41L5cZk017230%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000973.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1093 - / trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1093%20-%20/%20trunk/script&In-Reply-To=%3C200905012105.n41L5cZk017230%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1093 - / trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri May  1 23:05:38 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000973.html">[Parley-svn] r1092 - / tags/parley-1.2.1
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#974">[ date ]</a>
+              <a href="thread.html#974">[ thread ]</a>
+              <a href="subject.html#974">[ subject ]</a>
+              <a href="author.html#974">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-05-01 23:05:38 +0200 (Fri, 01 May 2009)
+New Revision: 1093
+
+Modified:
+   /
+   trunk/script/deploy.sh
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9400 at wiggin</A>:  chisel | 2009-04-29 22:40:37 +0100
+ Copied updated script from parley demo server
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9399
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9400
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/script/deploy.sh
+===================================================================
+--- trunk/script/deploy.sh	2009-05-01 21:05:28 UTC (rev 1092)
++++ trunk/script/deploy.sh	2009-05-01 21:05:38 UTC (rev 1093)
+@@ -1,32 +1,16 @@
+ #!/usr/bin/env sh
+ 
+-############################################################################
+-#
+-# Usage: deploy.sh &lt;version&gt;
+-#   e.g. deploy 0.58_12
+-#
+-# This is the script I use on my home server to (easily)
+-# deploy new versions of Parley
+-#
+-# I run under FastCGI using config/parley and Ubuntu's &quot;site_available&quot;
+-# with apache2
+-#
+-# I drop all my tarballs in /home/parley and run the script from there
+-#
+-# I don't know how the script will behave if there isn't an existing
+-# deployment - I had one before writing the script.
+-#
+-############################################################################
+-
+-############################################################################
+-#            THERE IS NOTHING CONFIGURABLE IN THIS SCRIPT!!                #
+-############################################################################
+-
+ VERSION=$1;
+-MAJOR_VERSION=${VERSION%_*}
+-MINOR_VERSION=${VERSION#*_}
++MAJOR_VERSION=${VERSION%.*}
++MINOR_VERSION=${VERSION##*.}
+ 
++echo $VERSION
++echo $MAJOR_VERSION
++echo $MINOR_VERSION
++
++#TARBALL=&quot;Parley-v${VERSION}.tar.gz&quot;
+ TARBALL=&quot;Parley-${VERSION}.tar.gz&quot;
++#DIR=&quot;Parley-v${VERSION}&quot;
+ DIR=&quot;Parley-${VERSION}&quot;
+ 
+ if [ -z &quot;$VERSION&quot; ]; then
+@@ -42,7 +26,7 @@
+ 
+ tar zxf $TARBALL
+ 
+-PATCH_MATCH_COUNT=`ls ${DIR}/db/*${MAJOR_VERSION}*sql | grep -c -`
++PATCH_MATCH_COUNT=`ls ${DIR}/db/*_${MAJOR_VERSION}*sql |grep -c -`
+ 
+ if [ $PATCH_MATCH_COUNT -gt 0 ]; then
+ 	echo &quot;There are ${PATCH_MATCH_COUNT} patch(es) that match the requested version to deploy:&quot;
+@@ -57,8 +41,13 @@
+ fi
+ 
+ cp -a ./parley/root/static/user_file ./$DIR/root/static/ 2&gt;/dev/null
++sudo chown -R parley:www-data ./$DIR/root/static/user_file/
+ ls ./$DIR/root/static/user_file/
+ 
++if [ -f ./parley/parley_local.conf ]; then
++	cp -av ./parley/parley_local.conf ./$DIR/parley_local.conf
++fi
++
+ (cd $DIR &amp;&amp; perl Makefile.PL)
+ 
+ ./parley/script/parley_email_engine.pl stop
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000973.html">[Parley-svn] r1092 - / tags/parley-1.2.1
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#974">[ date ]</a>
+              <a href="thread.html#974">[ thread ]</a>
+              <a href="subject.html#974">[ subject ]</a>
+              <a href="author.html#974">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

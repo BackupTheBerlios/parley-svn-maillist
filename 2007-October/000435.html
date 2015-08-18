@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r547 - / trunk trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r547%20-%20/%20trunk%20trunk/root/base/shared%0A%09trunk/root/base/thread%20trunk/root/static/images&In-Reply-To=%3C200710112131.l9BLVC5d012422%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000434.html">
+   <LINK REL="Next"  HREF="000436.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r547 - / trunk trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r547%20-%20/%20trunk%20trunk/root/base/shared%0A%09trunk/root/base/thread%20trunk/root/static/images&In-Reply-To=%3C200710112131.l9BLVC5d012422%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r547 - / trunk trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Oct 11 23:31:12 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000434.html">[Parley-svn] r546 - / trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000436.html">[Parley-svn] r548 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#435">[ date ]</a>
+              <a href="thread.html#435">[ thread ]</a>
+              <a href="subject.html#435">[ subject ]</a>
+              <a href="author.html#435">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-11 23:31:11 +0200 (Thu, 11 Oct 2007)
+New Revision: 547
+
+Added:
+   trunk/root/base/shared/loading_please_wait
+   trunk/root/static/images/rel_interstitial_loading.gif
+Modified:
+   /
+   trunk/TODO
+   trunk/root/base/thread/reply
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3936 at wiggin</A>:  chisel | 2007-10-11 08:50:48 +0100
+ + updated TODO
+ + added Loading Panel for thread/reply Message Preview
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3935
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3936
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-10-11 21:30:58 UTC (rev 546)
++++ trunk/TODO	2007-10-11 21:31:11 UTC (rev 547)
+@@ -1,5 +1,6 @@
+ TODO LIST
+ 
++  - investigate i18n
+   - write some sensible T&amp;Cs
+   - setup/use ttcache
+   - update avatar update response to force a No-Cache?
+
+Added: trunk/root/base/shared/loading_please_wait
+===================================================================
+--- trunk/root/base/shared/loading_please_wait	2007-10-11 21:30:58 UTC (rev 546)
++++ trunk/root/base/shared/loading_please_wait	2007-10-11 21:31:11 UTC (rev 547)
+@@ -0,0 +1,35 @@
++&lt;!-- shared/loading_please_wait --&gt;
++&lt;div id=&quot;loading&quot;&gt;&lt;/div&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++    YAHOO.namespace(&quot;parley.loading&quot;);
++
++    function loading_init() {
++        var content = document.getElementById(&quot;loading&quot;);
++        content.innerHTML = &quot;&quot;;
++
++        if (!YAHOO.parley.loading.wait) {
++            // Initialize the temporary Panel to display while waiting for external content to load
++            YAHOO.parley.loading.wait = 
++                new YAHOO.widget.Panel(
++                    &quot;wait&quot;,  
++                    {
++                        width:          &quot;240px&quot;, 
++                        fixedcenter:    true, 
++                        close:          false, 
++                        draggable:      false, 
++                        modal:          true,
++                        zindex:         4,
++                        visible:        false
++                    } 
++                )
++            ;
++    
++            YAHOO.parley.loading.wait.setHeader(&quot;Loading, please wait...&quot;);
++            YAHOO.parley.loading.wait.setBody(&quot;&lt;img src=\&quot;static/images/rel_interstitial_loading.gif\&quot;/&gt;&quot;);
++            YAHOO.parley.loading.wait.render(document.body);
++        }
++    }
++
++    loading_init();
++&lt;/script&gt;
++&lt;!-- (end) shared/loading_please_wait --&gt;
+
+Modified: trunk/root/base/thread/reply
+===================================================================
+--- trunk/root/base/thread/reply	2007-10-11 21:30:58 UTC (rev 546)
++++ trunk/root/base/thread/reply	2007-10-11 21:31:11 UTC (rev 547)
+@@ -1,4 +1,9 @@
+ &lt;div id=&quot;logger&quot;&gt;&lt;/div&gt;
++
++[% PROCESS shared/loading_please_wait %]
++
++
++
+ &lt;h1&gt;
+ [% current_forum.name %]
+ &nbsp;:&nbsp;
+@@ -128,6 +133,8 @@
+                 var data = eval('(' + o.responseText + ')');
+                 var obj = o.argument.obj;
+ 
++                YAHOO.parley.loading.wait.hide();
++
+                 if (data.formatted) {
+                     obj.previewElId = YU.Dom.generateId();
+ 
+@@ -190,6 +197,7 @@
+             };
+ 
+             this.preview = function() {
++                YAHOO.parley.loading.wait.show();
+                 var request = YU.Connect.asyncRequest(
+                     'POST',
+                     '[%base%]post/preview',
+
+Added: trunk/root/static/images/rel_interstitial_loading.gif
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/rel_interstitial_loading.gif
+___________________________________________________________________
+Name: svn:executable
+   + *
+Name: svn:mime-type
+   + application/octet-stream
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000434.html">[Parley-svn] r546 - / trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000436.html">[Parley-svn] r548 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#435">[ date ]</a>
+              <a href="thread.html#435">[ thread ]</a>
+              <a href="subject.html#435">[ subject ]</a>
+              <a href="author.html#435">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

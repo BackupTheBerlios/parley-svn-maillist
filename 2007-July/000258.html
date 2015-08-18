@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r370 - / trunk/lib/Template/Plugin trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r370%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200707042214.l64MEoYU013301%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000257.html">
+   <LINK REL="Next"  HREF="000259.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r370 - / trunk/lib/Template/Plugin trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r370%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200707042214.l64MEoYU013301%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r370 - / trunk/lib/Template/Plugin trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul  5 00:14:50 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000257.html">[Parley-svn] r369 - / trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000259.html">[Parley-svn] r371 - / trunk/lib/Template/Plugin trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#258">[ date ]</a>
+              <a href="thread.html#258">[ thread ]</a>
+              <a href="subject.html#258">[ subject ]</a>
+              <a href="author.html#258">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-05 00:14:49 +0200 (Thu, 05 Jul 2007)
+New Revision: 370
+
+Modified:
+   /
+   trunk/lib/Template/Plugin/ForumCode.pm
+   trunk/t/04_forumcode.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3437 at wiggin</A>:  chisel | 2007-06-28 19:27:03 +0100
+ / first run at working list ForumCode
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3436
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3437
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- trunk/lib/Template/Plugin/ForumCode.pm	2007-07-04 22:14:35 UTC (rev 369)
++++ trunk/lib/Template/Plugin/ForumCode.pm	2007-07-04 22:14:49 UTC (rev 370)
+@@ -137,15 +137,37 @@
+     my ($self, $textref) = @_;
+ 
+     $$textref =~ s{
+-        \[list]
++        \[list\]
++        (?:
++            \s*
++            (?:
++                &lt;br\s*?/&gt;
++            )?
++            \s*
++        )
+         (.+?)
+-        \[/list]
++        \[/list\]
++        [\s]*
++        (?:
++            &lt;br\s*?/&gt;
++        )?
+     }
+-    {&lt;li&gt;$1&lt;/li&gt;}xmsg;
++    {'&lt;ul&gt;' . _list_elements($1) . '&lt;/ul&gt;'}xmsge;
+ }
+ 
+ sub _list_elements {
+-    my ($textref);
++    my ($text) = @_;
++
++    $text =~ s{
++        \[\*\]
++        \s*
++        (.+?)
++        &lt;br\s*?/&gt;
++        \s*
++    }
++    {&lt;li&gt;$1&lt;/li&gt;}xmsg;
++
++    return $text;
+ }
+ 
+ 1;
+
+Modified: trunk/t/04_forumcode.t
+===================================================================
+--- trunk/t/04_forumcode.t	2007-07-04 22:14:35 UTC (rev 369)
++++ trunk/t/04_forumcode.t	2007-07-04 22:14:49 UTC (rev 370)
+@@ -163,16 +163,16 @@
+         },
+ 
+ 
+-#        # lists
+-#        # unordered
+-#        {
+-#            in      =&gt; q{[list]
+-#            [*]Red
+-#            [*]Blue
+-#            [*]Yellow
+-#            [/list]},
+-#            out     =&gt; q{&lt;ul&gt;&lt;li&gt;Red&lt;/li&gt;&lt;li&gt;Blue&lt;/li&gt;&lt;li&gt;Yellow&lt;/li&gt;&lt;/ul&gt;},
+-#        },
++        # lists
++        # unordered
++        {
++            in      =&gt; q{[list]
++            [*]Red
++            [*]Blue
++            [*]Yellow
++            [/list]},
++            out     =&gt; q{&lt;ul&gt;&lt;li&gt;Red&lt;/li&gt;&lt;li&gt;Blue&lt;/li&gt;&lt;li&gt;Yellow&lt;/li&gt;&lt;/ul&gt;},
++        },
+     );
+ 
+     # test count is a fixed number of tests + the length of the @tests array
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000257.html">[Parley-svn] r369 - / trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000259.html">[Parley-svn] r371 - / trunk/lib/Template/Plugin trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#258">[ date ]</a>
+              <a href="thread.html#258">[ thread ]</a>
+              <a href="subject.html#258">[ subject ]</a>
+              <a href="author.html#258">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

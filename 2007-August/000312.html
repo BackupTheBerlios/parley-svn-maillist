@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r424 - / trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r424%20-%20/%20trunk/root/base/thread&In-Reply-To=%3C200708082007.l78K7Jem015416%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000311.html">
+   <LINK REL="Next"  HREF="000313.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r424 - / trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r424%20-%20/%20trunk/root/base/thread&In-Reply-To=%3C200708082007.l78K7Jem015416%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r424 - / trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug  8 22:07:19 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000311.html">[Parley-svn] r423 - / trunk/root/base/forum
+</A></li>
+        <LI>Next message: <A HREF="000313.html">[Parley-svn] r425 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#312">[ date ]</a>
+              <a href="thread.html#312">[ thread ]</a>
+              <a href="subject.html#312">[ subject ]</a>
+              <a href="author.html#312">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-08 22:07:19 +0200 (Wed, 08 Aug 2007)
+New Revision: 424
+
+Modified:
+   /
+   trunk/root/base/thread/recent
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3639 at wiggin</A>:  chisel | 2007-08-08 19:05:57 +0100
+ + give the &lt;table&gt; a class
+ + add &quot;interval ago&quot; information
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3638
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3639
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/recent
+===================================================================
+--- trunk/root/base/thread/recent	2007-08-08 20:07:13 UTC (rev 423)
++++ trunk/root/base/thread/recent	2007-08-08 20:07:19 UTC (rev 424)
+@@ -2,7 +2,7 @@
+ 
+ [%- IF thread_list.count &gt; 0 %]
+ [% PROCESS shared/pager_advanced %]
+-&lt;table&gt;
++&lt;table class=&quot;recently_updated&quot;&gt;
+ [% WHILE (thread = thread_list.next) %]
+     &lt;tr&gt;
+         &lt;td width=&quot;36&quot;&gt;
+@@ -34,6 +34,9 @@
+ 
+         &lt;td&gt;
+         [% nicedate(thread.last_post.created) %]
++        &lt;br /&gt;&lt;span class=&quot;interval_ago&quot;&gt;
++            [% thread.last_post.interval_ago %] ago
++            &lt;/span&gt;
+         &lt;br /&gt;
+         &lt;span class=&quot;topic_creator&quot;&gt;posted by
+             &lt;span class=&quot;post_creator&quot;&gt;[% thread.last_post.creator.forum_name %]&lt;/span&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000311.html">[Parley-svn] r423 - / trunk/root/base/forum
+</A></li>
+	<LI>Next message: <A HREF="000313.html">[Parley-svn] r425 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#312">[ date ]</a>
+              <a href="thread.html#312">[ thread ]</a>
+              <a href="subject.html#312">[ subject ]</a>
+              <a href="author.html#312">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

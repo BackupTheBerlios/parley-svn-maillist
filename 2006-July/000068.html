@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r180 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r180%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200607191621.k6JGL80J018526%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000067.html">
+   <LINK REL="Next"  HREF="000069.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r180 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r180%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200607191621.k6JGL80J018526%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r180 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 19 18:21:08 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000067.html">[Parley-svn] r179 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000069.html">[Parley-svn] r181 - / trunk/lib/Parley/Model/ParleyDB
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#68">[ date ]</a>
+              <a href="thread.html#68">[ thread ]</a>
+              <a href="subject.html#68">[ subject ]</a>
+              <a href="author.html#68">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-07-19 18:21:08 +0200 (Wed, 19 Jul 2006)
+New Revision: 180
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4887 at ferrari</A>:  chisel | 2006-07-19 09:50:11 +0100
+ + thread/add: start work on new message notification
+ + thread/watch: set/remove a watch on a thread (in preparation for notification emails)
+ + thread/next_post: continue reading a thread from where you last saw it
+ + thread/view: if logged in keep track of thread viewing progress
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4886
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4887
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2006-07-19 16:20:55 UTC (rev 179)
++++ trunk/lib/Parley/Controller/Thread.pm	2006-07-19 16:21:08 UTC (rev 180)
+@@ -9,6 +9,7 @@
+ use Parley::App::Helper;
+ use Data::FormValidator 4.02;
+ use Data::SpreadPagination;
++use DateTime;
+ 
+ our $DFV;
+ 
+@@ -67,8 +68,48 @@
+             page        =&gt; $page,
+         }
+     );
+-    $c-&gt;log-&gt;dumper( $c-&gt;stash-&gt;{post_list}-&gt;count(), 'POST_COUNT' );
+ 
++    # get the last post on the page
++    my ($last_post, $last_post_timestamp);
++    $last_post = $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;last_post_in_list(
++        $c-&gt;stash-&gt;{post_list}
++    );
++    $last_post_timestamp = $last_post-&gt;created();
++
++    # ONLY DO THE FOLLOWING IF THE USER IS LOGGED IN
++    if ($c-&gt;authed_user()) {
++        # make a note of when we last viewed this thread
++        my $thread_view = $c-&gt;model('ParleyDB')-&gt;table('thread_view')-&gt;find_or_create(
++            {
++                person      =&gt; $c-&gt;authed_user()-&gt;id(),
++                thread      =&gt; $c-&gt;stash-&gt;{current_thread}-&gt;id(),
++                timestamp   =&gt; $last_post_timestamp,
++            },
++        );
++        # set the timestamp the time of the last post on the page (unless the
++        # existing time is later)
++        if ($thread_view-&gt;timestamp() &lt; $last_post_timestamp) {
++            $c-&gt;log-&gt;debug('thread view time is less than last_post time');
++            $thread_view-&gt;timestamp( $last_post_timestamp );
++        }
++        $thread_view-&gt;update;
++
++
++        # find out if the user is watching the thread
++        $c-&gt;stash-&gt;{watching_thread} = $c-&gt;model('ParleyDB')-&gt;table('thread')-&gt;watching_thread(
++            $c-&gt;stash-&gt;{current_thread},
++            $c-&gt;authed_user(),
++        );
++    }
++
++    # how many people are watching this thread?
++    $c-&gt;stash-&gt;{watcher_count} = $c-&gt;model('ParleyDB')-&gt;table('thread_view')-&gt;count(
++        {
++            thread  =&gt; $c-&gt;stash-&gt;{current_thread}-&gt;id(),
++            watched =&gt; 1,
++        }
++    );
++
+     # set up the pager
+     $c-&gt;stash-&gt;{page} = $c-&gt;stash-&gt;{post_list}-&gt;pager();
+ 
+@@ -88,6 +129,81 @@
+     $self-&gt;_increase_view_count($c);
+ }
+ 
++sub next_post : Local {
++    my ($self, $c) = @_;
++
++    # need to be logged in to use next_post
++    # (we don't store last_viewed information for people who aren't logged in)
++    Parley::App::Helper-&gt;login_if_required($c, q{You must be logged in before you can use the thread continuation functionality.});
++
++    # now get the most recent post the user has seen
++    my $last_viewed_post = $c-&gt;model('ParleyDB')-&gt;table('person')-&gt;last_post_viewed_in_thread(
++        $c-&gt;authed_user(),
++        $c-&gt;stash-&gt;{current_thread},
++    );
++
++    # now get the next post after it
++    $c-&gt;stash-&gt;{current_post} = $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;next_post(
++        $last_viewed_post
++    );
++
++    # now view the next post
++    $c-&gt;detach('/post/view');
++}
++
++sub watch : Local {
++    my ($self, $c) = @_;
++
++    my $watched = $c-&gt;request-&gt;param('watch');
++    if (not defined $watched) {
++        $watched = 1;
++    }
++
++    # need to be logged in to watch threads
++    Parley::App::Helper-&gt;login_if_required($c, q{You must be logged in before you can watch a topic.});
++
++    # get the ThreadView so we can update it
++    my $thread_view = $c-&gt;model('ParleyDB')-&gt;table('thread_view')-&gt;find(
++        {
++            person  =&gt; $c-&gt;authed_user()-&gt;id(),
++            thread  =&gt; $c-&gt;stash-&gt;{current_thread}-&gt;id(),
++        }
++    );
++
++    if (defined $thread_view) {
++        my $redirect_url;
++
++        # update the watched status
++        $thread_view-&gt;watched($watched);
++        $thread_view-&gt;update;
++
++        # if we have a current post, we can just use 'post/view'
++        if (defined $c-&gt;stash-&gt;{current_post}) {
++            $c-&gt;detach('/post/view');
++        }
++        # otherwise we want to redirect back the the same page of the sane
++        # thread
++        else {
++            # page to show - either a param, or show the first
++            my $page_number = $c-&gt;request-&gt;param('page') || 1;
++
++            # build the URL to redirect to
++            my $redirect_url = $c-&gt;uri_for(
++                '/thread',
++                'view?thread='
++                . $c-&gt;stash-&gt;{current_thread}-&gt;id()
++                . &quot;&amp;page=$page_number&quot;
++            );
++
++            # redirect to the apropriate place
++            $c-&gt;response-&gt;redirect( $redirect_url );
++        }
++    }
++    else {
++        $c-&gt;stash-&gt;{error}{message} = q{Failed to watch thread};
++    }
++}
++
+ sub add : Local {
+     my ($self, $c) = @_;
+ 
+@@ -293,6 +409,13 @@
+                 $new_post-&gt;update();
+             }
+ 
++            # get the full object record
++            $new_post = $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;find(
++                {
++                    post_id =&gt; $new_post-&gt;id(),
++                }
++            );
++
+             # update information about the most recent forum/thread post
+             $self-&gt;_update_last_post($c, $new_post);
+ 
+@@ -315,6 +438,20 @@
+             eval { $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;storage-&gt;txn_rollback };
+         }
+ 
++        # now get a list of people we want to send an alert to
++        $c-&gt;model('ParleyDB')-&gt;table('thread')-&gt;storage-&gt;debug(1);
++        my $alert_list = $c-&gt;model('ParleyDB')-&gt;table('thread')-&gt;new_post_alert_list(
++            $c-&gt;stash-&gt;{current_thread},
++            $new_post,
++        );
++        if (defined $alert_list) {
++            $c-&gt;log-&gt;dumper( $alert_list-&gt;count() );
++
++           while (my $cd = $alert_list-&gt;next) { $c-&gt;log-&gt;dumper( $cd ); }
++
++        }
++        $c-&gt;model('ParleyDB')-&gt;table('thread')-&gt;storage-&gt;debug(0);
++
+         # view the new thread - but only if no errors
+         if (not scalar(@messages)) {
+             $c-&gt;response-&gt;redirect(
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000067.html">[Parley-svn] r179 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000069.html">[Parley-svn] r181 - / trunk/lib/Parley/Model/ParleyDB
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#68">[ date ]</a>
+              <a href="thread.html#68">[ thread ]</a>
+              <a href="subject.html#68">[ subject ]</a>
+              <a href="author.html#68">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

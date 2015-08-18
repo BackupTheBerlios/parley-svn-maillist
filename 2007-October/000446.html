@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r558 - / trunk/root/base/shared trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r558%20-%20/%20trunk/root/base/shared%20trunk/root/base/thread&In-Reply-To=%3C200710131310.l9DDAabL031350%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000445.html">
+   <LINK REL="Next"  HREF="000447.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r558 - / trunk/root/base/shared trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r558%20-%20/%20trunk/root/base/shared%20trunk/root/base/thread&In-Reply-To=%3C200710131310.l9DDAabL031350%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r558 - / trunk/root/base/shared trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Oct 13 15:10:36 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000445.html">[Parley-svn] r557 - / trunk/lib/Parley/I18N trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000447.html">[Parley-svn] r559 - / trunk/lib/Parley/I18N trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#446">[ date ]</a>
+              <a href="thread.html#446">[ thread ]</a>
+              <a href="subject.html#446">[ subject ]</a>
+              <a href="author.html#446">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-13 15:10:36 +0200 (Sat, 13 Oct 2007)
+New Revision: 558
+
+Modified:
+   /
+   trunk/root/base/shared/loading_please_wait
+   trunk/root/base/shared/moderator_list
+   trunk/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3974 at wiggin</A>:  chisel | 2007-10-13 12:59:40 +0100
+ + added missing TT [% .. %] tags around l() macro call
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3973
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3974
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/shared/loading_please_wait
+===================================================================
+--- trunk/root/base/shared/loading_please_wait	2007-10-13 13:10:10 UTC (rev 557)
++++ trunk/root/base/shared/loading_please_wait	2007-10-13 13:10:36 UTC (rev 558)
+@@ -24,7 +24,7 @@
+                 )
+             ;
+     
+-            YAHOO.parley.loading.wait.setHeader(&quot;Loading, please wait...&quot;);
++            YAHOO.parley.loading.wait.setHeader(&quot;%[l('Loading, please wait')%]...&quot;);
+             YAHOO.parley.loading.wait.setBody(&quot;&lt;img src=\&quot;static/images/rel_interstitial_loading.gif\&quot;/&gt;&quot;);
+             YAHOO.parley.loading.wait.render(document.body);
+         }
+
+Modified: trunk/root/base/shared/moderator_list
+===================================================================
+--- trunk/root/base/shared/moderator_list	2007-10-13 13:10:10 UTC (rev 557)
++++ trunk/root/base/shared/moderator_list	2007-10-13 13:10:36 UTC (rev 558)
+@@ -1,12 +1,12 @@
+ [% IF current_forum %]
+     &lt;div class=&quot;moderator_list&quot;&gt;
+-        &lt;strong&gt;l('Forum Moderators'):&lt;/strong&gt;
++        &lt;strong&gt;[%l('Forum Moderators')%]:&lt;/strong&gt;
+         [% IF current_forum.moderators.size &gt; 0 %]
+             [% FOR m IN current_forum.moderators %]
+             &lt;a href=&quot;user/profile?user=[%m.id%]&quot;&gt;[% m.forum_name %]&lt;/a&gt;[% UNLESS loop.last() %], [% END %]
+             [% END %]
+         [% ELSE %]
+-            &lt;em&gt;l('None')&lt;/em&gt;
++            &lt;em&gt;[%l('None')%]&lt;/em&gt;
+         [% END %]
+     &lt;/div&gt;
+ [% END %]
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-10-13 13:10:10 UTC (rev 557)
++++ trunk/root/base/thread/view	2007-10-13 13:10:36 UTC (rev 558)
+@@ -31,18 +31,18 @@
+                             &lt;td width=&quot;50%&quot;&gt;
+                                 &lt;small&gt;
+                                     [% current_thread.view_count %]
+-                                    [% IF current_thread.view_count == 1 %]l('view')[% ELSE %]l('views')[% END %].
++                                    [% IF current_thread.view_count == 1 %][%l('view')%][% ELSE %][%l('views')%][% END %].
+                                 &lt;/small&gt;
+                             &lt;/td&gt;
+                             &lt;td width=&quot;50%&quot; align=&quot;right&quot;&gt;
+                                 &lt;small&gt;
+                                 [% IF current_thread.locked %]
+-                                    l('Thread Locked') 
+-                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;l('Locked')&quot; title=&quot;l('Locked Topic')&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++                                    [%l('Thread Locked')%] 
++                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')&quot;%] title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+                                 [% ELSE %]
+                                     &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                                         &lt;span class=&quot;first-child&quot;&gt;
+-                                            &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;l('Reply')&lt;/a&gt;
++                                            &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;[%l('Reply')%]&lt;/a&gt;
+                                         &lt;/span&gt;
+                                     &lt;/span&gt;
+                                 [% END %]
+@@ -60,7 +60,7 @@
+         &lt;tr&gt;
+             &lt;td class=&quot;user_post_info&quot;&gt;
+                 &lt;!-- user avatar --&gt;
+-                [% avatar_file = c.path_to('root') _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
++                [% avatar_file = c.path_to('root')%] _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
+                 [% TRY %]
+                     [% USE avatar = Image(avatar_file) %]
+                     [% tmp = avatar.attr %]
+@@ -84,7 +84,7 @@
+                 &lt;div class=&quot;innerpost&quot;&gt;
+                     [% IF post.quoted_post %]
+                     &lt;div class=&quot;quote&quot;&gt;
+-                    &lt;strong&gt;[% post.quoted_post.creator.forum_name %] l('wrote'):&lt;/strong&gt;&lt;br&gt;
++                    &lt;strong&gt;[% post.quoted_post.creator.forum_name %] [%l('wrote')%]:&lt;/strong&gt;&lt;br&gt;
+                     [% ForumCode.forumcode(post.quoted_text) %]&lt;br /&gt;
+                     &lt;/div&gt;
+                     &lt;br /&gt;
+@@ -97,14 +97,14 @@
+                     [% nicedate(post.created) %]
+                     &lt;br /&gt;[% post.interval_ago %] ago
+                     [% IF post.edited %]
+-                    &lt;br /&gt;&lt;span class=&quot;post_edited_alert&quot;&gt;l('Edited'): [% nicedate(post.edited) %]&lt;/span&gt;
++                    &lt;br /&gt;&lt;span class=&quot;post_edited_alert&quot;&gt;[%l('Edited')%]: [% nicedate(post.edited) %]&lt;/span&gt;
+                     [% END %]
+                     &lt;br /&gt;
+                     [% IF post.ip_addr %]
+                         [% IF moderator %]
+-                            l('Posted from'): [% post.ip_addr %]
++                            [%l('Posted from')%]: [% post.ip_addr %]
+                         [% ELSE %]
+-                           l('IP Logged') 
++                           [%l('IP Logged')%] 
+                         [% END %]
+                     [% END %]
+                     [% UNLESS current_thread.locked %]
+@@ -113,18 +113,18 @@
+                         [% IF authed_user.id == post.creator.id %]
+                         &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                             &lt;span class=&quot;first-child&quot;&gt;
+-                                &lt;a href=&quot;post/edit?post=[% post.id %]&quot;&gt;l('Edit')&lt;/a&gt;
++                                &lt;a href=&quot;post/edit?post=[% post.id %]&quot;&gt;[%l('Edit')%]&lt;/a&gt;
+                             &lt;/span&gt;
+                         &lt;/span&gt;
+                         [% END %]
+                         &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                             &lt;span class=&quot;first-child&quot;&gt;
+-                                &lt;a href=&quot;thread/reply?post=[% post.id %]&quot;&gt;l('Quote')&lt;/a&gt;
++                                &lt;a href=&quot;thread/reply?post=[% post.id %]&quot;&gt;[%l('Quote')%]&lt;/a&gt;
+                             &lt;/span&gt;
+                         &lt;/span&gt;
+                         &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                             &lt;span class=&quot;first-child&quot;&gt;
+-                                &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;l('Reply')&lt;/a&gt;
++                                &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;[%l('Reply')%]&lt;/a&gt;
+                             &lt;/span&gt;
+                         &lt;/span&gt;
+                     [% END %]
+@@ -152,18 +152,18 @@
+                             &lt;td width=&quot;50%&quot;&gt;
+                                 &lt;small&gt;
+                                     [% current_thread.view_count %]
+-                                    [% IF current_thread.view_count == 1 %]l('view')[% ELSE %]l('views')[% END %].
++                                    [% IF current_thread.view_count == 1 %][%l('view')%][% ELSE %][%l('views')%][% END %].
+                                 &lt;/small&gt;
+                             &lt;/td&gt;
+                             &lt;td width=&quot;50%&quot; align=&quot;right&quot;&gt;
+                                 &lt;small&gt;
+                                 [% IF current_thread.locked %]
+-                                    l('Thread Locked') 
+-                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;l('Locked')&quot; title=&quot;l('Locked Topic')&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++                                    [%l('Thread Locked')%] 
++                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+                                 [% ELSE %]
+                                     &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                                         &lt;span class=&quot;first-child&quot;&gt;
+-                                            &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;l('Reply')&lt;/a&gt;
++                                            &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;[%l('Reply')%]&lt;/a&gt;
+                                         &lt;/span&gt;
+                                     &lt;/span&gt;
+                                 [% END %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000445.html">[Parley-svn] r557 - / trunk/lib/Parley/I18N trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000447.html">[Parley-svn] r559 - / trunk/lib/Parley/I18N trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#446">[ date ]</a>
+              <a href="thread.html#446">[ thread ]</a>
+              <a href="subject.html#446">[ subject ]</a>
+              <a href="author.html#446">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

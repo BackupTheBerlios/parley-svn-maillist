@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r842 - / trunk trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema	trunk/root/base/menu trunk/root/base/site trunk/root/base/user
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r842%20-%20/%20trunk%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema%0A%09trunk/root/base/menu%20trunk/root/base/site%20trunk/root/base/user&In-Reply-To=%3C200803162300.m2GN0Sml018621%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000729.html">
+   <LINK REL="Next"  HREF="000731.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r842 - / trunk trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema	trunk/root/base/menu trunk/root/base/site trunk/root/base/user</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r842%20-%20/%20trunk%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema%0A%09trunk/root/base/menu%20trunk/root/base/site%20trunk/root/base/user&In-Reply-To=%3C200803162300.m2GN0Sml018621%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r842 - / trunk trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema	trunk/root/base/menu trunk/root/base/site trunk/root/base/user">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Mar 17 00:00:28 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000729.html">[Parley-svn] r841 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000731.html">[Parley-svn] r843 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#730">[ date ]</a>
+              <a href="thread.html#730">[ thread ]</a>
+              <a href="subject.html#730">[ subject ]</a>
+              <a href="author.html#730">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-17 00:00:26 +0100 (Mon, 17 Mar 2008)
+New Revision: 842
+
+Added:
+   trunk/README.gravatar
+   trunk/lib/Parley/ResultSet/IpBanType.pm
+   trunk/root/base/site/ip_bans
+   trunk/root/base/user/access_ip_banned
+   trunk/root/base/user/posting_ip_banned
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/ROADMAP
+   trunk/lib/Parley/Contributors.pm
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/lib/Parley/Schema/IpBanType.pm
+   trunk/root/base/menu/menubar
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4764 at wiggin</A>:  chisel | 2008-03-16 22:59:58 +0000
+ + more i_default i18n phrases
+ + added to ROADMAP
+ + added famfamfam flags to contributors file
+ + functionality to update/edit ip bans in application UI
+ + checked in missing ip-ban template files
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4763
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4764
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/Changes.i18n	2008-03-16 23:00:26 UTC (rev 842)
+@@ -34,6 +34,7 @@
+             - &quot;Posting Not Allowed&quot;
+             - &quot;Access Denied&quot;
+             - &quot;Access to this application is not permitted from %1&quot;
++            - &quot;IP Bans&quot;
+ 
+     it.po:
+         - added:
+
+Added: trunk/README.gravatar
+===================================================================
+--- trunk/README.gravatar	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/README.gravatar	2008-03-16 23:00:26 UTC (rev 842)
+@@ -0,0 +1,29 @@
++From: <A HREF="http://site.gravatar.com/site/implement">http://site.gravatar.com/site/implement</A>
++
++PERL
++
++Gravatar implementations with PERL are pretty straightforward, however you do
++need to include several external libraries. These are probably already
++installed on your machine, but if they're not, you'll have to download and
++install them.
++
++Let's start by including those library functions that we'll utilize:
++
++use URI::Escape qw(uri_escape);
++use Digest::MD5 qw(md5_hex);
++
++Next, assume the following variables are available to you:
++
++my $email = &quot;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">someone at somewhere.com</A>&quot;;
++my $default = &quot;<A HREF="http://www.somewhere.com/homsar.jpg">http://www.somewhere.com/homsar.jpg</A>&quot;;
++my $size = 40;
++
++You can construct your gravatar url with the following PERL code:
++
++my $grav_url = &quot;<A HREF="http://www.gravatar.com/avatar.php?">http://www.gravatar.com/avatar.php?</A>
++gravatar_id=&quot;.md5_hex($email).
++&quot;&amp;default=&quot;.uri_escape($default).
++&quot;&amp;size=&quot;.$size;
++
++This only constructs the URL, so don't forget to place it in an img tag before
++printing it.
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/ROADMAP	2008-03-16 23:00:26 UTC (rev 842)
+@@ -50,3 +50,4 @@
+         - password management
+         - resend auth mail(s)
+         - realtime time-format example update
++        - gravatar support
+
+Modified: trunk/lib/Parley/Contributors.pm
+===================================================================
+--- trunk/lib/Parley/Contributors.pm	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/lib/Parley/Contributors.pm	2008-03-16 23:00:26 UTC (rev 842)
+@@ -23,6 +23,8 @@
+ 
+ L&lt;FamFamFam Silk Icons|<A HREF="http://www.famfamfam.com/lab/icons/silk/">http://www.famfamfam.com/lab/icons/silk/</A>&gt;
+ 
++L&lt;FamFamFam Flag Icons|<A HREF="http://www.famfamfam.com/lab/icons/flags/">http://www.famfamfam.com/lab/icons/flags/</A>&gt;
++
+ =head1 I18N
+ 
+ =head2 Italian
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/lib/Parley/Controller/Site.pm	2008-03-16 23:00:26 UTC (rev 842)
+@@ -35,6 +35,15 @@
+     $c-&gt;response-&gt;body('Matched Parley::Controller::Site in Site.');
+ }
+ 
++sub ip_bans :Local {
++    my ($self, $c) = @_;
++
++    # a list of ban types
++    $c-&gt;stash-&gt;{ip_ban_types} =
++        $c-&gt;model('ParleyDB::IpBanType')
++            -&gt;ban_type_list;
++}
++
+ sub services : Local {
+     my ($self, $c) = @_;
+ 
+@@ -218,6 +227,91 @@
+     return;
+ }
+ 
++sub saveBanHandler :Local {
++    my ($self, $c) = @_;
++    my ($fieldname, $return_data, $json);
++
++    $return_data-&gt;{updated}     = 0;
++    $return_data-&gt;{old_value}   = $c-&gt;request-&gt;param('ovalue');
++
++    $fieldname = $c-&gt;request-&gt;param('fieldname');
++
++    # update an existing ban?
++    if ($fieldname =~ m{\Aipban_(\d+)\z}xms) {
++        eval {
++            my $id = $1;
++
++            $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                sub {
++                    $c-&gt;model('ParleyDB::IpBan')-&gt;find($id)
++                        -&gt;update(
++                            {
++                                ip_range    =&gt; $c-&gt;request-&gt;param('value'),
++                            },
++                    )
++                }
++            );
++            $return_data-&gt;{updated} = 1;
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die &quot;something terrible has happened!&quot;  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $return_data-&gt;{error}{message} =
++                qq{Database transaction failed: $@};
++            $c-&gt;log-&gt;error( $@ );
++            $json = to_json($return_data);
++            $c-&gt;response-&gt;body( $json );
++            return;
++        }
++    }
++
++    # add a new ban?
++    elsif ($fieldname =~ m{\Aipbannewtype_(\d+)\z}xms) {
++        eval {
++            my $id = $1;
++
++            $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                sub {
++                    $c-&gt;model('ParleyDB::IpBan')-&gt;update_or_create(
++                        {
++                            ban_type_id =&gt; $id,
++                            ip_range    =&gt; $c-&gt;request-&gt;param('value'),
++                        },
++                    )
++                }
++            );
++            $return_data-&gt;{updated} = 1;
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die &quot;something terrible has happened!&quot;  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $return_data-&gt;{error}{message} =
++                qq{Database transaction failed: $@};
++            $c-&gt;log-&gt;error( $@ );
++            $json = to_json($return_data);
++            $c-&gt;response-&gt;body( $json );
++            $c-&gt;log-&gt;info( $json );
++            return;
++        }
++    }
++
++    # unknown
++    else {
++        $return_data-&gt;{error}{message} =
++            $c-&gt;localize(q{Unrecognised field-name format});
++    }
++
++    # return some JSON
++    $json = to_json($return_data);
++    $c-&gt;response-&gt;body( $json );
++    $c-&gt;log-&gt;info( $json );
++    return;
++}
++
+ =head1 NAME
+ 
+ Parley::Controller::Site - Catalyst Controller
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/lib/Parley/I18N/i_default.po	2008-03-16 23:00:26 UTC (rev 842)
+@@ -255,6 +255,9 @@
+ msgid &quot;Invalid requested value&quot;
+ msgstr &quot;Invalid requested value&quot;
+ 
++msgid &quot;IP Bans&quot;
++msgstr &quot;IP Bans&quot;
++
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Logged&quot;
+ 
+
+Added: trunk/lib/Parley/ResultSet/IpBanType.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/IpBanType.pm	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/lib/Parley/ResultSet/IpBanType.pm	2008-03-16 23:00:26 UTC (rev 842)
+@@ -0,0 +1,25 @@
++package Parley::ResultSet::IpBanType;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base 'DBIx::Class::ResultSet';
++
++sub ban_type_list {
++    my $resultsource = shift;
++    my ($rs);
++
++    $rs = $resultsource-&gt;search(
++        {},
++        {
++            'order_by'  =&gt; ['name ASC'],
++        }
++    );
++
++    return $rs;
++}
++
++
++1;
+
+Modified: trunk/lib/Parley/Schema/IpBanType.pm
+===================================================================
+--- trunk/lib/Parley/Schema/IpBanType.pm	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/lib/Parley/Schema/IpBanType.pm	2008-03-16 23:00:26 UTC (rev 842)
+@@ -15,6 +15,8 @@
+ __PACKAGE__-&gt;add_columns(qw/id name description/);
+ # Set the primary key for the table
+ __PACKAGE__-&gt;set_primary_key(qw/id/);
++# Set the resultset class
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::IpBanType');
+ 
+ #
+ # Set relationships:
+@@ -25,6 +27,12 @@
+     ['name']
+ );
+ 
++# lib/Parley/Schema/Forum.pm:__PACKAGE__-&gt;has_many(
++# &quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.forum&quot; =&gt; &quot;self.id&quot; });
++__PACKAGE__-&gt;has_many(
++    'ip_bans' =&gt; 'IpBan',
++    { 'foreign.ban_type_id' =&gt; 'self.id' }
++);
+ 
+ 
+ 1;
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/root/base/menu/menubar	2008-03-16 23:00:26 UTC (rev 842)
+@@ -122,6 +122,7 @@
+                                         &lt;ul class=&quot;first-of-type&quot;&gt;
+                                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;site/services&quot;&gt;[%l('Services')%]&lt;/a&gt;&lt;/li&gt;
+                                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;site/users&quot;&gt;[%l('Users')%]&lt;/a&gt;&lt;/li&gt;
++                                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;site/ip_bans&quot;&gt;[%l('IP Bans')%]&lt;/a&gt;&lt;/li&gt;
+                                         &lt;/ul&gt;            
+                                     &lt;/div&gt;
+                                 &lt;/div&gt;                    
+
+Added: trunk/root/base/site/ip_bans
+===================================================================
+--- trunk/root/base/site/ip_bans	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/root/base/site/ip_bans	2008-03-16 23:00:26 UTC (rev 842)
+@@ -0,0 +1,74 @@
++&lt;h1&gt;[%l('IP Bans')%]&lt;/h1&gt;
++[% WHILE (ban_type = ip_ban_types.next) %]
++&lt;h2 class=&quot;top_padded&quot;&gt;[% ban_type.description %]&lt;/h2&gt;
++    [% bans = ban_type.ip_bans_rs %]
++    [% IF bans.count %]
++        [% WHILE (ip_ban = bans.next) %]
++        &lt;span id=&quot;ipban_[%ip_ban.id%]&quot; class=&quot;editable&quot;&gt;[%ip_ban.ip_range%]&lt;/span&gt;
++        [% END %]
++    [% ELSE %]
++        &lt;span id=&quot;ipbannewtype_[%ban_type.id%]&quot; class=&quot;editable&quot;&gt;None&lt;/span&gt;
++    [% END %]
++[% END %]
++
++
++[% PROCESS shared/ajax_dialog %]
++
++
++&lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/Editable-min.js&quot;&gt;&lt;/script&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++    var E  = new YAHOO.widget.EditableElement;
++    E.config.input_type = 'textarea';
++
++    E.callback = function(){
++        var handleSuccess = function(o) {
++            YAHOO.parley.small_loading.wait.hide();
++            var data = eval('(' + o.responseText + ')');
++            // if we didn't update reset the field value
++            if (data.updated != 1) {
++                o.argument.node.innerHTML = data.old_value;
++            }
++            if (data.error) {
++                try {
++                    YAHOO.parley.ajax_dialog.dlg.show_message( data.error );
++                } catch(e) { alert('handleSuccess: ' + e); }
++            }
++        };
++        var handleFailure =  function(o) {
++            YAHOO.parley.small_loading.wait.hide();
++            try {
++                YAHOO.parley.ajax_dialog.dlg.show_message( o );
++            } catch(e) { alert('handleFailure: ' + e); }
++        };
++
++        // let the user know something is happening
++        YAHOO.parley.small_loading.wait.show();
++
++        // where to post to
++        var sUrl = &quot;[%c.uri_for('/site/saveBanHandler')%]&quot;;
++
++        // postdata is a query string ... how irksome!!
++        var postData =
++               'value='     + this.contents_new
++            + '&amp;ovalue='    + this.contents
++            + '&amp;fieldname=' + this.clicked.id
++        ;
++
++        //var msg_node = YAHOO.util.Dom.get('result');
++
++        var request = YAHOO.util.Connect.asyncRequest(
++            'POST',
++            sUrl,
++            {
++                success:  handleSuccess,
++                failure:  handleFailure,
++                argument: {
++                    node:     this.clicked
++                }
++            },
++            postData
++        );
++    };
++
++    E.init();
++&lt;/script&gt;
+
+Added: trunk/root/base/user/access_ip_banned
+===================================================================
+--- trunk/root/base/user/access_ip_banned	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/root/base/user/access_ip_banned	2008-03-16 23:00:26 UTC (rev 842)
+@@ -0,0 +1,3 @@
++&lt;h1&gt;[%l('Access Denied')%]&lt;/h1&gt;
++
++[%l('Access to this application is not permitted from [_1]', c.request.address)%]
+
+Added: trunk/root/base/user/posting_ip_banned
+===================================================================
+--- trunk/root/base/user/posting_ip_banned	2008-03-16 23:00:10 UTC (rev 841)
++++ trunk/root/base/user/posting_ip_banned	2008-03-16 23:00:26 UTC (rev 842)
+@@ -0,0 +1,3 @@
++&lt;h1&gt;[%l('Posting Not Allowed')%]&lt;/h1&gt;
++
++[%l('Posting is not permitted from [_1]', c.request.address)%]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000729.html">[Parley-svn] r841 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000731.html">[Parley-svn] r843 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#730">[ date ]</a>
+              <a href="thread.html#730">[ thread ]</a>
+              <a href="subject.html#730">[ subject ]</a>
+              <a href="author.html#730">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r367 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r367%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200706252211.l5PMB3OS025534%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000254.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r367 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r367%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200706252211.l5PMB3OS025534%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r367 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/thread trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jun 26 00:11:03 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000254.html">[Parley-svn] r366 - / trunk/root/base/my
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#255">[ date ]</a>
+              <a href="thread.html#255">[ thread ]</a>
+              <a href="subject.html#255">[ subject ]</a>
+              <a href="author.html#255">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-06-26 00:11:03 +0200 (Tue, 26 Jun 2007)
+New Revision: 367
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/root/base/thread/view
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3414 at wiggin</A>:  chisel | 2007-06-22 08:51:59 +0100
+ + reimplemented post/edit
+ / added missing inflate_column() for post.edited column
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3413
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3414
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/Changes	2007-06-25 22:11:03 UTC (rev 367)
+@@ -2,11 +2,12 @@
+ 
+ 0.53
+ 
++    - reimplemented post/edit (lost in the 0.5 rewrite)
+     - automatically add thread-watch on new thread/post
+       (checkbox value defaults to appropriate pref value for user)
+     - added a basic profile page for users
+     - store the IP address of each post author
+-    - improved preference screen (time, watch info)
++    - improved preference screen (time, watch info, notifications)
+     - preferences are now in a tabbed container
+     - tidied up CSS and layout
+     - added more missing dependencies to Makefile.PL
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/lib/Parley/Controller/Post.pm	2007-06-25 22:11:03 UTC (rev 367)
+@@ -3,12 +3,91 @@
+ use strict;
+ use warnings;
+ use base 'Catalyst::Controller';
++use DateTime;
+ 
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++my %dfv_profile_for = (
++    # DFV validation profile for adding a new topic
++    edit_post =&gt; {
++        required    =&gt; [qw( post_message )],
++        filters     =&gt; [qw( trim )],
++        msgs =&gt; {
++            format  =&gt; q{%s},
++            missing =&gt; q{One or more required fields are missing},
++        },
++    },
++);
++
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Controller Actions
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++sub edit : Local {
++    my ($self, $c) = @_;
++
++    # if we don't have a post param, then return with an error
++    unless (defined $c-&gt;_current_post) {
++        $c-&gt;stash-&gt;{error}{message} = q{Incomplete URL};
++        return;
++    }
++
++    # you need to be logged in to edit a post
++    # (although non-logged users shouldn't see an edit link, you never know
++    # what people will make-up or bookmark)
++    $c-&gt;login_if_required(q{You must be logged in before you can edit your posts.});
++
++    # you can only edit you own posts
++    # (unless you're a moderator, but we don't do that yet)
++    if ($c-&gt;_authed_user()-&gt;id() != $c-&gt;_current_post()-&gt;creator()-&gt;id()) {
++        $c-&gt;stash-&gt;{error}{message} = q{You can only edit posts you have made};
++        return;
++    }
++
++    # you can't edit a locked post
++    elsif ($c-&gt;_current_post-&gt;thread-&gt;locked) {
++        $c-&gt;stash-&gt;{error}{message} = q{You can't edit locked posts};
++        return;
++    }
++
++    # process the form submission
++    else {
++        # validate the form data
++        $c-&gt;form(
++            $dfv_profile_for{edit_post}
++        );
++        # deal with missing/invalid fields
++        if ($c-&gt;form-&gt;has_missing()) {
++            $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++            foreach my $f ( $c-&gt;form-&gt;missing ) {
++                push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++            }
++        }
++        elsif ($c-&gt;form-&gt;has_invalid()) {
++            $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++            foreach my $f ( $c-&gt;form-&gt;invalid ) {
++                push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++            }
++        }
++        # otherwise; everything seems fine - edit the post
++        else {
++            # update the post with the new information
++            $c-&gt;_current_post-&gt;message( $c-&gt;form-&gt;valid-&gt;{post_message} );
++
++            # set the edited time
++            $c-&gt;_current_post-&gt;edited( DateTime-&gt;now() );
++
++            # store the updates in the db
++            $c-&gt;_current_post-&gt;update();
++
++            # view the (updated) post
++            $c-&gt;detach('/post/view');
++        }
++    }
++}
++
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/lib/Parley/Schema/Post.pm	2007-06-25 22:11:03 UTC (rev 367)
+@@ -95,7 +95,7 @@
+ 
+ 
+ 
+-foreach my $datecol (qw/created/) {
++foreach my $datecol (qw/created edited/) {
+     __PACKAGE__-&gt;inflate_column($datecol, {
+         inflate =&gt; sub { DateTime::Format::Pg-&gt;parse_datetime(shift); },
+         deflate =&gt; sub { DateTime::Format::Pg-&gt;format_datetime(shift); },
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/lib/Parley.pm	2007-06-25 22:11:03 UTC (rev 367)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.53_003';
++our $VERSION = '0.53_004';
+ 
+ __PACKAGE__-&gt;config( version =&gt; $VERSION );
+ __PACKAGE__-&gt;setup;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/root/base/thread/view	2007-06-25 22:11:03 UTC (rev 367)
+@@ -89,9 +89,23 @@
+ 
+                 &lt;div class=&quot;post_info&quot;&gt;
+                     [% nicedate(post.created) %]
++                    [% IF post.edited %]
++                    &lt;br /&gt;&lt;span class=&quot;post_edited_alert&quot;&gt;Edited: [% nicedate(post.edited) %]&lt;/span&gt;
++                    [% END %]
++                    &lt;br /&gt;
++                    [% IF post.ip_addr %]
++                        [% IF moderator %]
++                            Posted from: [% post.ip_addr %]
++                        [% ELSE %]
++                            IP Logged
++                        [% END %]
++                    [% END %]
+                     [% UNLESS current_thread.locked %]
+                         &lt;br /&gt;
+                         &lt;br /&gt;
++                        [% IF authed_user.id == post.creator.id %]
++                        &lt;a class=&quot;button&quot; href=&quot;post/edit?post=[% post.id %]&quot;&gt;Edit&lt;/a&gt;
++                        [% END %]
+                         &lt;a class=&quot;button&quot; href=&quot;thread/reply?post=[% post.id %]&quot;&gt;Quote&lt;/a&gt;
+                         &lt;a class=&quot;button&quot; href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
+                     [% END %]
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-06-25 22:10:50 UTC (rev 366)
++++ trunk/root/css/common.css	2007-06-25 22:11:03 UTC (rev 367)
+@@ -269,6 +269,12 @@
+     vertical-align:     top;
+ }
+ 
++.post_edited_alert {
++    font-weight:    bold;
++    font-style:     italic;
++    font-size:      0.8em;
++}
++
+ .user_post_info {
+     background:         #ccc;
+     font-size:          85%;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000254.html">[Parley-svn] r366 - / trunk/root/base/my
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#255">[ date ]</a>
+              <a href="thread.html#255">[ thread ]</a>
+              <a href="subject.html#255">[ subject ]</a>
+              <a href="author.html#255">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

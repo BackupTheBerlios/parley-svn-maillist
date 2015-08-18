@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r531 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r531%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200710031053.l93Aricn031920%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000418.html">
+   <LINK REL="Next"  HREF="000420.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r531 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r531%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200710031053.l93Aricn031920%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r531 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Oct  3 12:53:44 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000418.html">[Parley-svn] r530 - / trunk/lib/Template/Plugin trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000420.html">[Parley-svn] r532 - / trunk trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#419">[ date ]</a>
+              <a href="thread.html#419">[ thread ]</a>
+              <a href="subject.html#419">[ subject ]</a>
+              <a href="author.html#419">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-03 12:53:43 +0200 (Wed, 03 Oct 2007)
+New Revision: 531
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3913 at wiggin</A>:  chisel | 2007-10-03 11:53:33 +0100
+ - removed some (no longer required) $c-&gt;log-&gt;debug(...) statements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3909
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3913
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2007-10-03 08:44:01 UTC (rev 530)
++++ trunk/lib/Parley/Controller/Post.pm	2007-10-03 10:53:43 UTC (rev 531)
+@@ -136,7 +136,7 @@
+                 )
+         }
+     );
+-    $c-&gt;log-&gt;debug( $json );
++    #$c-&gt;log-&gt;debug( $json );
+ 
+     $c-&gt;response-&gt;body( $json );
+     return;
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-10-03 08:44:01 UTC (rev 530)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-10-03 10:53:43 UTC (rev 531)
+@@ -147,7 +147,7 @@
+     # setup the pager
+     $self-&gt;_prepare_pager($c, $c-&gt;stash-&gt;{thread_list});
+ 
+-    $c-&gt;log-&gt;debug( $c-&gt;stash-&gt;{thread_list}-&gt;count() );
++    #$c-&gt;log-&gt;debug( $c-&gt;stash-&gt;{thread_list}-&gt;count() );
+     return;
+ }
+ 
+@@ -182,13 +182,13 @@
+             and $c-&gt;request-&gt;method() eq 'POST'
+             and defined $c-&gt;request-&gt;param('post_reply')
+     ) {
+-        $c-&gt;log-&gt;debug('calling: _add_new_reply($c)');
++        #$c-&gt;log-&gt;debug('calling: _add_new_reply($c)');
+         $self-&gt;_add_new_reply($c);
+     }
+     # other wise we continue merrily on our way, and simply display the
+     # thread/reply page
+     else {
+-        $c-&gt;log-&gt;debug('allowing fall-through to view in reply()');
++        #$c-&gt;log-&gt;debug('allowing fall-through to view in reply()');
+         # thread/reply template shown automagically
+     }
+ }
+@@ -229,7 +229,7 @@
+     # some updates for logged in users
+     ##################################################
+     if ($c-&gt;_authed_user) {
+-        $c-&gt;log-&gt;debug('thread view by authed user');
++        #$c-&gt;log-&gt;debug('thread view by authed user');
+ 
+         # update thread_view for user
+         $self-&gt;_update_thread_view($c);
+@@ -340,7 +340,7 @@
+ 
+     # if we've got a list of threads to stop watching ...
+     if (my @thread_ids = $c-&gt;request-&gt;param('stop_watching')) {
+-        $c-&gt;log-&gt;debug( q{stop_watching parameter found} );
++        #$c-&gt;log-&gt;debug( q{stop_watching parameter found} );
+         foreach my $thread_id ( @thread_ids ) {
+             # get the ThreadView so we can update it
+             my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
+@@ -693,7 +693,7 @@
+ 
+     # get the timestamp of the last post
+     $last_post_timestamp = $last_post-&gt;created();
+-    $c-&gt;log-&gt;debug( qq{\$last_post_timestamp = $last_post_timestamp} );
++    #$c-&gt;log-&gt;debug( qq{\$last_post_timestamp = $last_post_timestamp} );
+ 
+     # make a note of when the user last viewed this thread, if a record doesn't already exist
+     my $thread_view =
+@@ -709,7 +709,7 @@
+     # set the timestamp the time of the last post on the page (unless the
+     # existing time is later)
+     if ($thread_view-&gt;timestamp() &lt; $last_post_timestamp) {
+-        $c-&gt;log-&gt;debug('thread view time is less than last_post time');
++        #$c-&gt;log-&gt;debug('thread view time is less than last_post time');
+         $thread_view-&gt;timestamp( $last_post_timestamp );
+     }
+ 
+@@ -784,14 +784,14 @@
+ 
+     # would we like to lock the thread?
+     if ($c-&gt;form-&gt;valid-&gt;{lock_thread} and $c-&gt;stash-&gt;{moderator}) {
+-        $c-&gt;log-&gt;debug( q{locking thread after replying} );
++        #$c-&gt;log-&gt;debug( q{locking thread after replying} );
+         $new_post-&gt;thread-&gt;locked(1);
+         $new_post-&gt;thread-&gt;update;
+     }
+ 
+     # would we like to set a thread watch at the time of posting?
+     if ($c-&gt;form-&gt;valid-&gt;{watch_on_post}) {
+-        $c-&gt;log-&gt;debug( q{Auto-add thread watch on new post} );
++        #$c-&gt;log-&gt;debug( q{Auto-add thread watch on new post} );
+         my $thread_view =
+             $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
+                 {
+@@ -801,7 +801,7 @@
+             )
+         ;
+         if (defined $thread_view) {
+-            $c-&gt;log-&gt;debug( q{Adding Watch} );
++            #$c-&gt;log-&gt;debug( q{Adding Watch} );
+             #$thread_view-&gt;timestamp( $new_post-&gt;created() );
+             $thread_view-&gt;watched( 1 );
+             $thread_view-&gt;update;
+@@ -853,7 +853,7 @@
+     # if the poster wants to add a watch we need to create the ThreadView record here
+     # (it's a new thread so they can't have viewed it yet)
+     if ($c-&gt;form-&gt;valid-&gt;{watch_on_post}) {
+-        $c-&gt;log-&gt;debug( q{Auto-add thread watch on new thread} );
++        #$c-&gt;log-&gt;debug( q{Auto-add thread watch on new thread} );
+         my $thread_view =
+             $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;create(
+                 {
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000418.html">[Parley-svn] r530 - / trunk/lib/Template/Plugin trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000420.html">[Parley-svn] r532 - / trunk trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#419">[ date ]</a>
+              <a href="thread.html#419">[ thread ]</a>
+              <a href="subject.html#419">[ subject ]</a>
+              <a href="author.html#419">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r385 - / trunk/root/base/menu
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r385%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200707042219.l64MJL5R014545%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000271.html">
+   <LINK REL="Next"  HREF="000273.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r385 - / trunk/root/base/menu</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r385%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200707042219.l64MJL5R014545%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r385 - / trunk/root/base/menu">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul  5 00:19:21 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000271.html">[Parley-svn] r384 - / trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000273.html">[Parley-svn] r386 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#272">[ date ]</a>
+              <a href="thread.html#272">[ thread ]</a>
+              <a href="subject.html#272">[ subject ]</a>
+              <a href="author.html#272">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-05 00:19:20 +0200 (Thu, 05 Jul 2007)
+New Revision: 385
+
+Modified:
+   /
+   trunk/root/base/menu/menubar
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3452 at wiggin</A>:  chisel | 2007-07-04 08:34:21 +0100
+ + Lock, Stick, Search, Moderate
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3451
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3452
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-07-04 22:19:14 UTC (rev 384)
++++ trunk/root/base/menu/menubar	2007-07-04 22:19:20 UTC (rev 385)
+@@ -37,10 +37,28 @@
+     [% END %]
+ &lt;/div&gt;
+ 
++&lt;div dojoType=&quot;PopupMenu2&quot; widgetId=&quot;menu_moderate&quot;&gt;
++    [% IF current_thread.locked %]
++	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Unlock Thread&quot; onClick=&quot;document.location.href='admin/lock?thread=[%current_thread.id%]&amp;lock=0';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
++    [% ELSE %]
++	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Lock Thread&quot; onClick=&quot;document.location.href='admin/lock?thread=[%current_thread.id%]';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
++    [% END %]
++
++    [% IF current_thread.sticky %]
++	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Unstick Thread&quot; onClick=&quot;document.location.href='admin/sticky?thread=[%current_thread.id%]&amp;sticky=0';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
++    [% ELSE %]
++	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Stick Thread&quot; onClick=&quot;document.location.href='admin/sticky?thread=[%current_thread.id%]';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
++    [% END %]
++&lt;/div&gt;
++
+ &lt;div dojoType=&quot;MenuBar2&quot;&gt;
+ 	&lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Go To ...&quot;    submenuId=&quot;menu_go&quot;&gt;&lt;/div&gt;
+ 	&lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Forum&quot;        submenuId=&quot;menu_forum&quot;&gt;&lt;/div&gt;
+ 	&lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Thread&quot;       submenuId=&quot;menu_thread&quot;&gt;&lt;/div&gt;
++    &lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Search&quot;       onClick=&quot;search_dialog.show();&quot;&gt;&lt;/div&gt;
+ 	&lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Me&quot;           submenuId=&quot;menu_my&quot;&gt;&lt;/div&gt;
++    [% IF moderator %]
++	&lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Moderate&quot;     submenuId=&quot;menu_moderate&quot;&gt;&lt;/div&gt;
++    [% END %]
+ &lt;/div&gt;
+ &lt;!-- end :menubar --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000271.html">[Parley-svn] r384 - / trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000273.html">[Parley-svn] r386 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#272">[ date ]</a>
+              <a href="thread.html#272">[ thread ]</a>
+              <a href="subject.html#272">[ subject ]</a>
+              <a href="author.html#272">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

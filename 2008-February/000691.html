@@ -1,0 +1,375 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r803 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r803%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema%20trunk/t/schema&In-Reply-To=%3C200802151605.m1FG5CAR026120%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000690.html">
+   <LINK REL="Next"  HREF="000692.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r803 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r803%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema%20trunk/t/schema&In-Reply-To=%3C200802151605.m1FG5CAR026120%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r803 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Feb 15 17:05:12 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000690.html">[Parley-svn] r802 - / trunk trunk/db trunk/lib trunk/lib/Parley	trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000692.html">[Parley-svn] r804 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/lib/Parley/Schema	trunk/root/base/menu trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#691">[ date ]</a>
+              <a href="thread.html#691">[ thread ]</a>
+              <a href="subject.html#691">[ subject ]</a>
+              <a href="author.html#691">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-15 17:05:11 +0100 (Fri, 15 Feb 2008)
+New Revision: 803
+
+Modified:
+   /
+   trunk/README.admin
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/ResultSet/Post.pm
+   trunk/lib/Parley/ResultSet/Thread.pm
+   trunk/lib/Parley/Schema/Forum.pm
+   trunk/t/schema/forum.t
+   trunk/t/schema/post.t
+   trunk/t/schema/thread.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4667 at wiggin</A>:  chisel | 2008-02-15 16:04:42 +0000
+ + add an extra thought to README.admin
+ / switch from objToJson() to to_json() [deprecation warnings for the former]
+ / convert some in-controller DBIC lookups to ResultSet methods
+ + added to schema tests accordingly
+ / user #0 is no longer 'special'. special, aka Site Moderator is now a user_role
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4665
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4667
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/README.admin
+===================================================================
+--- trunk/README.admin	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/README.admin	2008-02-15 16:05:11 UTC (rev 803)
+@@ -107,3 +107,4 @@
+ 
+     Methods can be added to ::Schema::Person to do various role checks;
+     e.g.  can_suspend_account()
++    [although, how can we use the Catalyst plugin be used from the Schema?]
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/lib/Parley/Controller/Post.pm	2008-02-15 16:05:11 UTC (rev 803)
+@@ -158,7 +158,7 @@
+     my $tt_forum = Template::Plugin::ForumCode-&gt;new();
+     my $msg_source = $c-&gt;request-&gt;param('msg_source');
+ 
+-    my $json = objToJson(
++    my $json = to_json(
+         {
+             'formatted' =&gt;
+                 $tt_forum-&gt;forumcode(
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/lib/Parley/Controller/Root.pm	2008-02-15 16:05:11 UTC (rev 803)
+@@ -71,14 +71,8 @@
+     }
+ 
+     # get a list of (all/available) forums
+-    $c-&gt;stash-&gt;{available_forums} = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
+-        {
+-            active  =&gt; 1,
+-        },
+-        {
+-            order_by    =&gt; 'name ASC',
+-        }
+-    );
++    $c-&gt;stash-&gt;{available_forums} =
++        $c-&gt;model('ParleyDB::Forum')-&gt;available_list();
+ 
+     ##################################################
+     # do we have a post id in the URL?
+@@ -96,18 +90,8 @@
+ 
+         # get the matching post
+         $c-&gt;_current_post(
+-            $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;find(
+-                {
+-                    'me.id'  =&gt; $c-&gt;request-&gt;param('post')
+-                },
+-                {
+-                    prefetch =&gt; [
+-                        { thread =&gt; 'forum' },
+-                        'creator',
+-                        'reply_to',
+-                        'quoted_post',
+-                    ],
+-                }
++            $c-&gt;model('ParleyDB::Post')-&gt;record_from_id(
++                $c-&gt;request-&gt;param('post')
+             )
+         );
+ 
+@@ -137,17 +121,8 @@
+ 
+         # get the matching thread
+         $c-&gt;_current_thread(
+-            $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;find(
+-                {
+-                    'me.id'  =&gt; $c-&gt;request-&gt;param('thread'),
+-                },
+-                {
+-                    prefetch =&gt; [
+-                        { 'forum' =&gt; 'last_post' },
+-                        'creator',
+-                        'last_post',
+-                    ]
+-                }
++            $c-&gt;model('ParleyDB::Thread')-&gt;record_from_id(
++                $c-&gt;request-&gt;param('thread')
+             )
+         );
+ 
+@@ -172,15 +147,8 @@
+ 
+         # get the matching forum
+         $c-&gt;_current_forum(
+-            $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;find(
+-                {
+-                    'me.id'  =&gt; $c-&gt;request-&gt;param('forum'),
+-                },
+-                {
+-                    prefetch =&gt; [
+-                        'last_post',
+-                    ],
+-                }
++            $c-&gt;model('ParleyDB::Forum')-&gt;record_from_id(
++                $c-&gt;request-&gt;param('forum')
+             )
+         );
+     }
+@@ -191,13 +159,14 @@
+     if ( $c-&gt;user and not defined $c-&gt;_authed_user ) {
+         $c-&gt;log-&gt;info('Fetching user information for ' . $c-&gt;user-&gt;id);
+ 
++        # FIXME : move this to the ResultSet class?
+         # get the person info for the username
+         my $row = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;find(
+             {
+                 'authentication.username'   =&gt; $c-&gt;user-&gt;username(),
+             },
+             {
+-                join =&gt; 'authentication',
++                #join =&gt; 'authentication',
+                 prefetch =&gt; [
+                     'authentication',
+                     { 'preference' =&gt; 'time_format' },
+@@ -217,10 +186,15 @@
+ 
+ 
+     ######################################
+-    # TopDog is always a site moderator
++    # user's with 'site_moderator' role
++    # get flagged as such
+     # ####################################
+-    if (defined $c-&gt;_authed_user() and 0 == $c-&gt;_authed_user()-&gt;id()) {
+-        $c-&gt;log-&gt;debug( q{topdog user site-moderates anything he wants} );
++    if (
++        defined $c-&gt;_authed_user()
++            and
++        $c-&gt;check_user_roles('site_moderator')
++    ) {
++        $c-&gt;log-&gt;debug( q{site_moderator role for user} );
+         $c-&gt;stash-&gt;{site_moderator} = 1;
+     }
+ 
+@@ -229,12 +203,13 @@
+     # user moderate it?
+     ##################################################
+     if (defined $c-&gt;_authed_user() and defined $c-&gt;_current_forum()) {
+-        # 'topdog' user can moderate anything
+-        if (0 == $c-&gt;_authed_user()-&gt;id()) {
+-            $c-&gt;log-&gt;debug( q{topdog user moderates anything he wants} );
++        # site_moderators can moderate anything
++        if ($c-&gt;check_user_roles('site_moderator')) {
++            $c-&gt;log-&gt;debug( q{site_moderator role moderates anything he wants} );
+             $c-&gt;stash-&gt;{moderator} = 1;
+         }
+         else {
++            # FIXME : move this to the ResultSet class?
+             # look up person/forum
+             my $results = $c-&gt;model('ParleyDB')-&gt;resultset('ForumModerator')-&gt;find(
+                 {
+
+Modified: trunk/lib/Parley/ResultSet/Post.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Post.pm	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/lib/Parley/ResultSet/Post.pm	2008-02-15 16:05:11 UTC (rev 803)
+@@ -5,6 +5,27 @@
+ 
+ use base 'DBIx::Class::ResultSet';
+ 
++sub record_from_id {
++    my ($resultsource, $post_id) = @_;
++    my ($rs);
++
++    $rs = $resultsource-&gt;find(
++        {
++            'me.id'  =&gt; $post_id,
++        },
++        {
++            prefetch =&gt; [
++                { thread =&gt; 'forum' },
++                'creator',
++                'reply_to',
++                'quoted_post',
++            ],
++        }
++    );
++
++    return $rs;
++}
++
+ sub people_posting_from_ip {
+     my ($resultsource, $ip_addr) = @_;
+     my ($rs);
+
+Modified: trunk/lib/Parley/ResultSet/Thread.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Thread.pm	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/lib/Parley/ResultSet/Thread.pm	2008-02-15 16:05:11 UTC (rev 803)
+@@ -127,4 +127,24 @@
+     );
+ }
+ 
++sub record_from_id {
++    my ($resultsource, $thread_id) = @_;
++    my ($rs);
++
++    $rs = $resultsource-&gt;find(
++        {
++            'me.id'  =&gt; $thread_id,
++        },
++        {
++            prefetch =&gt; [
++                { 'forum' =&gt; 'last_post' },
++                'creator',
++                'last_post',
++            ]
++        }
++    );
++
++    return $rs;
++}
++
+ 1;
+
+Modified: trunk/lib/Parley/Schema/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Forum.pm	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/lib/Parley/Schema/Forum.pm	2008-02-15 16:05:11 UTC (rev 803)
+@@ -50,6 +50,9 @@
+ 
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;add_unique_constraint(&quot;forum_name_key&quot;, [&quot;name&quot;]);
++
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Forum');
++
+ __PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.forum&quot; =&gt; &quot;self.id&quot; });
+ __PACKAGE__-&gt;belongs_to(
+     &quot;last_post&quot; =&gt; &quot;Post&quot;,
+
+Modified: trunk/t/schema/forum.t
+===================================================================
+--- trunk/t/schema/forum.t	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/t/schema/forum.t	2008-02-15 16:05:11 UTC (rev 803)
+@@ -43,6 +43,8 @@
+ 
+         resultsets =&gt; [
+             qw[
++                available_list
++                record_from_id
+             ]
+         ],
+     }
+
+Modified: trunk/t/schema/post.t
+===================================================================
+--- trunk/t/schema/post.t	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/t/schema/post.t	2008-02-15 16:05:11 UTC (rev 803)
+@@ -59,6 +59,7 @@
+ 
+         resultsets =&gt; [
+             qw[
++                record_from_id
+                 people_posting_from_ip
+                 last_post_in_list
+                 next_post
+
+Modified: trunk/t/schema/thread.t
+===================================================================
+--- trunk/t/schema/thread.t	2008-02-14 21:12:26 UTC (rev 802)
++++ trunk/t/schema/thread.t	2008-02-15 16:05:11 UTC (rev 803)
+@@ -49,6 +49,9 @@
+ 
+         resultsets =&gt; [
+             qw[
++                last_post_viewed_in_thread
++                recent
++                record_from_id
+             ]
+         ],
+     }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000690.html">[Parley-svn] r802 - / trunk trunk/db trunk/lib trunk/lib/Parley	trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000692.html">[Parley-svn] r804 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/lib/Parley/Schema	trunk/root/base/menu trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#691">[ date ]</a>
+              <a href="thread.html#691">[ thread ]</a>
+              <a href="subject.html#691">[ subject ]</a>
+              <a href="author.html#691">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

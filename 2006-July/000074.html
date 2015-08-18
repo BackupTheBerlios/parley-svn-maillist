@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r186 - / trunk/lib
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r186%20-%20/%20trunk/lib&In-Reply-To=%3C200607191622.k6JGM4QQ018914%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000073.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r186 - / trunk/lib</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r186%20-%20/%20trunk/lib&In-Reply-To=%3C200607191622.k6JGM4QQ018914%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r186 - / trunk/lib">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 19 18:22:04 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000073.html">[Parley-svn] r185 - / trunk/lib/Parley/Model
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#74">[ date ]</a>
+              <a href="thread.html#74">[ thread ]</a>
+              <a href="subject.html#74">[ subject ]</a>
+              <a href="author.html#74">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-07-19 18:22:03 +0200 (Wed, 19 Jul 2006)
+New Revision: 186
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4893 at ferrari</A>:  chisel | 2006-07-19 09:58:50 +0100
+ commented out a number of debugging messages
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4892
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4893
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2006-07-19 16:21:55 UTC (rev 185)
++++ trunk/lib/Parley.pm	2006-07-19 16:22:03 UTC (rev 186)
+@@ -105,17 +105,17 @@
+                 . ']';
+             return;
+         }
+-        $c-&gt;log-&gt;debug('[from post #] setting: current_post');
++        #$c-&gt;log-&gt;debug('[from post #] setting: current_post');
+         $c-&gt;stash-&gt;{current_post} = $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;search(
+             post_id  =&gt; $c-&gt;req-&gt;param('post'),
+         )-&gt;first;
+ 
+         # set the current_thread from the current_post
+-        $c-&gt;log-&gt;debug('[from post #] setting: current_thread');
++        #$c-&gt;log-&gt;debug('[from post #] setting: current_thread');
+         $c-&gt;stash-&gt;{current_thread} = $c-&gt;stash-&gt;{current_post}-&gt;thread();
+ 
+         # set the current_forum from the current thread
+-        $c-&gt;log-&gt;debug('[from post #] setting: current_forum');
++        #$c-&gt;log-&gt;debug('[from post #] setting: current_forum');
+         $c-&gt;stash-&gt;{current_forum} = $c-&gt;stash-&gt;{current_thread}-&gt;forum();
+     }
+ 
+@@ -128,13 +128,13 @@
+                 . ']';
+             return;
+         }
+-        $c-&gt;log-&gt;debug('[from thread #] setting: current_thread');
++        #$c-&gt;log-&gt;debug('[from thread #] setting: current_thread');
+         $c-&gt;stash-&gt;{current_thread} = $c-&gt;model('ParleyDB')-&gt;table('thread')-&gt;search(
+             thread_id  =&gt; $c-&gt;req-&gt;param('thread'),
+         )-&gt;first;
+ 
+         # set the current_forum from the current thread
+-        $c-&gt;log-&gt;debug('[from thread #] setting: current_forum');
++        #$c-&gt;log-&gt;debug('[from thread #] setting: current_forum');
+         $c-&gt;stash-&gt;{current_forum} = $c-&gt;stash-&gt;{current_thread}-&gt;forum();
+     }
+ 
+@@ -147,7 +147,7 @@
+                 . ']';
+             return;
+         }
+-        $c-&gt;log-&gt;debug('[from forum #] setting: current_forum');
++        #$c-&gt;log-&gt;debug('[from forum #] setting: current_forum');
+ 
+         $c-&gt;stash-&gt;{current_forum} = $c-&gt;model('ParleyDB')-&gt;table('forum')-&gt;search(
+             forum_id  =&gt; $c-&gt;req-&gt;param('forum'),
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000073.html">[Parley-svn] r185 - / trunk/lib/Parley/Model
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#74">[ date ]</a>
+              <a href="thread.html#74">[ thread ]</a>
+              <a href="subject.html#74">[ subject ]</a>
+              <a href="author.html#74">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

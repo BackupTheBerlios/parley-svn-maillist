@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r402 - / trunk/root/base/help
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r402%20-%20/%20trunk/root/base/help&In-Reply-To=%3C200707162107.l6GL7qRG021093%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000289.html">
+   <LINK REL="Next"  HREF="000291.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r402 - / trunk/root/base/help</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r402%20-%20/%20trunk/root/base/help&In-Reply-To=%3C200707162107.l6GL7qRG021093%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r402 - / trunk/root/base/help">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Jul 16 23:07:52 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000289.html">[Parley-svn] r401 - / trunk/root/static/images	trunk/root/static/images/filetypes
+</A></li>
+        <LI>Next message: <A HREF="000291.html">[Parley-svn] r403 - / trunk/root/base/user/signup trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#290">[ date ]</a>
+              <a href="thread.html#290">[ thread ]</a>
+              <a href="subject.html#290">[ subject ]</a>
+              <a href="author.html#290">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-16 23:07:52 +0200 (Mon, 16 Jul 2007)
+New Revision: 402
+
+Modified:
+   /
+   trunk/root/base/help/faq
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3501 at wiggin</A>:  chisel | 2007-07-13 19:10:11 +0100
+ / added extra content to the FAQ page
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3500
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3501
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/help/faq
+===================================================================
+--- trunk/root/base/help/faq	2007-07-16 21:07:40 UTC (rev 401)
++++ trunk/root/base/help/faq	2007-07-16 21:07:52 UTC (rev 402)
+@@ -2,3 +2,46 @@
+ 
+ &lt;p&gt;This page should answer common queries and problems.
+ If it doesn't you're just being difficult *wink*&lt;/p&gt;
++
++&lt;h3&gt;General Questions&lt;/h3&gt;
++
++&lt;ol class=&quot;help&quot;&gt;
++    &lt;li&gt;Does the world need another piece of forum/message board software?
++    &lt;br /&gt;
++    &lt;em&gt;
++    Possibly not. This is a personal quest for me. if it's useful to someone
++    else that's even better.
++    I've always thought that the Perl landscape was missing a well-written
++    and functional forum application.
++    Add to that the emergence of the
++    &lt;a href=&quot;<A HREF="http://catalystframework.org/">http://catalystframework.org/</A>&quot;&gt;Catalyst framework&lt;/a&gt;
++    and a desire to explore the benefits of this project and you've got Parley.
++    &lt;/em&gt;
++    &lt;/li&gt;
++&lt;/ol&gt;
++
++&lt;h3&gt;Technical Questions&lt;/h3&gt;
++
++&lt;ol class=&quot;help&quot;&gt;
++    &lt;li&gt;What software does this forum run on?
++    &lt;br /&gt;
++    &lt;em&gt;
++    The core elements of the application are:
++    &lt;a href=&quot;<A HREF="http://perl.com/">http://perl.com/</A>&quot;&gt;Perl&lt;/a&gt;,
++    &lt;a href=&quot;<A HREF="http://postgresql.org/">http://postgresql.org/</A>&quot;&gt;PostgreSQL&lt;/a&gt;
++    and
++    &lt;a href=&quot;<A HREF="http://template-toolkit.org/">http://template-toolkit.org/</A>&quot;&gt;Template Toolkit&lt;/a&gt;.
++    These elements are all tied together using the
++    &lt;a href=&quot;<A HREF="http://catalystframework.org/">http://catalystframework.org/</A>&quot;&gt;Catalyst framework&lt;/a&gt;.
++    &lt;/em&gt;
++    &lt;/li&gt;
++
++    &lt;li&gt;PostgreSQL?! What about MySQL, SQLite, ...?
++    &lt;br /&gt;
++    &lt;em&gt;
++    I prefer PostgreSQL. I don't have the time or energy to make the application
++    compatible with everyone's preferred database. I'll happily accept patches
++    that don't break the application's coupling with PostgreSQL.
++    &lt;/em&gt;
++    &lt;/li&gt;
++&lt;/ol&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000289.html">[Parley-svn] r401 - / trunk/root/static/images	trunk/root/static/images/filetypes
+</A></li>
+	<LI>Next message: <A HREF="000291.html">[Parley-svn] r403 - / trunk/root/base/user/signup trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#290">[ date ]</a>
+              <a href="thread.html#290">[ thread ]</a>
+              <a href="subject.html#290">[ subject ]</a>
+              <a href="author.html#290">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

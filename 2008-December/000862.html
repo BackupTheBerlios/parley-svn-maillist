@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r980 - / trunk trunk/root/base/post	trunk/root/base/terms trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r980%20-%20/%20trunk%20trunk/root/base/post%0A%09trunk/root/base/terms%20trunk/root/base/thread&In-Reply-To=%3C200812162009.mBGK94EH015602%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000861.html">
+   <LINK REL="Next"  HREF="000863.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r980 - / trunk trunk/root/base/post	trunk/root/base/terms trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r980%20-%20/%20trunk%20trunk/root/base/post%0A%09trunk/root/base/terms%20trunk/root/base/thread&In-Reply-To=%3C200812162009.mBGK94EH015602%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r980 - / trunk trunk/root/base/post	trunk/root/base/terms trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Dec 16 21:09:04 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000861.html">[Parley-svn] r979 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000863.html">[Parley-svn] r981 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#862">[ date ]</a>
+              <a href="thread.html#862">[ thread ]</a>
+              <a href="subject.html#862">[ subject ]</a>
+              <a href="author.html#862">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-16 21:09:04 +0100 (Tue, 16 Dec 2008)
+New Revision: 980
+
+Modified:
+   /
+   trunk/Changes
+   trunk/root/base/post/edit
+   trunk/root/base/terms/add
+   trunk/root/base/thread/add
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8636 at wiggin</A>:  chisel | 2008-12-16 07:09:01 +0000
+ / switch from /post/preview to /forumcode/preview
+ / updated change log
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8622
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8636
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-12-12 19:01:53 UTC (rev 979)
++++ trunk/Changes	2008-12-16 20:09:04 UTC (rev 980)
+@@ -7,6 +7,7 @@
+       - aggregate controller_*.t tests
+       - aggregate t/schema/*.t tests
+     - use HTML::ForumCode for post preview
++    - added /forumcode/preview
+ 
+ 1.0.2   Thu Oct  9 14:52:26 BST 2008
+     - fixed &quot;vanishing '+' symbol&quot; issue in Message Preview
+
+Modified: trunk/root/base/post/edit
+===================================================================
+--- trunk/root/base/post/edit	2008-12-12 19:01:53 UTC (rev 979)
++++ trunk/root/base/post/edit	2008-12-16 20:09:04 UTC (rev 980)
+@@ -62,7 +62,7 @@
+ 
+     MessagePreview.config.label_preview = '[%l('Preview')%]';
+     MessagePreview.config.label_edit    = '[%l('Edit')%]';
+-    MessagePreview.config.post_url      = &quot;[%c.uri_for('/post/preview')%]&quot;;
++    MessagePreview.config.post_url      = &quot;[%c.uri_for('/forumcode/preview')%]&quot;;
+ 
+     MessagePreview.init();
+ &lt;/script&gt;
+
+Modified: trunk/root/base/terms/add
+===================================================================
+--- trunk/root/base/terms/add	2008-12-12 19:01:53 UTC (rev 979)
++++ trunk/root/base/terms/add	2008-12-16 20:09:04 UTC (rev 980)
+@@ -104,7 +104,8 @@
+             this.preview = function() {
+                 var request = YU.Connect.asyncRequest(
+                     'POST',
+-                    '[%base%]post/preview',
++                    // '/forumcode/preview',
++                    &quot;[%c.uri_for('/forumcode/preview')%]&quot;,
+                     {
+                         success: this.handleSuccess,
+                         failure: this.handleFailure,
+
+Modified: trunk/root/base/thread/add
+===================================================================
+--- trunk/root/base/thread/add	2008-12-12 19:01:53 UTC (rev 979)
++++ trunk/root/base/thread/add	2008-12-16 20:09:04 UTC (rev 980)
+@@ -64,7 +64,7 @@
+ 
+     MessagePreview.config.label_preview = '[%l('Preview')%]';
+     MessagePreview.config.label_edit    = '[%l('Edit')%]';
+-    MessagePreview.config.post_url      = &quot;[%c.uri_for('/post/preview')%]&quot;;
++    MessagePreview.config.post_url      = &quot;[%c.uri_for('/forumcode/preview')%]&quot;;
+ 
+     MessagePreview.init();
+ &lt;/script&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000861.html">[Parley-svn] r979 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000863.html">[Parley-svn] r981 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#862">[ date ]</a>
+              <a href="thread.html#862">[ thread ]</a>
+              <a href="subject.html#862">[ subject ]</a>
+              <a href="author.html#862">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

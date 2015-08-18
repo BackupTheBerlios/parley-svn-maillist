@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r635 - / trunk/lib/Parley/Controller trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r635%20-%20/%20trunk/lib/Parley/Controller%20trunk/t&In-Reply-To=%3C200711031024.lA3AO7m2003218%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000522.html">
+   <LINK REL="Next"  HREF="000524.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r635 - / trunk/lib/Parley/Controller trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r635%20-%20/%20trunk/lib/Parley/Controller%20trunk/t&In-Reply-To=%3C200711031024.lA3AO7m2003218%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r635 - / trunk/lib/Parley/Controller trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Nov  3 11:24:07 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000522.html">[Parley-svn] r634 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000524.html">[Parley-svn] r636 - / trunk trunk/lib/Parley/I18N	trunk/root/base/help trunk/root/email_templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#523">[ date ]</a>
+              <a href="thread.html#523">[ thread ]</a>
+              <a href="subject.html#523">[ subject ]</a>
+              <a href="author.html#523">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-03 11:24:06 +0100 (Sat, 03 Nov 2007)
+New Revision: 635
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/t/controller_Forum.t
+   trunk/t/controller_Post.t
+   trunk/t/controller_Thread.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4127 at wiggin</A>:  chisel | 2007-11-02 22:06:00 +0000
+ + added a sprinkling of controller tests
+ / tweaked controllers to fail more gracefully with missing id/values
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4126
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4127
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2007-11-03 10:23:51 UTC (rev 634)
++++ trunk/lib/Parley/Controller/Forum.pm	2007-11-03 10:24:06 UTC (rev 635)
+@@ -4,6 +4,8 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++use Parley::App::Error qw( :methods );
++
+ sub list : Local {
+     my ($self, $c) = @_;
+ 
+@@ -22,6 +24,11 @@
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
++    if (not defined $c-&gt;_current_forum) {
++        parley_die($c, $c-&gt;localize('There is no current forum to view'));
++        return;
++    }
++
+     # page to show - either a param, or show the first
+     $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
+ 
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-11-03 10:23:51 UTC (rev 634)
++++ trunk/lib/Parley/Controller/Root.pm	2007-11-03 10:24:06 UTC (rev 635)
+@@ -21,6 +21,8 @@
+ sub auto : Private {
+     my ($self, $c) = @_;
+ 
++    $c-&gt;log-&gt;debug( $c-&gt;language() );
++
+     # get a list of (all/available) forums
+     $c-&gt;stash-&gt;{available_forums} = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
+         {
+@@ -214,7 +216,7 @@
+ 
+     if (has_died($c)) {
+         $c-&gt;stash-&gt;{template} = 'error/simple';
+-        $c-&gt;log-&gt;error( $c-&gt;stash-&gt;{view}{error}{messages} );
++        $c-&gt;log-&gt;error( @{ $c-&gt;stash-&gt;{view}{error}{messages} } );
+     }
+ }
+ 
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-11-03 10:23:51 UTC (rev 634)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-11-03 10:24:06 UTC (rev 635)
+@@ -5,6 +5,7 @@
+ use base 'Catalyst::Controller';
+ use Data::SpreadPagination;
+ 
++use Parley::App::Error qw( :methods );
+ use Parley::App::Notification qw( :watch );
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -196,6 +197,11 @@
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
++    if (not defined $c-&gt;_current_thread) {
++        parley_die($c, $c-&gt;localize('There is no current thread to view'));
++        return;
++    }
++
+     # page to show - either a param, or show the first
+     $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
+ 
+@@ -271,7 +277,7 @@
+     }
+ 
+     # need to be logged in to watch threads
+-    $c-&gt;login_if_required($c, $c-&gt;localize(q{LOGIN WATCH TOPIC}));
++    $c-&gt;login_if_required($c-&gt;localize(q{LOGIN WATCH TOPIC}));
+ 
+     # get the ThreadView so we can update it
+     my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
+
+Modified: trunk/t/controller_Forum.t
+===================================================================
+--- trunk/t/controller_Forum.t	2007-11-03 10:23:51 UTC (rev 634)
++++ trunk/t/controller_Forum.t	2007-11-03 10:24:06 UTC (rev 635)
+@@ -1,10 +1,10 @@
+ use strict;
+ use warnings;
+-use Test::More tests =&gt; 2;
++use Test::More tests =&gt; 4;
+ 
+ BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+ BEGIN { use_ok 'Parley::Controller::Forum' }
+ 
+-#ok( request('/forum')-&gt;is_success, 'Request should succeed' );
++ok( request('/forum/list')-&gt;is_success, 'forum/list exists' );
++ok( request('/forum/view')-&gt;is_success, 'forum/view exists' );
+ 
+-
+
+Modified: trunk/t/controller_Post.t
+===================================================================
+--- trunk/t/controller_Post.t	2007-11-03 10:23:51 UTC (rev 634)
++++ trunk/t/controller_Post.t	2007-11-03 10:24:06 UTC (rev 635)
+@@ -1,10 +1,10 @@
+ use strict;
+ use warnings;
+-use Test::More tests =&gt; 2;
++use Test::More tests =&gt; 3;
+ 
+ BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+ BEGIN { use_ok 'Parley::Controller::Post' }
+ 
+-#ok( request('/post')-&gt;is_success, 'Request should succeed' );
++ok( request('/post/edit')-&gt;is_success, 'post/edit exists' );
+ 
+ 
+
+Modified: trunk/t/controller_Thread.t
+===================================================================
+--- trunk/t/controller_Thread.t	2007-11-03 10:23:51 UTC (rev 634)
++++ trunk/t/controller_Thread.t	2007-11-03 10:24:06 UTC (rev 635)
+@@ -1,10 +1,14 @@
+ use strict;
+ use warnings;
+-use Test::More tests =&gt; 2;
++use Test::More tests =&gt; 9;
+ 
+ BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+ BEGIN { use_ok 'Parley::Controller::Thread' }
+ 
+-#ok( request('/thread')-&gt;is_success, 'Request should succeed' );
+-
+-
++ok( request('/thread/add')      -&gt;is_success,   'thread/add exists'         );
++ok( request('/thread/next_post')-&gt;is_success,   'thread/next_post exists'   );
++ok( request('/thread/recent')   -&gt;is_success,   'thread/recent exists'      );
++ok( request('/thread/reply')    -&gt;is_success,   'thread/reply exists'       );
++ok( request('/thread/view')     -&gt;is_success,   'thread/view exists'        );
++ok( request('/thread/watch')    -&gt;is_success,   'thread/watch exists'       );
++ok( request('/thread/watches')  -&gt;is_success,   'thread/watches exists'     );
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000522.html">[Parley-svn] r634 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000524.html">[Parley-svn] r636 - / trunk trunk/lib/Parley/I18N	trunk/root/base/help trunk/root/email_templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#523">[ date ]</a>
+              <a href="thread.html#523">[ thread ]</a>
+              <a href="subject.html#523">[ subject ]</a>
+              <a href="author.html#523">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

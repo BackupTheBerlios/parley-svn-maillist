@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r826 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r826%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/user&In-Reply-To=%3C200803111119.m2BBJVxN016773%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000713.html">
+   <LINK REL="Next"  HREF="000715.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r826 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r826%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/user&In-Reply-To=%3C200803111119.m2BBJVxN016773%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r826 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Mar 11 12:19:31 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000713.html">[Parley-svn] r825 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000715.html">[Parley-svn] r827 - / trunk trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#714">[ date ]</a>
+              <a href="thread.html#714">[ thread ]</a>
+              <a href="subject.html#714">[ subject ]</a>
+              <a href="author.html#714">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-11 12:19:31 +0100 (Tue, 11 Mar 2008)
+New Revision: 826
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/user/profile
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4731 at wiggin</A>:  chisel | 2008-03-11 09:33:01 +0000
+ + added some i_default i18n strings
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4730
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4731
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-03-11 11:19:24 UTC (rev 825)
++++ trunk/Changes.i18n	2008-03-11 11:19:31 UTC (rev 826)
+@@ -19,6 +19,10 @@
+             - &quot;We're not in Kansas any more&quot;
+             - &quot;Invalid %1&quot;
+             - &quot;Invalid requested value&quot;
++            - &quot;Administration&quot;
++            - &quot;Suspend Account&quot;
++            - &quot;Please enter suspension information&quot;
++            - &quot;Reason for suspension&quot;
+ 
+     it.po:
+         - added:
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-03-11 11:19:24 UTC (rev 825)
++++ trunk/lib/Parley/I18N/i_default.po	2008-03-11 11:19:31 UTC (rev 826)
+@@ -52,6 +52,9 @@
+ msgid &quot;ADMIN SPECIFY STICK THREAD&quot;
+ msgstr &quot;You must specify the thread to stick&quot;
+ 
++msgid &quot;Administration&quot;
++msgstr &quot;Administration&quot;
++
+ msgid &quot;ago&quot;
+ msgstr &quot;ago&quot;
+ 
+@@ -462,6 +465,9 @@
+ msgid &quot;Please choose a language&quot;
+ msgstr &quot;Please choose a language&quot;
+ 
++msgid &quot;Please enter suspension information&quot;
++msgstr &quot;Please enter suspension information&quot;
++
+ msgid &quot;Please enter your information&quot;
+ msgstr &quot;Please enter your information&quot;
+ 
+@@ -516,6 +522,9 @@
+ msgid &quot;Quote&quot;
+ msgstr &quot;Quote&quot;
+ 
++msgid &quot;Reason for suspension&quot;
++msgstr &quot;Reason for suspension&quot;
++
+ msgid &quot;Recently Updated Threads&quot;
+ msgstr &quot;Recently Updated Threads&quot;
+ 
+@@ -642,6 +651,9 @@
+ msgid &quot;Summary of Changes&quot;
+ msgstr &quot;Summary of Changes&quot;
+ 
++msgid &quot;Suspend Account&quot;
++msgstr &quot;Suspend Account&quot;
++
+ msgid &quot;TERMS ADD NEW&quot;
+ msgstr &quot;Add New Site Terms &amp; Conditions&quot;
+ 
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2008-03-11 11:19:24 UTC (rev 825)
++++ trunk/root/base/user/profile	2008-03-11 11:19:31 UTC (rev 826)
+@@ -44,12 +44,12 @@
+     &lt;/div&gt;
+ 
+     [% IF authed_user.is_site_moderator || authed_user.can_suspend_account %]
+-    &lt;h2&gt;Administration&lt;/h2&gt;
++    &lt;h2&gt;[%l('Administration')%]&lt;/h2&gt;
+ 
+     &lt;div class=&quot;yui-gf top_padded&quot;&gt;
+         [% IF authed_user.can_suspend_account %]
+         &lt;div class=&quot;yui-u first align_right&quot;&gt;
+-        Suspend Account
++        [%l('Suspend Account')%]
+         &lt;/div&gt;
+         &lt;div class=&quot;yui-u&quot;&gt;
+         &lt;input
+@@ -75,17 +75,11 @@
+     &lt;div class=&quot;hd&quot;&gt;Please enter suspension information&lt;/div&gt;
+     &lt;div class=&quot;bd&quot;&gt;
+         &lt;form method=&quot;POST&quot; action=&quot;assets/post.php&quot;&gt;
+-            &lt;label for=&quot;suspension_reason&quot;&gt;Reason for suspension:&lt;/label&gt;
++            &lt;label for=&quot;suspension_reason&quot;&gt;[%l('Reason for suspension')%]:&lt;/label&gt;
+             &lt;br /&gt;
+             &lt;textarea id=&quot;suspension_reason&quot; cols=&quot;30&quot; rows=&quot;6&quot;&gt;&lt;/textarea&gt;
+         &lt;/form&gt;
+     &lt;/div&gt;
+ &lt;/div&gt;
+ 
+-&lt;div id=&quot;ajax_dialog&quot;&gt;
+-    &lt;div class=&quot;hd&quot;&gt;AJAX Message Dialog&lt;/div&gt;
+-    &lt;div class=&quot;bd&quot;&gt;
+-        Message
+-    &lt;/div&gt;
+-&lt;/div&gt;
+-
++[% PROCESS shared/ajax_dialog %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000713.html">[Parley-svn] r825 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000715.html">[Parley-svn] r827 - / trunk trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#714">[ date ]</a>
+              <a href="thread.html#714">[ thread ]</a>
+              <a href="subject.html#714">[ subject ]</a>
+              <a href="author.html#714">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

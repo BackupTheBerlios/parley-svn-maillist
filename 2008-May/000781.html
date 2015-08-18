@@ -1,0 +1,812 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r893 - / trunk trunk/db trunk/doc trunk/lib	trunk/lib/Parley/Controller trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r893%20-%20/%20trunk%20trunk/db%20trunk/doc%20trunk/lib%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema&In-Reply-To=%3C200805272104.m4RL4FVI010678%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000780.html">
+   <LINK REL="Next"  HREF="000782.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r893 - / trunk trunk/db trunk/doc trunk/lib	trunk/lib/Parley/Controller trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r893%20-%20/%20trunk%20trunk/db%20trunk/doc%20trunk/lib%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema&In-Reply-To=%3C200805272104.m4RL4FVI010678%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r893 - / trunk trunk/db trunk/doc trunk/lib	trunk/lib/Parley/Controller trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue May 27 23:04:15 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000780.html">[Parley-svn] r892 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000782.html">[Parley-svn] r894 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#781">[ date ]</a>
+              <a href="thread.html#781">[ thread ]</a>
+              <a href="subject.html#781">[ subject ]</a>
+              <a href="author.html#781">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-05-27 23:04:13 +0200 (Tue, 27 May 2008)
+New Revision: 893
+
+Added:
+   trunk/db/patch_0.59_to_1.0.0.psql
+   trunk/doc/setup.html
+Modified:
+   /
+   trunk/Changes
+   trunk/MANIFEST
+   trunk/MANIFEST.SKIP
+   trunk/README
+   trunk/ROADMAP
+   trunk/db/parley.psql
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/Schema/Authentication.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/lib/Parley/Schema/UserRole.pm
+   trunk/parley.conf
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5483 at wiggin</A>:  chisel | 2008-05-27 22:03:46 +0100
+ This is the core of the work required for dropping Authentication::Store::DBIC
+ and Authentication::Credential::Password in favour of the &quot;new style&quot;
+ authentication and authorization
+ 
+ / updated change log
+ / regenerated MANIFEST
+ / updated README
+ + added patch for roles (authentication-&gt;roles instead of person-&gt;roles)
+ + added non-admin default user
+ + added setup guide
+ / modifications for role changes
+ + updated .conf file for new-auth
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5329
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5483
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/Changes	2008-05-27 21:04:13 UTC (rev 893)
+@@ -5,6 +5,8 @@
+     - moved README.* into doc/
+     - added parley.sites-enabled
+     - switched from Graphics::Magick to Image::Magick
++    - resolved some bugs and errors when deploying from scratch
++    - added more comprehensive instructions for getting started
+ 
+ 
+ After knackering up the version numbers towards the end of 0.59
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/MANIFEST	2008-05-27 21:04:13 UTC (rev 893)
+@@ -26,14 +26,22 @@
+ doc/parley-qs.html
+ doc/README.admin
+ doc/README.gravatar
+-inc/Module/AutoInstall.pm
++doc/setup.html
++inc.nip/Module/Install.pm
++inc.nip/Module/Install/Base.pm
++inc.nip/Module/Install/Can.pm
++inc.nip/Module/Install/Catalyst.pm
++inc.nip/Module/Install/Fetch.pm
++inc.nip/Module/Install/Makefile.pm
++inc.nip/Module/Install/Metadata.pm
++inc.nip/Module/Install/Scripts.pm
++inc.nip/Module/Install/Win32.pm
++inc.nip/Module/Install/WriteAll.pm
+ inc/Module/Install.pm
+-inc/Module/Install/AutoInstall.pm
+ inc/Module/Install/Base.pm
+ inc/Module/Install/Can.pm
+ inc/Module/Install/Catalyst.pm
+ inc/Module/Install/Fetch.pm
+-inc/Module/Install/Include.pm
+ inc/Module/Install/Makefile.pm
+ inc/Module/Install/Metadata.pm
+ inc/Module/Install/Scripts.pm
+@@ -830,12 +838,14 @@
+ script/time_string_sample.pl
+ t.output/0.59.00
+ t.output/0.59.03
++t.output/1.0.0
+ t/01app.t
+ t/02pod.t
+ t/03podcoverage.t
+ t/04_forumcode.t
+ t/05.userroles.t
+ t/50.text_search.sql.t
++t/bug/01.forum_list_no_posts.t
+ t/controller_Admin.t
+ t/controller_Forum.t
+ t/controller_Help.t
+
+Modified: trunk/MANIFEST.SKIP
+===================================================================
+--- trunk/MANIFEST.SKIP	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/MANIFEST.SKIP	2008-05-27 21:04:13 UTC (rev 893)
+@@ -16,6 +16,7 @@
+ \.bak$
+ root/base/help/en/yui_test
+ ttcache
++t/60.image_mate.t
+ t/99.prefetch_experiments.t
+ .*YUI.*
+ root/base/yui
+
+Modified: trunk/README
+===================================================================
+--- trunk/README	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/README	2008-05-27 21:04:13 UTC (rev 893)
+@@ -1 +1,3 @@
++Read doc/parley-qs.html to get set up.
++
+ Run script/parley_server.pl to test the application.
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/ROADMAP	2008-05-27 21:04:13 UTC (rev 893)
+@@ -40,7 +40,8 @@
+ 
+     - [D] upgrade to YUI 2.5.x
+     - update to use &quot;new catalyst authentication&quot;
+-    - replace Graphics::Magick (Image::Mate?)
++    - [D] replace Graphics::Magick (Image::Mate?)
++    - write decent Getting Started docs
+ 
+ 1.0.1:
+ 
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/db/parley.psql	2008-05-27 21:04:13 UTC (rev 893)
+@@ -261,15 +261,15 @@
+ CREATE INDEX idx_role_name ON role(name);
+ 
+ CREATE TABLE user_roles (
+-    id              serial      primary key,
+-    person_id       integer     not null
+-                                references person(id),
+-    role_id         integer     not null
+-                                references role(id),
+-    UNIQUE (person_id, role_id)
++    id                  serial      primary key,
++    authentication_id   integer     not null
++                                    references authentication(id),
++    role_id             integer     not null
++                                    references role(id),
++    UNIQUE (authentication_id, role_id)
+ );
+-CREATE INDEX idx_userroles_personid ON user_roles(person_id);
+-CREATE INDEX idx_userroles_roleid   ON user_roles(role_id);
++CREATE INDEX idx_userroles_authenticationid ON user_roles(authentication_id);
++CREATE INDEX idx_userroles_roleid           ON user_roles(role_id);
+ 
+ -- admin action log actions/messages
+ CREATE TABLE admin_action (
+@@ -345,6 +345,27 @@
+ VALUES
+ (0, 'Top','Dog','<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">topdog at herlpacker.co.uk</A>','TopDog', 0, 0);
+ 
++
++-- #1 authentication
++INSERT INTO authentication
++(id, username, password, authenticated)
++VALUES
++(1, 'norm', md5('k1tt3n'), true);
++-- #1 preference
++INSERT INTO preference
++(id, timezone)
++VALUES
++(1, 'UTC');
++-- #1 person info
++INSERT INTO person
++(id,first_name, last_name, email, forum_name, authentication_id, preference_id)
++VALUES
++(1, 'Norman','Normal','<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">norman.normal at herlpacker.co.uk</A>','Norman', 1, 1);
++-- fix PK sequences
++SELECT setval('authentication_id_seq',  1);
++SELECT setval('preference_id_seq',      1);
++SELECT setval('person_id_seq',          1);
++
+ INSERT INTO forum (id, name, description) VALUES (0, 'Off-Topic', 'General off-topic discussion');
+ INSERT INTO forum (name, description) VALUES ('Suggestions', 'Things you think should be added');
+ INSERT INTO forum (name, description) VALUES ('Bugs', 'If you find anything broken, report it here');
+
+Added: trunk/db/patch_0.59_to_1.0.0.psql
+===================================================================
+--- trunk/db/patch_0.59_to_1.0.0.psql	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/db/patch_0.59_to_1.0.0.psql	2008-05-27 21:04:13 UTC (rev 893)
+@@ -0,0 +1,27 @@
++-- Patch:
++--   From: 0.59
++--   To:   1.0.0
++--
++-- Description:
++
++BEGIN;
++
++-- patch starts here --
++
++ALTER TABLE user_roles
++    ADD COLUMN authentication_id integer
++        references authentication(id);
++
++UPDATE user_roles
++    SET authentication_id = person_id;
++
++ALTER TABLE user_roles
++    ALTER COLUMN person_id
++        SET NOT NULL;
++
++ALTER TABLE user_roles
++    DROP COLUMN person_id;
++
++-- patch ends here --
++
++COMMIT;
+
+Added: trunk/doc/setup.html
+===================================================================
+--- trunk/doc/setup.html	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/doc/setup.html	2008-05-27 21:04:13 UTC (rev 893)
+@@ -0,0 +1,210 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;<A HREF="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</A>&quot;&gt;
++
++&lt;!-- Header : Start --&gt;
++&lt;html&gt;
++    &lt;head&gt;
++        &lt;title&gt;Parley - Setup Guide&lt;/title&gt;
++
++        &lt;style type=&quot;text/css&quot;&gt;
++            body {
++                color:              #000;
++                background-color:   #fff;
++                font-family:        Verdana,Arial,Helvetica,sans-serif;
++            }
++            blockquote&gt;code {
++                display:            block;
++                overflow:           auto;
++                border:             solid black 1px;
++                background:         #ccc;
++                font-family:        &quot;courier new&quot;, courier, fixed;
++                color:              #000;
++                margin-left:        25px;
++                margin-top:         5px;
++                margin-bottom:      5px;
++                padding:            5px;
++                line-height:        1.5em;
++                white-space:        pre;
++            }
++
++        &lt;/style&gt;
++    &lt;/head&gt;
++
++    &lt;body&gt;
++        &lt;h1&gt;Parley - Setup Guide&lt;/h1&gt;
++
++        &lt;h2&gt;Table of Contents&lt;/h2&gt;
++
++        &lt;ol&gt;
++            &lt;li&gt;&lt;a href=&quot;#getting_parley&quot;&gt;Getting Parley&lt;/a&gt;&lt;/li&gt;
++            &lt;li&gt;&lt;a href=&quot;#initial_deployment&quot;&gt;Initial Deployment&lt;/a&gt;&lt;/li&gt;
++            &lt;ol&gt;
++                &lt;li&gt;&lt;a href=&quot;#location&quot;&gt;Location&lt;/a&gt;&lt;/li&gt;
++                &lt;li&gt;&lt;a href=&quot;#extract&quot;&gt;Extract&lt;/a&gt;&lt;/li&gt;
++                &lt;li&gt;&lt;a href=&quot;#database&quot;&gt;Database&lt;/a&gt;&lt;/li&gt;
++                &lt;li&gt;&lt;a href=&quot;#testing&quot;&gt;Testing&lt;/a&gt;&lt;/li&gt;
++            &lt;/ol&gt;
++            &lt;li&gt;&lt;a href=&quot;#launching&quot;&gt;Launching the Application&lt;/a&gt;&lt;/li&gt;
++            &lt;li&gt;&lt;a href=&quot;#email_engine&quot;&gt;The Email Engine&lt;/a&gt;&lt;/li&gt;
++            &lt;li&gt;&lt;a href=&quot;#using_parley&quot;&gt;Using Parley&lt;/a&gt;&lt;/li&gt;
++        &lt;/ol&gt;
++
++        &lt;a id=&quot;getting_parley&quot;&gt;&lt;/a&gt;
++        &lt;h2&gt;Getting Parley&lt;/h2&gt;
++
++        &lt;p&gt;You should get Parley by visiting the
++        &lt;a href=&quot;<A HREF="http://developer.berlios.de/projcts/parley">http://developer.berlios.de/projcts/parley</A>&quot;&gt;project page at BerliOS&lt;/a&gt;
++        or from
++        &lt;a href=&quot;<A HREF="http://search.cpan.org/~chisel">http://search.cpan.org/~chisel</A>&quot;&gt;the author's CPAN page&lt;/a&gt;
++        &lt;/p&gt;
++
++        &lt;a id=&quot;initial_deployment&quot;&gt;&lt;/a&gt;
++        &lt;h2&gt;Initial Deployment&lt;/h2&gt;
++
++
++        &lt;a id=&quot;location&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Location&lt;/h3&gt;
++
++        &lt;p&gt;We'll keep as much of parley as possible inside its own directory
++        area:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;mkdir -p ~/development/parley_app/dist
++cd ~/development/parley_app/&lt;/code&gt;&lt;/blockquote&gt;
++
++        We'll use &lt;code&gt;dist/&lt;/code&gt; to store any tarballs that we have
++        downloaded, to reduce clutter:
++
++        &lt;blockquote&gt;&lt;code&gt;mv /.../Parley-1.x.y.tar.gz dist/&lt;/code&gt;&lt;/blockquote&gt;
++
++
++        &lt;a id=&quot;extract&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Extract&lt;/h3&gt;
++
++        Then extract our most recent copy [the only one currently]:
++
++        &lt;blockquote&gt;&lt;code&gt;tar zxf dist/Parley-1.x.y.tar.gz&lt;/code&gt;&lt;/blockquote&gt;
++
++        Making a softlink to the current version makes navigation easier,
++        and will aid us later when we consider a full Apache based deployment:
++
++        &lt;blockquote&gt;&lt;code&gt;ln -sv Parley-1.x.y parley
++cd parley&lt;/code&gt;&lt;/blockquote&gt;
++
++
++        &lt;a id=&quot;database&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Database&lt;/h3&gt;
++
++        Before we can run the application we need to setup the database:
++        &lt;blockquote&gt;&lt;code&gt;sudo -u postgres createuser -A -d parley
++createdb -U parley -E UTF8 parley
++psql -U parley -d parley -f db/parley.psql&lt;/code&gt;&lt;/blockquote&gt;
++
++        We can quickly check that we have created &lt;em&gt;something&lt;/em&gt;:
++        &lt;blockquote&gt;&lt;code&gt;psql -U parley -d parley -c '\dt'&lt;/code&gt;&lt;/blockquote&gt;
++
++
++        &lt;a id=&quot;testing&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Testing&lt;/h3&gt;
++
++        &lt;p&gt;Although coverage isn't as high as desired, it makes sense to run the
++        application tests to make sure there are no show-stopping issues:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;PARLEY_DEBUG=0 prove -lr t/&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;All test should pass. If they don't you may run into problems
++        when using the application:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;All tests successful, 2 tests and 169 subtests skipped.
++Files=44, Tests=455, 54 wallclock secs (38.13 cusr +  2.59 csys = 40.72 CPU)&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;a id=&quot;launching&quot;&gt;&lt;/a&gt;
++        &lt;h2&gt;Launching the Application&lt;/h2&gt;
++
++        &lt;p&gt;Assuming that the tests passed, you should be in a position where
++        you can run and explore the application.&lt;/p&gt;
++
++        &lt;/p&gt;Although not recommended for a production deployment you can
++        run the application for testing and evaluation using
++        &lt;code&gt;script/parley_server.pl&lt;/code&gt;.&lt;/p&gt;
++
++        &lt;p&gt;In its most simple form you can start that application with:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;script/parley_server.pl&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;If there are no problems you should see somthing similar to:
++
++        &lt;blockquote&gt;&lt;code&gt;[info] Parley powered by Catalyst 5.7012
++You can connect to your server at <A HREF="http://localhost:3000&lt;/code">http://localhost:3000&lt;/code</A>&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;View the URL in your browser and you should see the Forum List page
++        with three forums listed.&lt;/p&gt;
++
++
++        &lt;a id=&quot;email_engine&quot;&gt;&lt;/a&gt;
++        &lt;h2&gt;The Email Engine&lt;/h2&gt;
++
++        &lt;p&gt;Parley emails will only be sent if the email engine is running. The
++        email engine is a stand-alone script that is launched and runs in the
++        background.&lt;/p&gt;
++
++        &lt;p&gt;It polls a table for emails that need to be sent and performs the
++        required magic to send them.&lt;/p&gt;
++
++        &lt;p&gt;&lt;strong&gt;BEFORE&lt;/strong&gt; you start the email engine, please edit
++        &lt;code&gt;parley.yml&lt;/code&gt; and edit &lt;code&gt;from_name&lt;/code&gt; and
++        &lt;code&gt;from_address&lt;/code&gt; in the &lt;code&gt;alerts&lt;/code&gt; section.&lt;/p&gt;
++
++        &lt;p&gt;You can start the email engine with:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;./script/parley_email_engine.pl&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;Because the script puts itself into the background you won't see
++        any output in your terminal. You can verify that the script is running
++        by doing the following:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;ps ax |grep parley_email&lt;/code&gt;&lt;/blockquote&gt;
++
++        and you should see something similar to:
++
++        &lt;blockquote&gt;&lt;code&gt;18061 ?        S      0:00 perl ./script/parley_email_engine.pl&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;The email engine uses syslog to log messages, which means you may
++        be able to see further information in
++        &lt;code&gt;/var/log/messages&lt;/code&gt;:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;$ grep parley_email_engine /var/log/messages
++Apr 21 19:07:26 wiggin parley_email_engine[18058]: script started 
++Apr 21 19:07:26 wiggin parley_email_engine[18061]: child process created&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;a id=&quot;using_parley&quot;&gt;&lt;/a&gt;
++        &lt;h2&gt;Using Parley&lt;/h2&gt;
++
++        &lt;p&gt;There isn't much you can do in a forum with no messages. Parley
++        comes with two users out of the box: &lt;em&gt;Top Dog&lt;/em&gt;, an application
++        super-user, and &lt;a&gt;Normal Normal&lt;/a&gt;, a user with no special powers at
++        all.&lt;/p&gt;
++
++        &lt;p&gt;Top Dog's username is &lt;code&gt;topdog&lt;/code&gt; and has a default
++        password of &lt;code&gt;k1tt3n&lt;/code&gt;.&lt;/p&gt;
++
++        &lt;p&gt;Norman's username is &lt;code&gt;norm&lt;/code&gt; and also has a default
++        password of &lt;code&gt;k1tt3n&lt;/code&gt;.&lt;/p&gt;
++
++        &lt;p&gt;Both users can post, read posts, search, browse, etc. Top Dog also
++        has access to the &lt;em&gt;Site&lt;/em&gt; menu in the menu-bar.&lt;/p&gt;
++
++        &lt;h2&gt;Site Usage Terms&lt;/h2&gt;
++
++        &lt;p&gt;One of the first tasks you may like to perform as Top Dog is adding
++        T&amp;Cs for the site. If Parley has T&amp;Cs defined all registered
++        users must agree to those terms to continue using the site. ('Guest'
++        users can use the site in read-only mode without needing to agree to
++        the T&amp;Cs).&lt;/p&gt;
++
++        &lt;p&gt;If new T&amp;Cs are added, users must agree to those to continue
++        uing the site.&lt;/p&gt;
++
++        &lt;p&gt;You can add new T&amp;Cs by clicking the &lt;em&gt;Add T&amp;Cs&lt;/em&gt; item
++        in the &lt;em&gt;Site&lt;/em&gt; menu.&lt;/p&gt;
++    &lt;/body&gt;
++&lt;/html&gt;
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/lib/Parley/Controller/Site.pm	2008-05-27 21:04:13 UTC (rev 893)
+@@ -109,7 +109,7 @@
+ sub roleSaveHandler :Local {
+     my ($self, $c) = @_;
+     my ($return_data, $json);
+-    my ($person_id, $role_id, $value);
++    my ($person_id, $role_id, $value, $person);
+ 
+     $person_id  = $c-&gt;request-&gt;param('person');
+     $role_id    = $c-&gt;request-&gt;param('role');
+@@ -132,15 +132,18 @@
+             $c-&gt;localize('Invalid requested value');
+     }
+ 
++    # find the person
++    $person = $c-&gt;model('ParleyDB::Person')-&gt;find( $person_id );
++
+     # remove the role?
+-    elsif (0 == $value) {
++    if (0 == $value) {
+         # try to remove the join table entry
+         eval {
+             $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
+                 sub {
+                     my $userrole = $c-&gt;model('ParleyDB::UserRole')-&gt;find(
+                         {
+-                            person_id   =&gt; $person_id,
++                            authentication_id   =&gt; $person-&gt;authentication_id,
+                             role_id     =&gt; $role_id,
+                         }
+                     );
+@@ -184,7 +187,7 @@
+                 sub {
+                     $c-&gt;model('ParleyDB::UserRole')-&gt;update_or_create(
+                         {
+-                            person_id   =&gt; $person_id,
++                            authentication_id   =&gt; $person-&gt;authentication_id,
+                             role_id     =&gt; $role_id,
+                         }
+                     )
+@@ -213,7 +216,7 @@
+     # return some JSON
+     $json = to_json($return_data);
+     $c-&gt;response-&gt;body( $json );
+-    $c-&gt;log-&gt;info( $json );
++    #$c-&gt;log-&gt;info( $json );
+     return;
+ }
+ 
+@@ -261,7 +264,7 @@
+     # return some JSON
+     $json = to_json($return_data);
+     $c-&gt;response-&gt;body( $json );
+-    $c-&gt;log-&gt;info( $json );
++    #$c-&gt;log-&gt;info( $json );
+     return;
+ }
+ 
+@@ -333,7 +336,7 @@
+             $c-&gt;log-&gt;error( $@ );
+             $json = to_json($return_data);
+             $c-&gt;response-&gt;body( $json );
+-            $c-&gt;log-&gt;info( $json );
++            #$c-&gt;log-&gt;info( $json );
+             return;
+         }
+     }
+@@ -347,7 +350,7 @@
+     # return some JSON
+     $json = to_json($return_data);
+     $c-&gt;response-&gt;body( $json );
+-    $c-&gt;log-&gt;info( $json );
++    #$c-&gt;log-&gt;info( $json );
+     return;
+ }
+ 
+
+Modified: trunk/lib/Parley/Schema/Authentication.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Authentication.pm	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/lib/Parley/Schema/Authentication.pm	2008-05-27 21:04:13 UTC (rev 893)
+@@ -39,9 +39,17 @@
+ );
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;add_unique_constraint(&quot;authentication_username_key&quot;, [&quot;username&quot;]);
++
+ __PACKAGE__-&gt;has_many(
+   &quot;people&quot; =&gt; &quot;Person&quot;,
+   { &quot;foreign.authentication_id&quot; =&gt; &quot;self.id&quot; },
+ );
+ 
++__PACKAGE__-&gt;has_many(
++    map_user_role =&gt; 'Parley::Schema::UserRole',
++    'authentication_id',
++    { join_type =&gt; 'right' }
++);
++__PACKAGE__-&gt;many_to_many('roles' =&gt; 'map_user_role' =&gt; 'role');
++
+ 1;
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/lib/Parley/Schema/Person.pm	2008-05-27 21:04:13 UTC (rev 893)
+@@ -116,11 +116,11 @@
+   { &quot;foreign.recipient&quot; =&gt; &quot;self.id&quot; },
+ );
+ 
+-__PACKAGE__-&gt;has_many(
+-    map_user_role =&gt; 'Parley::Schema::UserRole',
+-    'person_id',
+-    { join_type =&gt; 'right' }
+-);
++#__PACKAGE__-&gt;has_many(
++#    map_user_role =&gt; 'Parley::Schema::UserRole',
++#    'person_id',
++#    { join_type =&gt; 'right' }
++#);
+ 
+ sub roles {
+     my $record = shift;
+@@ -130,11 +130,11 @@
+ 
+     $rs = $schema-&gt;resultset('Role')-&gt;search(
+         {
+-            'person.id'  =&gt; $record-&gt;id(),
++            'authentication.id'  =&gt; $record-&gt;authentication_id(),
+         },
+         {
+             prefetch =&gt; [
+-                { 'map_user_role' =&gt; 'person' },
++                { 'map_user_role' =&gt; 'authentication' },
+             ],
+         }
+     );
+@@ -155,14 +155,14 @@
+ 
+     $rs = $schema-&gt;resultset('Role')-&gt;search(
+         {
+-            'map_user_role.person_id'   =&gt; $record-&gt;id(),
++            'map_user_role.authentication_id'   =&gt; $record-&gt;authentication_id(),
+             'me.name' =&gt; {
+                 -in =&gt; \@roles,
+             },
+         },
+         {
+             prefetch =&gt; [
+-                { 'map_user_role' =&gt; 'person' },
++                { 'map_user_role' =&gt; 'authentication' },
+             ],
+         },
+     );
+@@ -178,23 +178,21 @@
+         if (not @roles);
+ 
+     my ($schema, $rs);
+-
+     $schema = $record-&gt;result_source()-&gt;schema();
+ 
+     $rs = $schema-&gt;resultset('Role')-&gt;search(
+         {
+-            'map_user_role.person_id'   =&gt; $record-&gt;id(),
++            'map_user_role.authentication_id'   =&gt; $record-&gt;authentication_id(),
+             'me.name' =&gt; {
+                 -in =&gt; \@roles,
+             },
+         },
+         {
+             prefetch =&gt; [
+-                { 'map_user_role' =&gt; 'person' },
++                { 'map_user_role' =&gt; 'authentication' },
+             ],
+         },
+     );
+-
+     return ($rs-&gt;count &gt; 0);
+ }
+ 
+
+Modified: trunk/lib/Parley/Schema/UserRole.pm
+===================================================================
+--- trunk/lib/Parley/Schema/UserRole.pm	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/lib/Parley/Schema/UserRole.pm	2008-05-27 21:04:13 UTC (rev 893)
+@@ -12,7 +12,7 @@
+ # Set the table name
+ __PACKAGE__-&gt;table('user_roles');
+ # Set columns in table
+-__PACKAGE__-&gt;add_columns(qw/id person_id role_id/);
++__PACKAGE__-&gt;add_columns(qw/id authentication_id role_id/);
+ # Set the primary key for the table
+ __PACKAGE__-&gt;set_primary_key(qw/id/);
+ 
+@@ -25,7 +25,10 @@
+ #     1) Name of relationship, DBIC will create accessor with this name
+ #     2) Name of the model class referenced by this relationship
+ #     3) Column name in *this* table
+-__PACKAGE__-&gt;belongs_to(person =&gt; 'Parley::Schema::Person', 'person_id');
++__PACKAGE__-&gt;belongs_to(
++    authentication =&gt; 'Parley::Schema::Authentication',
++    'authentication_id'
++);
+ 
+ # belongs_to():
+ #   args:
+@@ -36,8 +39,8 @@
+ 
+ 
+ __PACKAGE__-&gt;add_unique_constraint(
+-    'userroles_person_role_key',
+-    ['person_id', 'role_id']
++    'userroles_authentication_role_key',
++    ['authentication_id', 'role_id']
+ );
+ 
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/lib/Parley.pm	2008-05-27 21:04:13 UTC (rev 893)
+@@ -23,9 +23,6 @@
+     Session::State::Cookie
+ 
+     Authentication
+-    Authentication::Store::DBIC
+-    Authentication::Credential::Password
+-
+     Authorization::Roles
+     Authorization::ACL
+ 
+@@ -58,7 +55,6 @@
+ ##    [$_]
+ ##)
+ ##for qw/ip_ban_posting site_moderator/;
+-
+ __PACKAGE__-&gt;deny_access_unless(
+     '/site/fmodSaveHandler',
+     [qw/site_moderator/]
+@@ -111,7 +107,12 @@
+     [qw/site_moderator/]
+ );
+ 
++#__PACKAGE__-&gt;deny_access_unless(
++#    '/site/users',
++#    [qw/site_moderator/]
++#);
+ 
++
+ # ---- END:   ACL RULES ----
+ 
+ 
+
+Modified: trunk/parley.conf
+===================================================================
+--- trunk/parley.conf	2008-05-22 23:32:12 UTC (rev 892)
++++ trunk/parley.conf	2008-05-27 21:04:13 UTC (rev 893)
+@@ -49,15 +49,19 @@
+ ################################################################################
+ 
+ # how we authenticate user logins
+-# perldoc Catalyst::Plugin::Authentication::Store::DBIC
++# perldoc Catalyst::Authentication::Store::DBIx::Class
+ &lt;authentication&gt;
+     default_realm                   members
+     &lt;realms&gt;
+         &lt;members&gt;
+             &lt;store&gt;
+-                id_field            username
+                 class               DBIx::Class
+                 user_class          ParleyDB::Authentication
++                id_field            username
++
++                # authorization
++                role_relation       roles
++                role_field          name
+             &lt;/store&gt;
+             &lt;credential&gt;
+                 password_field      password
+@@ -69,13 +73,12 @@
+     &lt;/realms&gt;
+ &lt;/authentication&gt;
+ 
+-# user roles
+ &lt;authorization&gt;
+     &lt;dbic&gt;
+         role_class                  ParleyDB::Role
++        role_field                  name
+         role_rel                    map_user_role
+-        role_field                  name
+-        user_role_user_field        person_id
++        user_role_user_field        authentication_id
+     &lt;/dbic&gt;
+ &lt;/authorization&gt;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000780.html">[Parley-svn] r892 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000782.html">[Parley-svn] r894 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#781">[ date ]</a>
+              <a href="thread.html#781">[ thread ]</a>
+              <a href="subject.html#781">[ subject ]</a>
+              <a href="author.html#781">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

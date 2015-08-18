@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r673 - / trunk/root/base/shared
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r673%20-%20/%20trunk/root/base/shared&In-Reply-To=%3C200711261954.lAQJsBZ4021663%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000560.html">
+   <LINK REL="Next"  HREF="000562.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r673 - / trunk/root/base/shared</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r673%20-%20/%20trunk/root/base/shared&In-Reply-To=%3C200711261954.lAQJsBZ4021663%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r673 - / trunk/root/base/shared">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Nov 26 20:54:11 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000560.html">[Parley-svn] r672 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000562.html">[Parley-svn] r674 - / trunk/root/base trunk/root/base/forum
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#561">[ date ]</a>
+              <a href="thread.html#561">[ thread ]</a>
+              <a href="subject.html#561">[ subject ]</a>
+              <a href="author.html#561">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-26 20:54:11 +0100 (Mon, 26 Nov 2007)
+New Revision: 673
+
+Modified:
+   /
+   trunk/root/base/shared/login_dialog
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4278 at wiggin</A>:  chisel | 2007-11-26 10:21:24 +0000
+ / for some reason this file was causing a display glitch (even though the dialog wasn't visible).
+   resolved by using the search_dialog file (which doesn't have the same issue) and making appropriate changes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4273
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4278
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/shared/login_dialog
+===================================================================
+--- trunk/root/base/shared/login_dialog	2007-11-22 21:09:42 UTC (rev 672)
++++ trunk/root/base/shared/login_dialog	2007-11-26 19:54:11 UTC (rev 673)
+@@ -1,8 +1,8 @@
+-&lt;!-- login dialog (YUI) --&gt;
++&lt;!-- LOGIN DIALOG --&gt;
+ &lt;script type=&quot;text/javascript&quot;&gt;
+ YAHOO.namespace(&quot;parley.login&quot;);
+ 
+-function init() {
++function login_dialog_init() {
+ 	// Define various event handlers for Dialog
+ 	var handleSubmit = function() {
+ 		this.submit();
+@@ -11,7 +11,7 @@
+ 		this.cancel();
+ 	};
+ 	var handleSuccess = function(o) {
+-        //console.log('Success');
++        console.log('Success');
+ 	};
+ 	var handleFailure = function(o) {
+ 		alert(&quot;Submission failed: &quot; + o.status);
+@@ -21,13 +21,13 @@
+ 	YAHOO.parley.login.login_dialog = new YAHOO.widget.Dialog(
+         'login_dialog', 
+         {
+-            postmethod : 'form',
+-            fixedcenter : true,
+-            visible : false, 
+-            modal: true,
+-            constraintoviewport : true,
++            postmethod:             'form',
++            fixedcenter:            true,
++            visible:                false, 
++            modal:                  false,
++            constraintoviewport:    true,
+             buttons : [
+-                { text:'Submit', handler:handleSubmit, isDefault:true },
++                { text:'Login',  handler:handleSubmit, isDefault:true },
+                 { text:'Cancel', handler:handleCancel }
+             ]
+         }
+@@ -39,67 +39,45 @@
+ 		if (data.username == &quot;&quot; || data.password == &quot;&quot;) {
+ 			alert(&quot;[%l('Please enter your username and password')%].&quot;);
+ 			return false;
+-		} else {
++		}
++        else {
+ 			return true;
+ 		}
+ 	};
+ 
+ 	// Wire up the success and failure handlers
+-	YAHOO.parley.login.login_dialog.callback = { success: handleSubmit,
+-												 failure: handleFailure };
++	YAHOO.parley.login.login_dialog.callback = {
++        success: handleSubmit,
++        failure: handleFailure
++    };
+ 	
+ 	// Render the Dialog
+ 	YAHOO.parley.login.login_dialog.render();
+-
+-    // firefox caret/cursor fix
+-    // from: <A HREF="http://yuiblog.com/sandbox/yui/v230/examples/container/ffcursor.html">http://yuiblog.com/sandbox/yui/v230/examples/container/ffcursor.html</A>
+-    if (YAHOO.env.ua.gecko) {
+-        var dlg = YAHOO.parley.login.login_dialog;
+-        /* 
+-            * Other part of workaround for <A HREF="https://bugzilla.mozilla.org/show_bug.cgi?id=167801">https://bugzilla.mozilla.org/show_bug.cgi?id=167801</A> !!?
+-            * I have no explanation for why the new thread (setTimeout) is needed, but it is.
+-            */
+-        YAHOO.util.Dom.addClass(dlg.form, &quot;caretfix&quot;);
+-
+-        dlg.showEvent.subscribe(function() {
+-            YAHOO.util.Dom.setStyle(dlg.form, &quot;display&quot;, &quot;none&quot;);
+-
+-            var fixDisplay = function() {
+-                YAHOO.util.Dom.setStyle(dlg.form, &quot;display&quot;, &quot;block&quot;);
+-                try {
+-                    dlg.firstFormElement.focus();
+-                } catch (e) {
+-                    // Not related to the workaround, I just try/catch focus calls
+-                    // to avoid testing for the various conditions in which they could
+-                    // fail.
+-                }
+-            }
+-            setTimeout(fixDisplay, 0);
+-        });
+-    }
++	//YAHOO.parley.search.search_dialog.show();
+ }
+ 
+-YAHOO.util.Event.onDOMReady(init);
++YAHOO.util.Event.onDOMReady(login_dialog_init);
+ &lt;/script&gt;
+ 
+ &lt;div id=&quot;login_dialog&quot;&gt;
+-&lt;div class=&quot;hd&quot;&gt;[%l('Please enter your information')%]&lt;/div&gt;
+-&lt;div class=&quot;bd&quot;&gt;
+-    &lt;form action=&quot;user/login&quot; method=&quot;post&quot; name=&quot;login_form&quot; class=&quot;login_dialog_form&quot;&gt;
+-        &lt;fieldset&gt;
+-            &lt;label for=&quot;username&quot;&gt;&lt;b&gt;[%l('Username')%]:&lt;/b&gt;&lt;/label&gt;
+-            &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; style=&quot;width: 16em;&quot; class=&quot;input_text&quot; /&gt;
+-            &lt;br /&gt;
+-            &lt;label for=&quot;password&quot;&gt;&lt;b&gt;[%l('Password')%]:&lt;/b&gt;&lt;/label&gt;
+-            &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
++    &lt;div class=&quot;hd&quot;&gt;
++        [%l('Please enter your information')%]
++    &lt;/div&gt;
++    &lt;div class=&quot;bd&quot;&gt;
++        &lt;form action=&quot;user/login&quot; method=&quot;post&quot; name=&quot;login_form&quot;
++            class=&quot;login_dialog_form_&quot;&gt;
++            &lt;fieldset&gt;
++                &lt;label for=&quot;username&quot;&gt;&lt;b&gt;[%l('Username')%]:&lt;/b&gt;&lt;/label&gt;
++                &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; style=&quot;width: 16em;&quot; class=&quot;input_text&quot; /&gt;
++                &lt;br /&gt;
++                &lt;label for=&quot;password&quot;&gt;&lt;b&gt;[%l('Password')%]:&lt;/b&gt;&lt;/label&gt;
++                &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
+ 
+-            &lt;p align=&quot;right&quot;&gt;
+-            &lt;a href=&quot;user/password/forgotten&quot;&gt;[%l('Forgotten Password')%]&lt;/a&gt;
+-            |
+-            &lt;a id=&quot;login_dialog_hider&quot; href=&quot;javascript:;&quot;&gt;[%l('Close')%]&lt;/a&gt;&lt;br /&gt;
+-            &lt;/p&gt;
+-        &lt;/fieldset&gt;
+-    &lt;/form&gt;
++                &lt;p align=&quot;right&quot;&gt;
++                &lt;a href=&quot;user/password/forgotten&quot;&gt;[%l('Forgotten Password')%]&lt;/a&gt;
++                &lt;/p&gt;
++            &lt;/fieldset&gt;
++        &lt;/form&gt;
++    &lt;/div&gt;
+ &lt;/div&gt;
+-&lt;/div&gt;
+-&lt;!-- (end) login dialog (YUI) --&gt;
++&lt;!-- LOGIN DIALOG --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000560.html">[Parley-svn] r672 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000562.html">[Parley-svn] r674 - / trunk/root/base trunk/root/base/forum
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#561">[ date ]</a>
+              <a href="thread.html#561">[ thread ]</a>
+              <a href="subject.html#561">[ subject ]</a>
+              <a href="author.html#561">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

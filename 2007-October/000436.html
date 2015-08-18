@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r548 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r548%20-%20/%20trunk&In-Reply-To=%3C200710112131.l9BLVfw0012508%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000435.html">
+   <LINK REL="Next"  HREF="000437.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r548 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r548%20-%20/%20trunk&In-Reply-To=%3C200710112131.l9BLVfw0012508%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r548 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Oct 11 23:31:41 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000435.html">[Parley-svn] r547 - / trunk trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images
+</A></li>
+        <LI>Next message: <A HREF="000437.html">[Parley-svn] r549 - / trunk trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#436">[ date ]</a>
+              <a href="thread.html#436">[ thread ]</a>
+              <a href="subject.html#436">[ subject ]</a>
+              <a href="author.html#436">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-11 23:31:41 +0200 (Thu, 11 Oct 2007)
+New Revision: 548
+
+Modified:
+   /
+   trunk/
+   trunk/MANIFEST
+   trunk/MANIFEST.SKIP
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3937 at wiggin</A>:  chisel | 2007-10-11 08:53:54 +0100
+ Updated svn:ignore and MANIFEST
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3936
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3937
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svn:ignore
+   - *gz
+*swp
+Makefile
+Makefile.old
+blib
+inc
+MANIFEST.bak
+META.yml
+dist
+pm_to_blib
+
+   + *gz
+*swp
+Makefile
+Makefile.old
+blib
+inc
+MANIFEST.bak
+META.yml
+dist
+pm_to_blib
+ttcache
+
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2007-10-11 21:31:11 UTC (rev 547)
++++ trunk/MANIFEST	2007-10-11 21:31:41 UTC (rev 548)
+@@ -94,6 +94,7 @@
+ root/base/search/forum
+ root/base/shared/autocomplete_style
+ root/base/shared/focus_username_js
++root/base/shared/loading_please_wait
+ root/base/shared/login_dialog
+ root/base/shared/moderator_list
+ root/base/shared/navigation
+@@ -149,6 +150,7 @@
+ root/static/images/filetypes/image.png
+ root/static/images/filetypes/pdf.png
+ root/static/images/locked.png
++root/static/images/rel_interstitial_loading.gif
+ root/static/images/sticky.png
+ root/static/images/unread_posts.gif
+ root/static/script/prototype.js
+
+Modified: trunk/MANIFEST.SKIP
+===================================================================
+--- trunk/MANIFEST.SKIP	2007-10-11 21:31:11 UTC (rev 547)
++++ trunk/MANIFEST.SKIP	2007-10-11 21:31:41 UTC (rev 548)
+@@ -14,3 +14,4 @@
+ ^pm_to_blib
+ \.bak$
+ root/base/help/yui_test
++ttcache
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000435.html">[Parley-svn] r547 - / trunk trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images
+</A></li>
+	<LI>Next message: <A HREF="000437.html">[Parley-svn] r549 - / trunk trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#436">[ date ]</a>
+              <a href="thread.html#436">[ thread ]</a>
+              <a href="subject.html#436">[ subject ]</a>
+              <a href="author.html#436">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

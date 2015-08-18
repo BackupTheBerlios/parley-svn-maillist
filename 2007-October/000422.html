@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r534 - / trunk trunk/lib/Parley/Controller	trunk/root/base/help trunk/root/base/terms
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r534%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/help%20trunk/root/base/terms&In-Reply-To=%3C200710092020.l99KK7mD020085%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000421.html">
+   <LINK REL="Next"  HREF="000423.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r534 - / trunk trunk/lib/Parley/Controller	trunk/root/base/help trunk/root/base/terms</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r534%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/help%20trunk/root/base/terms&In-Reply-To=%3C200710092020.l99KK7mD020085%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r534 - / trunk trunk/lib/Parley/Controller	trunk/root/base/help trunk/root/base/terms">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Oct  9 22:20:07 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000421.html">[Parley-svn] r533 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000423.html">[Parley-svn] r535 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#422">[ date ]</a>
+              <a href="thread.html#422">[ thread ]</a>
+              <a href="subject.html#422">[ subject ]</a>
+              <a href="author.html#422">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-09 22:20:06 +0200 (Tue, 09 Oct 2007)
+New Revision: 534
+
+Modified:
+   /
+   trunk/TODO
+   trunk/lib/Parley/Controller/
+   trunk/lib/Parley/Controller/Terms.pm
+   trunk/root/base/help/
+   trunk/root/base/terms/
+   trunk/root/base/terms/index
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3919 at wiggin</A>:  chisel | 2007-10-08 08:51:10 +0100
+ + add historic T&amp;C view (for all users)
+ + add svn:ignore to some directories
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3916
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3919
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-10-04 21:15:01 UTC (rev 533)
++++ trunk/TODO	2007-10-09 20:20:06 UTC (rev 534)
+@@ -1,7 +1,7 @@
+ TODO LIST
+ 
+   - add T&amp;C editor/updater
+-  - add historic T&amp;C view (for all users)
++D - add historic T&amp;C view (for all users)
+   - write some sensible T&amp;Cs
+   - add missing link to &lt;img&gt; tag to help/formatting_posts
+   - add missing link to BBCode to help/formatting_posts
+
+
+Property changes on: trunk/lib/Parley/Controller
+___________________________________________________________________
+Name: svn:ignore
+   + *.swp
+
+
+Modified: trunk/lib/Parley/Controller/Terms.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Terms.pm	2007-10-04 21:15:01 UTC (rev 533)
++++ trunk/lib/Parley/Controller/Terms.pm	2007-10-09 20:20:06 UTC (rev 534)
+@@ -18,6 +18,32 @@
+ 
+ sub index : Private {
+     my ( $self, $c ) = @_;
++
++    # we'd like to be able to give the use the option
++    # of viewing older T&amp;Cs
++    $c-&gt;stash-&gt;{all_site_terms} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('Terms')-&gt;search(
++            {},
++            {
++                'order_by' =&gt; 'created DESC',
++            }
++        )
++    ;
++
++    if (    'GET' eq $c-&gt;request-&gt;method()
++        and defined $c-&gt;request-&gt;param('site_term_id')
++    ) {
++        # get the terms for the given id
++        $c-&gt;stash-&gt;{terms} =
++            $c-&gt;model('ParleyDB')-&gt;resultset('Terms')-&gt;find(
++                $c-&gt;request-&gt;param('site_term_id')
++            );
++    }
++
++    # otherwise show the latest terms
++    else {
++        $c-&gt;stash-&gt;{terms} = $c-&gt;stash-&gt;{latest_terms};
++    }
+ }
+ 
+ sub accept : Local {
+
+
+Property changes on: trunk/root/base/help
+___________________________________________________________________
+Name: svn:ignore
+   + *.swp
+
+
+
+Property changes on: trunk/root/base/terms
+___________________________________________________________________
+Name: svn:ignore
+   + *.swp
+
+
+Modified: trunk/root/base/terms/index
+===================================================================
+--- trunk/root/base/terms/index	2007-10-04 21:15:01 UTC (rev 533)
++++ trunk/root/base/terms/index	2007-10-09 20:20:06 UTC (rev 534)
+@@ -1,18 +1,34 @@
+-[% IF latest_terms %]
++[% IF terms %]
+     &lt;h1&gt;Terms and Conditions&lt;/h1&gt;
+     &lt;div class=&quot;site_terms&quot;&gt;
+-        [% ForumCode.forumcode(latest_terms.content) %]
++        [% ForumCode.forumcode(terms.content) %]
+         &lt;div style=&quot;text-align: right;&quot;&gt;
+-        Last Modified: [% nicedate(latest_terms.created) %]
++        Last Modified: [% nicedate(terms.created) %]
+         &lt;/div&gt;
+     &lt;/div&gt;
+ 
+-    [% IF latest_terms.change_summary %]
++    [% IF terms.change_summary %]
+     &lt;h1&gt;Summary of Changes&lt;/h1&gt;
+     &lt;div class=&quot;site_terms&quot;&gt;
+-        [% ForumCode.forumcode(latest_terms.change_summary) %]
++        [% ForumCode.forumcode(terms.change_summary) %]
+     &lt;/div&gt;
+     [% END %]
+ [% ELSE %]
+ This site has no Terms and Conditions to view.
+ [% END %]
++
++[% IF all_site_terms %]
++&lt;form method=&quot;get&quot; action=&quot;terms&quot;&gt;
++    &lt;div style=&quot;text-align: right;&quot;&gt;
++        &lt;select name=&quot;site_term_id&quot;&gt;
++            [% WHILE (site_terms=all_site_terms.next) %]
++            &lt;option value=&quot;[%site_terms.id%]&quot;&gt;
++                [% nicedate(site_terms.created) %]
++            &lt;/option&gt;
++            [% END %]
++        &lt;/select&gt;
++        &lt;input type=&quot;submit&quot; value=&quot;View&quot;/&gt;
++    &lt;/div&gt;
++&lt;/form&gt;
++[% END %]
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000421.html">[Parley-svn] r533 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000423.html">[Parley-svn] r535 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#422">[ date ]</a>
+              <a href="thread.html#422">[ thread ]</a>
+              <a href="subject.html#422">[ subject ]</a>
+              <a href="author.html#422">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

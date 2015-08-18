@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r722 - / trunk/t/mechanize
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r722%20-%20/%20trunk/t/mechanize&In-Reply-To=%3C200801032205.m03M5sVY021737%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000609.html">
+   <LINK REL="Next"  HREF="000611.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r722 - / trunk/t/mechanize</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r722%20-%20/%20trunk/t/mechanize&In-Reply-To=%3C200801032205.m03M5sVY021737%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r722 - / trunk/t/mechanize">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan  3 23:05:54 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000609.html">[Parley-svn] r721 - / trunk/root/base/forum trunk/t/mechanize
+</A></li>
+        <LI>Next message: <A HREF="000611.html">[Parley-svn] r723 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#610">[ date ]</a>
+              <a href="thread.html#610">[ thread ]</a>
+              <a href="subject.html#610">[ subject ]</a>
+              <a href="author.html#610">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-03 23:05:53 +0100 (Thu, 03 Jan 2008)
+New Revision: 722
+
+Added:
+   trunk/t/mechanize/00.login.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4451 at wiggin</A>:  chisel | 2008-01-03 18:56:11 +0000
+ / simple test for logging in
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4450
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4451
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/t/mechanize/00.login.t
+===================================================================
+--- trunk/t/mechanize/00.login.t	2008-01-03 22:05:34 UTC (rev 721)
++++ trunk/t/mechanize/00.login.t	2008-01-03 22:05:53 UTC (rev 722)
+@@ -0,0 +1,40 @@
++#!/usr/bin/env perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Test::More tests =&gt; 5;
++
++use_ok( 'Test::WWW::Mechanize::Catalyst', 'Parley' );
++
++my ($mech, $status);
++
++$mech = Test::WWW::Mechanize::Catalyst-&gt;new;
++isa_ok(
++    $mech,
++    'Test::WWW::Mechanize::Catalyst'
++);
++
++
++$mech-&gt;get_ok(
++    '<A HREF="http://anywhere/user/login">http://anywhere/user/login</A>',
++    'Got index page'
++);
++
++$mech-&gt;content_contains(
++    'Please enter your username and password',
++    'Login message in returned page content'
++);
++
++
++$mech-&gt;submit_form(
++    fields =&gt; {
++        username =&gt; 'topdog',
++        password =&gt; 'k1tt3n',
++    }
++);
++
++$mech-&gt;content_contains(
++    'TopDog',
++    'page contains forumname'
++);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000609.html">[Parley-svn] r721 - / trunk/root/base/forum trunk/t/mechanize
+</A></li>
+	<LI>Next message: <A HREF="000611.html">[Parley-svn] r723 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#610">[ date ]</a>
+              <a href="thread.html#610">[ thread ]</a>
+              <a href="subject.html#610">[ subject ]</a>
+              <a href="author.html#610">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

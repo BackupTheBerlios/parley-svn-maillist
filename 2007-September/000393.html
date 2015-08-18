@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r505 - / trunk/root/static
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r505%20-%20/%20trunk/root/static&In-Reply-To=%3C200709272013.l8RKDkTl029666%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000392.html">
+   <LINK REL="Next"  HREF="000394.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r505 - / trunk/root/static</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r505%20-%20/%20trunk/root/static&In-Reply-To=%3C200709272013.l8RKDkTl029666%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r505 - / trunk/root/static">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Sep 27 22:13:46 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000392.html">[Parley-svn] r504 - / trunk/root/static
+</A></li>
+        <LI>Next message: <A HREF="000394.html">[Parley-svn] r506 - / trunk/root
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#393">[ date ]</a>
+              <a href="thread.html#393">[ thread ]</a>
+              <a href="subject.html#393">[ subject ]</a>
+              <a href="author.html#393">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-27 22:13:46 +0200 (Thu, 27 Sep 2007)
+New Revision: 505
+
+Modified:
+   /
+   trunk/root/static/Editable.js
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3857 at wiggin</A>:  chisel | 2007-09-27 20:11:10 +0100
+ / more tweaks, fixes and improvements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3856
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3857
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/static/Editable.js
+===================================================================
+--- trunk/root/static/Editable.js	2007-09-27 20:13:39 UTC (rev 504)
++++ trunk/root/static/Editable.js	2007-09-27 20:13:46 UTC (rev 505)
+@@ -91,26 +91,27 @@
+             return y;
+         };
+ 
++        this.step_up = function(el) {
++            if (el) {
++                var tmpEl = el;
++                while (tmpEl.className != this.config.class_name) {
++                    tmpEl = tmpEl.parentNode;
++                }
++                if (tmpEl) {
++                    el = tmpEl;
++                }
++            }
++            return el;
++        }
+ 
+         this.triggered = function(ev) {
+-            if (!  this.check() ) {
++            if (! this.check() ) {
+                 return;
+             }
+ 
+             this.clicked = YU.Event.getTarget(ev);
+-            if (this.clicked) {
+-                var clicked = this.clicked;
+-                while (
+-                    (clicked.className != this.config.class_name)
+-                ) {
+-                    clicked = clicked.parentNode;
+-                }
++            this.clicked = this.step_up(this.clicked);
+ 
+-                if (clicked) {
+-                    this.clicked = clicked;
+-                }
+-            }
+-
+             this.contents = this.clicked.innerHTML;
+             this.create_input_field();
+         };
+@@ -203,7 +204,7 @@
+             new_save_input   = document.createElement('input');
+             with (new_save_input) {
+                 setAttribute('type', 'button');
+-                setAttribute('id', this.input);
++                setAttribute('id', this.save_input);
+                 value = 'Save';
+                 className = 'editable_input';
+             }
+@@ -226,7 +227,7 @@
+             new_cancel_input   = document.createElement('input');
+             with (new_cancel_input) {
+                 setAttribute('type', 'button');
+-                setAttribute('id', this.input);
++                setAttribute('id', this.cancel_input);
+                 value = 'Cancel';
+                 className = 'editable_input';
+             }
+@@ -245,9 +246,9 @@
+ 
+         this.reset_input_field = function() {
+             this.clicked.innerHTML = this.contents;
+-            this.clicked  = false;
+-            this.contents = false;
+-            this.input    = false;
++            this.clicked  = undefined;
++            this.contents = undefined;
++            this.input    = undefined;
+         };
+ 
+ 
+@@ -265,12 +266,13 @@
+                 this.clicked.innerHTML = this.contents_new;
+ 
+                 if (this.contents_new != this.contents) {
+-                    this.callback();
++                    var el = this.step_up(this.clicked);
++                    this.callback(el);
+                 }
+             }
+-            this.clicked  = false;
+-            this.contents = false;
+-            this.input    = false;
++            this.clicked  = undefined;
++            this.contents = undefined;
++            this.input    = undefined;
+         };
+ 
+ 
+@@ -283,10 +285,17 @@
+ 
+ 
+         this.check = function(ev) {
+-            if (this.clicked) {
++            if (!ev) {
++                if (this.clicked == undefined) {
++                    return true;
++                }
+                 return false;
+             }
+-            return true;
++            if (this.clicked) {
++                clicked = YU.Event.getTarget(ev);
++                this.clear_input();
++                return true;
++            }
+         };
+ 
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000392.html">[Parley-svn] r504 - / trunk/root/static
+</A></li>
+	<LI>Next message: <A HREF="000394.html">[Parley-svn] r506 - / trunk/root
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#393">[ date ]</a>
+              <a href="thread.html#393">[ thread ]</a>
+              <a href="subject.html#393">[ subject ]</a>
+              <a href="author.html#393">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

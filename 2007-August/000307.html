@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r419 - / trunk/lib/Parley/Controller/User	trunk/root/base/user trunk/root/base/user/lostpassword
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r419%20-%20/%20trunk/lib/Parley/Controller/User%0A%09trunk/root/base/user%20trunk/root/base/user/lostpassword&In-Reply-To=%3C200708082006.l78K6VbY015069%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000306.html">
+   <LINK REL="Next"  HREF="000308.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r419 - / trunk/lib/Parley/Controller/User	trunk/root/base/user trunk/root/base/user/lostpassword</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r419%20-%20/%20trunk/lib/Parley/Controller/User%0A%09trunk/root/base/user%20trunk/root/base/user/lostpassword&In-Reply-To=%3C200708082006.l78K6VbY015069%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r419 - / trunk/lib/Parley/Controller/User	trunk/root/base/user trunk/root/base/user/lostpassword">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug  8 22:06:31 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000306.html">[Parley-svn] r418 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000308.html">[Parley-svn] r420 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#307">[ date ]</a>
+              <a href="thread.html#307">[ thread ]</a>
+              <a href="subject.html#307">[ subject ]</a>
+              <a href="author.html#307">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-08 22:06:31 +0200 (Wed, 08 Aug 2007)
+New Revision: 419
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/root/base/user/login
+   trunk/root/base/user/lostpassword/reset_success
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3634 at wiggin</A>:  chisel | 2007-08-08 19:00:00 +0100
+ / updated DFV functions and profile to work (newer DFV version since we wrote the code?)
+ / updated &quot;you can now login&quot; link (we've changed from hacked-ajax to dojo.dialog)
+ + added Forgotton Password and Signup links to user/login
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3633
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3634
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2007-08-08 20:06:25 UTC (rev 418)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2007-08-08 20:06:31 UTC (rev 419)
+@@ -12,18 +12,30 @@
+ 
+ # used by DFV
+ sub _dfv_constraint_confirm_equal {
+-    my $dfv  = shift;
+-    my $val1 = shift;
+-    my $val2 = shift;
++    my ($attrs)  = @_;
+ 
+-    return ( $val1 eq $val2 );
++    my ($first, $second) = @{ $attrs-&gt;{fields} } if $attrs-&gt;{fields};
++
++    return sub {
++        my $dfv = shift;
++        my $data = $dfv-&gt;get_filtered_data();
++
++        warn $data-&gt;{ $first };
++        warn $data-&gt;{ $second };
++
++        return ( $data-&gt;{$first} eq $data-&gt;{$second} );
++    }
+ }
+ 
+ sub _dfv_constraint_valid_email {
+-    my $dfv   = shift;
+-    my $email = shift;
++    my $attrs = @_;
+ 
+-    return Email::Valid-&gt;address($email);
++    return sub {
++        my $dfv = shift;
++        my $data = $dfv-&gt;get_filtered_data();
++
++        return Email::Valid-&gt;address($data-&gt;{email});
++    }
+ }
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -44,11 +56,12 @@
+         filters =&gt; [qw(trim)],
+ 
+         constraint_methods =&gt; {
+-            email =&gt; {
+-                name =&gt; 'email',
+-                constraint_method =&gt; \&amp;_dfv_constraint_valid_email,
+-                params      =&gt; [qw( email )],
+-            },
++            confirm_email =&gt;
++                _dfv_constraint_confirm_equal(
++                    {
++                        fields =&gt; [qw/email confirm_email/],
++                    }
++                ),
+         },
+ 
+         msgs =&gt; {
+@@ -72,11 +85,12 @@
+         filters =&gt; [qw(trim)],
+ 
+         constraint_methods =&gt; {
+-            confirm_password =&gt; {
+-                name =&gt; 'confirm_password',
+-                constraint  =&gt; \&amp;_dfv_constraint_confirm_equal,
+-                params      =&gt; [qw( new_password confirm_password )],
+-            },
++            confirm_password =&gt;
++                _dfv_constraint_confirm_equal(
++                    {
++                        fields =&gt; [qw/new_password confirm_password/],
++                    }
++                ),
+         },
+ 
+         msgs =&gt; {
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2007-08-08 20:06:25 UTC (rev 418)
++++ trunk/root/base/user/login	2007-08-08 20:06:31 UTC (rev 419)
+@@ -15,6 +15,12 @@
+ 
+         &lt;br /&gt;
+         &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;log in&lt;/button&gt;
++
++            &lt;p align=&quot;right&quot;&gt;
++            &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt;
++            |
++            &lt;a href=&quot;user/signup&quot;&gt;Signup&lt;/a&gt;
++            &lt;/p&gt;
+     &lt;/fieldset&gt;
+ &lt;/form&gt;
+ 
+
+Modified: trunk/root/base/user/lostpassword/reset_success
+===================================================================
+--- trunk/root/base/user/lostpassword/reset_success	2007-08-08 20:06:25 UTC (rev 418)
++++ trunk/root/base/user/lostpassword/reset_success	2007-08-08 20:06:31 UTC (rev 419)
+@@ -1,2 +1,2 @@
+ Your password has been set to the value you entered. You may now 
+-&lt;a href=&quot;javascript:;&quot; onclick=&quot;showLoginBox(this)&quot;&gt;login&lt;/a&gt;
++&lt;a href=&quot;javascript:;&quot; onclick=&quot;login_dialog.show();&quot;&gt;login&lt;/a&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000306.html">[Parley-svn] r418 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000308.html">[Parley-svn] r420 - / trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#307">[ date ]</a>
+              <a href="thread.html#307">[ thread ]</a>
+              <a href="subject.html#307">[ subject ]</a>
+              <a href="author.html#307">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

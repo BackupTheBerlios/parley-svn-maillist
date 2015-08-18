@@ -1,0 +1,1187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r152 - / trunk trunk/issues trunk/issues/dbic_create_auth_id_problem trunk/issues/dbic_create_auth_id_problem/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/db trunk/issues/dbic_create_auth_id_problem/AuthTest/lib trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest trunk/issues/dbic_create_auth_id_problem/AuthTest/root trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images trunk/issues/dbic_create_auth_id_problem/AuthTest/script trunk/issues/dbic_create_auth_id_problem/AuthTest/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r152%20-%20/%20trunk%20trunk/issues%20trunk/issues/dbic_create_auth_id_problem%20trunk/issues/dbic_create_auth_id_problem/AuthTest%20trunk/issues/dbic_create_auth_id_problem/AuthTest/db%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest%20trunk/issues/dbic_create_auth_id_problem/AuthTest/root%20trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static%20trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images%20trunk/issues/dbic_create_auth_id_problem/AuthTest/script%20trunk/issues/dbic_create_auth_id_problem/AuthTest/t&In-Reply-To=%3C200605111952.k4BJqCFq024249%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000041.html">
+   <LINK REL="Next"  HREF="000018.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r152 - / trunk trunk/issues trunk/issues/dbic_create_auth_id_problem trunk/issues/dbic_create_auth_id_problem/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/db trunk/issues/dbic_create_auth_id_problem/AuthTest/lib trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest trunk/issues/dbic_create_auth_id_problem/AuthTest/root trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images trunk/issues/dbic_create_auth_id_problem/AuthTest/script trunk/issues/dbic_create_auth_id_problem/AuthTest/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r152%20-%20/%20trunk%20trunk/issues%20trunk/issues/dbic_create_auth_id_problem%20trunk/issues/dbic_create_auth_id_problem/AuthTest%20trunk/issues/dbic_create_auth_id_problem/AuthTest/db%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model%20trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest%20trunk/issues/dbic_create_auth_id_problem/AuthTest/root%20trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static%20trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images%20trunk/issues/dbic_create_auth_id_problem/AuthTest/script%20trunk/issues/dbic_create_auth_id_problem/AuthTest/t&In-Reply-To=%3C200605111952.k4BJqCFq024249%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r152 - / trunk trunk/issues trunk/issues/dbic_create_auth_id_problem trunk/issues/dbic_create_auth_id_problem/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/db trunk/issues/dbic_create_auth_id_problem/AuthTest/lib trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest trunk/issues/dbic_create_auth_id_problem/AuthTest/root trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images trunk/issues/dbic_create_auth_id_problem/AuthTest/script trunk/issues/dbic_create_auth_id_problem/AuthTest/t">chiselwright at berlios.de
+       </A><BR>
+    <I>Thu May 11 21:52:12 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000041.html">[Parley-svn] r151 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000018.html">[Parley-svn] r153 - / trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#46">[ date ]</a>
+              <a href="thread.html#46">[ thread ]</a>
+              <a href="subject.html#46">[ subject ]</a>
+              <a href="author.html#46">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-05-11 21:52:10 +0200 (Thu, 11 May 2006)
+New Revision: 152
+
+Added:
+   trunk/issues/
+   trunk/issues/dbic_create_auth_id_problem/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/README
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/db/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/View/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/favicon.ico
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/catalyst_logo.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14418 at ferrari</A>:  chisel | 2006-05-11 09:17:57 +0100
+ + Added a directory for making test cases for issues encountered
+ + added test case for PK issue with authentication table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14418
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,4 @@
++This file documents the revision history for Perl extension AuthTest.
++
++0.01  Fri Apr 21 08:34:24 2006
++        - initial revision, generated by Catalyst
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,12 @@
++use inc::Module::Install;
++
++name 'AuthTest';
++all_from 'lib/AuthTest.pm';
++
++requires Catalyst =&gt; '5.64';
++
++catalyst;
++
++install_script glob('script/*.pl');
++auto_install;
++WriteAll;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/README
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/README	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/README	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,16 @@
++1. create the database
++
++    createuser -A -D parleytest
++    createdb -E UTF8 -O parleytest parleytest
++    psql -U parleytest -d parleytest -f db/schema.psql
++
++2. run the two tests
++
++    # should work
++    prove --lib --verbose t/model_ParleyTest-Preference.t
++
++    # fails on my laptop
++    prove --lib --verbose t/model_ParleyTest-Authentication.t
++
++    # works on my laptop - odd because it's a copy of the Authentication test
++    prove --lib --verbose t/model_ParleyTest-Foo.t
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,2 @@
++---
++name: AuthTest
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,39 @@
++
++-- wrap it all in a transaction
++BEGIN;
++
++-- we have authentication
++CREATE TABLE authentication (
++    authentication_id       SERIAL          not null        primary key,
++    username                text            not null,
++    password                text            not null,
++    authenticated           boolean         NOT NULL        default False,
++
++    UNIQUE (username)
++);
++
++-- we have foo
++CREATE TABLE foo (
++    authentication_id       SERIAL          not null        primary key,
++    username                text            not null,
++    password                text            not null,
++    authenticated           boolean         NOT NULL        default False,
++
++    UNIQUE (username)
++);
++
++-- users can have preferences
++CREATE TABLE preference (
++    preference_id   SERIAL      primary key,
++
++    timezone        text        not null
++            default 'UTC',
++    favourite_colour    text,
++    nicest_meal         text,
++    compass_direction   text    not null
++            default 'North West'
++);
++
++
++-- commit our changes
++COMMIT;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,74 @@
++package AuthTest::Controller::Root;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++#
++# Sets the actions in this controller to be registered with no prefix
++# so they function identically to actions created in MyApp.pm
++#
++__PACKAGE__-&gt;config-&gt;{namespace} = '';
++
++=head1 NAME
++
++AuthTest::Controller::Root - Root Controller for this Catalyst based application
++
++=head1 SYNOPSIS
++
++See L&lt;AuthTest&gt;.
++
++=head1 DESCRIPTION
++
++Root Controller for this Catalyst based application.
++
++=head1 METHODS
++
++=cut
++
++=head2 default
++
++=cut
++
++sub default : Private {
++    my ( $self, $c ) = @_;
++
++    # Hello World
++    $c-&gt;response-&gt;body( 'Dummy Content' );
++
++    
++    $c-&gt;model('ParleyTest')-&gt;table('authentication')-&gt;storage-&gt;txn_begin;
++    my $new_auth = $c-&gt;model('ParleyTest')-&gt;table('authentication')-&gt;create(
++        {
++            username =&gt; scalar(localtime),
++            password =&gt; 'pwd',
++        }
++    );
++    $c-&gt;log-&gt;dumper($new_auth-&gt;{_column_data}, 'NEW_AUTHENTICATION');
++    $c-&gt;model('ParleyTest')-&gt;table('authentication')-&gt;storage-&gt;txn_rollback;
++
++
++    $c-&gt;model('ParleyTest')-&gt;table('preference')-&gt;storage-&gt;txn_begin;
++    my $new_pref = $c-&gt;model('ParleyTest')-&gt;table('preference')-&gt;create(
++        {
++            timezone =&gt; 'UTC',
++        }
++    );
++    $c-&gt;log-&gt;dumper($new_pref-&gt;{_column_data}, 'NEW_PREFERENCE');
++    $c-&gt;model('ParleyTest')-&gt;table('preference')-&gt;storage-&gt;txn_rollback;
++
++
++}
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,30 @@
++package AuthTest::Model::ParleyTest::Authentication;
++
++use strict;
++use warnings;
++use base 'DBIx::Class::Core';
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest::Authentication - Catalyst DBIC Table Model
++
++=head1 SYNOPSIS
++
++See L&lt;AuthTest&gt;
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Table Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,30 @@
++package AuthTest::Model::ParleyTest::Foo;
++
++use strict;
++use warnings;
++use base 'DBIx::Class::Core';
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest::Authentication - Catalyst DBIC Table Model
++
++=head1 SYNOPSIS
++
++See L&lt;AuthTest&gt;
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Table Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,30 @@
++package AuthTest::Model::ParleyTest::Preference;
++
++use strict;
++use warnings;
++use base 'DBIx::Class::Core';
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest::Preference - Catalyst DBIC Table Model
++
++=head1 SYNOPSIS
++
++See L&lt;AuthTest&gt;
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Table Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,37 @@
++package AuthTest::Model::ParleyTest;
++
++use strict;
++use base 'Catalyst::Model::DBIC';
++
++__PACKAGE__-&gt;config(
++    dsn           =&gt; 'dbi:Pg:dbname=parleytest',
++    user          =&gt; 'parleytest',
++    password      =&gt; '',
++    options       =&gt; {},
++    relationships =&gt; 1
++);
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest - Catalyst DBIC Model
++
++=head1 SYNOPSIS
++
++See L&lt;AuthTest&gt;
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,53 @@
++package AuthTest;
++
++use strict;
++use warnings;
++
++#
++# Set flags and add plugins for the application
++#
++#         -Debug: activates the debug mode for very useful log messages
++# Static::Simple: will serve static files from the application's root 
++# directory
++#
++use Catalyst qw/ConfigLoader Static::Simple Dumper/;
++
++our $VERSION = '0.01';
++
++#
++# Start the application
++#
++__PACKAGE__-&gt;setup;
++
++#
++# IMPORTANT: Please look into AuthTest::Controller::Root for more
++#
++
++=head1 NAME
++
++AuthTest - Catalyst based application
++
++=head1 SYNOPSIS
++
++    script/authtest_server.pl
++
++=head1 DESCRIPTION
++
++Catalyst based application.
++
++=head1 SEE ALSO
++
++L&lt;AuthTest::Controller::Root&gt;, L&lt;Catalyst&gt;
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/favicon.ico
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/favicon.ico
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/catalyst_logo.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/catalyst_logo.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,37 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'CGI' }
++
++use strict;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++use AuthTest;
++
++AuthTest-&gt;run;
++
++1;
++
++=head1 NAME
++
++authtest_cgi.pl - Catalyst CGI
++
++=head1 SYNOPSIS
++
++See L&lt;Catalyst::Manual&gt;
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as cgi.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,72 @@
++#!/usr/bin/perl -w
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use Catalyst::Helper;
++
++my $force = 0;
++my $mech  = 0;
++my $help  = 0;
++
++GetOptions(
++    'nonew|force'    =&gt; \$force,
++    'mech|mechanize' =&gt; \$mech,
++    'help|?'         =&gt; \$help
++ );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++my $helper = Catalyst::Helper-&gt;new( { '.newfiles' =&gt; !$force, mech =&gt; $mech } );
++
++pod2usage(1) unless $helper-&gt;mk_component( 'AuthTest', @ARGV );
++
++1;
++
++=head1 NAME
++
++authtest_create.pl - Create a new Catalyst Component
++
++=head1 SYNOPSIS
++
++authtest_create.pl [options] model|view|controller name [helper] [options]
++
++ Options:
++   -force        don't create a .new file where a file to be created exists
++   -mechanize    use Test::WWW::Mechanize::Catalyst for tests if available
++   -help         display this help and exits
++
++ Examples:
++   authtest_create.pl controller My::Controller
++   authtest_create.pl -mechanize controller My::Controller
++   authtest_create.pl view My::View
++   authtest_create.pl view MyView TT
++   authtest_create.pl view TT TT
++   authtest_create.pl model My::Model
++   authtest_create.pl model SomeDB CDBI dbi:SQLite:/tmp/my.db
++   authtest_create.pl model AnotherDB CDBI dbi:Pg:dbname=foo root 4321
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Create a new Catalyst Component.
++
++Existing component files are not overwritten.  If any of the component files
++to be created already exist the file will be written with a '.new' suffix.
++This behavior can be suppressed with the C&lt;-force&gt; option.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,76 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'FastCGI' }
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++use AuthTest;
++
++my $help = 0;
++my ( $listen, $nproc, $pidfile, $manager, $detach );
++ 
++GetOptions(
++    'help|?'      =&gt; \$help,
++    'listen|l=s'  =&gt; \$listen,
++    'nproc|n=i'   =&gt; \$nproc,
++    'pidfile|p=s' =&gt; \$pidfile,
++    'manager|M=s' =&gt; \$manager,
++    'daemon|d'    =&gt; \$detach,
++);
++
++pod2usage(1) if $help;
++
++AuthTest-&gt;run( 
++    $listen, 
++    {   nproc   =&gt; $nproc,
++        pidfile =&gt; $pidfile, 
++        manager =&gt; $manager,
++        detach  =&gt; $detach,
++    }
++);
++
++1;
++
++=head1 NAME
++
++authtest_fastcgi.pl - Catalyst FastCGI
++
++=head1 SYNOPSIS
++
++authtest_fastcgi.pl [options]
++ 
++ Options:
++   -? -help      display this help and exits
++   -l -listen    Socket path to listen on
++                 (defaults to standard input)
++                 can be HOST:PORT, :PORT or a
++                 filesystem path
++   -n -nproc     specify number of processes to keep
++                 to serve requests (defaults to 1,
++                 requires -listen)
++   -p -pidfile   specify filename for pid file
++                 (requires -listen)
++   -d -daemon    daemonize (requires -listen)
++   -M -manager   specify alternate process manager
++                 (FCGI::ProcManager sub-class)
++                 or empty string to disable
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as fastcgi.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,104 @@
++#!/usr/bin/perl -w
++
++BEGIN { 
++    $ENV{CATALYST_ENGINE} ||= 'HTTP';
++    $ENV{CATALYST_SCRIPT_GEN} = 27;
++}  
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++
++my $debug         = 0;
++my $fork          = 0;
++my $help          = 0;
++my $host          = undef;
++my $port          = 3000;
++my $keepalive     = 0;
++my $restart       = 0;
++my $restart_delay = 1;
++my $restart_regex = '\.yml$|\.yaml$|\.pm$';
++
++my @argv = @ARGV;
++
++GetOptions(
++    'debug|d'           =&gt; \$debug,
++    'fork'              =&gt; \$fork,
++    'help|?'            =&gt; \$help,
++    'host=s'            =&gt; \$host,
++    'port=s'            =&gt; \$port,
++    'keepalive|k'       =&gt; \$keepalive,
++    'restart|r'         =&gt; \$restart,
++    'restartdelay|rd=s' =&gt; \$restart_delay,
++    'restartregex|rr=s' =&gt; \$restart_regex
++);
++
++pod2usage(1) if $help;
++
++if ( $restart ) {
++    $ENV{CATALYST_ENGINE} = 'HTTP::Restarter';
++}
++if ( $debug ) {
++    $ENV{CATALYST_DEBUG} = 1;
++}
++
++# This is require instead of use so that the above environment
++# variables can be set at runtime.
++require AuthTest;
++
++AuthTest-&gt;run( $port, $host, {
++    argv          =&gt; \@argv,
++    'fork'        =&gt; $fork,
++    keepalive     =&gt; $keepalive,
++    restart       =&gt; $restart,
++    restart_delay =&gt; $restart_delay,
++    restart_regex =&gt; qr/$restart_regex/
++} );
++
++1;
++
++=head1 NAME
++
++authtest_server.pl - Catalyst Testserver
++
++=head1 SYNOPSIS
++
++authtest_server.pl [options]
++
++ Options:
++   -d -debug          force debug mode
++   -f -fork           handle each request in a new process
++                      (defaults to false)
++   -? -help           display this help and exits
++      -host           host (defaults to all)
++   -p -port           port (defaults to 3000)
++   -k -keepalive      enable keep-alive connections
++   -r -restart        restart when files got modified
++                      (defaults to false)
++   -rd -restartdelay  delay between file checks
++   -rr -restartregex  regex match files that trigger
++                      a restart when modified
++                      (defaults to '\.yml$|\.yaml$|\.pm$')
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst Testserver for this application.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,54 @@
++#!/usr/bin/perl -w
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++use Catalyst::Test 'AuthTest';
++
++my $help = 0;
++
++GetOptions( 'help|?' =&gt; \$help );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++print request($ARGV[0])-&gt;content . &quot;\n&quot;;
++
++1;
++
++=head1 NAME
++
++authtest_test.pl - Catalyst Test
++
++=head1 SYNOPSIS
++
++authtest_test.pl [options] uri
++
++ Options:
++   -help    display this help and exits
++
++ Examples:
++   authtest_test.pl <A HREF="http://localhost/some_action">http://localhost/some_action</A>
++   authtest_test.pl /some_action
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst action from the command line.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,7 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 2;
++
++BEGIN { use_ok 'Catalyst::Test', 'AuthTest' }
++
++ok( request('/')-&gt;is_success, 'Request should succeed' );
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval &quot;use Test::Pod 1.14&quot;;
++plan skip_all =&gt; 'Test::Pod 1.14 required' if $@;
++plan skip_all =&gt; 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_files_ok();
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval &quot;use Test::Pod::Coverage 1.04&quot;;
++plan skip_all =&gt; 'Test::Pod::Coverage 1.04 required' if $@;
++plan skip_all =&gt; 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_coverage_ok();
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,34 @@
++use Test::More tests =&gt; 6;
++use_ok( Catalyst::Test, 'AuthTest' );
++use_ok('AuthTest::Model::ParleyTest::Authentication');
++use Data::Dumper;
++
++
++# create a new Authentication record (do it all inside a transaction, so we can rollback)
++
++# BEGIN TRANSACTION
++AuthTest-&gt;model('ParleyTest')-&gt;table('authentication')-&gt;storage-&gt;txn_begin;
++
++# create new record
++my $now = scalar(localtime);
++my $new_auth = AuthTest-&gt;model('ParleyTest')-&gt;table('authentication')-&gt;create(
++    {
++        username =&gt; $now,
++        password =&gt; 'pwd',
++    }
++);
++
++# correct class returned
++isa_ok($new_auth, 'AuthTest::Model::ParleyTest::Authentication');
++
++diag Dumper($new_auth-&gt;{_column_data});
++
++# new object has values we created it with
++is($new_auth-&gt;username(), $now, 'username set');
++is($new_auth-&gt;password(), 'pwd', 'password set');
++
++# now the kicker ... doe we have an id?
++ok(defined($new_auth-&gt;authentication_id()), 'authentication_id set');
++
++# ROLLBACK TRANSACTION
++AuthTest-&gt;model('ParleyTest')-&gt;table('authentication')-&gt;storage-&gt;txn_rollback;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,34 @@
++use Test::More tests =&gt; 6;
++use_ok( Catalyst::Test, 'AuthTest' );
++use_ok('AuthTest::Model::ParleyTest::Foo');
++use Data::Dumper;
++
++
++# create a new Authentication record (do it all inside a transaction, so we can rollback)
++
++# BEGIN TRANSACTION
++AuthTest-&gt;model('ParleyTest')-&gt;table('foo')-&gt;storage-&gt;txn_begin;
++
++# create new record
++my $now = scalar(localtime);
++my $new_auth = AuthTest-&gt;model('ParleyTest')-&gt;table('foo')-&gt;create(
++    {
++        username =&gt; $now,
++        password =&gt; 'pwd',
++    }
++);
++
++# correct class returned
++isa_ok($new_auth, 'AuthTest::Model::ParleyTest::Foo');
++
++diag Dumper($new_auth-&gt;{_column_data});
++
++# new object has values we created it with
++is($new_auth-&gt;username(), $now, 'username set');
++is($new_auth-&gt;password(), 'pwd', 'password set');
++
++# now the kicker ... doe we have an id?
++ok(defined($new_auth-&gt;authentication_id()), 'authentication_id set');
++
++# ROLLBACK TRANSACTION
++AuthTest-&gt;model('ParleyTest')-&gt;table('foo')-&gt;storage-&gt;txn_rollback;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,34 @@
++use Test::More tests =&gt; 5;
++use_ok( Catalyst::Test, 'AuthTest' );
++use_ok('AuthTest::Model::ParleyTest::Preference');
++use Data::Dumper;
++
++# create a new Authentication record (do it all inside a transaction, so we can rollback)
++
++# BEGIN TRANSACTION
++AuthTest-&gt;model('ParleyTest')-&gt;table('preference')-&gt;storage-&gt;txn_begin;
++
++# create new record
++my $now = scalar(localtime);
++my $new_auth = AuthTest-&gt;model('ParleyTest')-&gt;table('preference')-&gt;create(
++    {
++        timezone =&gt; 'MyTZ',
++    }
++);
++
++# correct class returned
++isa_ok($new_auth, 'AuthTest::Model::ParleyTest::Preference');
++
++diag Dumper($new_auth-&gt;{_column_data});
++
++# new object has values we created it with
++is($new_auth-&gt;timezone(), 'MyTZ', 'timezone set');
++
++# what about the compass_direction?
++#ok(defined($new_auth-&gt;compass_direction()), 'compass_direction defined');
++
++# now the kicker ... doe we have an id?
++ok(defined($new_auth-&gt;preference_id()), 'preference_id set');
++
++# ROLLBACK TRANSACTION
++AuthTest-&gt;model('ParleyTest')-&gt;table('preference')-&gt;storage-&gt;txn_rollback;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000041.html">[Parley-svn] r151 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000018.html">[Parley-svn] r153 - / trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#46">[ date ]</a>
+              <a href="thread.html#46">[ thread ]</a>
+              <a href="subject.html#46">[ subject ]</a>
+              <a href="author.html#46">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

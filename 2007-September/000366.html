@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r478 - / trunk/root/base/my
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r478%20-%20/%20trunk/root/base/my&In-Reply-To=%3C200709131321.l8DDLiUU013327%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000365.html">
+   <LINK REL="Next"  HREF="000367.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r478 - / trunk/root/base/my</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r478%20-%20/%20trunk/root/base/my&In-Reply-To=%3C200709131321.l8DDLiUU013327%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r478 - / trunk/root/base/my">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Sep 13 15:21:44 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000365.html">[Parley-svn] r477 - / trunk/root/base/menu
+</A></li>
+        <LI>Next message: <A HREF="000367.html">[Parley-svn] r479 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#366">[ date ]</a>
+              <a href="thread.html#366">[ thread ]</a>
+              <a href="subject.html#366">[ subject ]</a>
+              <a href="author.html#366">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-13 15:21:44 +0200 (Thu, 13 Sep 2007)
+New Revision: 478
+
+Modified:
+   /
+   trunk/root/base/my/tab_you
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3798 at wiggin</A>:  chisel | 2007-09-13 11:09:36 +0100
+ / updated tab_you to use YUI instead of dojo for magical-updates
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3797
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3798
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/my/tab_you
+===================================================================
+--- trunk/root/base/my/tab_you	2007-09-13 13:21:35 UTC (rev 477)
++++ trunk/root/base/my/tab_you	2007-09-13 13:21:44 UTC (rev 478)
+@@ -1,37 +1,5 @@
+ &lt;!-- preferences : tab_you --&gt;
+ 
+-&lt;script type=&quot;text/javascript&quot;&gt;
+-    function saveHandler(newVal, oldVal, fld) {
+-        // do something
+-        var kw = {
+-            url:  &quot;[% base %]my/saveHandler&quot;,
+-            method: &quot;post&quot;,
+-            mimetype: &quot;text/json&quot;,
+-            formNode: dojo.byId(&quot;form&quot;),
+-            content: { value: newVal, ovalue: oldVal, fieldname: fld },
+-            load: function(type, data) {
+-                dojo.byId(&quot;result&quot;).innerHTML = data.message;
+-                if (data.updated != 1) {
+-                    dojo.byId( data.fieldname ).innerHTML = data.old_value;
+-                }
+-            },
+-            error: function(type, error){
+-                document.getElementById(&quot;result&quot;).innerHTML = error.message;
+-            },
+-        };
+-        dojo.io.bind(kw);
+-    }
+-    function init() {
+-        var fields = new Array;
+-        fields = [ 'FirstName', 'LastName', 'ForumName' ];
+-        for(i = 0; i &lt; fields.length; i++){
+-            var editable = dojo.widget.byId(fields[i]);
+-            editable.onSave = saveHandler;
+-        }
+-    }
+-    dojo.addOnLoad(init);
+-&lt;/script&gt;
+-
+ &lt;div id=&quot;result&quot;&gt;&nbsp;&lt;/div&gt;
+ 
+ &lt;table class=&quot;user_profile&quot;&gt;
+@@ -41,11 +9,7 @@
+                 First Name:
+             &lt;/td&gt;
+ 
+-            &lt;td&gt;
+-                &lt;div id=&quot;FirstName&quot; name=&quot;First Name&quot; class=&quot;inlineEdit&quot; dojoType=&quot;inlineEditBox&quot; &gt;
+-                [% authed_user.first_name %]
+-                &lt;/div&gt;
+-            &lt;/td&gt;
++            &lt;td id=&quot;FirstName&quot; name=&quot;First name&quot; class=&quot;editable&quot;&gt;[%authed_user.first_name%]&lt;/td&gt;
+         &lt;/tr&gt;
+ 
+         &lt;tr&gt;
+@@ -53,11 +17,7 @@
+                 Last Name:
+             &lt;/td&gt;
+ 
+-            &lt;td&gt;
+-                &lt;div id=&quot;LastName&quot; name=&quot;Last Name&quot; class=&quot;inlineEdit&quot; dojoType=&quot;inlineEditBox&quot; &gt;
+-                [% authed_user.last_name %]
+-                &lt;/div&gt;
+-            &lt;/td&gt;
++            &lt;td id=&quot;LastName&quot; class=&quot;editable&quot;&gt;[% authed_user.last_name %]&lt;/td&gt;
+         &lt;/tr&gt;
+ 
+         &lt;tr&gt;
+@@ -65,11 +25,7 @@
+                 Forum Name:
+             &lt;/td&gt;
+ 
+-            &lt;td&gt;
+-                &lt;div id=&quot;ForumName&quot; name=&quot;Forum Name&quot; class=&quot;inlineEdit&quot; dojoType=&quot;inlineEditBox&quot; &gt;
+-                [% authed_user.forum_name %]
+-                &lt;/div&gt;
+-            &lt;/td&gt;
++            &lt;td id=&quot;ForumName&quot; class=&quot;editable&quot;&gt;[% authed_user.forum_name %]&lt;/td&gt;
+         &lt;/tr&gt;
+ 
+         &lt;tr&gt;
+@@ -85,5 +41,53 @@
+         &lt;/tr&gt;
+     &lt;/tbody&gt;
+ &lt;/table&gt;
++&lt;!-- (end) preferences : tab_you --&gt;
+ 
+-&lt;!-- (end) preferences : tab_you --&gt;
++&lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/Editable.js&quot;&gt;&lt;/script&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++    var E  = new YAHOO.widget.EditableElement;
++
++    E.callback = function(){
++        var handleSuccess = function(o) {
++            var data = eval('(' + o.responseText + ')');
++            // show the status message
++            o.argument.msg_node.innerHTML = data.message;
++            // if we didn't update reset the field value
++            if (data.updated != 1) {
++                o.argument.node.innerHTML = data.old_value;
++            }
++        };
++        var handleFailure =  function(o) {
++            alert('ERROR: ' + o.responseText);
++        };
++
++        // where to post to
++        var sUrl = '[%base%]my/saveHandler';
++
++        // postdata is a query string ... how irksome!!
++        var postData =
++               'value='     + this.contents_new
++            + '&amp;ovalue='    + this.contents
++            + '&amp;fieldname=' + this.clicked.id
++        ;
++
++        var msg_node = YAHOO.util.Dom.get('result');
++
++        var request = YAHOO.util.Connect.asyncRequest(
++            'POST',
++            sUrl,
++            {
++                success:  handleSuccess,
++                failure:  handleFailure,
++                argument: {
++                    node:     this.clicked,
++                    msg_node: msg_node
++                }
++            },
++            postData
++        );
++    };
++
++    E.init();
++&lt;/script&gt;
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000365.html">[Parley-svn] r477 - / trunk/root/base/menu
+</A></li>
+	<LI>Next message: <A HREF="000367.html">[Parley-svn] r479 - / trunk/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#366">[ date ]</a>
+              <a href="thread.html#366">[ thread ]</a>
+              <a href="subject.html#366">[ subject ]</a>
+              <a href="author.html#366">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

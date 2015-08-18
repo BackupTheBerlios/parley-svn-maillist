@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r844 - / trunk/root/email_templates	trunk/root/email_templates/nl
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r844%20-%20/%20trunk/root/email_templates%0A%09trunk/root/email_templates/nl&In-Reply-To=%3C200803182011.m2IKB92l023536%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000731.html">
+   <LINK REL="Next"  HREF="000733.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r844 - / trunk/root/email_templates	trunk/root/email_templates/nl</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r844%20-%20/%20trunk/root/email_templates%0A%09trunk/root/email_templates/nl&In-Reply-To=%3C200803182011.m2IKB92l023536%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r844 - / trunk/root/email_templates	trunk/root/email_templates/nl">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Mar 18 21:11:09 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000731.html">[Parley-svn] r843 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000733.html">[Parley-svn] r845 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#732">[ date ]</a>
+              <a href="thread.html#732">[ thread ]</a>
+              <a href="subject.html#732">[ subject ]</a>
+              <a href="author.html#732">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-18 21:11:08 +0100 (Tue, 18 Mar 2008)
+New Revision: 844
+
+Added:
+   trunk/root/email_templates/nl/
+   trunk/root/email_templates/nl/authentication_email.eml
+   trunk/root/email_templates/nl/password_reset.eml
+   trunk/root/email_templates/nl/thread_update_notify.eml
+   trunk/root/email_templates/nl/thread_update_notify.html
+   trunk/root/email_templates/nl/username_reminder.eml
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4768 at wiggin</A>:  chisel | 2008-03-18 19:06:07 +0000
+ + added Dutch email template translations
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4767
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4768
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/root/email_templates/nl/authentication_email.eml
+===================================================================
+--- trunk/root/email_templates/nl/authentication_email.eml	2008-03-18 20:10:59 UTC (rev 843)
++++ trunk/root/email_templates/nl/authentication_email.eml	2008-03-18 20:11:08 UTC (rev 844)
+@@ -0,0 +1,12 @@
++[% person.first_name %],
++
++Dank voor het registreren met [% c.config.name %]
++Om uw registratie te voltooien gelieve te klikken op de hieronder verbinding.
++
++  [% c.request.base %]user/authenticate/[% regauth.id %]
++
++en volg de instructies op scherm.
++
++Achting,
++
++Het [% c.config.name %] team.
+
+Added: trunk/root/email_templates/nl/password_reset.eml
+===================================================================
+--- trunk/root/email_templates/nl/password_reset.eml	2008-03-18 20:10:59 UTC (rev 843)
++++ trunk/root/email_templates/nl/password_reset.eml	2008-03-18 20:11:08 UTC (rev 844)
+@@ -0,0 +1,12 @@
++[% person.first_name %],
++
++Om uw rekeningswachtwoord terug te stellen gelieve te klikken op de
++hieronder verbinding.
++
++  [% c.request.base %]user/password/reset/[% pwd_reset.id %]
++
++en volg de instructies op scherm.
++
++Achting,
++
++Het [% c.config.name %] team.
+
+Added: trunk/root/email_templates/nl/thread_update_notify.eml
+===================================================================
+--- trunk/root/email_templates/nl/thread_update_notify.eml	2008-03-18 20:10:59 UTC (rev 843)
++++ trunk/root/email_templates/nl/thread_update_notify.eml	2008-03-18 20:11:08 UTC (rev 844)
+@@ -0,0 +1,20 @@
++[% person.first_name %],
++
++De draad &quot;[% post.thread.subject %]&quot;
++een nieuw antwoord langs heeft ontvangen [% post.creator.forum_name %].
++
++Klik hier blijven lezend de draad:
++
++ [% c.req.base %]thread/next_post?thread=[% post.thread.id %]
++
++Klik hier om de recentste post in de draad te bekijken:
++
++ [% c.req.base %]post/view?post=[% post.id %]
++
++Gelieve van nota te nemen: U zult geen verdere berichten voor deze draad
++ontvangen tot u hierboven de post of om het even welke posten bekijkt
++die na het worden gecreeerd.
++
++Achting,
++
++Het [% c.config.name %] team.
+
+Added: trunk/root/email_templates/nl/thread_update_notify.html
+===================================================================
+--- trunk/root/email_templates/nl/thread_update_notify.html	2008-03-18 20:10:59 UTC (rev 843)
++++ trunk/root/email_templates/nl/thread_update_notify.html	2008-03-18 20:11:08 UTC (rev 844)
+@@ -0,0 +1,29 @@
++&lt;html&gt;
++    &lt;head&gt;
++        &lt;title&gt;Het Bericht van de Update van de draad&lt;/title&gt;
++    &lt;/head&gt;
++
++    &lt;body&gt;
++        &lt;p&gt;[% person.first_name %],&lt;/p&gt;
++
++        &lt;p&gt;De draad &quot;[% post.thread.subject %]&quot;
++        een nieuw antwoord langs heeft ontvangen [% post.creator.forum_name %].&lt;/p&gt;
++
++        &lt;p&gt;Kies ??n van de volgende acties:
++        &lt;ul&gt;
++            &lt;li&gt;
++            &lt;a href=&quot;[% c.req.base %]thread/next_post?thread=[% post.thread.id %]&quot;&gt;Blijf lezend &quot;[% post.thread.subject %]&quot; van uw laatste positie&lt;/a&gt;
++            &lt;/li&gt;
++            &lt;li&gt;
++            &lt;a href=&quot;[% c.req.base %]post/view?post=[% post.id %]&quot;&gt;Mening &quot;[% post.thread.subject %]&quot; van de nieuwe post&lt;/a&gt;
++            &lt;/li&gt;
++        &lt;/ul&gt;
++        &lt;/p&gt;
++
++        &lt;p&gt;Gelieve van nota te nemen: U &lt;b&gt;zal niet&lt;/b&gt; ontvang om het even welke verdere berichten voor deze draad tot u hierboven de post of om het even welke posten bekijkt die na het worden gecreeerd.&lt;/p&gt;
++
++        &lt;p&gt;Achting,&lt;/p&gt;
++
++        &lt;p&gt;Het [% c.config.name %] team.&lt;/p&gt;
++    &lt;/body&gt;
++&lt;/html&gt;
+
+Added: trunk/root/email_templates/nl/username_reminder.eml
+===================================================================
+--- trunk/root/email_templates/nl/username_reminder.eml	2008-03-18 20:10:59 UTC (rev 843)
++++ trunk/root/email_templates/nl/username_reminder.eml	2008-03-18 20:11:08 UTC (rev 844)
+@@ -0,0 +1,13 @@
++[% person.first_name %],
++
++Uw gebruikersbenaming voor [% c.config.name %] is:
++
++  [% person.authentication.username %]
++
++U kunt bezoeken [% c.config.name %] bij:
++
++  [% c.request.base %]
++
++Achting,
++
++Het [% c.config.name %] team.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000731.html">[Parley-svn] r843 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000733.html">[Parley-svn] r845 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#732">[ date ]</a>
+              <a href="thread.html#732">[ thread ]</a>
+              <a href="subject.html#732">[ subject ]</a>
+              <a href="author.html#732">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

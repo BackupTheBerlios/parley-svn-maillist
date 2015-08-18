@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1036 - / branches/parley-1.1	branches/parley-1.1/root/base branches/parley-1.1/root/base/shared
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1036%20-%20/%20branches/parley-1.1%0A%09branches/parley-1.1/root/base%20branches/parley-1.1/root/base/shared&In-Reply-To=%3C200902242258.n1OMwiT8021731%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000919.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1036 - / branches/parley-1.1	branches/parley-1.1/root/base branches/parley-1.1/root/base/shared</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1036%20-%20/%20branches/parley-1.1%0A%09branches/parley-1.1/root/base%20branches/parley-1.1/root/base/shared&In-Reply-To=%3C200902242258.n1OMwiT8021731%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1036 - / branches/parley-1.1	branches/parley-1.1/root/base branches/parley-1.1/root/base/shared">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Feb 24 23:58:44 CET 2009</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000919.html">[Parley-svn] r1037 - / branches/parley-1.1	branches/parley-1.1/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#918">[ date ]</a>
+              <a href="thread.html#918">[ thread ]</a>
+              <a href="subject.html#918">[ subject ]</a>
+              <a href="author.html#918">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-02-24 23:58:43 +0100 (Tue, 24 Feb 2009)
+New Revision: 1036
+
+Added:
+   branches/parley-1.1/root/base/shared/google_analytics
+Modified:
+   /
+   branches/parley-1.1/Changes
+   branches/parley-1.1/TODO
+   branches/parley-1.1/parley.conf
+   branches/parley-1.1/root/base/footer
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8903 at wiggin</A>:  chisel | 2008-12-31 02:02:24 +0000
+ + added Google Analytics
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8901
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8903
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: branches/parley-1.1/Changes
+===================================================================
+--- branches/parley-1.1/Changes	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/Changes	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -7,6 +7,7 @@
+     - modified CSS for &quot;user information&quot;; now the header is a fixed-width we
+       can place this div inside it (instead of flushed to the RHS of the
+       page/window)
++    - added Google Analytics (configurable via parley.conf)
+ 
+ 1.0.4   Wed Dec 24 18:54:24 GMT 2008
+     - fixed skin2
+
+Modified: branches/parley-1.1/TODO
+===================================================================
+--- branches/parley-1.1/TODO	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/TODO	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -1,13 +1,12 @@
+ TODO LIST
+ 
++  - refactor/tidy conf file(s)
+   - update i18n from Advanced Search additions
+   - move search_dialog inline styles into CSS file
+   - fix &quot;oversized image&quot; bug
+-  - fix &quot;user information&quot; CSS location
+   - local file permissions (for avatar uploads)
+   - optional ReCAPTCHA during sign-up
+   - optional google ads
+-  - optional google analytics
+   - 11:58 &lt;marcus&gt; btw did you consider packing the css and js to reduce the number of includes?
+     <A HREF="http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm">http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm</A>
+     <A HREF="http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm">http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm</A>
+@@ -24,7 +23,6 @@
+   - investigate in-application language preference/choice
+   - write some sensible T&amp;Cs
+   - update avatar update response to force a No-Cache?
+-  - advanced search page
+   - proper moderator support/management
+      - forum creation
+      - abuse handling
+@@ -40,6 +38,9 @@
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++D - optional google analytics
++D - advanced search page
++D - fix &quot;user information&quot; CSS location
+ D - skinning (user pref overrides CSS used?)
+ D - skinning (config frile driven)
+ D - use HTML::ForumCode::Cookbook::Recipe1 for message preview(s)
+
+Modified: branches/parley-1.1/parley.conf
+===================================================================
+--- branches/parley-1.1/parley.conf	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/parley.conf	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -22,7 +22,11 @@
+ # &quot;Add This&quot;
+ add_this_account            chiselwright
+ 
++# Google Analytics - change this for your &quot;Web Property ID&quot;, or comment out to
++# disable
++google_analytics_id         UA-116361-5
+ 
++
+ # comment out any log levels you don't want to see in your logs
+ # 'info' and 'debug' are common choices for suppresing in a live environment
+ log_levels                  info
+
+Modified: branches/parley-1.1/root/base/footer
+===================================================================
+--- branches/parley-1.1/root/base/footer	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/root/base/footer	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -23,6 +23,7 @@
+             [% PROCESS shared/login_dialog %]
+             [% PROCESS shared/language_dialog %]
+         &lt;/div&gt;&lt;!-- id=&quot;doc3&quot; --&gt;
++        [% PROCESS shared/google_analytics %]
+     &lt;/body&gt;
+ &lt;/html&gt;
+ &lt;!-- Footer : End --&gt;
+
+Added: branches/parley-1.1/root/base/shared/google_analytics
+===================================================================
+--- branches/parley-1.1/root/base/shared/google_analytics	2008-12-31 01:42:37 UTC (rev 1035)
++++ branches/parley-1.1/root/base/shared/google_analytics	2009-02-24 22:58:43 UTC (rev 1036)
+@@ -0,0 +1,13 @@
++[% IF c.config.google_analytics_id %]
++&lt;script type=&quot;text/javascript&quot;&gt;
++var gaJsHost = ((&quot;https:&quot; == document.location.protocol) ? &quot;<A HREF="https://ssl.">https://ssl.</A>&quot; : &quot;<A HREF="http://www.">http://www.</A>&quot;);
++document.write(unescape(&quot;%3Cscript src='&quot; + gaJsHost + &quot;google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E&quot;));
++&lt;/script&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++try {
++var pageTracker = _gat._getTracker(&quot;[%c.config.google_analytics_id%]&quot;);
++pageTracker._trackPageview();
++} catch(err) {}&lt;/script&gt;
++[% ELSE %]
++&lt;!-- Google Analytics Not Enabled --&gt;
++[% END %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000919.html">[Parley-svn] r1037 - / branches/parley-1.1	branches/parley-1.1/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#918">[ date ]</a>
+              <a href="thread.html#918">[ thread ]</a>
+              <a href="subject.html#918">[ subject ]</a>
+              <a href="author.html#918">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

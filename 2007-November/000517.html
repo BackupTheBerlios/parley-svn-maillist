@@ -1,0 +1,382 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r629 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r629%20-%20/%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200711012156.lA1Lu83X029926%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000516.html">
+   <LINK REL="Next"  HREF="000518.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r629 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r629%20-%20/%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200711012156.lA1Lu83X029926%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r629 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Nov  1 22:56:08 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000516.html">[Parley-svn] r628 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000518.html">[Parley-svn] r630 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#517">[ date ]</a>
+              <a href="thread.html#517">[ thread ]</a>
+              <a href="subject.html#517">[ subject ]</a>
+              <a href="author.html#517">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-01 22:56:08 +0100 (Thu, 01 Nov 2007)
+New Revision: 629
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Schema/Forum.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/lib/Parley/Schema/Thread.pm
+   trunk/lib/Parley/Schema/ThreadView.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4111 at wiggin</A>:  chisel | 2007-11-01 08:53:28 +0000
+ / bumped version to 0.58_01
+ + modified column names for post table and updated modules accordingly
+ + added the first batch of DBIC prefetches to reduce hits on the database
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4110
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4111
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley/Controller/Forum.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -38,6 +38,11 @@
+                 # pager information
+                 rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
+                 page        =&gt; $c-&gt;stash-&gt;{current_page},
++
++                prefetch =&gt; [
++                    { creator =&gt; 'authentication' },
++                    'last_post',
++                ],
+             }
+         );
+ 
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -209,12 +209,19 @@
+     ##################################################
+     $c-&gt;stash-&gt;{post_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
+         {
+-            thread =&gt; $c-&gt;_current_thread-&gt;id(),
++            'me.thread_id' =&gt; $c-&gt;_current_thread-&gt;id(),
+         },
+         {
+-            order_by    =&gt; 'created ASC',
++            order_by    =&gt; 'me.created ASC',
+             rows        =&gt; $c-&gt;config-&gt;{posts_per_page},
+             page        =&gt; $c-&gt;stash-&gt;{current_page},
++
++            prefetch =&gt; [
++                { thread =&gt; 'forum' },
++                { reply_to =&gt; 'creator' },
++                { quoted_post =&gt; 'creator' },
++                { creator =&gt; 'authentication' },
++            ],
+         }
+     );
+ 
+
+Modified: trunk/lib/Parley/Schema/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Forum.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley/Schema/Forum.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -46,7 +46,7 @@
+ __PACKAGE__-&gt;set_primary_key(&quot;forum_id&quot;);
+ __PACKAGE__-&gt;add_unique_constraint(&quot;forum_name_key&quot;, [&quot;name&quot;]);
+ __PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.forum&quot; =&gt; &quot;self.forum_id&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;last_post&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { id =&gt; &quot;last_post&quot; });
+ 
+ sub moderators {
+     my $self = shift;
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley/Schema/Person.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -70,10 +70,9 @@
+   { &quot;foreign.person&quot; =&gt; &quot;self.person_id&quot; },
+ );
+ __PACKAGE__-&gt;belongs_to(&quot;preference&quot;, &quot;Preference&quot;, { preference_id =&gt; &quot;preference&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;last_post&quot; });
++__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { id =&gt; &quot;last_post&quot; });
+ __PACKAGE__-&gt;belongs_to(
+-  &quot;authentication&quot;,
+-  &quot;Authentication&quot;,
++  &quot;authentication&quot; =&gt; &quot;Authentication&quot;,
+   { authentication_id =&gt; &quot;authentication&quot; },
+ );
+ __PACKAGE__-&gt;has_many(
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley/Schema/Post.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -18,51 +18,61 @@
+ __PACKAGE__-&gt;load_components(&quot;ResultSetManager&quot;, &quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;post&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;creator&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;subject&quot;,
+-  {
++  &quot;id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('post_post_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;creator_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;subject&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 1,
+     size =&gt; undef,
+   },
+-  &quot;quoted_post&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;message&quot;,
+-  {
++  &quot;quoted_post_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;message&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;quoted_text&quot;,
+-  {
++  &quot;quoted_text&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 1,
+     size =&gt; undef,
+   },
+-  &quot;created&quot;,
+-  {
++  &quot;created&quot; =&gt; {
+     data_type =&gt; &quot;timestamp with time zone&quot;,
+     default_value =&gt; &quot;now()&quot;,
+     is_nullable =&gt; 1,
+     size =&gt; 8,
+   },
+-  &quot;thread&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;reply_to&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;post_id&quot;,
+-  {
++  &quot;thread_id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+-    default_value =&gt; &quot;nextval('post_post_id_seq'::regclass)&quot;,
++    default_value =&gt; undef,
+     is_nullable =&gt; 0,
+-    size =&gt; 4,
++    size =&gt; 4
+   },
+-  &quot;edited&quot;,
+-  {
++  &quot;reply_to_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;edited&quot; =&gt; {
+     data_type =&gt; &quot;timestamp with time zone&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 1,
+@@ -76,24 +86,45 @@
+     size =&gt; 8,
+   },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;post_id&quot;);
+-__PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.last_post&quot; =&gt; &quot;self.post_id&quot; });
+-__PACKAGE__-&gt;has_many(&quot;forums&quot;, &quot;Forum&quot;, { &quot;foreign.last_post&quot; =&gt; &quot;self.post_id&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;creator&quot;, &quot;Person&quot;, { person_id =&gt; &quot;creator&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;reply_to&quot;, &quot;Post&quot;, { post_id =&gt; &quot;reply_to&quot; });
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;has_many(
+-  &quot;post_reply_toes&quot;,
+-  &quot;Post&quot;,
+-  { &quot;foreign.reply_to&quot; =&gt; &quot;self.post_id&quot; },
++    &quot;threads&quot; =&gt; &quot;Thread&quot;,
++    { &quot;foreign.last_post&quot; =&gt; &quot;self.id&quot; }
+ );
+-__PACKAGE__-&gt;belongs_to(&quot;thread&quot;, &quot;Thread&quot;, { thread_id =&gt; &quot;thread&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;quoted_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;quoted_post&quot; });
+ __PACKAGE__-&gt;has_many(
+-  &quot;post_quoted_posts&quot;,
+-  &quot;Post&quot;,
+-  { &quot;foreign.quoted_post&quot; =&gt; &quot;self.post_id&quot; },
++    &quot;forums&quot; =&gt; &quot;Forum&quot;,
++    { &quot;foreign.last_post&quot; =&gt; &quot;self.id&quot; }
+ );
+-__PACKAGE__-&gt;has_many(&quot;people&quot;, &quot;Person&quot;, { &quot;foreign.last_post&quot; =&gt; &quot;self.post_id&quot; });
++__PACKAGE__-&gt;belongs_to(
++    &quot;creator&quot; =&gt; &quot;Person&quot;,
++    { person_id =&gt; &quot;creator_id&quot; },
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;reply_to&quot; =&gt; &quot;Post&quot;,
++    { id =&gt; &quot;reply_to_id&quot; },
++    { join_type =&gt; 'left' },
++);
++__PACKAGE__-&gt;has_many(
++  &quot;post_reply_toes&quot; =&gt; &quot;Post&quot;,
++  { &quot;foreign.reply_to&quot; =&gt; &quot;self.id&quot; },
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;thread&quot; =&gt; &quot;Thread&quot;,
++    { thread_id =&gt; &quot;thread_id&quot; },
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;quoted_post&quot; =&gt; &quot;Post&quot;,
++    { id =&gt; &quot;quoted_post_id&quot; },
++    { join_type =&gt; 'left' },
++);
++__PACKAGE__-&gt;has_many(
++  &quot;post_quoted_posts&quot; =&gt; &quot;Post&quot;,
++  { &quot;foreign.quoted_post&quot; =&gt; &quot;self.id&quot; },
++);
++__PACKAGE__-&gt;has_many(
++    &quot;people&quot; =&gt; &quot;Person&quot;,
++    { &quot;foreign.last_post&quot; =&gt; &quot;self.id&quot; },
++);
+ 
+ 
+ 
+
+Modified: trunk/lib/Parley/Schema/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Thread.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley/Schema/Thread.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -65,10 +65,17 @@
+ );
+ __PACKAGE__-&gt;set_primary_key(&quot;thread_id&quot;);
+ __PACKAGE__-&gt;belongs_to(&quot;creator&quot;, &quot;Person&quot;, { person_id =&gt; &quot;creator&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { post_id =&gt; &quot;last_post&quot; });
++__PACKAGE__-&gt;belongs_to(
++    &quot;last_post&quot;, &quot;Post&quot;,
++    { id =&gt; &quot;last_post&quot; },
++    { prefetch =&gt; [ qw/ creator / ] },
++);
+ __PACKAGE__-&gt;belongs_to(&quot;forum&quot;, &quot;Forum&quot;, { forum_id =&gt; &quot;forum&quot; });
+-__PACKAGE__-&gt;has_many(&quot;posts&quot;, &quot;Post&quot;, { &quot;foreign.thread&quot; =&gt; &quot;self.thread_id&quot; });
+ __PACKAGE__-&gt;has_many(
++    &quot;posts&quot;, &quot;Post&quot;,
++    { &quot;foreign.thread&quot; =&gt; &quot;self.thread_id&quot; },
++);
++__PACKAGE__-&gt;has_many(
+   &quot;thread_views&quot;,
+   &quot;ThreadView&quot;,
+   { &quot;foreign.thread&quot; =&gt; &quot;self.thread_id&quot; },
+
+Modified: trunk/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ThreadView.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley/Schema/ThreadView.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -104,7 +104,7 @@
+     # [we don't seem to get all the default column data for a new create()]
+     $schema = $self-&gt;result_source()-&gt;schema();
+     $post = $schema-&gt;resultset('Post')-&gt;find(
+-        post_id =&gt; $post-&gt;id()
++        id =&gt; $post-&gt;id()
+     );
+     if (not defined $post) {
+         warn 'failed to re-fetch post in notification_list()';
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-11-01 21:55:53 UTC (rev 628)
++++ trunk/lib/Parley.pm	2007-11-01 21:56:08 UTC (rev 629)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++our $VERSION = '0.58_01';
++
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+     Dumper
+@@ -29,8 +31,6 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.57_08';
+-
+ __PACKAGE__-&gt;config( version =&gt; $VERSION );
+ __PACKAGE__-&gt;setup;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000516.html">[Parley-svn] r628 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000518.html">[Parley-svn] r630 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#517">[ date ]</a>
+              <a href="thread.html#517">[ thread ]</a>
+              <a href="subject.html#517">[ subject ]</a>
+              <a href="author.html#517">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

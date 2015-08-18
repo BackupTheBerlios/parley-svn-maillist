@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r161 - / trunk/issues trunk/issues/search_deflate trunk/issues/search_deflate/db trunk/issues/search_deflate/lib trunk/issues/search_deflate/lib/TimeDB trunk/issues/search_deflate/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r161%20-%20/%20trunk/issues%20trunk/issues/search_deflate%20trunk/issues/search_deflate/db%20trunk/issues/search_deflate/lib%20trunk/issues/search_deflate/lib/TimeDB%20trunk/issues/search_deflate/t&In-Reply-To=%3C200606271847.k5RIlOg6030238%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000049.html">
+   <LINK REL="Next"  HREF="000051.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r161 - / trunk/issues trunk/issues/search_deflate trunk/issues/search_deflate/db trunk/issues/search_deflate/lib trunk/issues/search_deflate/lib/TimeDB trunk/issues/search_deflate/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r161%20-%20/%20trunk/issues%20trunk/issues/search_deflate%20trunk/issues/search_deflate/db%20trunk/issues/search_deflate/lib%20trunk/issues/search_deflate/lib/TimeDB%20trunk/issues/search_deflate/t&In-Reply-To=%3C200606271847.k5RIlOg6030238%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r161 - / trunk/issues trunk/issues/search_deflate trunk/issues/search_deflate/db trunk/issues/search_deflate/lib trunk/issues/search_deflate/lib/TimeDB trunk/issues/search_deflate/t">chiselwright at berlios.de
+       </A><BR>
+    <I>Tue Jun 27 20:47:24 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000049.html">[Parley-svn] r160 - trunk
+</A></li>
+        <LI>Next message: <A HREF="000051.html">[Parley-svn] r162 - / trunk/lib/Parley/Model/ParleyDB
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#50">[ date ]</a>
+              <a href="thread.html#50">[ thread ]</a>
+              <a href="subject.html#50">[ subject ]</a>
+              <a href="author.html#50">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-06-27 20:47:22 +0200 (Tue, 27 Jun 2006)
+New Revision: 161
+
+Added:
+   trunk/issues/search_deflate/
+   trunk/issues/search_deflate/README
+   trunk/issues/search_deflate/db/
+   trunk/issues/search_deflate/db/search_deflate.pgsql
+   trunk/issues/search_deflate/lib/
+   trunk/issues/search_deflate/lib/TimeDB.pm
+   trunk/issues/search_deflate/lib/TimeDB/
+   trunk/issues/search_deflate/lib/TimeDB/Thingy.pm
+   trunk/issues/search_deflate/lib/TimeTests.pm
+   trunk/issues/search_deflate/t/
+   trunk/issues/search_deflate/t/inflate.t
+   trunk/issues/search_deflate/test_results
+   trunk/issues/search_deflate/version.txt
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r15494 at ferrari</A>:  chisel | 2006-06-27 18:07:52 +0100
+ + test case to illustrate problem with hires time lookups
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14423
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15494
+
+Added: trunk/issues/search_deflate/README
+===================================================================
+--- trunk/issues/search_deflate/README	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/README	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,23 @@
++1. Create the database and schema
++
++  createdb -E UTF8 search_deflate
++  psql -d search_deflate -f db/search_deflate.pgsql
++
++
++2. Run the tests
++
++  prove --lib --verbose t/inflate.t
++
++To run all the tests:
++
++  prove --lib --verbose t/
++
++
++3. Work out what's broken
++
++  [exercise left for the reader]
++
++
++4. Cleanup
++
++  dropdb search_deflate
+
+Added: trunk/issues/search_deflate/db/search_deflate.pgsql
+===================================================================
+--- trunk/issues/search_deflate/db/search_deflate.pgsql	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/db/search_deflate.pgsql	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,14 @@
++-- To create the database, do the following:
++--  $ createdb -E UTF8 time_precision
++--  $ psql -d time_precision -f db/time_precision.pgsql
++
++-- we don't want half a schema
++BEGIN;
++
++CREATE TABLE thingy (
++    thingy_id   SERIAL primary key,
++    created     timestamp with time zone default CURRENT_TIMESTAMP,
++    stuff       text default 'foo'
++);
++
++COMMIT;
+
+Added: trunk/issues/search_deflate/lib/TimeDB/Thingy.pm
+===================================================================
+--- trunk/issues/search_deflate/lib/TimeDB/Thingy.pm	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/lib/TimeDB/Thingy.pm	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,23 @@
++package TimeDB::Thingy;
++use strict;
++use warnings;
++use base qw/DBIx::Class/;
++use DateTime::Format::Pg;
++
++__PACKAGE__-&gt;load_components(qw/PK::Auto Core/);
++__PACKAGE__-&gt;table('thingy');
++__PACKAGE__-&gt;add_columns(qw/
++    thingy_id
++    created
++    stuff
++/);
++__PACKAGE__-&gt;set_primary_key('thingy_id');
++
++foreach my $datecol (qw/created/) {
++    __PACKAGE__-&gt;inflate_column($datecol, {
++        inflate =&gt; sub { DateTime::Format::Pg-&gt;parse_datetime(shift); },
++        deflate =&gt; sub { DateTime::Format::Pg-&gt;format_datetime(shift); },
++    });
++}
++
++1;
+
+Added: trunk/issues/search_deflate/lib/TimeDB.pm
+===================================================================
+--- trunk/issues/search_deflate/lib/TimeDB.pm	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/lib/TimeDB.pm	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,10 @@
++package TimeDB;
++use strict;
++use warnings;
++
++use base qw/DBIx::Class::Schema/;
++__PACKAGE__-&gt;load_classes(qw/ Thingy /);
++
++
++1;
++
+
+Added: trunk/issues/search_deflate/lib/TimeTests.pm
+===================================================================
+--- trunk/issues/search_deflate/lib/TimeTests.pm	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/lib/TimeTests.pm	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,11 @@
++package TimeTests;
++use strict;
++use warnings;
++use Test::More;
++
++sub connect_db {
++    my $schema = TimeDB-&gt;connect('dbi:Pg:dbname=time_precision');
++    ok(defined $schema, 'schema object is defined');
++}
++
++1;
+
+Added: trunk/issues/search_deflate/t/inflate.t
+===================================================================
+--- trunk/issues/search_deflate/t/inflate.t	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/t/inflate.t	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,84 @@
++use Test::More tests =&gt; 7;
++use strict;
++use warnings;
++
++# global variables
++our ($schema, $new_thingy, $thingy_list, $pg_time, $nanoseconds);
++
++BEGIN {
++    # use modules
++    use_ok('TimeDB');
++
++    # this is the time we'll use to create a new thingy
++    # it uses both tz-offset and nanoseconds
++    $nanoseconds = 987654321;
++    $pg_time = qq{1974-10-02 14:17:52.${nanoseconds}+03};
++
++    # get DBIC schema
++    $schema = TimeDB-&gt;connect('dbi:Pg:dbname=search_deflate');
++    ok(defined $schema, 'schema object is defined');
++
++    # do everything inside a transaction - then we can discard our test data
++    $schema-&gt;txn_begin;
++}
++
++END {
++    # rollback our changes
++    $schema-&gt;txn_rollback;
++}
++
++################################################################################
++diag q{first of all get an item into the database};
++################################################################################
++$new_thingy = $schema-&gt;resultset('Thingy')-&gt;create(
++    {
++        created =&gt; $pg_time,
++    }
++);
++# make sure we made a thingy and that it has an ID
++ok(defined $new_thingy, 'resultset for new Thingy is defined');
++ok(defined $new_thingy-&gt;id(), 'PK-id for new Thingy is defined');
++################################################################################
++
++
++################################################################################
++diag q{look up the thingy by pg_time - this should be fine};
++################################################################################
++# get all thingies matching $pg_time
++$thingy_list = $schema-&gt;resultset('Thingy')-&gt;search(
++    {
++        created =&gt; { '=', $pg_time },
++    }
++);
++# check we get the right number of Thingies
++is($thingy_list-&gt;count(), 1, q{correct number of thingies [=, $pg_time]});
++################################################################################
++
++
++################################################################################
++diag q{look up the thingy by -&gt;created() - this should be fine, but it isn't};
++diag q{search() doesn't appear to deflate as we might expect it to};
++################################################################################
++# get all thingies matching $pg_time
++$thingy_list = $schema-&gt;resultset('Thingy')-&gt;search(
++    {
++        created =&gt; { '=', $new_thingy-&gt;created() },
++    }
++);
++# check we get the right number of Thingies
++is($thingy_list-&gt;count(), 1, q{correct number of thingies [=, $new_thingy-&gt;created()]});
++################################################################################
++
++
++################################################################################
++diag q{look up the thingy by -&gt;created(), using an explicit 'deflate'};
++################################################################################
++# get all thingies matching $pg_time
++$thingy_list = $schema-&gt;resultset('Thingy')-&gt;search(
++    {
++        created =&gt; { '=', DateTime::Format::Pg-&gt;format_datetime($new_thingy-&gt;created()) },
++    }
++);
++# check we get the right number of Thingies
++is($thingy_list-&gt;count(), 1, q{correct number of thingies [=, DateTime::Format::Pg-&gt;format_datetime($new_thingy-&gt;created())]});
++################################################################################
+
+Added: trunk/issues/search_deflate/test_results
+===================================================================
+--- trunk/issues/search_deflate/test_results	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/test_results	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,92 @@
++t/datetime..............1..10
++ok 1 - use TimeDB;
++ok 2 - use DateTime;
++ok 3 - schema object is defined
++ok 4 - resultset for new Thingy is defined
++ok 5 - PK-id for new Thingy is defined
++ok 6 - New thingy has correct nanoseconds
++ok 7 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++not ok 8 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++
++#   Failed test 'correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]'
++#   in t/datetime.t at line 61.
++#          got: '0'
++#     expected: '1'
++ok 9 - correct number of thingies [all thingies]
++ok 10 - Thingy has non-zero nanoseconds
++# Looks like you failed 1 test of 10.
++dubious
++	Test returned status 1 (wstat 256, 0x100)
++DIED. FAILED test 8
++	Failed 1/10 tests, 90.00% okay
++t/nano-default_time.....1..10
++ok 1 - use TimeDB;
++ok 2 - use TimeTests;
++ok 3 - schema object is defined
++ok 4 - schema object is defined
++ok 5 - schema object is defined
++ok 6 - resultset for new Thingy is defined
++ok 7 - PK-id for new Thingy is defined
++# 2006-06-27T11:37:20
++# 2006-06-27 11:37:20.024312000+0100
++not ok 8 - correct number of thingies [=, 2006-06-27T11:37:20]
++
++#   Failed test 'correct number of thingies [=, 2006-06-27T11:37:20]'
++#   in t/nano-default_time.t at line 63.
++#          got: '0'
++#     expected: '1'
++not ok 9 - correct number of thingies [&lt;=, 2006-06-27T11:37:20]
++
++#   Failed test 'correct number of thingies [&lt;=, 2006-06-27T11:37:20]'
++#   in t/nano-default_time.t at line 73.
++#          got: '0'
++#     expected: '1'
++not ok 10 - correct number of thingies [&gt;, 2006-06-27T11:37:20]
++
++#   Failed test 'correct number of thingies [&gt;, 2006-06-27T11:37:20]'
++#   in t/nano-default_time.t at line 83.
++#          got: '1'
++#     expected: '0'
++# Looks like you failed 3 tests of 10.
++dubious
++	Test returned status 3 (wstat 768, 0x300)
++DIED. FAILED tests 8-10
++	Failed 3/10 tests, 70.00% okay
++t/nano..................1..10
++ok 1 - use TimeDB;
++ok 2 - schema object is defined
++ok 3 - resultset for new Thingy is defined
++ok 4 - PK-id for new Thingy is defined
++ok 5 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++ok 6 - correct number of thingies [&lt;=, 1974-10-02 14:17:52.987654321+03]
++ok 7 - correct number of thingies [&gt;, 1974-10-02 14:17:52.987654321+03]
++not ok 8 - correct number of thingies [=, 1974-10-02T14:17:52]
++
++#   Failed test 'correct number of thingies [=, 1974-10-02T14:17:52]'
++#   in t/nano.t at line 50.
++#          got: '0'
++#     expected: '1'
++ok 9 - correct number of thingies [&lt;=, 1974-10-02T14:17:52]
++ok 10 - correct number of thingies [&gt;, 1974-10-02T14:17:52]
++# Looks like you failed 1 test of 10.
++dubious
++	Test returned status 1 (wstat 256, 0x100)
++DIED. FAILED test 8
++	Failed 1/10 tests, 90.00% okay
++t/sql_abstract_limit....1..7
++ok 1 - use SQL::Abstract::Limit;
++ok 2 - use TimeDB;
++ok 3 - schema object is defined
++# SELECT * FROM thingy WHERE ( created = ? )
++# 1974-10-02 14:17:52.987654321+03
++ok 4 - resultset for new Thingy is defined
++ok 5 - PK-id for new Thingy is defined
++ok 6 - New thingy has correct nanoseconds
++ok 7 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++ok
++Failed Test           Stat Wstat Total Fail  Failed  List of Failed
++-------------------------------------------------------------------------------
++t/datetime.t             1   256    10    1  10.00%  8
++t/nano-default_time.t    3   768    10    3  30.00%  8-10
++t/nano.t                 1   256    10    1  10.00%  8
++Failed 3/4 test scripts, 25.00% okay. 5/37 subtests failed, 86.49% okay.
+
+Added: trunk/issues/search_deflate/version.txt
+===================================================================
+--- trunk/issues/search_deflate/version.txt	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/version.txt	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1 @@
++DBIx::Class: 0.06003
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000049.html">[Parley-svn] r160 - trunk
+</A></li>
+	<LI>Next message: <A HREF="000051.html">[Parley-svn] r162 - / trunk/lib/Parley/Model/ParleyDB
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#50">[ date ]</a>
+              <a href="thread.html#50">[ thread ]</a>
+              <a href="subject.html#50">[ subject ]</a>
+              <a href="author.html#50">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

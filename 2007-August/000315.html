@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r427 - / trunk/root/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r427%20-%20/%20trunk/root/base&In-Reply-To=%3C200708082007.l78K7ekJ015643%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000314.html">
+   <LINK REL="Next"  HREF="000316.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r427 - / trunk/root/base</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r427%20-%20/%20trunk/root/base&In-Reply-To=%3C200708082007.l78K7ekJ015643%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r427 - / trunk/root/base">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug  8 22:07:40 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000314.html">[Parley-svn] r426 - / trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000316.html">[Parley-svn] r428 - / trunk/root/base/error
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#315">[ date ]</a>
+              <a href="thread.html#315">[ thread ]</a>
+              <a href="subject.html#315">[ subject ]</a>
+              <a href="author.html#315">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-08 22:07:40 +0200 (Wed, 08 Aug 2007)
+New Revision: 427
+
+Modified:
+   /
+   trunk/root/base/header
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3642 at wiggin</A>:  chisel | 2007-08-08 19:11:59 +0100
+ + add &quot;userinfo&quot; div
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3641
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3642
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-08-08 20:07:34 UTC (rev 426)
++++ trunk/root/base/header	2007-08-08 20:07:40 UTC (rev 427)
+@@ -59,6 +59,15 @@
+             &lt;div id=&quot;header&quot;&gt;
+                 &lt;h1&gt;Parley&lt;/h1&gt;
+             &lt;/div&gt;&lt;!-- header div --&gt;
++
++            &lt;div id=&quot;userinfo_box&quot;&gt;
++                Current User:
++                [% IF authed_user %]
++                &lt;em&gt;[% authed_user.forum_name %]&lt;/em&gt;
++                [% ELSE %]
++                &lt;em&gt;Guest User&lt;/em&gt;
++                [% END %]
++            &lt;/div&gt;
+         [% PROCESS menu/menubar %]
+ 
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000314.html">[Parley-svn] r426 - / trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000316.html">[Parley-svn] r428 - / trunk/root/base/error
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#315">[ date ]</a>
+              <a href="thread.html#315">[ thread ]</a>
+              <a href="subject.html#315">[ subject ]</a>
+              <a href="author.html#315">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

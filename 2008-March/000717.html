@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r829 - / trunk/lib/Parley/Controller	trunk/root/base/user
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r829%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/user&In-Reply-To=%3C200803131233.m2DCXoj2020751%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000716.html">
+   <LINK REL="Next"  HREF="000718.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r829 - / trunk/lib/Parley/Controller	trunk/root/base/user</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r829%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/user&In-Reply-To=%3C200803131233.m2DCXoj2020751%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r829 - / trunk/lib/Parley/Controller	trunk/root/base/user">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Mar 13 13:33:50 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000716.html">[Parley-svn] r828 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user
+</A></li>
+        <LI>Next message: <A HREF="000718.html">[Parley-svn] r830 - / trunk trunk/lib/Parley/I18N	trunk/lib/Parley/Schema trunk/root/base/user	trunk/root/static/script
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#717">[ date ]</a>
+              <a href="thread.html#717">[ thread ]</a>
+              <a href="subject.html#717">[ subject ]</a>
+              <a href="author.html#717">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-13 13:33:50 +0100 (Thu, 13 Mar 2008)
+New Revision: 829
+
+Added:
+   trunk/root/base/user/suspended
+Modified:
+   /
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/User.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4738 at wiggin</A>:  chisel | 2008-03-11 19:20:16 +0000
+ + suspended users can only visit user/suspended and user/logout; any other urls are redirected to user/suspended
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4737
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4738
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-03-13 12:33:42 UTC (rev 828)
++++ trunk/lib/Parley/Controller/Root.pm	2008-03-13 12:33:50 UTC (rev 829)
+@@ -168,7 +168,6 @@
+                 'authentication.username'   =&gt; $c-&gt;user-&gt;username(),
+             },
+             {
+-                #join =&gt; 'authentication',
+                 prefetch =&gt; [
+                     'authentication',
+                     { 'preference' =&gt; 'time_format' },
+@@ -186,7 +185,23 @@
+         }
+     }
+ 
++    ############################################################
++    # if we have a suspended user ...
++    ############################################################
++    if (
++        $c-&gt;_authed_user
++            and
++        $c-&gt;_authed_user-&gt;suspended
++            and
++        $c-&gt;request-&gt;path() !~ m{user/suspended}
++            and
++        $c-&gt;request-&gt;path() !~ m{user/logout}
++    ) {
++        $c-&gt;forward('/user/suspended');
++        return 0;
++    }
+ 
++
+     ######################################
+     # user's with 'site_moderator' role
+     # get flagged as such
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2008-03-13 12:33:42 UTC (rev 828)
++++ trunk/lib/Parley/Controller/User.pm	2008-03-13 12:33:50 UTC (rev 829)
+@@ -181,6 +181,12 @@
+     return;
+ }
+ 
++sub suspended :Local {
++    my ($self, $c) = @_;
++    $c-&gt;stash-&gt;{template} = 'user/suspended';
++    return;
++}
++
+ 1;
+ 
+ __END__
+
+Added: trunk/root/base/user/suspended
+===================================================================
+--- trunk/root/base/user/suspended	2008-03-13 12:33:42 UTC (rev 828)
++++ trunk/root/base/user/suspended	2008-03-13 12:33:50 UTC (rev 829)
+@@ -0,0 +1 @@
++&lt;h1 class=&quot;top_padded&quot;&gt;Your account has been suspended.&lt;/h1&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000716.html">[Parley-svn] r828 - / trunk trunk/lib/Parley/I18N	trunk/root/base/user
+</A></li>
+	<LI>Next message: <A HREF="000718.html">[Parley-svn] r830 - / trunk trunk/lib/Parley/I18N	trunk/lib/Parley/Schema trunk/root/base/user	trunk/root/static/script
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#717">[ date ]</a>
+              <a href="thread.html#717">[ thread ]</a>
+              <a href="subject.html#717">[ subject ]</a>
+              <a href="author.html#717">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,494 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r835 - / trunk trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema	trunk/root/base/user trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r835%20-%20/%20trunk%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema%0A%09trunk/root/base/user%20trunk/t/schema&In-Reply-To=%3C200803132333.m2DNXph3019406%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000722.html">
+   <LINK REL="Next"  HREF="000724.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r835 - / trunk trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema	trunk/root/base/user trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r835%20-%20/%20trunk%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema%0A%09trunk/root/base/user%20trunk/t/schema&In-Reply-To=%3C200803132333.m2DNXph3019406%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r835 - / trunk trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema	trunk/root/base/user trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Mar 14 00:33:51 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000722.html">[Parley-svn] r834 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000724.html">[Parley-svn] r836 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#723">[ date ]</a>
+              <a href="thread.html#723">[ thread ]</a>
+              <a href="subject.html#723">[ subject ]</a>
+              <a href="author.html#723">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-14 00:33:49 +0100 (Fri, 14 Mar 2008)
+New Revision: 835
+
+Added:
+   trunk/lib/Parley/ResultSet/IpBan.pm
+   trunk/lib/Parley/Schema/IpBan.pm
+   trunk/lib/Parley/Schema/IpBanType.pm
+   trunk/root/base/user/login_ip_banned
+   trunk/t/schema/ip_ban.t
+   trunk/t/schema/ip_ban_type.t
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/Makefile.PL
+   trunk/db/patch_0.58_to_0.59.psql
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/lib/Parley/Schema.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4751 at wiggin</A>:  chisel | 2008-03-13 19:27:49 +0000
+ / more i_default i18n
+ + added tables for IP based bans
+ + add code to user/login to deal with login-banned-ips
+ + add template so send banned ips to
+ + new classes and tests for ip_ban and ip_ban_type tables
+ + ip_ban ResultSet to provide is_login_banned()
+ + added new dep to Makefile.PL: Net::IP::Match::Regexp
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4743
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4751
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/Changes.i18n	2008-03-13 23:33:49 UTC (rev 835)
+@@ -26,6 +26,8 @@
+             - &quot;You don't have the required privileges to do that&quot;
+             - &quot;Suspended&quot;
+             - &quot;No reason given&quot;
++            - &quot;Logins are not permitted from %1&quot;
++            - &quot;Login Not Allowed&quot;
+ 
+     it.po:
+         - added:
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/Makefile.PL	2008-03-13 23:33:49 UTC (rev 835)
+@@ -36,6 +36,7 @@
+ requires 'JSON';
+ requires 'List::MoreUtils';
+ requires 'MIME::Lite';
++requires 'Net::IP::Match::Regexp';
+ requires 'Perl6::Export::Attrs';
+ requires 'Proc::Daemon';
+ requires 'Proc::PID::File';
+
+Modified: trunk/db/patch_0.58_to_0.59.psql
+===================================================================
+--- trunk/db/patch_0.58_to_0.59.psql	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/db/patch_0.58_to_0.59.psql	2008-03-13 23:33:49 UTC (rev 835)
+@@ -7,6 +7,7 @@
+ --  lock posts (so they can't be changed after being edited by admin)
+ --  allow user accounts to be suspended
+ --  logging of admin actions on users (e.g. why suspended)
++--  table support for various per-ip bans
+ 
+ BEGIN;
+ 
+@@ -105,7 +106,28 @@
+ CREATE INDEX idx_adminaction_personid ON log_admin_action(person_id);
+ CREATE INDEX idx_adminaction_adminid  ON log_admin_action(admin_id);
+ 
++CREATE TABLE ip_ban_type (
++    id          serial      primary key,
++    name        text        not null,
++    description text,
+ 
++    UNIQUE(name)
++);
++INSERT INTO ip_ban_type (name,description) VALUES ('access','Restrict all access by IP');
++INSERT INTO ip_ban_type (name,description) VALUES ('login','Restrict login by IP');
++INSERT INTO ip_ban_type (name,description) VALUES ('posting','Restrict posting by IP');
++INSERT INTO ip_ban_type (name,description) VALUES ('signup','Restrict sign-up by IP');
++
++CREATE TABLE ip_ban (
++    id          serial      primary key,
++    ban_type_id integer     not null
++                            references ip_ban_type(id),
++    ip_range    text,
++
++    UNIQUE(ban_type_id)
++);
++
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/lib/Parley/Controller/User.pm	2008-03-13 23:33:49 UTC (rev 835)
+@@ -1,5 +1,5 @@
+ package Parley::Controller::User;
+-
++# vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
+ 
+@@ -19,6 +19,16 @@
+     # make sure we use the correct template - we sometimes detach() here
+     $c-&gt;stash-&gt;{template} = 'user/login';
+ 
++
++    # deal with logins banned by IP
++    my $ip = $c-&gt;request-&gt;address;
++    my $login_banned =
++        $c-&gt;model('ParleyDB::IpBan')-&gt;is_login_banned($ip);
++    if ($login_banned) {
++        $c-&gt;stash-&gt;{template} = 'user/login_ip_banned';
++        return;
++    }
++
+     # if we have a username, try to log the user in
+     if ( $c-&gt;request-&gt;param('username') ) {
+         # try to log the user in
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/lib/Parley/I18N/i_default.po	2008-03-13 23:33:49 UTC (rev 835)
+@@ -312,6 +312,12 @@
+ msgid &quot;Login&quot;
+ msgstr &quot;Login&quot;
+ 
++msgid &quot;Login Not Allowed&quot;
++msgstr &quot;Login Not Allowed&quot;
++
++msgid &quot;Logins are not permitted from %1&quot;
++msgstr &quot;Logins are not permitted from %1&quot;
++
+ msgid &quot;Logout&quot;
+ msgstr &quot;Logout&quot;
+ 
+
+Added: trunk/lib/Parley/ResultSet/IpBan.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/IpBan.pm	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/lib/Parley/ResultSet/IpBan.pm	2008-03-13 23:33:49 UTC (rev 835)
+@@ -0,0 +1,51 @@
++package Parley::ResultSet::IpBan;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base 'DBIx::Class::ResultSet';
++
++use Net::IP::Match::Regexp qw( create_iprange_regexp match_ip );
++
++sub is_login_banned {
++    my $resultsource = shift;
++    my $ip_address   = shift;
++    my ($rs);
++
++    # get the record for login ip bans
++    $rs = $resultsource-&gt;search(
++        {
++            'ban_type.name' =&gt; q{login},
++        },
++        {
++            'join' =&gt; [qw/ban_type/],
++        },
++    );
++
++    # no record? no bans
++    return 0 # not banned
++        if (0 == $rs-&gt;count);
++
++    # we're only expecting one row, but this way we won't be bitten on the ass
++    # if we change our mind in the future
++    while (my $record = $rs-&gt;next) {
++        # build the regexp to check against
++        my $regexp = create_iprange_regexp(
++            split(m{\s+}, $record-&gt;ip_range) # we pass an array of
++                                             # &quot;stuff&quot; to the function
++        );
++
++        # see if it's banned
++        if (match_ip($ip_address, $regexp)) {
++            # ip in one of the banned ranges
++            return 1;
++        }
++    }
++
++    # if we don't know any better give the benefit of the doubt
++    return 0; # not banned
++}
++
++1;
+
+Added: trunk/lib/Parley/Schema/IpBan.pm
+===================================================================
+--- trunk/lib/Parley/Schema/IpBan.pm	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/lib/Parley/Schema/IpBan.pm	2008-03-13 23:33:49 UTC (rev 835)
+@@ -0,0 +1,37 @@
++package Parley::Schema::IpBan;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base qw/DBIx::Class/;
++
++# Load required DBIC stuff
++__PACKAGE__-&gt;load_components(qw/PK::Auto Core/);
++# Set the table name
++__PACKAGE__-&gt;table('ip_ban');
++# Set columns in table
++__PACKAGE__-&gt;add_columns(qw/
++    id
++    ban_type_id
++    ip_range
++/);
++# Set the primary key for the table
++__PACKAGE__-&gt;set_primary_key(qw/id/);
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::IpBan');
++
++
++__PACKAGE__-&gt;belongs_to(
++    ban_type =&gt; 'Parley::Schema::IpBanType',
++    'ban_type_id'
++);
++
++__PACKAGE__-&gt;add_unique_constraint(
++    'unique_ip_ban_type',
++    ['ban_type_id']
++);
++
++
++
++1;
+
+Added: trunk/lib/Parley/Schema/IpBanType.pm
+===================================================================
+--- trunk/lib/Parley/Schema/IpBanType.pm	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/lib/Parley/Schema/IpBanType.pm	2008-03-13 23:33:49 UTC (rev 835)
+@@ -0,0 +1,30 @@
++package Parley::Schema::IpBanType;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base qw/DBIx::Class/;
++
++# Load required DBIC stuff
++__PACKAGE__-&gt;load_components(qw/PK::Auto Core/);
++# Set the table name
++__PACKAGE__-&gt;table('ip_ban_type');
++# Set columns in table
++__PACKAGE__-&gt;add_columns(qw/id name description/);
++# Set the primary key for the table
++__PACKAGE__-&gt;set_primary_key(qw/id/);
++
++#
++# Set relationships:
++#
++
++__PACKAGE__-&gt;add_unique_constraint(
++    'unique_ban_name',
++    ['name']
++);
++
++
++
++1;
+
+Modified: trunk/lib/Parley/Schema.pm
+===================================================================
+--- trunk/lib/Parley/Schema.pm	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/lib/Parley/Schema.pm	2008-03-13 23:33:49 UTC (rev 835)
+@@ -14,6 +14,8 @@
+         'EmailQueue',
+         'ForumModerator',
+         'Forum',
++        'IpBan',
++        'IpBanType',
+         'LogAdminAction',
+         'PasswordReset',
+         'Person',
+
+Added: trunk/root/base/user/login_ip_banned
+===================================================================
+--- trunk/root/base/user/login_ip_banned	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/root/base/user/login_ip_banned	2008-03-13 23:33:49 UTC (rev 835)
+@@ -0,0 +1,3 @@
++&lt;h1&gt;[%l('Login Not Allowed')%]&lt;/h1&gt;
++
++[%l('Logins are not permitted from [_1]', c.request.address)%]
+
+Added: trunk/t/schema/ip_ban.t
+===================================================================
+--- trunk/t/schema/ip_ban.t	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/t/schema/ip_ban.t	2008-03-13 23:33:49 UTC (rev 835)
+@@ -0,0 +1,46 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'IpBan',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                ban_type_id
++                ip_range
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++                ban_type
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/ip_ban.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/t/schema/ip_ban_type.t
+===================================================================
+--- trunk/t/schema/ip_ban_type.t	2008-03-13 12:34:27 UTC (rev 834)
++++ trunk/t/schema/ip_ban_type.t	2008-03-13 23:33:49 UTC (rev 835)
+@@ -0,0 +1,45 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'IpBanType',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                name
++                description
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/ip_ban_type.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000722.html">[Parley-svn] r834 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000724.html">[Parley-svn] r836 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#723">[ date ]</a>
+              <a href="thread.html#723">[ thread ]</a>
+              <a href="subject.html#723">[ subject ]</a>
+              <a href="author.html#723">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

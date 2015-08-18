@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r765 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r765%20-%20/%20trunk&In-Reply-To=%3C200801310956.m0V9u07q020703%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000652.html">
+   <LINK REL="Next"  HREF="000654.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r765 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r765%20-%20/%20trunk&In-Reply-To=%3C200801310956.m0V9u07q020703%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r765 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 31 10:56:00 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000652.html">[Parley-svn] r764 - / trunk/lib/Parley/ResultSet trunk/t	trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000654.html">[Parley-svn] r766 - / trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#653">[ date ]</a>
+              <a href="thread.html#653">[ thread ]</a>
+              <a href="subject.html#653">[ subject ]</a>
+              <a href="author.html#653">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-31 10:55:59 +0100 (Thu, 31 Jan 2008)
+New Revision: 765
+
+Added:
+   trunk/ROADMAP
+Modified:
+   /
+   trunk/MANIFEST
+   trunk/TODO
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4579 at wiggin</A>:  chisel | 2008-01-31 08:50:27 +0000
+ + added ROADMAP
+ / updated TODO
+ / updated MANIFEST
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4578
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4579
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-01-31 09:55:52 UTC (rev 764)
++++ trunk/MANIFEST	2008-01-31 09:55:59 UTC (rev 765)
+@@ -85,6 +85,7 @@
+ META.yml
+ parley.yml
+ README
++ROADMAP
+ root/base/about/modules
+ root/base/error/simple
+ root/base/footer
+@@ -747,6 +748,7 @@
+ t/mechanize/01.main_page.t
+ t/mechanize/02.forum.t
+ t/model_ParleyDB.t
++t/model_Post.t
+ t/schema/authentication.t
+ t/schema/email_queue.t
+ t/schema/forum.t
+
+Added: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-01-31 09:55:52 UTC (rev 764)
++++ trunk/ROADMAP	2008-01-31 09:55:59 UTC (rev 765)
+@@ -0,0 +1,35 @@
++This is a rough map of the direction things will be taking for Parley over the
++next few releases. A more detailed, but less organised, list of features in
++the pipeline can be found in the TODO file.
++
++This isn't set in stone - the roadmap can be swayed by valid, sensible
++reasoning from interested parties.
++
++
++0.59 (Feb 2008):
++
++    - UI improvements and cleanup
++    - DBIC ResultSetManager deprecation
++    - DBIC prefetch (DB optimisation)
++
++0.60:
++
++    - admin/moderator support (deal with bad people)
++        - edit posts (and flag accordingly)
++        - abuse handling (suspend accounts, ban-by-ip, ...)
++        - IP reporting
++
++0.61:
++
++    - advanced search
++
++0.62:
++
++    - admin: add/edit/order forums
++
++0.63:
++
++    - user prefs:
++        - language preference
++        - password management
++        - resend auth mail(s)
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-01-31 09:55:52 UTC (rev 764)
++++ trunk/TODO	2008-01-31 09:55:59 UTC (rev 765)
+@@ -4,17 +4,18 @@
+   - investigate in-application language preference/choice
+   - styling: user prefs
+   - styling: user profile
+-  - [bug] fix email notification for thread notification emails
+   - write some sensible T&amp;Cs
+   - update avatar update response to force a No-Cache?
+-  - application logo
+   - advanced search page
+   - proper moderator support/management
+      - forum creation
+      - abuse handling
+      - post editing (other users)
+-  - IP/user reporting
++     - IP/user reporting
+   - voting?
++  - 'smileys'?
++D - [bug] fix email notification for thread notification emails
++D - application logo
+ D - styling: thread/reply
+ D - styling: post/edit
+ D - styling: user/login
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000652.html">[Parley-svn] r764 - / trunk/lib/Parley/ResultSet trunk/t	trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000654.html">[Parley-svn] r766 - / trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#653">[ date ]</a>
+              <a href="thread.html#653">[ thread ]</a>
+              <a href="subject.html#653">[ subject ]</a>
+              <a href="author.html#653">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

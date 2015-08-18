@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r541 - / trunk/lib/Parley/Controller trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r541%20-%20/%20trunk/lib/Parley/Controller%20trunk/t&In-Reply-To=%3C200710112128.l9BLSdgT011834%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000428.html">
+   <LINK REL="Next"  HREF="000430.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r541 - / trunk/lib/Parley/Controller trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r541%20-%20/%20trunk/lib/Parley/Controller%20trunk/t&In-Reply-To=%3C200710112128.l9BLSdgT011834%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r541 - / trunk/lib/Parley/Controller trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Oct 11 23:28:39 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000428.html">[Parley-svn] r540 - / trunk/lib/Parley trunk/root/base	trunk/root/base/site trunk/root/css trunk/script
+</A></li>
+        <LI>Next message: <A HREF="000430.html">[Parley-svn] r542 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#429">[ date ]</a>
+              <a href="thread.html#429">[ thread ]</a>
+              <a href="subject.html#429">[ subject ]</a>
+              <a href="author.html#429">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-11 23:28:38 +0200 (Thu, 11 Oct 2007)
+New Revision: 541
+
+Added:
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/t/controller_Site.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3930 at wiggin</A>:  chisel | 2007-10-10 19:20:10 +0100
+ + Controller and test file for /site URI action(s)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3929
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3930
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2007-10-11 21:28:29 UTC (rev 540)
++++ trunk/lib/Parley/Controller/Site.pm	2007-10-11 21:28:38 UTC (rev 541)
+@@ -0,0 +1,77 @@
++package Parley::Controller::Site;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use Proc::Daemon;
++use Proc::PID::File;
++
++use Parley::App::Error qw( :methods );
++
++sub auto : Private {
++    my ($self, $c) = @_;
++
++    if (not $c-&gt;stash-&gt;{site_moderator}) {
++        parley_warn($c, q{You need to be a site moderator});
++
++        $c-&gt;response-&gt;redirect(
++            $c-&gt;uri_for(
++                $c-&gt;config-&gt;{default_uri}
++            )
++        );
++        return 0;
++    }
++
++    return 1;
++}
++
++sub index : Private {
++    my ( $self, $c ) = @_;
++
++    $c-&gt;response-&gt;body('Matched Parley::Controller::Site in Site.');
++}
++
++sub services : Local {
++    my ($self, $c) = @_;
++
++    # does the email engine appear to be running?
++    # get the pid file ...
++    my $pid = Proc::PID::File-&gt;running(
++        debug   =&gt; 0,
++        name    =&gt; q{parley_email_engine},
++        dir     =&gt; q{/tmp},
++    );
++    $c-&gt;stash-&gt;{email_engine}{pid} = $pid;
++}
++
++
++=head1 NAME
++
++Parley::Controller::Site - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=cut
++
++=head2 index 
++
++=cut
++
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/t/controller_Site.t
+===================================================================
+--- trunk/t/controller_Site.t	2007-10-11 21:28:29 UTC (rev 540)
++++ trunk/t/controller_Site.t	2007-10-11 21:28:38 UTC (rev 541)
+@@ -0,0 +1,10 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 3;
++
++BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::Site' }
++
++ok( request('/site')-&gt;is_success, 'Request should succeed' );
++
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000428.html">[Parley-svn] r540 - / trunk/lib/Parley trunk/root/base	trunk/root/base/site trunk/root/css trunk/script
+</A></li>
+	<LI>Next message: <A HREF="000430.html">[Parley-svn] r542 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#429">[ date ]</a>
+              <a href="thread.html#429">[ thread ]</a>
+              <a href="subject.html#429">[ subject ]</a>
+              <a href="author.html#429">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

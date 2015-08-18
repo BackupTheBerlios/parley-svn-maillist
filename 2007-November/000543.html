@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r655 - / trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r655%20-%20/%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/App/Communication%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%20trunk/script&In-Reply-To=%3C200711082146.lA8LkwwK016401%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000542.html">
+   <LINK REL="Next"  HREF="000544.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r655 - / trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r655%20-%20/%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/App/Communication%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%20trunk/script&In-Reply-To=%3C200711082146.lA8LkwwK016401%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r655 - / trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Nov  8 22:46:58 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000542.html">[Parley-svn] r654 - / trunk/lib/Parley/App
+</A></li>
+        <LI>Next message: <A HREF="000544.html">[Parley-svn] r656 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#543">[ date ]</a>
+              <a href="thread.html#543">[ thread ]</a>
+              <a href="subject.html#543">[ subject ]</a>
+              <a href="author.html#543">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-08 22:46:58 +0100 (Thu, 08 Nov 2007)
+New Revision: 655
+
+Modified:
+   /
+   trunk/lib/Parley/App/Communication/Email.pm
+   trunk/lib/Parley/App/Notification.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Schema/EmailQueue.pm
+   trunk/script/parley_email_engine.pl
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4169 at wiggin</A>:  chisel | 2007-11-08 20:42:09 +0000
+ / fix email notifications
+ / fix more incorrect column references (missing _id)
+ + more query prefetching
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4168
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4169
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/App/Communication/Email.pm
+===================================================================
+--- trunk/lib/Parley/App/Communication/Email.pm	2007-11-08 21:46:46 UTC (rev 654)
++++ trunk/lib/Parley/App/Communication/Email.pm	2007-11-08 21:46:58 UTC (rev 655)
+@@ -9,16 +9,24 @@
+ 
+ sub queue_email :Export( :email ) {
+     my ($c, $options) = @_;
+-    my $queued_mail = $c-&gt;model('ParleyDB')-&gt;resultset('EmailQueue')-&gt;create(
+-        {
+-            sender          =&gt; $options-&gt;{headers}{from}        || q{Missing From &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at somewhere.com</A>&gt;},
++    $c-&gt;log-&gt;info('queuing an email');
++    eval {
++        my $queued_mail = $c-&gt;model('ParleyDB')-&gt;resultset('EmailQueue')-&gt;create(
++            {
++                sender          =&gt; $options-&gt;{headers}{from}        || q{Missing From &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at somewhere.com</A>&gt;},
+ 
+-            recipient       =&gt; $options-&gt;{recipient}-&gt;id()      || 0,
+-            subject         =&gt; $options-&gt;{headers}{subject}     || q{Subject Line Missing},
+-            text_content    =&gt; $options-&gt;{text_content}         || q{Email Body Text Missing},
+-            html_content    =&gt; $options-&gt;{html_content}         || undef,
+-        }
+-    );
++                recipient_id    =&gt; $options-&gt;{recipient}-&gt;id()      || 0,
++                subject         =&gt; $options-&gt;{headers}{subject}     || q{Subject Line Missing},
++                text_content    =&gt; $options-&gt;{text_content}         || q{Email Body Text Missing},
++                html_content    =&gt; $options-&gt;{html_content}         || undef,
++            }
++        );
++    };
++    if ($@) {
++        $c-&gt;log-&gt;error($@);
++        return;
++    }
++    $c-&gt;log-&gt;info('email queued');
+     return 1; # success
+ }
+ 
+@@ -51,6 +59,13 @@
+ 
+     # prepare the text content portion of the message - we read this from a
+     # [template] file which we render
++    $c-&gt;log-&gt;info(
++        $c-&gt;path_to(
++            'root',
++            'email_templates',
++            $locale
++        )
++    );
+     $text_content = $c-&gt;view('Plain')-&gt;render(
+         $c,
+         $options-&gt;{template}{text},
+
+Modified: trunk/lib/Parley/App/Notification.pm
+===================================================================
+--- trunk/lib/Parley/App/Notification.pm	2007-11-08 21:46:46 UTC (rev 654)
++++ trunk/lib/Parley/App/Notification.pm	2007-11-08 21:46:58 UTC (rev 655)
+@@ -49,8 +49,8 @@
+         # update thread_view record for thread-person
+         my $thread_view_record = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')
+             -&gt;find(
+-                person  =&gt; $thread_view_row-&gt;person()-&gt;id(),
+-                thread  =&gt; $post-&gt;thread()-&gt;id(),
++                person_id  =&gt; $thread_view_row-&gt;person()-&gt;id(),
++                thread_id  =&gt; $post-&gt;thread()-&gt;id(),
+             )
+         ;
+         $thread_view_record-&gt;last_notified(
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-11-08 21:46:46 UTC (rev 654)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-11-08 21:46:58 UTC (rev 655)
+@@ -638,8 +638,8 @@
+     $c-&gt;stash-&gt;{watcher_count} =
+         $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;count(
+             {
+-                'me.id' =&gt; $c-&gt;_current_thread()-&gt;id(),
+-                watched =&gt; 1,
++                'thread_id' =&gt; $c-&gt;_current_thread()-&gt;id(),
++                watched     =&gt; 1,
+             }
+         )
+     ;
+
+Modified: trunk/lib/Parley/Schema/EmailQueue.pm
+===================================================================
+--- trunk/lib/Parley/Schema/EmailQueue.pm	2007-11-08 21:46:46 UTC (rev 654)
++++ trunk/lib/Parley/Schema/EmailQueue.pm	2007-11-08 21:46:58 UTC (rev 655)
+@@ -78,10 +78,13 @@
+ );
+ __PACKAGE__-&gt;belongs_to(
+     &quot;cc&quot; =&gt; &quot;Person&quot;,
+-    { 'foreign.id' =&gt; 'self.cc_id' }
++    { 'foreign.id' =&gt; 'self.cc_id' },
++    { join_type =&gt; 'left' },
+ );
+ __PACKAGE__-&gt;belongs_to(
+     &quot;bcc&quot; =&gt;  &quot;Person&quot;,
+-    { 'foreign.id' =&gt; 'self.bcc_id' });
++    { 'foreign.id' =&gt; 'self.bcc_id' },
++    { join_type =&gt; 'left' },
++);
+ 
+ 1;
+
+Modified: trunk/script/parley_email_engine.pl
+===================================================================
+--- trunk/script/parley_email_engine.pl	2007-11-08 21:46:46 UTC (rev 654)
++++ trunk/script/parley_email_engine.pl	2007-11-08 21:46:58 UTC (rev 655)
+@@ -125,6 +125,13 @@
+             order_by    =&gt; 'queued ASC',
+             # one result
+             rows        =&gt; 1,
++
++            # some prefetching to make things a little easier on the database
++            prefetch =&gt; [
++                'recipient',
++                'cc',
++                'bcc'
++            ],
+         }
+     );
+ 
+@@ -180,6 +187,7 @@
+ 
+     # print the email out for now, no need to send anything
+     $email-&gt;send();
++    syslog( LOG_INFO, $email-&gt;as_string() );
+     # update the table to say we've attempted delivery
+     $queue_item-&gt;attempted_delivery(1);
+     $queue_item-&gt;update();
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000542.html">[Parley-svn] r654 - / trunk/lib/Parley/App
+</A></li>
+	<LI>Next message: <A HREF="000544.html">[Parley-svn] r656 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#543">[ date ]</a>
+              <a href="thread.html#543">[ thread ]</a>
+              <a href="subject.html#543">[ subject ]</a>
+              <a href="author.html#543">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

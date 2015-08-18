@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1070 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1070%20-%20/%20trunk&In-Reply-To=%3C200904222139.n3MLdkNb014114%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000951.html">
+   <LINK REL="Next"  HREF="000953.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1070 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1070%20-%20/%20trunk&In-Reply-To=%3C200904222139.n3MLdkNb014114%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1070 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Apr 22 23:39:46 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000951.html">[Parley-svn] r1069 - / trunk/todo.i18n
+</A></li>
+        <LI>Next message: <A HREF="000953.html">[Parley-svn] r1071 - / trunk trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#952">[ date ]</a>
+              <a href="thread.html#952">[ thread ]</a>
+              <a href="subject.html#952">[ subject ]</a>
+              <a href="author.html#952">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-04-22 23:39:46 +0200 (Wed, 22 Apr 2009)
+New Revision: 1070
+
+Modified:
+   /
+   trunk/SIGNATURE
+   trunk/TODO
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9368 at wiggin</A>:  chisel | 2009-04-22 22:39:35 +0100
+ / TODO updates
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9366
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9368
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/SIGNATURE
+===================================================================
+--- trunk/SIGNATURE	2009-04-22 21:32:00 UTC (rev 1069)
++++ trunk/SIGNATURE	2009-04-22 21:39:46 UTC (rev 1070)
+@@ -1025,12 +1025,12 @@
+ SHA1 88f5b01d4ea7bb9f4f1ff3d5c35ca4234a7132d2 t_aggregate/schematests/thread.t
+ SHA1 bebc948f5535eb83a346b7a350e9b44e191f5892 t_aggregate/schematests/thread_view.t
+ SHA1 00471f03ca3b521055698b058a5bfda13b575614 t_aggregate/schematests/user_role.t
+-SHA1 7a76fa5f6e2e43d1ab9b3287686d68300956e628 todo.i18n/it
+-SHA1 4b08a07150c82ac1a2a6c08d77336551cd5b3bbf todo.i18n/nl
++SHA1 68ecf0c41f5b6ac0e1996279b8f6e72a19a59c88 todo.i18n/it
++SHA1 48b6d7eec0dc277f42d3594119590941ba2169f8 todo.i18n/nl
+ -----BEGIN PGP SIGNATURE-----
+ Version: GnuPG v1.4.9 (GNU/Linux)
+ 
+-iEYEARECAAYFAknvjBAACgkQh4j7xTiFuxG0EwCeJqNmfALfZvD1BrCkC7PykSvM
+-ah8AoKdl6eW4cJK2XUQpHyn6GEtHqusj
+-=FJYp
++iEYEARECAAYFAknvjOEACgkQh4j7xTiFuxGfvwCfW66qRdbnULgBgVz16GtjnriO
++tvgAn0DoXyekQFuWlMZiJQDl+JE3+487
++=pzBe
+ -----END PGP SIGNATURE-----
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2009-04-22 21:32:00 UTC (rev 1069)
++++ trunk/TODO	2009-04-22 21:39:46 UTC (rev 1070)
+@@ -1,11 +1,12 @@
+ TODO LIST
+ 
+   - investigate &quot;use base 'Catalyst::Controller'&quot; and Class::C3
++  - don't show &quot;Add Watch&quot; if user is already watching the thread
++  - check &quot;reply-&gt;post in thread&quot; still works correctly
+   - refactor/tidy conf file(s)
+   - move search_dialog inline styles into CSS file
+   - fix &quot;oversized image&quot; bug
+   - local file permissions (for avatar uploads)
+-  - optional google ads
+   - 11:58 &lt;marcus&gt; btw did you consider packing the css and js to reduce the number of includes?
+     <A HREF="http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm">http://search.cpan.org/~pmichaux/JavaScript-Minifier-1.05/lib/JavaScript/Minifier.pm</A>
+     <A HREF="http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm">http://search.cpan.org/~pmichaux/CSS-Minifier-0.01/lib/CSS/Minifier.pm</A>
+@@ -37,6 +38,7 @@
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++D - optional google ads
+ D - update i18n from Advanced Search additions
+ D - optional ReCAPTCHA during sign-up
+ D - optional google analytics
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000951.html">[Parley-svn] r1069 - / trunk/todo.i18n
+</A></li>
+	<LI>Next message: <A HREF="000953.html">[Parley-svn] r1071 - / trunk trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#952">[ date ]</a>
+              <a href="thread.html#952">[ thread ]</a>
+              <a href="subject.html#952">[ subject ]</a>
+              <a href="author.html#952">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r566 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r566%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N&In-Reply-To=%3C200710172027.l9HKRd4n005634%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000453.html">
+   <LINK REL="Next"  HREF="000455.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r566 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r566%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N&In-Reply-To=%3C200710172027.l9HKRd4n005634%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r566 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Oct 17 22:27:39 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000453.html">[Parley-svn] r565 - / trunk/lib/Parley/App
+</A></li>
+        <LI>Next message: <A HREF="000455.html">[Parley-svn] r567 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#454">[ date ]</a>
+              <a href="thread.html#454">[ thread ]</a>
+              <a href="subject.html#454">[ subject ]</a>
+              <a href="author.html#454">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-17 22:27:38 +0200 (Wed, 17 Oct 2007)
+New Revision: 566
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Admin.pm
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/I18N/en.po
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3992 at wiggin</A>:  chisel | 2007-10-17 08:42:06 +0100
+ + added i18n to some application controllers
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3990
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3992
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Admin.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Admin.pm	2007-10-16 19:43:47 UTC (rev 565)
++++ trunk/lib/Parley/Controller/Admin.pm	2007-10-17 20:27:38 UTC (rev 566)
+@@ -39,8 +39,8 @@
+ 
+     # we should already have the thread we're locking, but let's check anyway
+     if (not defined $c-&gt;_current_thread()) {
+-        $c-&gt;stash-&gt;{error}{message} = q{You must specify the thread to lock};
+-        $c-&gt;log-&gt;error( q{You must specify the thread to lock} );
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{ADMIN SPECIFY LOCK THREAD});
++        $c-&gt;log-&gt;error( $c-&gt;localize(q{ADMIN SPECIFY LOCK THREAD}) );
+         return;
+     }
+ 
+@@ -66,8 +66,9 @@
+ 
+     # we should already have the thread we're sticking, but let's check anyway
+     if (not defined $c-&gt;_current_thread()) {
+-        $c-&gt;stash-&gt;{error}{message} = q{You must specify the thread to stick};
+-        $c-&gt;log-&gt;error( q{You must specify the thread to stick} );
++        $c-&gt;stash-&gt;{error}{message}
++            = $c-&gt;localize(q{ADMIN SPECIFY STICK THREAD});
++        $c-&gt;log-&gt;error( $c-&gt;localize(q{ADMIN SPECIFY STICK THREAD}) );
+         return;
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2007-10-16 19:43:47 UTC (rev 565)
++++ trunk/lib/Parley/Controller/Forum.pm	2007-10-17 20:27:38 UTC (rev 566)
+@@ -8,14 +8,15 @@
+     my ($self, $c) = @_;
+ 
+     # get a list of (active) forums
+-    $c-&gt;stash-&gt;{forum_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
+-        {
+-            active =&gt; 1,
+-        },
+-        {
+-            'order_by'  =&gt; 'forum_id ASC',
+-        }
+-    );
++    $c-&gt;stash-&gt;{forum_list} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
++            {
++                active =&gt; 1,
++            },
++            {
++                'order_by'  =&gt; 'forum_id ASC',
++            }
++        );
+ }
+ 
+ sub view : Local {
+@@ -25,19 +26,20 @@
+     $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
+ 
+     # get a list of (active) threads in a given forum
+-    $c-&gt;stash-&gt;{thread_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;search(
+-        {
+-            forum       =&gt; $c-&gt;_current_forum-&gt;id(),
+-            active      =&gt; 1,
+-        },
+-        {
+-            join        =&gt; 'last_post',
+-            order_by    =&gt; 'sticky DESC, last_post.created DESC',
+-            # pager information
+-            rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
+-            page        =&gt; $c-&gt;stash-&gt;{current_page},
+-        }
+-    );
++    $c-&gt;stash-&gt;{thread_list} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;search(
++            {
++                forum       =&gt; $c-&gt;_current_forum-&gt;id(),
++                active      =&gt; 1,
++            },
++            {
++                join        =&gt; 'last_post',
++                order_by    =&gt; 'sticky DESC, last_post.created DESC',
++                # pager information
++                rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
++                page        =&gt; $c-&gt;stash-&gt;{current_page},
++            }
++        );
+ 
+     # setup the pager
+     $self-&gt;_forum_view_pager($c);
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-10-16 19:43:47 UTC (rev 565)
++++ trunk/lib/Parley/Controller/My.pm	2007-10-17 20:27:38 UTC (rev 566)
+@@ -33,7 +33,7 @@
+         filters     =&gt; [qw( trim )],
+         msgs =&gt; {
+             format  =&gt; q{%s},
+-            missing =&gt; q{One or more required fields are missing},
++            missing =&gt; q{One ore more required fields are missing.},
+ 
+             constraints =&gt; {
+                 tz_data =&gt; 'you must do stuff',
+@@ -74,7 +74,7 @@
+     my ($self, $c) = @_;
+     # need to be logged in to perform any 'my' actions
+     my $status = $c-&gt;login_if_required(
+-        q{You must be logged in before you can access this area}
++        $c-&gt;localize(q{LOGIN REQUIRED}) 
+     );
+     if (not defined $status) {
+         return 0;
+@@ -178,7 +178,11 @@
+ 
+     # make sure the form name matches something we have a DFV profile for
+     if (not exists $dfv_profile_for{ $form_name }) {
+-        parley_warn($c, qq{no such form: $form_name});
++        parley_warn(
++            $c,
++              $c-&gt;localize(qq{No Such Form}) 
++            . q{: $form_name}
++        );
+         return;
+     }
+ 
+@@ -239,7 +243,7 @@
+ 
+     # deal with missing/invalid fields
+     if ($c-&gt;form-&gt;has_missing()) {
+-        parley_warn($c, q{You must fill in all the required fields});
++        parley_warn($c, $c-&gt;localize(q{DFV FILL REQUIRED}));
+         foreach my $f ( $c-&gt;form-&gt;missing ) {
+             parley_warn($c, $f);
+         }
+@@ -247,7 +251,7 @@
+         return; # invalid form data
+     }
+     elsif ($c-&gt;form-&gt;has_invalid()) {
+-        parley_warn($c, q{One or more fields are invalid});
++        parley_warn($c, $c-&gt;localize(q{DFV FIELDS INVALID}));
+         foreach my $f ( $c-&gt;form-&gt;invalid ) {
+             parley_warn($c, $f);
+         }
+@@ -300,8 +304,8 @@
+ 
+         # reject files that are too large
+         if ($upload-&gt;size &gt; 20480 ) {
+-            parley_warn($c, q{File size too large. File must be no larger than 20K});
+-            $c-&gt;log-&gt;info(q{File size too large. File must be no larger than 20K});
++            parley_warn($c, $c-&gt;localize(q{FILE TOO LARGE}));
++            $c-&gt;log-&gt;info($c-&gt;localize(q{FILE TOO LARGE}));
+             return;
+         }
+ 
+@@ -309,7 +313,8 @@
+         if ($upload-&gt;type !~ m{\Aimage/}xms) {
+             parley_warn(
+                 $c,
+-                  q{Uploaded file does not appear to be an image file [}
++                  $c-&gt;localize(q{FILE NOT IMAGE}) 
++                . q{ [}
+                 . $upload-&gt;type
+                 . q{]}
+             );
+@@ -327,7 +332,7 @@
+         if (not -d $target_dir) {
+             mkdir $target_dir;
+             if (not -d $target_dir) {
+-                parley_warn($c, q{Failed to create destination directory.  Unable to store upload.});
++                parley_warn($c, $c-&gt;localize(q{FILE NEWDIR FAILED}));
+                 $c-&gt;log-&gt;error( qq{$target_dir - $!} );
+                 return;
+             }
+@@ -335,7 +340,7 @@
+ 
+         # save the file for processing
+         if ( not $upload-&gt;link_to($target) and not $upload-&gt;copy_to($target) ) {
+-            parley_warn($c, q{Failed to store upload.});
++            parley_warn($c, $c-&gt;localize(q{FILE STORE FAILED}));
+             $c-&gt;log-&gt;error( qq{$target - $!} );
+             return;
+         }
+@@ -461,7 +466,9 @@
+                 $return_data-&gt;{message} =
+                       q{&lt;p&gt;'}
+                     . $c-&gt;request-&gt;param('value')
+-                    . q{' has already been used by another user.&lt;/p&gt;}
++                    . q{' }
++                    . $c-&gt;localize(q{FORUMNAME USED})
++                    . q{.&lt;/p&gt;}
+                 ;
+                 $return_data-&gt;{updated} = 0;
+                 $json = objToJson($return_data);
+@@ -507,7 +514,10 @@
+         }
+     }
+     else {
+-        $return_data-&gt;{message} = q{&lt;p&gt;Unknown field name&lt;/p&gt;};
++        $return_data-&gt;{message} =
++              q{&lt;p&gt;}
++            . $c-&gt;localize(q{Unknown field name})
++            . q{&lt;/p&gt;};
+         $return_data-&gt;{updated} = 0;
+         $json = objToJson($return_data);
+         $c-&gt;response-&gt;body( $json );
+@@ -538,14 +548,14 @@
+         # scale the longest side - if it's square, scale by height
+         if ($width &gt; $height) {
+             # scale down by width
+-            warn('# scale down by width');
++            #warn('# scale down by width');
+             $img-&gt;Resize(
+                 geometry =&gt; $options-&gt;{width}
+             );
+         }
+         elsif ($height &gt;= $width) {
+             # scale down by height
+-            warn('# scale down by height');
++            #warn('# scale down by height');
+             $img-&gt;Resize(
+                 geometry =&gt; q{x} . $options-&gt;{height}
+             );
+
+Modified: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-16 19:43:47 UTC (rev 565)
++++ trunk/lib/Parley/I18N/en.po	2007-10-17 20:27:38 UTC (rev 566)
+@@ -19,6 +19,12 @@
+ msgid &quot;Add Watch&quot;
+ msgstr &quot;Add Watch&quot;
+ 
++msgid &quot;ADMIN SPECIFY LOCK THREAD&quot;
++msgstr &quot;You must specify the thread to lock&quot;
++
++msgid &quot;ADMIN SPECIFY STICK THREAD&quot;
++msgstr &quot;You must specify the thread to stick&quot;
++
+ msgid &quot;ago&quot;
+ msgstr &quot;ago&quot;
+ 
+@@ -79,6 +85,15 @@
+ msgid &quot;Default&quot;
+ msgstr &quot;Default&quot;
+ 
++msgid &quot;DFV FIELDS MISSING&quot;
++msgstr &quot;One or more required fields are missing.&quot;
++
++msgid &quot;DFV FIELDS INVALID&quot;
++msgstr &quot;One or more fields are invalid.&quot;
++
++msgid &quot;DFV FILL REQUIRED&quot;
++msgstr &quot;You must fill in all the required fields.&quot;
++
+ msgid &quot;Edit&quot;
+ msgstr &quot;Edit&quot;
+ 
+@@ -103,6 +118,18 @@
+ msgid &quot;ENTER REPLY&quot;
+ msgstr &quot;Please enter your reply in the form below&quot;
+ 
++msgid &quot;FILE NOT IMAGE&quot;
++msgstr &quot;Uploaded file does not appear to be an image file&quot;
++
++msgid &quot;FILE NEWDIR FAILED&quot;
++msgstr &quot;Failed to create destination directory.  Unable to store upload.&quot;
++
++msgid &quot;FILE STORE FAILED&quot;
++msgstr &quot;Failed to store upload.&quot;
++
++msgid &quot;FILE TOO LARGE&quot;
++msgstr &quot;File size too large. File must be no larger than 20K.&quot;
++
+ msgid &quot;First&quot;
+ msgstr &quot;First&quot;
+ 
+@@ -130,6 +157,9 @@
+ msgid &quot;Forum Summary&quot;
+ msgstr &quot;Forum Summary&quot;
+ 
++msgid &quot;FORUMNAME USED&quot;
++msgstr &quot;has already been used by another user.&quot;
++
+ msgid &quot;General&quot;
+ msgstr &quot;General&quot;
+ 
+@@ -175,6 +205,9 @@
+ msgid &quot;Locked Topic&quot;
+ msgstr &quot;Locked Topic&quot;
+ 
++msgid &quot;LOGIN REQUIRED&quot;
++msgstr &quot;You must be logged in before you can access this area.&quot;
++
+ msgid &quot;Logged in as&quot;
+ msgstr &quot;Logged in as&quot;
+ 
+@@ -235,6 +268,9 @@
+ msgid &quot;NO SITE TERMS&quot;
+ msgstr &quot;This site has no Terms and Conditions to view&quot;
+ 
++msgid &quot;No Such Form&quot;
++msgstr &quot;No Such Form&quot;
++
+ msgid &quot;No User Avatar&quot;
+ msgstr &quot;No User Avatar&quot;
+ 
+@@ -496,6 +532,9 @@
+ msgid &quot;Topic&quot;
+ msgstr &quot;Topic&quot;
+ 
++msgid &quot;Unknown field name&quot;
++msgstr &quot;Unknown field name&quot;
++
+ msgid &quot;Unlock Thread&quot;
+ msgstr &quot;Unlock Thread&quot;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000453.html">[Parley-svn] r565 - / trunk/lib/Parley/App
+</A></li>
+	<LI>Next message: <A HREF="000455.html">[Parley-svn] r567 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#454">[ date ]</a>
+              <a href="thread.html#454">[ thread ]</a>
+              <a href="subject.html#454">[ subject ]</a>
+              <a href="author.html#454">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

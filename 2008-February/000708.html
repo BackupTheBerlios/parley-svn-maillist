@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r820 - / trunk/lib/Parley/Controller	trunk/root/base/site trunk/root/static/images
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r820%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/site%20trunk/root/static/images&In-Reply-To=%3C200802282231.m1SMVvki030317%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000707.html">
+   <LINK REL="Next"  HREF="000709.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r820 - / trunk/lib/Parley/Controller	trunk/root/base/site trunk/root/static/images</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r820%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/root/base/site%20trunk/root/static/images&In-Reply-To=%3C200802282231.m1SMVvki030317%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r820 - / trunk/lib/Parley/Controller	trunk/root/base/site trunk/root/static/images">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Feb 28 23:31:57 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000707.html">[Parley-svn] r819 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000709.html">[Parley-svn] r821 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/site
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#708">[ date ]</a>
+              <a href="thread.html#708">[ thread ]</a>
+              <a href="subject.html#708">[ subject ]</a>
+              <a href="author.html#708">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-28 23:31:57 +0100 (Thu, 28 Feb 2008)
+New Revision: 820
+
+Added:
+   trunk/root/static/images/loader-bar.gif
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/root/base/site/user
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4720 at wiggin</A>:  chisel | 2008-02-28 20:38:28 +0000
+ / objToJson() --&gt; to_json() 
+ + added server support for AJAX user role changes
+ / update JS an UI to make AJAX user role updates
+ + added feedback icon for AJAX updates
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4719
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4720
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2008-02-28 22:31:43 UTC (rev 819)
++++ trunk/lib/Parley/Controller/My.pm	2008-02-28 22:31:57 UTC (rev 820)
+@@ -480,7 +480,7 @@
+                     . q{.&lt;/p&gt;}
+                 ;
+                 $return_data-&gt;{updated} = 0;
+-                $json = objToJson($return_data);
++                $json = to_json($return_data);
+                 $c-&gt;response-&gt;body( $json );
+                 $c-&gt;log-&gt;info( $json );
+                 return;
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-02-28 22:31:43 UTC (rev 819)
++++ trunk/lib/Parley/Controller/Site.pm	2008-02-28 22:31:57 UTC (rev 820)
+@@ -107,6 +107,98 @@
+     return;
+ }
+ 
++sub roleSaveHandler :Local {
++    my ($self, $c) = @_;
++    my ($return_data, $json);
++    my ($person_id, $role_id, $value);
++
++    $person_id  = $c-&gt;request-&gt;param('person');
++    $role_id    = $c-&gt;request-&gt;param('role');
++    $value      = $c-&gt;request-&gt;param('value');
++
++    # default to responding with &quot;nothing changed&quot;
++    $return_data-&gt;{updated} = 0;
++
++    # check incoming values
++    if (not defined $person_id or $person_id !~ m{\A\d+\z}) {
++        $return_data-&gt;{error}{message} = 'Invalid user-id';
++    }
++    elsif (not defined $role_id or $role_id !~ m{\A\d+\z}) {
++        $return_data-&gt;{error}{message} = 'Invalid role-id';
++    }
++    elsif (not defined $value or $value !~ m{\A[01]}) {
++        $return_data-&gt;{error}{message} = 'Invalid requested value';
++    }
++
++    # remove the role?
++    elsif (0 == $value) {
++        # try to remove the join table entry
++        eval {
++            $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                sub {
++                    $c-&gt;model('ParleyDB::UserRole')-&gt;search(
++                        {
++                            person_id   =&gt; $person_id,
++                            role_id     =&gt; $role_id,
++                        }
++                    )
++                    -&gt;delete;
++                }
++            );
++            $return_data-&gt;{updated} = 1;
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die &quot;something terrible has happened!&quot;  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $return_data-&gt;{error}{message} =
++                qq{Database transaction failed: $@};
++            $c-&gt;log-&gt;error( $@ );
++            return;
++        }
++    }
++
++    # add the role?
++    elsif (1 == $value) {
++        # try to remove the join table entry
++        eval {
++            $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                sub {
++                    $c-&gt;model('ParleyDB::UserRole')-&gt;update_or_create(
++                        {
++                            person_id   =&gt; $person_id,
++                            role_id     =&gt; $role_id,
++                        }
++                    )
++                }
++            );
++            $return_data-&gt;{updated} = 1;
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die &quot;something terrible has happened!&quot;  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $return_data-&gt;{error}{message} =
++                qq{Database transaction failed: $@};
++            $c-&gt;log-&gt;error( $@ );
++            return;
++        }
++    }
++
++    # else ... um, how did we end up here?
++    else {
++        $return_data-&gt;{error}{message} = q{We're not in Kansas any more};
++    }
++
++    # return some JSON
++    $json = to_json($return_data);
++    $c-&gt;response-&gt;body( $json );
++    $c-&gt;log-&gt;info( $json );
++    return;
++}
++
+ =head1 NAME
+ 
+ Parley::Controller::Site - Catalyst Controller
+
+Modified: trunk/root/base/site/user
+===================================================================
+--- trunk/root/base/site/user	2008-02-28 22:31:43 UTC (rev 819)
++++ trunk/root/base/site/user	2008-02-28 22:31:57 UTC (rev 820)
+@@ -17,7 +17,6 @@
+                 &lt;td&gt;
+                     [% has_role = person.check_user_roles(role.name) %]
+                     &lt;input type=&quot;checkbox&quot; class=&quot;role_checkbox&quot; id=&quot;userrole_[%role.id%]&quot; [%IF has_role%]checked=&quot;checked&quot;[%END%]/&gt;
+-
+                     &lt;span id=&quot;status_[%role.id%]&quot;&gt;&lt;/span&gt;
+                 &lt;/td&gt;
+             &lt;/tr&gt;
+@@ -27,30 +26,81 @@
+     &lt;/table&gt;
+ &lt;/form&gt;
+ 
++&lt;div class=&quot;top_padded&quot;&gt;
++&lt;a href=&quot;[%c.uri_for('/site/users/')%]&quot;&gt;Back to User Management&lt;/a&gt;
++&lt;/div&gt;
++
+ &lt;script type=&quot;text/javascript&quot;&gt;
+     var YU  = YAHOO.util,
+         Dom = YAHOO.util.Dom;
+ 
+     var items = Dom.getElementsByClassName('role_checkbox');
+-    console.log(items);
+ 
+-
+-    var boink = function() {
++    update_role = function() {
+         var elID = this.id,
+-            checked = this.checked;
++            checked = (this.checked ? 1 : 0);
+         var roleID = elID.split('_')[1];
+         var statusDiv = Dom.get('status_' + roleID);
+ 
+-        statusDiv.innerHTML = '&lt;blink&gt;updating...&lt;/blink&gt;';
+-        statusDiv.innerHTML = '&lt;img src=&quot;/static/images/loader-bar.gif&quot; /&gt;';
++        var handleSuccess = function(o) {
++            var data = eval('(' + o.responseText + ')');
++            // show the status message
++            //o.argument.msg_node.innerHTML = data.message;
++            // clear the loader-gif
++            o.argument.msg_node.innerHTML = '';
+ 
+-        console.log('roleID:  ', roleID);
+-        console.log('checked: ', checked);
+-    }
++            // show any returned errors
++            if (data.error) {
++                if (data.error.message!=undefined) {
++                    o.argument.msg_node.innerHTML = data.error.message;
++                }
+ 
++                // reset the checkbox
++                Dom.get(o.argument.cb_node).checked =
++                    (1 - o.argument.value);
++            }
++        };
++        var handleFailure = function(o) {
++            // show the status message
++            o.argument.msg_node.innerHTML = o.responseText;
++
++            // reset the checkbox
++            Dom.get(o.argument.cb_node).checked =
++                (1 - o.argument.value);
++        };
++
++        // where to post to
++        var sUrl = '[%c.uri_for('/site/roleSaveHandler')%]';
++
++        // postdata is a query string ... how irksome!!
++        var postData =
++               'person='    + [%person.id%]
++            +  '&amp;role='     + roleID
++            +  '&amp;value='    + checked
++        ;
++
++        // some visual feedback that something is happening
++        statusDiv.innerHTML = '&lt;img src=&quot;[%c.uri_for('/static/images/loader-bar.gif')%]&quot; /&gt;';
++
++        var request = YAHOO.util.Connect.asyncRequest(
++            'POST',
++            sUrl,
++            {
++                success:  handleSuccess,
++                failure:  handleFailure,
++                argument: {
++                    msg_node: statusDiv,
++                    cb_node:  elID,
++                    value:    checked
++                }
++            },
++            postData
++        );
++    };
++
+     YU.Event.addListener(
+         items,
+         'change',
+-        boink
++        update_role
+     );
+ &lt;/script&gt;
+
+Added: trunk/root/static/images/loader-bar.gif
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/loader-bar.gif
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000707.html">[Parley-svn] r819 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000709.html">[Parley-svn] r821 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base/site
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#708">[ date ]</a>
+              <a href="thread.html#708">[ thread ]</a>
+              <a href="subject.html#708">[ subject ]</a>
+              <a href="author.html#708">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

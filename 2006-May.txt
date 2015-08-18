@@ -1,0 +1,3964 @@
+From chiselwright at berlios.de  Thu May 11 21:49:54 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:49:54 +0200
+Subject: [Parley-svn] r131 - /
+Message-ID: <200605111949.k4BJns6P023012@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:49:53 +0200 (Thu, 11 May 2006)
+New Revision: 131
+
+Modified:
+   /
+Log:
+ r14386 at ferrari:  chisel | 2006-04-06 09:29:20 +0100
+ + added about/modules, an easier way to obtain version information for loaded modules
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14382
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14386
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:49:38 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:49:38 +0200
+Subject: [Parley-svn] r128 - /
+Message-ID: <200605111949.k4BJncWN022829@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:49:38 +0200 (Thu, 11 May 2006)
+New Revision: 128
+
+Modified:
+   /
+Log:
+ r14380 at ferrari:  chisel | 2006-04-05 21:15:26 +0100
+ / auto-updated META.yml file changes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14377
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14380
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:50:27 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:50:27 +0200
+Subject: [Parley-svn] r135 - / trunk
+Message-ID: <200605111950.k4BJoRrM023227@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:50:27 +0200 (Thu, 11 May 2006)
+New Revision: 135
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r14390 at ferrari:  chisel | 2006-04-06 10:12:18 +0100
+ + show time formatting sample in my/preferences
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14389
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14390
+
+Modified: trunk/Changes
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:52:17 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:52:17 +0200
+Subject: [Parley-svn] r153 - / trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static
+Message-ID: <200605111952.k4BJqHFG024307@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:52:16 +0200 (Thu, 11 May 2006)
+New Revision: 153
+
+Removed:
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/
+Modified:
+   /
+Log:
+ r14419 at ferrari:  chisel | 2006-05-11 09:18:31 +0100
+ - removed images from test case
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14418
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14419
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:50:00 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:50:00 +0200
+Subject: [Parley-svn] r132 - / trunk
+Message-ID: <200605111950.k4BJo0as023067@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:50:00 +0200 (Thu, 11 May 2006)
+New Revision: 132
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r14387 at ferrari:  chisel | 2006-04-06 09:31:09 +0100
+ + updated Changes with about/modules message
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14386
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14387
+
+Modified: trunk/Changes
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:49:18 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:49:18 +0200
+Subject: [Parley-svn] r125 - / trunk
+Message-ID: <200605111949.k4BJnIo2022660@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:49:18 +0200 (Thu, 11 May 2006)
+New Revision: 125
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r14374 at ferrari:  chisel | 2006-04-05 20:55:27 +0100
+ + added Template::Plugin::ForumCode (not all BBCode functionality is complete yet)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14374
+
+Modified: trunk/Changes
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:49:42 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:49:42 +0200
+Subject: [Parley-svn] r129 - /
+Message-ID: <200605111949.k4BJngOL022882@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:49:42 +0200 (Thu, 11 May 2006)
+New Revision: 129
+
+Modified:
+   /
+Log:
+ r14381 at ferrari:  chisel | 2006-04-05 21:18:19 +0100
+ + update dependencies in Makefile.PL
+   I've reinstalled perl, and these are the current versions of modules that I'm
+   developing with. Since I'm not testing with older versions I can't
+   confidently say that the application works with older versions of
+   dependencies
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14380
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14381
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:49:31 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:49:31 +0200
+Subject: [Parley-svn] r127 - / trunk/root/css
+Message-ID: <200605111949.k4BJnVKd022777@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:49:30 +0200 (Thu, 11 May 2006)
+New Revision: 127
+
+Modified:
+   /
+   trunk/root/css/default.css
+Log:
+ r14377 at ferrari:  chisel | 2006-04-05 21:06:54 +0100
+ / used vim's retab command to eeplace tabs with spaces
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14376
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14377
+
+Modified: trunk/root/css/default.css
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:50:22 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:50:22 +0200
+Subject: [Parley-svn] r134 - / trunk/lib/Parley/Controller
+Message-ID: <200605111950.k4BJoMV4023172@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:50:22 +0200 (Thu, 11 May 2006)
+New Revision: 134
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+Log:
+ r14389 at ferrari:  chisel | 2006-04-06 09:58:44 +0100
+ / fix small bug in preferences referrer
+ - remove debugging output
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14388
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14389
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:40 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:40 +0200
+Subject: [Parley-svn] r146 - / trunk/root/css
+Message-ID: <200605111951.k4BJpeqN023893@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:39 +0200 (Thu, 11 May 2006)
+New Revision: 146
+
+Modified:
+   /
+   trunk/root/css/default.css
+Log:
+ r14412 at ferrari:  chisel | 2006-05-11 08:58:50 +0100
+ + make form labels bold
+ + add styling for "form fieldset p" and "form fieldset button"
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14411
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14412
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-05-11 19:51:35 UTC (rev 145)
++++ trunk/root/css/default.css	2006-05-11 19:51:39 UTC (rev 146)
+@@ -403,6 +403,7 @@
+ 	padding: 0; 
+ 	margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
+ 	text-align: right; 
++    font-weight: bold;
+ }
+ 
+ form fieldset label:first-letter { /* use first-letter pseudo-class to underline accesskey, note that */
+@@ -451,4 +452,13 @@
+     width: 8em;
+ }
+ 
++form fieldset p {
++    text-align: left;
++}
+ 
++form fieldset button {
++	margin:5px 0 0 10px;
++    margin-left: auto;
++    margin-right: auto;
++    display: block;
++}
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:52:25 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:52:25 +0200
+Subject: [Parley-svn] r155 - / trunk
+Message-ID: <200605111952.k4BJqPcI024427@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:52:24 +0200 (Thu, 11 May 2006)
+New Revision: 155
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r14421 at ferrari:  chisel | 2006-05-11 17:51:05 +0100
+ Updated Changes for 0.09 tagging
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14420
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14421
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-05-11 19:52:20 UTC (rev 154)
++++ trunk/Changes	2006-05-11 19:52:24 UTC (rev 155)
+@@ -1,5 +1,6 @@
+-This file documents the revision history for Perl extension Forum.
++This file documents the revision history for Parley.
+ 
++0.09  Thu May 11 17:50:07 BST 2006
+     - make email column unique
+       ** this may cause problems if you already have a large amount of user data **
+     - added lost password functionality in Controller::User::LostPassword
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:49:25 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:49:25 +0200
+Subject: [Parley-svn] r126 - / trunk/root/css
+Message-ID: <200605111949.k4BJnPnK022725@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:49:25 +0200 (Thu, 11 May 2006)
+New Revision: 126
+
+Modified:
+   /
+   trunk/root/css/default.css
+Log:
+ r14376 at ferrari:  chisel | 2006-04-05 21:06:03 +0100
+ / fixed height of #top
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14374
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14376
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-05-11 19:49:18 UTC (rev 125)
++++ trunk/root/css/default.css	2006-05-11 19:49:25 UTC (rev 126)
+@@ -18,6 +18,7 @@
+     margin:     0px 0px 0px 0px;
+     padding:    10px;
+     height:     70px; 
++	height:     70px; 
+ }
+ #left {
+     background: transparent;
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:44 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:44 +0200
+Subject: [Parley-svn] r147 - / trunk/lib/Parley/Model/ParleyDB
+Message-ID: <200605111951.k4BJpiHX023943@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:44 +0200 (Thu, 11 May 2006)
+New Revision: 147
+
+Modified:
+   /
+   trunk/lib/Parley/Model/ParleyDB/Authentication.pm
+Log:
+ r14413 at ferrari:  chisel | 2006-05-11 09:03:36 +0100
+ After upgrading to DBIC 5.x I starting having problems (with only table
+ 'authentication') with ->create() not returning the PK field in the new object
+ To try to rectify this I've specified the details for this table - it made no difference.
+ 
+ / alter AUTHOR email address
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14412
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14413
+
+Modified: trunk/lib/Parley/Model/ParleyDB/Authentication.pm
+===================================================================
+--- trunk/lib/Parley/Model/ParleyDB/Authentication.pm	2006-05-11 19:51:39 UTC (rev 146)
++++ trunk/lib/Parley/Model/ParleyDB/Authentication.pm	2006-05-11 19:51:44 UTC (rev 147)
+@@ -4,6 +4,17 @@
+ use warnings;
+ use base 'DBIx::Class::Core';
+ 
++__PACKAGE__->table('authentication');
++__PACKAGE__->add_columns(qw/
++    authentication_id
++    username
++    password
++    authenticated
++/);
++__PACKAGE__->set_primary_key('authentication_id');
++__PACKAGE__->sequence('authentication_authentication_id_seq');
++
++
+ =head1 NAME
+ 
+ Parley::Model::ParleyDB::Authentication - Catalyst DBIC Table Model
+@@ -18,7 +29,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C<< <pause at herlpacker.co.uk> >>
+ 
+ =head1 LICENSE
+ 
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:20 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:20 +0200
+Subject: [Parley-svn] r142 - / trunk/root/base/user
+Message-ID: <200605111951.k4BJpK8R023671@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:19 +0200 (Thu, 11 May 2006)
+New Revision: 142
+
+Modified:
+   /
+   trunk/root/base/user/login
+Log:
+ r14408 at ferrari:  chisel | 2006-05-11 08:52:53 +0100
+ fixed type of username field
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14405
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14408
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2006-05-11 19:51:15 UTC (rev 141)
++++ trunk/root/base/user/login	2006-05-11 19:51:19 UTC (rev 142)
+@@ -8,7 +8,7 @@
+             [% END %]
+         </p>
+         <label for="username" accesskey="u"><b>Username:</b></label>
+-        <input type="login_text" id="login_username" name="username" size="40" class="input_text" tabindex="1" />
++        <input type="text" id="login_username" name="username" size="40" class="input_text" tabindex="1" />
+ 
+         <label for="login_password" accesskey="p"><b>Password:</b></label>
+         <input type="password" id="login_password" name="password" size="40" class="input_text" tabindex="2" />
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:52:41 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:52:41 +0200
+Subject: [Parley-svn] r157 - / trunk/lib
+Message-ID: <200605111952.k4BJqfnT024527@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:52:41 +0200 (Thu, 11 May 2006)
+New Revision: 157
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ r14423 at ferrari:  chisel | 2006-05-11 18:05:09 +0100
+ set version to 0.10-pre
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14422
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14423
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2006-05-11 19:52:28 UTC (rev 156)
++++ trunk/lib/Parley.pm	2006-05-11 19:52:41 UTC (rev 157)
+@@ -35,7 +35,7 @@
+ use Parley::App::Helper;
+ use YAML;
+ 
+-our $VERSION = '0.09';
++our $VERSION = '0.10-pre';
+ 
+ #
+ # Configure the application
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:52:20 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:52:20 +0200
+Subject: [Parley-svn] r154 - / trunk/lib
+Message-ID: <200605111952.k4BJqKPX024367@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:52:20 +0200 (Thu, 11 May 2006)
+New Revision: 154
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ r14420 at ferrari:  chisel | 2006-05-11 17:48:54 +0100
+ changed version to 0.09 ready for tagging
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14419
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14420
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2006-05-11 19:52:16 UTC (rev 153)
++++ trunk/lib/Parley.pm	2006-05-11 19:52:20 UTC (rev 154)
+@@ -35,7 +35,7 @@
+ use Parley::App::Helper;
+ use YAML;
+ 
+-our $VERSION = '0.09-pre';
++our $VERSION = '0.09';
+ 
+ #
+ # Configure the application
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:48 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:48 +0200
+Subject: [Parley-svn] r148 - / trunk trunk/lib
+Message-ID: <200605111951.k4BJpmFh024023@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:48 +0200 (Thu, 11 May 2006)
+New Revision: 148
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/parley.yml
+Log:
+ r14414 at ferrari:  chisel | 2006-05-11 09:06:19 +0100
+ + only show certain log levels in output (specified by yml file)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14413
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14414
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2006-05-11 19:51:44 UTC (rev 147)
++++ trunk/lib/Parley.pm	2006-05-11 19:51:48 UTC (rev 148)
+@@ -43,6 +43,13 @@
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+ 
++# only show certain log levels in output
++__PACKAGE__->log (Catalyst::Log->new( @{__PACKAGE__->config->{log_levels}} ));
++
++
++# a function that easily lets us refer to where we're storing authed user
++# information - we had to change it from session to stash with a DBIx::Class
++# upgrade
+ sub authed_user {
+     my ($c, $value) = @_;
+ 
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2006-05-11 19:51:44 UTC (rev 147)
++++ trunk/parley.yml	2006-05-11 19:51:48 UTC (rev 148)
+@@ -7,6 +7,15 @@
+     from_name:      'Parley'
+     from_address:   'parley at localhost'
+ 
++# comment out any log levels you don't want to see in your logs
++# 'info' and 'debug' are common choices for suppresing in a live environment
++log_levels:
++#    - 'info'
++    - 'debug'
++    - 'warn'
++    - 'error'
++    - 'fatal'
++
+ #--
+ #-- LINES BELOW THIS SHOULDN'T NEED CHANGING
+ #--
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:50:34 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:50:34 +0200
+Subject: [Parley-svn] r136 - / trunk/root/base/menu trunk/root/base/user trunk/root/css
+Message-ID: <200605111950.k4BJoYNp023287@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:50:33 +0200 (Thu, 11 May 2006)
+New Revision: 136
+
+Modified:
+   /
+   trunk/root/base/menu/statusbar
+   trunk/root/base/user/login
+   trunk/root/css/default.css
+Log:
+ r14391 at ferrari:  chisel | 2006-04-13 08:56:34 +0100
+ Use a floating loginbox instead of a separate screen (as inspired by calendarhub.com)
+ 
+ + new CSS id 'loginbox', which is the <div> for the login-box
+ + added login-box to statusbar include file (we may wish to factor out the
+   login-box into it's own included file
+ / updated login link to ajax-appear the login-box
+ / modified redirection after login - if referer() and action() are different,
+   redirect to the referer() after a successful login. [This improves the
+   behaviour after login with the login-box]
+ 
+ ! if you end up at user/login the (visible) username field doesn't
+   automatically receive focus, this is because we now have the hidden login
+   form with a field having the same name/id
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14390
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14391
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+
+Modified: trunk/root/base/user/login
+===================================================================
+
+Modified: trunk/root/css/default.css
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:50:16 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:50:16 +0200
+Subject: [Parley-svn] r133 - / trunk trunk/lib/Parley/Controller trunk/root/base/my
+Message-ID: <200605111950.k4BJoGKa023121@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:50:16 +0200 (Thu, 11 May 2006)
+New Revision: 133
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/preferences
+Log:
+ r14388 at ferrari:  chisel | 2006-04-06 09:56:25 +0100
+ - added visual feedback when TZ preference is updated
+ - store the referer when visiting my/preferences making it easier to return to where we were previously
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14387
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14388
+
+Modified: trunk/Changes
+===================================================================
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:24 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:24 +0200
+Subject: [Parley-svn] r143 - / trunk/root/base/user trunk/root/base/user/signup
+Message-ID: <200605111951.k4BJpOEf023724@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:24 +0200 (Thu, 11 May 2006)
+New Revision: 143
+
+Added:
+   trunk/root/base/user/signup/
+   trunk/root/base/user/signup/signup
+Removed:
+   trunk/root/base/user/signup
+Modified:
+   /
+Log:
+ r14409 at ferrari:  chisel | 2006-05-11 08:53:58 +0100
+ + replaced single signup file with a signup/ directory as part of the ::User::SignUp refactoring
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14408
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14409
+
+Deleted: trunk/root/base/user/signup
+===================================================================
+--- trunk/root/base/user/signup	2006-05-11 19:51:19 UTC (rev 142)
++++ trunk/root/base/user/signup	2006-05-11 19:51:24 UTC (rev 143)
+@@ -1,121 +0,0 @@
+-<h1>User Signup</h1>
+-
+-<table>
+-	<form action="user/signup" method="POST" name="signup_form">
+-		<tr>
+-			<td colspan="2">
+-				Complete the form below to create a new user account.
+-			</td>
+-		</tr>
+-
+-		[% IF messages %]
+-		<tr>
+-			<td colspan="2">
+-				The following errors were found in your submission:<br />
+-				<ul>
+-                    <ul>
+-                        [% FOREACH message IN messages %]
+-                            <li>[% message %]</li>
+-                        [% END %]
+-                    </ul>
+-				</ul>
+-			</td>
+-		</tr>
+-		[% END %]
+-
+-		<tr>
+-			<td width="20%">
+-				<label for="username">Desired username:</label>
+-			</td>
+-			<td>
+-				<input type="text" id="username" name="username" class="input_text" />
+-				[% form_error.field_error_username %]
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td>
+-				<label for="password">Desired password:</label>
+-			</td>
+-			<td>
+-				<input type="password" id="password" name="password" class="input_text" />
+-				[% form_error.field_error_password %]
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td>
+-				<label for="confirm_password">Confirm password:</label>
+-			</td>
+-			<td>
+-				<input type="password" id="confirm_password" name="confirm_password" class="input_text" />
+-				[% form_error.field_error_confirm_password %]
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td colspan="2">
+-				Your email address will not be passed on to any third parties.
+-				It will be used to send an activation link for the new account.
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td>
+-				<label for="email">Your email address:</label>
+-			</td>
+-			<td>
+-				<input type="text" id="email" name="email" size="40" class="input_text" />
+-				[% form_error.field_error_email %]
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td>
+-				<label for="confirm_email">Confirm email address:</label>
+-			</td>
+-			<td>
+-				<input type="text" id="confirm_email" name="confirm_email" size="40" class="input_text" />
+-				[% form_error.field_error_confirm_email %]
+-			</td>
+-		</tr>
+-
+-		<tr><td colspan="2"><hr /></td></tr>
+-
+-		<tr>
+-			<td>
+-				<label for="first_name">First name:</label>
+-			</td>
+-			<td>
+-				<input type="text" id="first_name" name="first_name" size="40" class="input_text" />
+-				[% form_error.field_error_first_name %]
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td>
+-				<label for="first_name">Last name:</label>
+-			</td>
+-			<td>
+-				<input type="text" id="last_name" name="last_name" size="40" class="input_text" />
+-				[% form_error.field_error_last_name %]
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td>
+-				<label for="first_name">Forum name:</label>
+-			</td>
+-			<td>
+-				<input type="text" id="forum_name" name="forum_name" size="40" class="input_text" />
+-				[% form_error.field_error_forum_name %]
+-			</td>
+-		</tr>
+-
+-		<tr>
+-			<td colspan="2" style="text-align:center;">
+-				<input type="submit" name="form_submit" value="Sign Up" class="input_button" />
+-			</td>
+-		</tr>
+-	</form>
+-</table>
+
+Added: trunk/root/base/user/signup/signup
+===================================================================
+--- trunk/root/base/user/signup/signup	2006-05-11 19:51:19 UTC (rev 142)
++++ trunk/root/base/user/signup/signup	2006-05-11 19:51:24 UTC (rev 143)
+@@ -0,0 +1,121 @@
++<h1>User Signup</h1>
++
++<table>
++	<form action="user/signup" method="POST" name="signup_form">
++		<tr>
++			<td colspan="2">
++				Complete the form below to create a new user account.
++			</td>
++		</tr>
++
++		[% IF messages %]
++		<tr>
++			<td colspan="2">
++				The following errors were found in your submission:<br />
++				<ul>
++                    <ul>
++                        [% FOREACH message IN messages %]
++                            <li>[% message %]</li>
++                        [% END %]
++                    </ul>
++				</ul>
++			</td>
++		</tr>
++		[% END %]
++
++		<tr>
++			<td width="20%">
++				<label for="username">Desired username:</label>
++			</td>
++			<td>
++				<input type="text" id="username" name="username" class="input_text" />
++				[% form_error.field_error_username %]
++			</td>
++		</tr>
++
++		<tr>
++			<td>
++				<label for="password">Desired password:</label>
++			</td>
++			<td>
++				<input type="password" id="password" name="password" class="input_text" />
++				[% form_error.field_error_password %]
++			</td>
++		</tr>
++
++		<tr>
++			<td>
++				<label for="confirm_password">Confirm password:</label>
++			</td>
++			<td>
++				<input type="password" id="confirm_password" name="confirm_password" class="input_text" />
++				[% form_error.field_error_confirm_password %]
++			</td>
++		</tr>
++
++		<tr>
++			<td colspan="2">
++				Your email address will not be passed on to any third parties.
++				It will be used to send an activation link for the new account.
++			</td>
++		</tr>
++
++		<tr>
++			<td>
++				<label for="email">Your email address:</label>
++			</td>
++			<td>
++				<input type="text" id="email" name="email" size="40" class="input_text" />
++				[% form_error.field_error_email %]
++			</td>
++		</tr>
++
++		<tr>
++			<td>
++				<label for="confirm_email">Confirm email address:</label>
++			</td>
++			<td>
++				<input type="text" id="confirm_email" name="confirm_email" size="40" class="input_text" />
++				[% form_error.field_error_confirm_email %]
++			</td>
++		</tr>
++
++		<tr><td colspan="2"><hr /></td></tr>
++
++		<tr>
++			<td>
++				<label for="first_name">First name:</label>
++			</td>
++			<td>
++				<input type="text" id="first_name" name="first_name" size="40" class="input_text" />
++				[% form_error.field_error_first_name %]
++			</td>
++		</tr>
++
++		<tr>
++			<td>
++				<label for="first_name">Last name:</label>
++			</td>
++			<td>
++				<input type="text" id="last_name" name="last_name" size="40" class="input_text" />
++				[% form_error.field_error_last_name %]
++			</td>
++		</tr>
++
++		<tr>
++			<td>
++				<label for="first_name">Forum name:</label>
++			</td>
++			<td>
++				<input type="text" id="forum_name" name="forum_name" size="40" class="input_text" />
++				[% form_error.field_error_forum_name %]
++			</td>
++		</tr>
++
++		<tr>
++			<td colspan="2" style="text-align:center;">
++				<input type="submit" name="form_submit" value="Sign Up" class="input_button" />
++			</td>
++		</tr>
++	</form>
++</table>
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:35 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:35 +0200
+Subject: [Parley-svn] r145 - / trunk/root/base/menu
+Message-ID: <200605111951.k4BJpZeL023841@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:35 +0200 (Thu, 11 May 2006)
+New Revision: 145
+
+Modified:
+   /
+   trunk/root/base/menu/statusbar
+Log:
+ r14411 at ferrari:  chisel | 2006-05-11 08:56:59 +0100
+ / switched from HTML.escape to ForumCode.escape
+ + added Forgotten Password link
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14410
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14411
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-05-11 19:51:30 UTC (rev 144)
++++ trunk/root/base/menu/statusbar	2006-05-11 19:51:35 UTC (rev 145)
+@@ -8,7 +8,7 @@
+                       <a href="forum/view?forum=[% current_forum.id %]">[% current_forum.name %]</a>
+                       [% IF current_thread %]
+                         &raquo;
+-                        <a href="thread/view?thread=[% current_thread.id %]">[% HTML.escape(current_thread.subject) %]</a>
++                        <a href="thread/view?thread=[% current_thread.id %]">[% ForumCode.escape(current_thread.subject) %]</a>
+                       [% END %]
+                     [% END %]
+                 </td>
+@@ -47,6 +47,10 @@
+             <input type="password" id="password" name="password" style="width: 15em;" class="input_text" />
+             <br />
+             <button type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>log in</button>
++
++            <p>
++            <a href="user/password/forgotten">Forgotten Password</a>
++            </p>
+         </fieldset>
+     </form>
+ </div>
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:31 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:31 +0200
+Subject: [Parley-svn] r144 - / trunk/root/base/user trunk/root/base/user/lostpassword
+Message-ID: <200605111951.k4BJpVH7023785@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:30 +0200 (Thu, 11 May 2006)
+New Revision: 144
+
+Added:
+   trunk/root/base/user/lostpassword/
+   trunk/root/base/user/lostpassword/lost_password
+   trunk/root/base/user/lostpassword/lost_password_details_sent
+   trunk/root/base/user/lostpassword/reset
+   trunk/root/base/user/lostpassword/reset_success
+Modified:
+   /
+Log:
+ r14410 at ferrari:  chisel | 2006-05-11 08:55:04 +0100
+ + added templates for forgotten password functionality
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14409
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14410
+
+Added: trunk/root/base/user/lostpassword/lost_password
+===================================================================
+--- trunk/root/base/user/lostpassword/lost_password	2006-05-11 19:51:24 UTC (rev 143)
++++ trunk/root/base/user/lostpassword/lost_password	2006-05-11 19:51:30 UTC (rev 144)
+@@ -0,0 +1,29 @@
++<h1>Password Reset</h1>
++<p>[% name %] stores an encrypted copy of your password. This makes it
++impossible to remind you of your current password.</p>
++
++<p>To gain access to your account your password can be re-set, and an
++authentication email re-sent. If you wish to proceed please enter the username
++or email address you signed up with.</p>
++
++<form method="post" action="user/password/forgotten" name="password_reset_form">
++    <fieldset>
++        [%- IF messages %]
++        <p>
++            <ul>
++                [% FOREACH message IN messages %]
++                    <li>[% message %]</li>
++                [% END %]
++            </ul>
++        </p>
++        [% END %]
++
++        <label for="pwd_reset_username">Username:</a></label>
++        <input type="text" id="pwd_reset_username" name="username" class="input_text" tabindex="1" size="40" />
++
++        <label for="pwd_reset_email">Email:</a></label>
++        <input type="text" id="pwd_reset_email" name="email" class="input_text" tabindex="2" size="40" />
++
++        <button name="pwd_reset_submit" class="input_button" tabindex="3" />reset my password</button>
++    </fieldset>
++</form>
+
+Added: trunk/root/base/user/lostpassword/lost_password_details_sent
+===================================================================
+--- trunk/root/base/user/lostpassword/lost_password_details_sent	2006-05-11 19:51:24 UTC (rev 143)
++++ trunk/root/base/user/lostpassword/lost_password_details_sent	2006-05-11 19:51:30 UTC (rev 144)
+@@ -0,0 +1 @@
++<p>Details are in the post</p>
+
+Added: trunk/root/base/user/lostpassword/reset
+===================================================================
+--- trunk/root/base/user/lostpassword/reset	2006-05-11 19:51:24 UTC (rev 143)
++++ trunk/root/base/user/lostpassword/reset	2006-05-11 19:51:30 UTC (rev 144)
+@@ -0,0 +1,41 @@
++<form action="user/password/reset/[% reset_uid %]" method="post" name="password_reset_form">
++
++To reset your password enter your username and your desired password in the
++fields below, then click the <em>reset my password</em> button to proceed.
++
++    <fieldset>
++        [%- IF messages %]
++        <p>
++            <ul>
++                [% FOREACH message IN messages %]
++                    <li>[% message %]</li>
++                [% END %]
++            </ul>
++        </p>
++        [% END %]
++
++        <label>Name:</label>
++        <input type="text" value="[% reset_user.first_name %] [% reset_user.last_name %]" tabindex="1" readonly="readonly" disabled="disabled" size="40" />
++
++        <label for="reset_username">Username:</label>
++        <input type="text" name="reset_username" id="reset_username" size="40" tabindex="2" />
++
++        <label for="new_password">New password:</label>
++        <input type="password" name="new_password" id="new_password" size="40" tabindex="3" />
++
++        <label for="confirm_password">Confirm password:</label>
++        <input type="password" name="confirm_password" id="confirm_password" size="40" tabindex="4" />
++
++        <br />
++        <button type="submit" class="input_button" tabindex="5" />reset my password</button>
++
++    </fieldset>
++</form>
++
++<!-- put focus into the username field on the form above -->
++<script language="JavaScript">
++    <!-- Begin
++    document.forms['password_reset_form'].elements['reset_username'].focus();
++    // End -->
++</script>
++
+
+Added: trunk/root/base/user/lostpassword/reset_success
+===================================================================
+--- trunk/root/base/user/lostpassword/reset_success	2006-05-11 19:51:24 UTC (rev 143)
++++ trunk/root/base/user/lostpassword/reset_success	2006-05-11 19:51:30 UTC (rev 144)
+@@ -0,0 +1,3 @@
++Your password has been set to the value you entered. You may now 
++
++<a onclick="new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;" href="user/login">login</a>.
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:10 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:10 +0200
+Subject: [Parley-svn] r140 - / trunk/root/base/user trunk/root/css
+Message-ID: <200605111951.k4BJpA9i023564@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:10 +0200 (Thu, 11 May 2006)
+New Revision: 140
+
+Modified:
+   /
+   trunk/root/base/user/login
+   trunk/root/css/default.css
+Log:
+ r14404 at ferrari:  chisel | 2006-04-13 18:24:35 +0100
+ / move away from a table based layout for the login page/form
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14394
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14404
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2006-05-11 19:51:06 UTC (rev 139)
++++ trunk/root/base/user/login	2006-05-11 19:51:10 UTC (rev 140)
+@@ -1,47 +1,21 @@
+ <form action="user/login" method="post" name="login_form">
+-    <div class="no_table_border">
+-    <table width="100%">
+-        <tr>
+-            <td colspan="2">
+-                [% IF login_message %]
+-                [% login_message %]<br />
+-                [% ELSE %]
+-                [% message %]<br />
+-                [% END %]
+-            </td>
+-        </tr>
++    <fieldset>
++        <p>
++            [% IF login_message %]
++            [% login_message %]<br />
++            [% ELSE %]
++            [% message %]<br />
++            [% END %]
++        </p>
++        <label for="username" accesskey="u"><b>Username:</b></label>
++        <input type="login_text" id="login_username" name="username" size="40" class="input_text" tabindex="1" />
+ 
+-        <tr>
+-            <td>
+-                <label for="username"><b>Username:</b></label>
+-            </td>
+-            <td>
+-                <input type="text" id="username" name="username" size="40" class="input_text" />
+-            </td>
+-        </tr>
++        <label for="login_password" accesskey="p"><b>Password:</b></label>
++        <input type="password" id="login_password" name="password" size="40" class="input_text" tabindex="2" />
+ 
+-        <tr>
+-            <td>
+-                <label for="password"><b>Password:</b></label>
+-            </td>
+-            <td>
+-                <input type="password" id="password" name="password" size="40" class="input_text" />
+-            </td>
+-        </tr>
+-
+-        <tr>
+-            <td colspan="2" style="text-align:center;">
+-                <input type="submit" value="log in" class="input_button" />
+-            </td>
+-        </tr>
+-
+-        <tr>
+-            <td colspan="2" style="text-align:right;">
+-                Need an account? <a href="user/signup">Signup Now</a>
+-            </td>
+-        </tr>
+-    </table>
+-    </div>
++        <br />
++        <button type="submit" class="input_button" tabindex="3" />log in</button>
++    </fieldset>
+ </form>
+ 
+ <!-- put focus into the username field on the form above -->
+@@ -50,3 +24,4 @@
+     document.forms['login_form'].elements['username'].focus();
+ 	// End -->
+ </script>
++
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-05-11 19:51:06 UTC (rev 139)
++++ trunk/root/css/default.css	2006-05-11 19:51:10 UTC (rev 140)
+@@ -372,3 +372,71 @@
+     font-size:      0.8em;
+ }
+ 
++
++
++
++form {  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
++  font:100% verdana,arial,sans-serif;
++  margin: 0;
++  padding: 0;
++  min-width: 500px;
++  max-width: 600px;
++  width: 560px; 
++}
++
++form fieldset {
++  / * clear: both; note that this clear causes inputs to break to left in ie5.x mac, commented out */
++  border-color: #000;
++  border-width: 1px;
++  border-style: solid;
++  padding: 10px;        /* padding in fieldset support spotty in IE */
++  margin: 0;
++}
++
++form fieldset legend {
++	font-size:1.1em; /* bump up legend font size, not too large or it'll overwrite border on left */
++                       /* be careful with padding, it'll shift the nice offset on top of border  */
++}
++
++form label { 
++	display: block;  /* block float the labels to left column, set a width */
++	float: left; 
++	width: 150px; 
++	padding: 0; 
++	margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
++	text-align: right; 
++}
++
++form fieldset label:first-letter { /* use first-letter pseudo-class to underline accesskey, note that */
++	text-decoration:none;    /* Firefox 1.07 WIN and Explorer 5.2 Mac don't support first-letter */
++                                    /* pseudo-class on legend elements, but do support it on label elements */
++                                    /* we instead underline first letter on each label element and accesskey */
++                                    /* each input. doing only legends would  lessens cognitive load */
++                                   /* opera breaks after first letter underlined legends but not labels */
++}
++
++form input, form textarea {
++	/* display: inline; inline display must not be set or will hide submit buttons in IE 5x mac */
++	width:auto;      /* set width of form elements to auto-size, otherwise watch for wrap on resize */
++	margin:5px 0 0 10px; /* set margin on left of form elements rather than right of
++                              label aligns textarea better in IE */
++}
++
++form input#reset {
++	margin-left:0px; /* set margin-left back to zero on reset button (set above) */
++}
++
++textarea { overflow: auto; }
++
++form small {
++	display: block;
++	margin: 0 0 5px 160px; /* instructions/comments left margin set to align w/ right column inputs */
++	padding: 1px 3px;
++	font-size: 88%;
++}
++
++form .required{font-weight:bold;} /* uses class instead of div, more efficient */
++
++form br {
++	clear:left; /* setting clear on inputs didn't work consistently, so brs added for degrade */
++}
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:55 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:55 +0200
+Subject: [Parley-svn] r149 - / trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User
+Message-ID: <200605111951.k4BJpt2b024077@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:54 +0200 (Thu, 11 May 2006)
+New Revision: 149
+
+Added:
+   trunk/lib/Parley/Controller/User/
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+Modified:
+   /
+   trunk/lib/Parley/Controller/User.pm
+Log:
+ r14415 at ferrari:  chisel | 2006-05-11 09:11:11 +0100
+ / refactored out signup code into ::User::SignUp
+ + added Forgotten Password functionality in ::User::LostPassword
+ / modify post-login redirect to *not* return to user/password/* URIs
+ ! add extra code to _new_user() because of the authentication PK issue (r14413)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14414
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14415
+
+Added: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2006-05-11 19:51:48 UTC (rev 148)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2006-05-11 19:51:54 UTC (rev 149)
+@@ -0,0 +1,358 @@
++package Parley::Controller::User::LostPassword;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use List::MoreUtils qw{ uniq };
++use Digest::MD5 qw{ md5_hex };
++use Readonly;
++use Time::Piece;
++use Time::Seconds;
++
++use Data::FormValidator 4.02;
++use Data::FormValidator::Constraints qw(:closures);
++
++Readonly my $LIFETIME => Time::Seconds::ONE_HOUR;
++our $DFV;
++
++# used by DFV
++sub _confirm_equal {
++    my $val1 = shift;
++    my $val2 = shift;
++    return ( $val1 eq $val2 );
++}
++
++BEGIN {
++    $DFV = Data::FormValidator->new(
++        {   
++            'password_reset' => {
++                require_some => {
++                    user_details => [
++                        1,
++                        qw/ username email /
++                    ],
++                },
++
++                field_filters => {
++                    username  => 'trim',
++                    email     => 'trim',
++                },
++
++                constraints => {
++                    email => {
++                        name => 'email',
++                        constraint_method => email(),
++                    },
++                },
++
++                msgs => {
++                    constraints => {
++                        email => q{You must enter a valid email address},
++                    },
++                    missing => q{One or more required fields are missing},
++                    format => '%s',
++                },
++            },
++
++            'set_new_password' => {
++                required => [
++                    qw/
++                        reset_username
++                        new_password
++                        confirm_password
++                    /
++                ],
++
++                field_filters => {
++                    reset_username      => 'trim',
++                    new_password        => 'trim',
++                    confirm_password    => 'trim',
++                },
++
++                constraints => {
++                    confirm_password => {
++                        name       => 'confirm_password',
++                        constraint => \&_confirm_equal,
++                        params     => [qw(new_password confirm_password)],
++                    },
++                },
++
++                msgs => {
++                    constraints => {
++                        confirm_password => q{The passwords do not match},
++                    },
++                    missing => q{One or more required fields are missing},
++                    format => '%s',
++                },
++            }
++        },
++    );
++}
++
++# nice and easy - catch the url to display the lost password page
++# if we have a form submit, deal with it
++sub lost_password : Path('/user/password/forgotten') {
++    my ($self, $c) = @_;
++    my ($results, @messages);
++
++    if (defined $c->request->param('pwd_reset_submit')) {
++        @messages = $self->_user_reset($c);
++
++        # if we have any validation errors ...
++        if (scalar @messages) {
++            $c->stash->{messages} = \@messages;
++        }
++
++        # no messages, means that all should be well, so head off to the
++        # "details in the post" page
++        else {
++            $c->stash->{template} = 'user/lostpassword/lost_password_details_sent';
++        }
++    }
++}
++
++# this action uses the uid in the URL to work out who's password we are
++# resetting, after a little validation, we can use the new choice of password
++# for the user
++sub reset : Path('/user/password/reset') {
++    my ($self, $c, $reset_uid) = @_;
++    my ($results, @messages);
++
++    # we should have the reset UID in the URL
++    if (not defined $reset_uid) {
++        $c->stash->{error}{message} = q{Incomplete password reset URL};
++        return;
++    }
++
++    # fetch the info from the database
++    my $pwd_reset = $c->model('ParleyDB')->table('password_reset')->search(
++        {
++            password_reset_id => $reset_uid,
++        }
++    );
++
++    # if we don't have any matches then the id was bogus
++    if (not $pwd_reset->count()) {
++        $c->stash->{error}{message} = q{Bogus password reset ID};
++        return;
++    }
++
++    # get the first result
++    # TODO - we should probably ensure there's exactly one result
++    $pwd_reset = $pwd_reset->first;
++
++    #$c->log->dumper( $pwd_reset->{_column_data} ); # XXX
++    #$c->log->dumper( $pwd_reset->recipient()->{_column_data} ); # XXX
++
++    # put the reset_uid into the stash
++    $c->stash->{reset_uid} = $reset_uid;
++
++    # make user available to template
++    $c->stash->{reset_user} = $pwd_reset->recipient();
++
++
++    # do we have a form submit?
++    if ($c->request->method() eq 'POST') {
++        $c->log->debug('Reset form submitted');
++
++        if ($DFV) {
++            $results = $DFV->check($c->request->parameters(), 'set_new_password');
++        }
++
++        if ($results || !$DFV) {
++            # make sure the reset_uid points to a user that matches the username in
++            # the field
++            my $reset_username = $pwd_reset->recipient()->authentication()->username();
++            if ($reset_username eq $results->{valid}{reset_username}) {
++                eval {
++                    # start a transaction
++                    $c->model('ParleyDB')->table('password_reset')->storage->txn_begin;
++
++                    # username is a match, the form is OK ... looks like we're
++                    # ready to update the password
++                    $pwd_reset->recipient()->authentication()->password(
++                        md5_hex($results->{valid}{new_password})
++                    );
++                    $pwd_reset->recipient()->authentication()->authenticated(1);
++                    $pwd_reset->recipient()->authentication()->update();
++
++                    # remove all password_reset records for the current user
++                    $c->model('ParleyDB')->table('password_reset')->search(
++                        {
++                            recipient => $pwd_reset->recipient()->id(),
++                        }
++                    )->delete;
++
++                    # commit everything
++                    $c->model('ParleyDB')->table('password_reset')->storage->txn_commit;
++                };
++                # any errors?
++                if ($@) {
++                    # put something in the logs
++                    $c->log->error($@);
++                    # put something useful for the user to see
++                    push @messages, q{Failed to update database information};
++                    # rollback
++                    eval { $c->model('ParleyDB')->table('password_reset')->storage->txn_rollback };
++                }
++                else {
++                    push @messages, 'Password reset';
++                    $c->stash->{template} = 'user/lostpassword/reset_success';
++                }
++            }
++            else {
++                # silly user - wrong username
++                push @messages, 'Incorrect username supplied';
++            }
++        }
++        else {
++            # something went wrong
++            $c->log->error('DFV failed');
++            push @messages, uniq(sort(map {$_} values %{$results->msgs}));
++        }
++    }
++    else {
++        # show a page where the user can set a new password
++        # (this defaults to user/lostpassword/reset which is fine)
++    }
++
++    # if we have any validation errors ...
++    if (scalar @messages) {
++        $c->stash->{messages} = \@messages;
++    }
++
++    # no messages, means that all should be well
++    else {
++        #$c->stash->{template} = 'user/lostpassword/lost_password_details_sent';
++    }
++}
++
++sub _user_reset {
++    my ($self, $c) = @_;
++    my ($results, @messages);
++
++    if ($DFV) {
++        $results = $DFV->check($c->request->parameters(), 'password_reset');
++    }
++
++    if ($results || !$DFV) {
++        # things are good - we met the basic form requirements
++        $c->log->info('DFV OK');
++        my ($criteria, $matches, $person);
++
++        # make sure we can match user/email supplied
++        if (defined $results->{valid}{username}) {
++            $criteria->{'authentication.username'} = $results->{valid}{username};
++        }
++        elsif (defined $results->{valid}{email}) {
++            $criteria->{'email'} = $results->{valid}{email};
++        }
++        $matches = $c->model('ParleyDB')->table('person')->search(
++            $criteria,
++            {
++                join => 'authentication',
++            }
++        );
++        # get the first (and should be only) match
++        $person = $matches->first();
++
++        if (defined $person) {
++            # do the actual password reset
++            @messages = $self->_user_password_reset($c, $person);
++        }
++        else {
++            push @messages, q{There are no users matching that information};
++            $c->log->debug(' NO MATCHES ');
++        }
++    }
++    else {
++        # something went wrong
++        $c->log->error('DFV failed');
++        push @messages, map {$_} values %{$results->msgs};
++    }
++
++    return (uniq(sort @messages));
++}
++
++sub _create_pwd_reset {
++    my ($self, $c, $person) = @_;
++    my ($random, $pwd_reset);
++
++    # if it's good enough for Cozens, it's good enough for me
++    $random = md5_hex(time.(0+{}).$$.rand);
++
++    # create an invitation
++    $pwd_reset = $c->model('ParleyDB')->table('password_reset')->create(
++        {
++            'password_reset_id' => $random,
++            'recipient'		=> $person->person_id,
++            'expires'		=> Time::Piece->new(time + $LIFETIME)->datetime,
++        }
++    );
++
++    return $pwd_reset;
++}
++
++sub _user_password_reset {
++    my ($self, $c, $person) = @_;
++    my (@messages, $pwd_reset, $uid);
++
++    $c->log->debug( $person->email() );
++
++    # blank the password and make them no longer authenticated
++    eval {
++        # start a transaction
++        $c->model('ParleyDB')->table('authentication')->storage->txn_begin;
++
++        # create a new entry in the password_reset table
++        $pwd_reset = $self->_create_pwd_reset($c, $person);
++        $uid = $pwd_reset->id();
++
++        # make the changes we want
++        $person->authentication->password('X');
++        $person->authentication->authenticated(0);
++        $person->authentication->update();
++
++        # commit everything
++        $c->model('ParleyDB')->table('authentication')->storage->txn_commit;
++    };
++    # any errors?
++    if ($@) {
++        # put something in the logs
++        $c->log->error($@);
++        # put something useful for the user to see
++        push @messages, q{Failed to update database information};
++        # rollback
++        eval { $c->model('ParleyDB')->table('authentication')->storage->txn_rollback };
++    }
++    else {
++        # send the email with the reset link
++        $c->log->debug('about to send an email');
++        $c->email(
++            header => [
++                From    => Parley::App::Helper->application_email_address($c),
++                To      => $person->email(),
++                Subject => qq{Reset your @{[$c->config->{name}]} password},
++            ],
++            body => qq[@{[$person->first_name()]},
++
++To reset your account password please click on the link below.
++
++@{[$c->req->{base}]}user/password/reset/${uid}
++
++Regards,
++
++The @{[$c->config->{name}]} team.],
++        );
++        $c->log->debug('email sent - supposedly');
++    }
++
++    return @messages;
++}
++
++
++1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
++
+
+Added: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2006-05-11 19:51:48 UTC (rev 148)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2006-05-11 19:51:54 UTC (rev 149)
+@@ -0,0 +1,345 @@
++package Parley::Controller::User::SignUp;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++use List::MoreUtils qw{ uniq };
++use Digest::MD5 qw{ md5_hex };
++use Readonly;
++use Time::Piece;
++use Time::Seconds;
++
++use Data::FormValidator 4.02;
++use Data::FormValidator::Constraints qw(:closures);
++
++Readonly my $LIFETIME => Time::Seconds::ONE_WEEK;
++our $DFV;
++
++# used by DFV
++sub _confirm_equal {
++    my $val1 = shift;
++    my $val2 = shift;
++    return ( $val1 eq $val2 );
++}
++
++BEGIN {
++    $DFV = Data::FormValidator->new(
++        {   
++            'signup' => {
++                required => [
++                    qw/
++                        username password confirm_password email confirm_email
++                        first_name last_name forum_name
++                    /
++                ],
++
++                field_filters => {
++                    username        => 'trim',
++                    email           => 'trim',
++                    confirm_email   => 'trim',
++                    first_name      => 'trim',
++                    last_name       => 'trim',
++                    forum_name      => 'trim',
++                },
++
++                constraints => {
++                    confirm_password => {
++                        name => 'confirm_password',
++                        constraint  => \&_confirm_equal,
++                        params      => [qw( password confirm_password )],
++                    },
++                    email => {
++                        name => 'email',
++                        constraint_method => email(),
++                    },
++                    confirm_email => {
++                        name => 'confirm_email',
++                        constraint  => \&_confirm_equal,
++                        params      => [qw( email confirm_email )],
++                    },
++                },
++
++                msgs => {
++                    constraints => {
++                        confirm_password => q{The passwords do not match},
++                        confirm_email => q{The email addresses do not match},
++                        email => q{You must enter a valid email address},
++                    },
++                    missing => q{One or more required fields are missing},
++                    format => '%s',
++                },
++            },
++        }
++    );
++}
++
++sub signup : Path('/user/signup') {
++    my ( $self, $c ) = @_;
++    my (@messages);
++
++    if ($c->req->param('form_submit')) {
++        @messages = $self->_user_signup($c);
++    }
++
++    if (scalar @messages) {
++        $c->stash->{messages} = \@messages;
++    }
++}
++
++sub authenticate : Path('/user/authenticate') {
++    my ($self, $c, $auth_id) = @_;
++
++    # we should have an auth-id in the url
++    if (not defined $auth_id) {
++        $c->stash->{error}{message} = q{Incomplete authentication URL};
++        return;
++    }
++
++    # fetch the info from the database
++    my $regauth = $c->model('ParleyDB')->table('registration_authentication')->search(
++        {
++            registration_authentication_id => $auth_id,
++        }
++    );
++
++    # if we don't have any matches then the id was bogus
++    if (not $regauth->count()) {
++        $c->stash->{error}{message} = q{Bogus authentication ID};
++        return;
++    }
++
++    # get the first result
++    # TODO - we should probably ensure there's exactly one result
++    $regauth = $regauth->first;
++
++    # TODO
++    # if we get this far, we've got a valid ID, so we can yank out their details,
++    # and to be safe we'll finish the process by asking them for their password
++    #
++    # for now, we assume the link clicking is good enough, and we mark them
++    # as authenticated
++
++    # get the person matching the ID
++    $c->stash->{signup_user} = $c->model('ParleyDB')->table('person')->search(
++        {
++            person_id => $regauth->recipient->person_id(),
++        }
++    )->first();
++
++    # get the first (and should be only) match
++    $c->log->dumper($c->stash->{signup_user}->{_column_data});
++
++    # mark the person as authenticated
++    $c->stash->{signup_user}->authentication->authenticated(1);
++    $c->stash->{signup_user}->authentication->update();
++
++    # delete registration_authentication record
++    $regauth->delete;
++
++    # set a suitable success template
++    $c->stash->{template} = 'user/auth_success';
++}
++
++sub _user_signup {
++    my ($self, $c) = @_;
++    my ($results, @messages);
++
++    if ($DFV) {
++        $results = $DFV->check($c->request->parameters(), 'signup');
++    }
++
++    if ($results || !$DFV) {
++        # things are good - insert the information, and send email to new user
++        $c->log->info('DFV OK');
++        @messages = $self->_new_user($c, $results);
++    }
++    else {
++        # something went wrong
++        $c->log->error('DFV failed');
++        push @messages, map {$_} values %{$results->msgs};
++    }
++
++    return (uniq(sort @messages));
++}
++
++sub _new_user {
++    my ($self, $c, $dfv_results) = @_;
++    my (@messages, $valid_results, $new_auth, $new_person);
++
++    # less typing
++    $valid_results = $dfv_results->valid;
++
++    # is the requested username already in use?
++    if ($self->_username_exists($c, $valid_results->{username})) {
++        push @messages, q{The username you have chosen is already in use. Please try a different one.};
++    }
++    # is the requested email address already in use?
++    if ($self->_email_exists($c, $valid_results->{email})) {
++        push @messages, q{The email address you have chosen is already in use.<br />Please try a different one, or use the <a href="user/password/forgotten">Forgotten Password</a> page.};
++    }
++    # is the requested forum name already in use?
++    if ($self->_forumname_exists($c, $valid_results->{forum_name})) {
++        push @messages, q{The forum name you have chosen is already in use. Please try a different one.};
++    }
++
++    # if we *don't* have any messages, then it's safe to add stuff to the database
++    if (not scalar(@messages)) {
++        # transaction method taken from:
++        #  http://search.cpan.org/~mstrout/DBIx-Class-0.04999_01/lib/DBIx/Class/Manual/Cookbook.pod#Transactions
++        eval {
++            # start a transaction
++            $c->model('ParleyDB')->table('authentication')->storage->txn_begin;
++
++            # add authentication
++            $new_auth = $c->model('ParleyDB')->table('authentication')->create(
++                {
++                    username => $valid_results->{username},
++                    password => md5_hex($valid_results->{password}),
++                }
++            );
++            $c->log->dumper( $new_auth->{_column_data}, 'NEW_AUTH');
++
++            # XXX I don't know why we're not getting all fields after the create()
++            # XXX for now, just look up the newly created record ... pants isn't it?
++            $new_auth = $c->model('ParleyDB')->table('authentication')->search(
++                {
++                    username => $valid_results->{username},
++                    password => md5_hex($valid_results->{password}),
++                }
++            )->first();
++            $c->log->dumper( $new_auth->{_column_data}, 'SEARCHED_NEW_AUTH');
++            # make sure we have an authentication_id
++            if (not defined $new_auth->authentication_id()) {
++                # rollback
++                eval { $c->model('ParleyDB')->table('authentication')->storage->txn_rollback };
++                push @messages, q{Authentication ID is not available};
++                die q{Authentication ID is not availablen $new_auth object};
++            }
++
++            # add person
++            $new_person = $c->model('ParleyDB')->table('person')->create(
++                {
++                    first_name      => $valid_results->{first_name},
++                    last_name       => $valid_results->{last_name},
++                    forum_name      => $valid_results->{forum_name},
++                    email           => $valid_results->{email},
++                    authentication  => $new_auth->id(),
++                }
++            );
++            $c->log->debug( "$valid_results->{email} added with auth: " . $new_auth->id() );
++            $c->log->debug( "$valid_results->{email} added with auth: " . $new_auth->authentication_id() );
++
++            # commit everything
++            $c->model('ParleyDB')->table('authentication')->storage->txn_commit;
++        };
++        # any errors?
++        if ($@) {
++            # put something in the logs
++            $c->log->error($@);
++            # put something useful for the user to see
++            push @messages, q{Failed to insert new user information};
++            # rollback
++            eval { $c->model('ParleyDB')->table('authentication')->storage->txn_rollback };
++        }
++
++        # if it was all ok, send the authentication email
++        else {
++            $self->_send_auth_email($c, $new_person);
++            # set the template to show
++            $c->stash->{newdata}  = $new_person;
++            $c->stash->{template} = 'user/auth_emailed';
++        }
++    }
++
++    return sort(@messages);
++}
++
++
++sub _username_exists {
++    my ($self, $c, $username) = @_;
++    # look for the specified username
++    $c->log->info("Looking for: $username");
++    my $user = $c->model('ParleyDB')->table('authentication')->search(
++        username => $username,
++    );
++    # return the number of matches
++    return $user->count;
++}
++
++sub _email_exists {
++    my ($self, $c, $email) = @_;
++    # look for the specified email
++    $c->log->info("Looking for: $email");
++    my $user = $c->model('ParleyDB')->table('person')->search(
++        email => $email,
++    );
++    # return the number of matches
++    return $user->count;
++}
++
++sub _forumname_exists {
++    my ($self, $c, $forum_name) = @_;
++    # look for the specified forum_name
++    $c->log->info("Looking for: $forum_name");
++    my $user = $c->model('ParleyDB')->table('person')->search(
++        forum_name => $forum_name,
++    );
++    # return the number of matches
++    return $user->count;
++}
++
++sub _create_regauth {
++    my ($self, $c, $person) = @_;
++    my ($random, $invitation);
++
++    # if it's good enough for Cozens, it's good enough for me
++    $random = md5_hex(time.(0+{}).$$.rand);
++
++    # create an invitation
++    $invitation = $c->model('ParleyDB')->table('registration_authentication')->create(
++        {
++            'registration_authentication_id'	=> $random,
++            'recipient'				=> $person->person_id,
++            'expires'				=> Time::Piece->new(time + $LIFETIME)->datetime,
++        }
++    );
++
++    return $invitation;
++}
++
++sub _send_auth_email {
++    my ($self, $c, $person) = @_;
++    my (@messages, $uid, $invitation);
++
++    # create a new reg-auth entry
++    $invitation = $self->_create_regauth($c, $person);
++    $uid = $invitation->registration_authentication_id();
++
++    # send the email invite
++    $c->log->info('about to send an email');
++    $c->email(
++        header => [
++            From    => Parley::App::Helper->application_email_address($c),
++            To      => $person->email(),
++            Subject => qq{Activate your @{[$c->config->{name}]} registration},
++        ],
++        body => qq[@{[$person->first_name()]},
++Thanks for registering with @{[$c->config->{name}]}.
++To complete your registration please click on the link below.
++
++  @{[$c->req->{base}]}user/authenticate/${uid}
++
++and follow the on-screen instructions.
++
++Regards,
++
++The @{[$c->config->{name}]} team.],
++    );
++    $c->log->info('email sent - supposedly');
++}
++
++1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
++
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2006-05-11 19:51:48 UTC (rev 148)
++++ trunk/lib/Parley/Controller/User.pm	2006-05-11 19:51:54 UTC (rev 149)
+@@ -24,54 +24,7 @@
+ }
+ 
+ BEGIN {
+-    $DFV = Data::FormValidator->new(
+-        {   
+-            'signup' => {
+-                required => [
+-                    qw/
+-                        username password confirm_password email confirm_email
+-                        first_name last_name forum_name
+-                    /
+-                ],
+-
+-                field_filters => {
+-                    username        => 'trim',
+-                    email           => 'trim',
+-                    confirm_email   => 'trim',
+-                    first_name      => 'trim',
+-                    last_name       => 'trim',
+-                    forum_name      => 'trim',
+-                },
+-
+-                constraints => {
+-                    confirm_password => {
+-                        name => 'confirm_password',
+-                        constraint  => \&_confirm_equal,
+-                        params      => [qw( password confirm_password )],
+-                    },
+-                    email => {
+-                        name => 'email',
+-                        constraint_method => email(),
+-                    },
+-                    confirm_email => {
+-                        name => 'confirm_email',
+-                        constraint  => \&_confirm_equal,
+-                        params      => [qw( email confirm_email )],
+-                    },
+-                },
+-
+-                msgs => {
+-                    constraints => {
+-                        confirm_password => q{The passwords do not match},
+-                        confirm_email => q{The email addresses do not match},
+-                        email => q{You must enter a valid email address},
+-                    },
+-                    missing => q{One or more required fields are missing},
+-                    format => '%s',
+-                },
+-            },
+-        }
+-    );
++    # used to setup $DFV here
+ }
+ 
+ sub login : Path('/user/login') {
+@@ -94,9 +47,17 @@
+             my $base    = $c->request->base();
+             my $action  = $c->request->action();
+ 
++            $c->log->debug("base:   $base");
++            $c->log->debug("action: $action");
++
+             if ( $c->session->{after_login} ) {
+                 $c->response->redirect( delete $c->session->{after_login} );
+             }
++            # if we've just been through Forgotten Password, don't go back there
++            elsif ($c->request->referer() =~ m{user/password/}) {
++                # go to the default app URL
++                $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++            }
+             # redirect to where we were referred from, unless our referer is our action
+             elsif ( $c->request->referer() =~ m{\A$base}xms and $c->request->referer() !~ m{$action\z}xms) {
+                 $c->response->redirect( $c->request->referer() );
+@@ -133,224 +94,13 @@
+     }
+ }
+ 
+-sub signup : Path('/user/signup') {
+-    my ( $self, $c ) = @_;
+-    my (@messages);
+ 
+-    if ($c->req->param('form_submit')) {
+-        @messages = $self->_user_signup($c);
+-    }
++1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
+ 
+-    if (scalar @messages) {
+-        $c->stash->{template} = 'user/signup';
+-        $c->stash->{messages} = \@messages;
+-        $c->log->dumper( $c->stash->{messages} );
+-    }
+-}
++=pod
+ 
+-sub authenticate : Path('/user/authenticate') {
+-    my ($self, $c, $auth_id) = @_;
+-
+-    # we should have an auth-id in the url
+-    if (not defined $auth_id) {
+-        $c->stash->{error}{message} = q{Incomplete authentication URL};
+-        return;
+-    }
+-
+-    # fetch the info from the database
+-    my $regauth = $c->model('ParleyDB')->table('registration_authentication')->search(
+-        {
+-            registration_authentication_id => $auth_id,
+-        }
+-    );
+-
+-    # if we don't have any matches then the id was bogus
+-    if (not $regauth->count()) {
+-        $c->stash->{error}{message} = q{Bogus authentication ID};
+-        return;
+-    }
+-
+-    # get the first result
+-    # TODO - we should probably ensure there's exactly one result
+-    $regauth = $regauth->first;
+-
+-    # TODO
+-    # if we get this far, we've got a valid ID, so we can yank out their details,
+-    # and to be safe we'll finish the process my asking them for their password
+-    #
+-    # for now, we assume the link clicking is good enough, and we mark them
+-    # as authenticated
+-
+-    # get the person matching the ID
+-    $c->stash->{authed_user} = $c->model('ParleyDB')->table('person')->search(
+-        {
+-            person_id => $regauth->recipient->person_id(),
+-        }
+-    )->first();
+-
+-    # get the first (and should be only) match
+-    $c->log->dumper($c->stash->{authed_user});
+-
+-    # mark the person as authenticated
+-    $c->stash->{authed_user}->authentication->authenticated(1);
+-    $c->stash->{authed_user}->authentication->update();
+-
+-    # delete registration_authentication record
+-    $regauth->delete;
+-
+-    # set a suitable success template
+-    $c->stash->{template} = 'user/auth_success';
+-}
+-
+-sub _user_signup {
+-    my ($self, $c) = @_;
+-    my ($results, @messages);
+-
+-    if ($DFV) {
+-        $results = $DFV->check($c->request->parameters(), 'signup');
+-    }
+-
+-    if ($results || !$DFV) {
+-        # things are good - insert the information, and send email to new user
+-        $c->log->info('DFV OK');
+-        @messages = $self->_new_user($c, $results);
+-    }
+-    else {
+-        # something went wrong
+-        $c->log->error('DFV failed');
+-        push @messages, map {$_} values %{$results->msgs};
+-    }
+-
+-    return (uniq(sort @messages));
+-}
+-
+-sub _username_exists {
+-    my ($self, $c, $username) = @_;
+-    # look for the specified username
+-    $c->log->info("Looking for: $username");
+-    my $user = $c->model('ParleyDB')->table('authentication')->search(
+-        username => $username,
+-    );
+-    # return the number of matches
+-    return $user->count;
+-}
+-
+-sub _forumname_exists {
+-    my ($self, $c, $forum_name) = @_;
+-    # look for the specified forum_name
+-    $c->log->info("Looking for: $forum_name");
+-    my $user = $c->model('ParleyDB')->table('person')->search(
+-        forum_name => $forum_name,
+-    );
+-    # return the number of matches
+-    return $user->count;
+-}
+-
+-sub _new_user {
+-    my ($self, $c, $dfv_results) = @_;
+-    my (@messages, $valid_results, $new_auth, $new_person);
+-
+-    # less typing
+-    $valid_results = $dfv_results->valid;
+-
+-    # is the requested username already in use?
+-    if ($self->_username_exists($c, $valid_results->{username})) {
+-        push @messages, q{The username you have chosen is already in use. Please try a different one.};
+-    }
+-    # is the requested forum name already in use?
+-    if ($self->_forumname_exists($c, $valid_results->{forum_name})) {
+-        push @messages, q{The forum name you have chosen is already in use. Please try a different one.};
+-    }
+-
+-    # if we *don't* have any messages, then it's safe to add stuff to the database
+-    if (not scalar(@messages)) {
+-        # transaction method taken from:
+-        #  http://search.cpan.org/~mstrout/DBIx-Class-0.04999_01/lib/DBIx/Class/Manual/Cookbook.pod#Transactions
+-        eval {
+-            # start a transaction
+-            $c->model('ParleyDB')->table('authentication')->storage->txn_begin;
+-
+-            # add authentication
+-            $new_auth = $c->model('ParleyDB')->table('authentication')->create(
+-                {
+-                    username => $valid_results->{username},
+-                    password => md5_hex($valid_results->{password}),
+-                }
+-            );
+-
+-            # add person
+-            $new_person = $c->model('ParleyDB')->table('person')->create(
+-                {
+-                    first_name      => $valid_results->{first_name},
+-                    last_name       => $valid_results->{last_name},
+-                    forum_name      => $valid_results->{forum_name},
+-                    email           => $valid_results->{email},
+-                    authentication  => $new_auth->id(),
+-                }
+-            );
+-
+-            # commit everything
+-            $c->model('ParleyDB')->table('authentication')->storage->txn_commit;
+-        };
+-        # any errors?
+-        if ($@) {
+-            # put something in the logs
+-            $c->log->error($@);
+-            # put something useful for the user to see
+-            push @messages, q{Failed to insert new user information};
+-            # rollback
+-            eval { $c->model('ParleyDB')->table('authentication')->storage->txn_rollback };
+-        }
+-
+-        # if it was all ok, send the authentication email
+-        else {
+-            $self->_send_auth_email($c, $new_person);
+-            # set the template to show
+-            $c->stash->{newdata}  = $new_person;
+-            $c->stash->{template} = 'user/auth_emailed';
+-        }
+-    }
+-
+-    return sort(@messages);
+-}
+-
+-sub _send_auth_email {
+-    my ($self, $c, $person) = @_;
+-    my (@messages, $random, $invitation);
+-
+-	# if it's good enough for Cozens, it's good enough for me
+-	$random = md5_hex(time.(0+{}).$$.rand);
+-
+-	# create an invitation
+-	$invitation = $c->model('ParleyDB')->table('registration_authentication')->create(
+-        {
+-            'registration_authentication_id'	=> $random,
+-            'recipient'							=> $person->person_id,
+-            'expires'							=> Time::Piece->new(time + $LIFETIME)->datetime,
+-	    }
+-    );
+-
+-    # send the email invite
+-    $c->log->info('about to send an email');
+-    $c->email(
+-        header => [
+-            From    => Parley::App::Helper->application_email_address($c),
+-            To      => $person->email(),
+-            Subject => qq{Activate your @{[$c->config->{name}]} registration},
+-        ],
+-        body => qq[@{[$person->first_name()]},
+-Thanks for registering with @{[$c->config->{name}]}.
+-To complete your registration please click on the link below.
+-
+-  @{[$c->req->{base}]}user/authenticate/${random}
+-
+-Regards,
+-
+-The @{[$c->config->{name}]} team.],
+-    );
+-    $c->log->info('email sent - supposedly');
+-}
+-
+ =head1 NAME
+ 
+ Parley::Controller::User - Catalyst Controller
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:02 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:02 +0200
+Subject: [Parley-svn] r138 - / trunk/root/base/menu
+Message-ID: <200605111951.k4BJp2WL023437@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:50:56 +0200 (Thu, 11 May 2006)
+New Revision: 138
+
+Modified:
+   /
+   trunk/root/base/menu/statusbar
+Log:
+ r14393 at ferrari:  chisel | 2006-04-13 09:12:51 +0100
+ / set fade-up duration for login-box
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14392
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14393
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:59 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:59 +0200
+Subject: [Parley-svn] r150 - / trunk/db
+Message-ID: <200605111951.k4BJpxsa024133@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:59 +0200 (Thu, 11 May 2006)
+New Revision: 150
+
+Modified:
+   /
+   trunk/db/patch_0.08_to_0.09.psql
+Log:
+ r14416 at ferrari:  chisel | 2006-05-11 09:12:41 +0100
+ + add paddword_reset table (for Forgotten Password)
+ / make person.email UNIQUE
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14415
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14416
+
+Modified: trunk/db/patch_0.08_to_0.09.psql
+===================================================================
+--- trunk/db/patch_0.08_to_0.09.psql	2006-05-11 19:51:54 UTC (rev 149)
++++ trunk/db/patch_0.08_to_0.09.psql	2006-05-11 19:51:59 UTC (rev 150)
+@@ -1,15 +1,32 @@
+ -- Patch:
+---   From: 0.07
+---   To:   0.08
++--   From: 0.08
++--   To:   0.09
+ --
+ -- Description:
++--   new table for password_reset requests
+ 
+ BEGIN;
+ 
+ -- patch starts here --
+ 
++-- new table used during forgotten password process
++CREATE TABLE password_reset (
++    password_reset_id       text        primary key,
++    recipient               integer     not null
++                            references person,
++    expires                 timestamp
++);
+ 
++-- email address should be unique
++-- you may run into trouble here if you've got non-unique values here already
++-- SORRY!
+ 
++-- a nasty, evil option would be:
++--  update person set email = forum_name || '-' || email where person_id > 0;
++ALTER TABLE person
++  ADD UNIQUE(email)
++;
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:52:03 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:52:03 +0200
+Subject: [Parley-svn] r151 - / trunk
+Message-ID: <200605111952.k4BJq32F024192@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:52:03 +0200 (Thu, 11 May 2006)
+New Revision: 151
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r14417 at ferrari:  chisel | 2006-05-11 09:13:11 +0100
+ Commiting updated Changes file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14416
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-05-11 19:51:59 UTC (rev 150)
++++ trunk/Changes	2006-05-11 19:52:03 UTC (rev 151)
+@@ -1,5 +1,9 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - make email column unique
++      ** this may cause problems if you already have a large amount of user data **
++    - added lost password functionality in Controller::User::LostPassword
++    - factored signup functionality out into Controller::User::SignUp
+     - start moving towards use of <fieldset> instead of <table> for form layout
+     - use a floating loginbox instead of a separate screen (as inspired by
+       calendarhub.com)
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:15 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:15 +0200
+Subject: [Parley-svn] r141 - / trunk trunk/root/base/menu trunk/root/css
+Message-ID: <200605111951.k4BJpFRN023621@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:15 +0200 (Thu, 11 May 2006)
+New Revision: 141
+
+Modified:
+   /
+   trunk/Changes
+   trunk/root/base/menu/statusbar
+   trunk/root/css/default.css
+Log:
+ r14405 at ferrari:  chisel | 2006-04-19 09:22:07 +0100
+ / change popup_login_form to use a fieldset for layout, moving away from a table-layout
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14404
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14405
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-05-11 19:51:10 UTC (rev 140)
++++ trunk/Changes	2006-05-11 19:51:15 UTC (rev 141)
+@@ -1,5 +1,6 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - start moving towards use of <fieldset> instead of <table> for form layout
+     - use a floating loginbox instead of a separate screen (as inspired by
+       calendarhub.com)
+     - added visual feedback when TZ preference is updated
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-05-11 19:51:10 UTC (rev 140)
++++ trunk/root/base/menu/statusbar	2006-05-11 19:51:15 UTC (rev 141)
+@@ -38,38 +38,16 @@
+ 
+ <!-- we have to put the div outside the table, otherwise we get trapped inside it! -->
+ <div id="loginbox" style="display: none">
+-    <form action="user/login" method="post" name="popup_login_form">
+-        <table>
+-            <tr>
+-                <td>
+-                    <label for="username"><b>Username:</b></label>
+-                </td>
+-                <td>
+-                    <input type="text" id="username" name="username" style="width: 15em;" class="input_text" />
+-                </td>
+-            </tr>
+-
+-            <tr>
+-                <td>
+-                    <label for="password"><b>Password:</b></label>
+-                </td>
+-                <td>
+-                    <input type="password" id="password" name="password" style="width: 15em;" class="input_text" />
+-                </td>
+-            </tr>
+-
+-            <tr>
+-                <td colspan="2">
+-                    <input type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>
+-                </td>
+-            </tr>
+-
+-            <tr>
+-                <td colspan="2">
+-                    <a href="user/password/forgotten">Forgotten Password</a>
+-                </td>
+-            </tr>
+-        </table>
++    <form action="user/login" method="post" name="login_form" class="loginbox">
++        <fieldset>
++            <label for="username"><b>Username:</b></label>
++            <input type="text" id="username" name="username" style="width: 15em;" class="input_text" />
++            <br />
++            <label for="password"><b>Password:</b></label>
++            <input type="password" id="password" name="password" style="width: 15em;" class="input_text" />
++            <br />
++            <button type="submit" value="log in" class="input_button" style="margin-left: 170px;"/>log in</button>
++        </fieldset>
+     </form>
+ </div>
+ <!-- status bar : end -->
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-05-11 19:51:10 UTC (rev 140)
++++ trunk/root/css/default.css	2006-05-11 19:51:15 UTC (rev 141)
+@@ -374,9 +374,7 @@
+ 
+ 
+ 
+-
+ form {  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
+-  font:100% verdana,arial,sans-serif;
+   margin: 0;
+   padding: 0;
+   min-width: 500px;
+@@ -440,3 +438,17 @@
+ form br {
+ 	clear:left; /* setting clear on inputs didn't work consistently, so brs added for degrade */
+ }
++
++
++
++form.loginbox {
++    min-width: 0px;
++    max-width: 250px;
++}
++form.loginbox fieldset label, form.loginbox fieldset input{  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
++    padding: 0px;
++    margin: 5px 0 0 10px;
++    width: 8em;
++}
++
++
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:51:06 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:51:06 +0200
+Subject: [Parley-svn] r139 - / trunk/root/css
+Message-ID: <200605111951.k4BJp6B0023514@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:51:06 +0200 (Thu, 11 May 2006)
+New Revision: 139
+
+Modified:
+   /
+   trunk/root/css/default.css
+Log:
+ r14394 at ferrari:  chisel | 2006-04-13 09:23:05 +0100
+ / alter "Click to Login" to "Login"
+ + add "Signup" link in statusbar (when not logged in)
+ / slightly reduced text size for #left and #statusbar
+ + added "Forgotten Password" link to login-box
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14393
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14394
+
+Modified: trunk/root/css/default.css
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:50:43 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:50:43 +0200
+Subject: [Parley-svn] r137 - / trunk/root/base/menu
+Message-ID: <200605111950.k4BJohOI023348@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:50:42 +0200 (Thu, 11 May 2006)
+New Revision: 137
+
+Modified:
+   /
+   trunk/root/base/menu/statusbar
+Log:
+ r14392 at ferrari:  chisel | 2006-04-13 09:05:10 +0100
+ / rename the form in the loginbox (so it's different from the
+   existing visible one)
+ / remove the include for shared/focus_username_js
+ + add simple javascript to fucus the specific username field
+   we're interested in
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14391
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14392
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:49:49 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:49:49 +0200
+Subject: [Parley-svn] r130 - / trunk trunk/lib/Parley/Controller trunk/root/base/menu
+Message-ID: <200605111949.k4BJnnUJ022959@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:49:48 +0200 (Thu, 11 May 2006)
+New Revision: 130
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/root/base/menu/statusbar
+Log:
+ r14382 at ferrari:  chisel | 2006-04-05 21:27:11 +0100
+ - modify log-in check in auto() to use Auth::DBIC calling style
+ - use ConfigLoader plugin to load application config
+ - add authed_user() function, and alter instances of
+   $c->session->{authed_user} accordingly
+ - added new function to Parley::App::Helper - application_email_address()
+ - added Template::Plugin::ForumCode (not all BBCode functionality is
+   complete yet)
+ - use ForumCode plugin to process various display elements
+ - email from-address for emails is now set in config file
+ - new helper function application_email_address()
+ - change name of session file
+ - ammend statusbar and post-edit templating to work correctly with new
+   storage location of authed_user object
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14381
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14382
+
+Modified: trunk/Changes
+===================================================================
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+
+
+
+From chiselwright at berlios.de  Thu May 11 21:52:12 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 11 May 2006 21:52:12 +0200
+Subject: [Parley-svn] r152 - / trunk trunk/issues trunk/issues/dbic_create_auth_id_problem trunk/issues/dbic_create_auth_id_problem/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/db trunk/issues/dbic_create_auth_id_problem/AuthTest/lib trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest trunk/issues/dbic_create_auth_id_problem/AuthTest/root trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images trunk/issues/dbic_create_auth_id_problem/AuthTest/script trunk/issues/dbic_create_auth_id_problem/AuthTest/t
+Message-ID: <200605111952.k4BJqCFq024249@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-05-11 21:52:10 +0200 (Thu, 11 May 2006)
+New Revision: 152
+
+Added:
+   trunk/issues/
+   trunk/issues/dbic_create_auth_id_problem/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/README
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/db/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/View/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/favicon.ico
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered_shadow.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/catalyst_logo.png
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t
+   trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t
+Modified:
+   /
+Log:
+ r14418 at ferrari:  chisel | 2006-05-11 09:17:57 +0100
+ + Added a directory for making test cases for issues encountered
+ + added test case for PK issue with authentication table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14418
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/Changes	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,4 @@
++This file documents the revision history for Perl extension AuthTest.
++
++0.01  Fri Apr 21 08:34:24 2006
++        - initial revision, generated by Catalyst
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/Makefile.PL	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,12 @@
++use inc::Module::Install;
++
++name 'AuthTest';
++all_from 'lib/AuthTest.pm';
++
++requires Catalyst => '5.64';
++
++catalyst;
++
++install_script glob('script/*.pl');
++auto_install;
++WriteAll;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/README
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/README	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/README	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,16 @@
++1. create the database
++
++    createuser -A -D parleytest
++    createdb -E UTF8 -O parleytest parleytest
++    psql -U parleytest -d parleytest -f db/schema.psql
++
++2. run the two tests
++
++    # should work
++    prove --lib --verbose t/model_ParleyTest-Preference.t
++
++    # fails on my laptop
++    prove --lib --verbose t/model_ParleyTest-Authentication.t
++
++    # works on my laptop - odd because it's a copy of the Authentication test
++    prove --lib --verbose t/model_ParleyTest-Foo.t
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/authtest.yml	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,2 @@
++---
++name: AuthTest
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/db/schema.psql	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,39 @@
++
++-- wrap it all in a transaction
++BEGIN;
++
++-- we have authentication
++CREATE TABLE authentication (
++    authentication_id       SERIAL          not null        primary key,
++    username                text            not null,
++    password                text            not null,
++    authenticated           boolean         NOT NULL        default False,
++
++    UNIQUE (username)
++);
++
++-- we have foo
++CREATE TABLE foo (
++    authentication_id       SERIAL          not null        primary key,
++    username                text            not null,
++    password                text            not null,
++    authenticated           boolean         NOT NULL        default False,
++
++    UNIQUE (username)
++);
++
++-- users can have preferences
++CREATE TABLE preference (
++    preference_id   SERIAL      primary key,
++
++    timezone        text        not null
++            default 'UTC',
++    favourite_colour    text,
++    nicest_meal         text,
++    compass_direction   text    not null
++            default 'North West'
++);
++
++
++-- commit our changes
++COMMIT;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Controller/Root.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,74 @@
++package AuthTest::Controller::Root;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++#
++# Sets the actions in this controller to be registered with no prefix
++# so they function identically to actions created in MyApp.pm
++#
++__PACKAGE__->config->{namespace} = '';
++
++=head1 NAME
++
++AuthTest::Controller::Root - Root Controller for this Catalyst based application
++
++=head1 SYNOPSIS
++
++See L<AuthTest>.
++
++=head1 DESCRIPTION
++
++Root Controller for this Catalyst based application.
++
++=head1 METHODS
++
++=cut
++
++=head2 default
++
++=cut
++
++sub default : Private {
++    my ( $self, $c ) = @_;
++
++    # Hello World
++    $c->response->body( 'Dummy Content' );
++
++    
++    $c->model('ParleyTest')->table('authentication')->storage->txn_begin;
++    my $new_auth = $c->model('ParleyTest')->table('authentication')->create(
++        {
++            username => scalar(localtime),
++            password => 'pwd',
++        }
++    );
++    $c->log->dumper($new_auth->{_column_data}, 'NEW_AUTHENTICATION');
++    $c->model('ParleyTest')->table('authentication')->storage->txn_rollback;
++
++
++    $c->model('ParleyTest')->table('preference')->storage->txn_begin;
++    my $new_pref = $c->model('ParleyTest')->table('preference')->create(
++        {
++            timezone => 'UTC',
++        }
++    );
++    $c->log->dumper($new_pref->{_column_data}, 'NEW_PREFERENCE');
++    $c->model('ParleyTest')->table('preference')->storage->txn_rollback;
++
++
++}
++
++=head1 AUTHOR
++
++Chisel Wright C<< <pause at herlpacker.co.uk> >>
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Authentication.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,30 @@
++package AuthTest::Model::ParleyTest::Authentication;
++
++use strict;
++use warnings;
++use base 'DBIx::Class::Core';
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest::Authentication - Catalyst DBIC Table Model
++
++=head1 SYNOPSIS
++
++See L<AuthTest>
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Table Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Foo.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,30 @@
++package AuthTest::Model::ParleyTest::Foo;
++
++use strict;
++use warnings;
++use base 'DBIx::Class::Core';
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest::Authentication - Catalyst DBIC Table Model
++
++=head1 SYNOPSIS
++
++See L<AuthTest>
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Table Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest/Preference.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,30 @@
++package AuthTest::Model::ParleyTest::Preference;
++
++use strict;
++use warnings;
++use base 'DBIx::Class::Core';
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest::Preference - Catalyst DBIC Table Model
++
++=head1 SYNOPSIS
++
++See L<AuthTest>
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Table Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest/Model/ParleyTest.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,37 @@
++package AuthTest::Model::ParleyTest;
++
++use strict;
++use base 'Catalyst::Model::DBIC';
++
++__PACKAGE__->config(
++    dsn           => 'dbi:Pg:dbname=parleytest',
++    user          => 'parleytest',
++    password      => '',
++    options       => {},
++    relationships => 1
++);
++
++=head1 NAME
++
++AuthTest::Model::ParleyTest - Catalyst DBIC Model
++
++=head1 SYNOPSIS
++
++See L<AuthTest>
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/lib/AuthTest.pm	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,53 @@
++package AuthTest;
++
++use strict;
++use warnings;
++
++#
++# Set flags and add plugins for the application
++#
++#         -Debug: activates the debug mode for very useful log messages
++# Static::Simple: will serve static files from the application's root 
++# directory
++#
++use Catalyst qw/ConfigLoader Static::Simple Dumper/;
++
++our $VERSION = '0.01';
++
++#
++# Start the application
++#
++__PACKAGE__->setup;
++
++#
++# IMPORTANT: Please look into AuthTest::Controller::Root for more
++#
++
++=head1 NAME
++
++AuthTest - Catalyst based application
++
++=head1 SYNOPSIS
++
++    script/authtest_server.pl
++
++=head1 DESCRIPTION
++
++Catalyst based application.
++
++=head1 SEE ALSO
++
++L<AuthTest::Controller::Root>, L<Catalyst>
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/favicon.ico
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/favicon.ico
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_120x50_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/btn_88x31_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/catalyst_logo.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/root/static/images/catalyst_logo.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,37 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'CGI' }
++
++use strict;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++use AuthTest;
++
++AuthTest->run;
++
++1;
++
++=head1 NAME
++
++authtest_cgi.pl - Catalyst CGI
++
++=head1 SYNOPSIS
++
++See L<Catalyst::Manual>
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as cgi.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_cgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,72 @@
++#!/usr/bin/perl -w
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use Catalyst::Helper;
++
++my $force = 0;
++my $mech  = 0;
++my $help  = 0;
++
++GetOptions(
++    'nonew|force'    => \$force,
++    'mech|mechanize' => \$mech,
++    'help|?'         => \$help
++ );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++my $helper = Catalyst::Helper->new( { '.newfiles' => !$force, mech => $mech } );
++
++pod2usage(1) unless $helper->mk_component( 'AuthTest', @ARGV );
++
++1;
++
++=head1 NAME
++
++authtest_create.pl - Create a new Catalyst Component
++
++=head1 SYNOPSIS
++
++authtest_create.pl [options] model|view|controller name [helper] [options]
++
++ Options:
++   -force        don't create a .new file where a file to be created exists
++   -mechanize    use Test::WWW::Mechanize::Catalyst for tests if available
++   -help         display this help and exits
++
++ Examples:
++   authtest_create.pl controller My::Controller
++   authtest_create.pl -mechanize controller My::Controller
++   authtest_create.pl view My::View
++   authtest_create.pl view MyView TT
++   authtest_create.pl view TT TT
++   authtest_create.pl model My::Model
++   authtest_create.pl model SomeDB CDBI dbi:SQLite:/tmp/my.db
++   authtest_create.pl model AnotherDB CDBI dbi:Pg:dbname=foo root 4321
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Create a new Catalyst Component.
++
++Existing component files are not overwritten.  If any of the component files
++to be created already exist the file will be written with a '.new' suffix.
++This behavior can be suppressed with the C<-force> option.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_create.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,76 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'FastCGI' }
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++use AuthTest;
++
++my $help = 0;
++my ( $listen, $nproc, $pidfile, $manager, $detach );
++ 
++GetOptions(
++    'help|?'      => \$help,
++    'listen|l=s'  => \$listen,
++    'nproc|n=i'   => \$nproc,
++    'pidfile|p=s' => \$pidfile,
++    'manager|M=s' => \$manager,
++    'daemon|d'    => \$detach,
++);
++
++pod2usage(1) if $help;
++
++AuthTest->run( 
++    $listen, 
++    {   nproc   => $nproc,
++        pidfile => $pidfile, 
++        manager => $manager,
++        detach  => $detach,
++    }
++);
++
++1;
++
++=head1 NAME
++
++authtest_fastcgi.pl - Catalyst FastCGI
++
++=head1 SYNOPSIS
++
++authtest_fastcgi.pl [options]
++ 
++ Options:
++   -? -help      display this help and exits
++   -l -listen    Socket path to listen on
++                 (defaults to standard input)
++                 can be HOST:PORT, :PORT or a
++                 filesystem path
++   -n -nproc     specify number of processes to keep
++                 to serve requests (defaults to 1,
++                 requires -listen)
++   -p -pidfile   specify filename for pid file
++                 (requires -listen)
++   -d -daemon    daemonize (requires -listen)
++   -M -manager   specify alternate process manager
++                 (FCGI::ProcManager sub-class)
++                 or empty string to disable
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as fastcgi.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_fastcgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,104 @@
++#!/usr/bin/perl -w
++
++BEGIN { 
++    $ENV{CATALYST_ENGINE} ||= 'HTTP';
++    $ENV{CATALYST_SCRIPT_GEN} = 27;
++}  
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++
++my $debug         = 0;
++my $fork          = 0;
++my $help          = 0;
++my $host          = undef;
++my $port          = 3000;
++my $keepalive     = 0;
++my $restart       = 0;
++my $restart_delay = 1;
++my $restart_regex = '\.yml$|\.yaml$|\.pm$';
++
++my @argv = @ARGV;
++
++GetOptions(
++    'debug|d'           => \$debug,
++    'fork'              => \$fork,
++    'help|?'            => \$help,
++    'host=s'            => \$host,
++    'port=s'            => \$port,
++    'keepalive|k'       => \$keepalive,
++    'restart|r'         => \$restart,
++    'restartdelay|rd=s' => \$restart_delay,
++    'restartregex|rr=s' => \$restart_regex
++);
++
++pod2usage(1) if $help;
++
++if ( $restart ) {
++    $ENV{CATALYST_ENGINE} = 'HTTP::Restarter';
++}
++if ( $debug ) {
++    $ENV{CATALYST_DEBUG} = 1;
++}
++
++# This is require instead of use so that the above environment
++# variables can be set at runtime.
++require AuthTest;
++
++AuthTest->run( $port, $host, {
++    argv          => \@argv,
++    'fork'        => $fork,
++    keepalive     => $keepalive,
++    restart       => $restart,
++    restart_delay => $restart_delay,
++    restart_regex => qr/$restart_regex/
++} );
++
++1;
++
++=head1 NAME
++
++authtest_server.pl - Catalyst Testserver
++
++=head1 SYNOPSIS
++
++authtest_server.pl [options]
++
++ Options:
++   -d -debug          force debug mode
++   -f -fork           handle each request in a new process
++                      (defaults to false)
++   -? -help           display this help and exits
++      -host           host (defaults to all)
++   -p -port           port (defaults to 3000)
++   -k -keepalive      enable keep-alive connections
++   -r -restart        restart when files got modified
++                      (defaults to false)
++   -rd -restartdelay  delay between file checks
++   -rr -restartregex  regex match files that trigger
++                      a restart when modified
++                      (defaults to '\.yml$|\.yaml$|\.pm$')
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst Testserver for this application.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_server.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,54 @@
++#!/usr/bin/perl -w
++
++use strict;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib "$FindBin::Bin/../lib";
++use Catalyst::Test 'AuthTest';
++
++my $help = 0;
++
++GetOptions( 'help|?' => \$help );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++print request($ARGV[0])->content . "\n";
++
++1;
++
++=head1 NAME
++
++authtest_test.pl - Catalyst Test
++
++=head1 SYNOPSIS
++
++authtest_test.pl [options] uri
++
++ Options:
++   -help    display this help and exits
++
++ Examples:
++   authtest_test.pl http://localhost/some_action
++   authtest_test.pl /some_action
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst action from the command line.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C<sri at oook.de>
++
++=head1 COPYRIGHT
++
++Copyright 2004 Sebastian Riedel. All rights reserved.
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/dbic_create_auth_id_problem/AuthTest/script/authtest_test.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/01app.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,7 @@
++use strict;
++use warnings;
++use Test::More tests => 2;
++
++BEGIN { use_ok 'Catalyst::Test', 'AuthTest' }
++
++ok( request('/')->is_success, 'Request should succeed' );
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/02pod.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval "use Test::Pod 1.14";
++plan skip_all => 'Test::Pod 1.14 required' if $@;
++plan skip_all => 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_files_ok();
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/03podcoverage.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval "use Test::Pod::Coverage 1.04";
++plan skip_all => 'Test::Pod::Coverage 1.04 required' if $@;
++plan skip_all => 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_coverage_ok();
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Authentication.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,34 @@
++use Test::More tests => 6;
++use_ok( Catalyst::Test, 'AuthTest' );
++use_ok('AuthTest::Model::ParleyTest::Authentication');
++use Data::Dumper;
++
++
++# create a new Authentication record (do it all inside a transaction, so we can rollback)
++
++# BEGIN TRANSACTION
++AuthTest->model('ParleyTest')->table('authentication')->storage->txn_begin;
++
++# create new record
++my $now = scalar(localtime);
++my $new_auth = AuthTest->model('ParleyTest')->table('authentication')->create(
++    {
++        username => $now,
++        password => 'pwd',
++    }
++);
++
++# correct class returned
++isa_ok($new_auth, 'AuthTest::Model::ParleyTest::Authentication');
++
++diag Dumper($new_auth->{_column_data});
++
++# new object has values we created it with
++is($new_auth->username(), $now, 'username set');
++is($new_auth->password(), 'pwd', 'password set');
++
++# now the kicker ... doe we have an id?
++ok(defined($new_auth->authentication_id()), 'authentication_id set');
++
++# ROLLBACK TRANSACTION
++AuthTest->model('ParleyTest')->table('authentication')->storage->txn_rollback;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Foo.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,34 @@
++use Test::More tests => 6;
++use_ok( Catalyst::Test, 'AuthTest' );
++use_ok('AuthTest::Model::ParleyTest::Foo');
++use Data::Dumper;
++
++
++# create a new Authentication record (do it all inside a transaction, so we can rollback)
++
++# BEGIN TRANSACTION
++AuthTest->model('ParleyTest')->table('foo')->storage->txn_begin;
++
++# create new record
++my $now = scalar(localtime);
++my $new_auth = AuthTest->model('ParleyTest')->table('foo')->create(
++    {
++        username => $now,
++        password => 'pwd',
++    }
++);
++
++# correct class returned
++isa_ok($new_auth, 'AuthTest::Model::ParleyTest::Foo');
++
++diag Dumper($new_auth->{_column_data});
++
++# new object has values we created it with
++is($new_auth->username(), $now, 'username set');
++is($new_auth->password(), 'pwd', 'password set');
++
++# now the kicker ... doe we have an id?
++ok(defined($new_auth->authentication_id()), 'authentication_id set');
++
++# ROLLBACK TRANSACTION
++AuthTest->model('ParleyTest')->table('foo')->storage->txn_rollback;
+
+Added: trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t
+===================================================================
+--- trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t	2006-05-11 19:52:03 UTC (rev 151)
++++ trunk/issues/dbic_create_auth_id_problem/AuthTest/t/model_ParleyTest-Preference.t	2006-05-11 19:52:10 UTC (rev 152)
+@@ -0,0 +1,34 @@
++use Test::More tests => 5;
++use_ok( Catalyst::Test, 'AuthTest' );
++use_ok('AuthTest::Model::ParleyTest::Preference');
++use Data::Dumper;
++
++# create a new Authentication record (do it all inside a transaction, so we can rollback)
++
++# BEGIN TRANSACTION
++AuthTest->model('ParleyTest')->table('preference')->storage->txn_begin;
++
++# create new record
++my $now = scalar(localtime);
++my $new_auth = AuthTest->model('ParleyTest')->table('preference')->create(
++    {
++        timezone => 'MyTZ',
++    }
++);
++
++# correct class returned
++isa_ok($new_auth, 'AuthTest::Model::ParleyTest::Preference');
++
++diag Dumper($new_auth->{_column_data});
++
++# new object has values we created it with
++is($new_auth->timezone(), 'MyTZ', 'timezone set');
++
++# what about the compass_direction?
++#ok(defined($new_auth->compass_direction()), 'compass_direction defined');
++
++# now the kicker ... doe we have an id?
++ok(defined($new_auth->preference_id()), 'preference_id set');
++
++# ROLLBACK TRANSACTION
++AuthTest->model('ParleyTest')->table('preference')->storage->txn_rollback;
+
+
+

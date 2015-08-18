@@ -1,0 +1,532 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r824 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/static/script trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r824%20-%20/%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%0A%09trunk/root/static/script%20trunk/t/schema&In-Reply-To=%3C200803111119.m2BBJG2G016527%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000711.html">
+   <LINK REL="Next"  HREF="000713.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r824 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/static/script trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r824%20-%20/%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%0A%09trunk/root/static/script%20trunk/t/schema&In-Reply-To=%3C200803111119.m2BBJG2G016527%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r824 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema	trunk/root/static/script trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Mar 11 12:19:16 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000711.html">[Parley-svn] r823 - / trunk/db
+</A></li>
+        <LI>Next message: <A HREF="000713.html">[Parley-svn] r825 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#712">[ date ]</a>
+              <a href="thread.html#712">[ thread ]</a>
+              <a href="subject.html#712">[ subject ]</a>
+              <a href="author.html#712">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-11 12:19:14 +0100 (Tue, 11 Mar 2008)
+New Revision: 824
+
+Added:
+   trunk/lib/Parley/Schema/AdminAction.pm
+   trunk/t/schema/adminaction.t
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/db/patch_0.58_to_0.59.psql
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/Schema.pm
+   trunk/lib/Parley/Schema/LogAdminAction.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/root/static/script/ajax_error_dlg.js
+   trunk/root/static/script/user_suspend.js
+   trunk/t/schema/logadminaction.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4729 at wiggin</A>:  chisel | 2008-03-11 09:19:37 +0000
+ + added admin_action lookup table, with tests and DBIC schema
+ / removed (test) data from user-suspend ajax call's return data
+ + added set_suspended() method on Person resultset
+ / some JS tweaks and improvements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4726
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4729
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/db/parley.psql	2008-03-11 11:19:14 UTC (rev 824)
+@@ -271,6 +271,15 @@
+ CREATE INDEX idx_userroles_roleid   ON user_roles(role_id);
+ 
+ -- admin action log actions/messages
++CREATE TABLE admin_action (
++    id              serial      primary key,
++    name            text        not null,
++
++    UNIQUE(name)
++);
++INSERT INTO admin_action (id, name) VALUES (0, 'undefined');
++INSERT INTO admin_action (name) VALUES ('suspend_user');
++
+ CREATE TABLE log_admin_action (
+     id              serial      primary key,
+     person_id       integer     not null
+@@ -281,11 +290,15 @@
+                                 not null
+                                 default CURRENT_TIMESTAMP,
+ 
++    action_id       integer     not null
++                                default 0
++                                references admin_action(id),
++
+     message         text        not null
+                                 default 'No Message Supplied'
+ );
+-CREATE INDEX idx_adminaction_personid ON admin_action(person_id);
+-CREATE INDEX idx_adminaction_adminid  ON admin_action(admin_id);
++CREATE INDEX idx_adminaction_personid ON log_admin_action(person_id);
++CREATE INDEX idx_adminaction_adminid  ON log_admin_action(admin_id);
+ 
+ --
+ -- some default stuff
+
+Modified: trunk/db/patch_0.58_to_0.59.psql
+===================================================================
+--- trunk/db/patch_0.58_to_0.59.psql	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/db/patch_0.58_to_0.59.psql	2008-03-11 11:19:14 UTC (rev 824)
+@@ -75,6 +75,15 @@
+     (SELECT id FROM role WHERE name='site_moderator')
+ );
+ 
++CREATE TABLE admin_action (
++    id          serial      primary key,
++    name        text        not null,
++
++    UNIQUE(name)
++);
++INSERT INTO admin_action (id, name) VALUES (0, 'undefined');
++INSERT INTO admin_action (name) VALUES ('suspend_user');
++
+ -- admin action log actions/messages
+ CREATE TABLE log_admin_action (
+     id          serial      primary key,
+@@ -86,11 +95,15 @@
+                             not null
+                             default CURRENT_TIMESTAMP,
+ 
++    action_id   integer     not null
++                            default 0
++                            references admin_action(id),
++
+     message     text        not null
+                             default 'No Message Supplied'
+ );
+-CREATE INDEX idx_adminaction_personid ON admin_action(person_id);
+-CREATE INDEX idx_adminaction_adminid  ON admin_action(admin_id);
++CREATE INDEX idx_adminaction_personid ON log_admin_action(person_id);
++CREATE INDEX idx_adminaction_adminid  ON log_admin_action(admin_id);
+ 
+ 
+ -- patch ends here --
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/lib/Parley/Controller/User.pm	2008-03-11 11:19:14 UTC (rev 824)
+@@ -151,14 +151,15 @@
+             );
+ 
+             if (defined $person) {
+-                $return_data-&gt;{error}{suspended} = $suspended;
+-                $return_data-&gt;{error}{name} = $person-&gt;forum_name;
++                $return_data-&gt;{data}{suspended} = $suspended;
++                $return_data-&gt;{data}{name} = $person-&gt;forum_name;
+ 
+                 # suspend a person, giving a reson
+                 $person-&gt;set_suspended(
+                     {
+                         value   =&gt; $suspended,
+                         reason  =&gt; $c-&gt;request-&gt;param('reason'),
++                        admin   =&gt; $c-&gt;_authed_user,
+                     }
+                 );
+             }
+
+Added: trunk/lib/Parley/Schema/AdminAction.pm
+===================================================================
+--- trunk/lib/Parley/Schema/AdminAction.pm	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/lib/Parley/Schema/AdminAction.pm	2008-03-11 11:19:14 UTC (rev 824)
+@@ -0,0 +1,22 @@
++package Parley::Schema::AdminAction;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
++use base 'DBIx::Class';
++use DateTime::Format::Pg;
++
++use Parley::App::DateTime qw( :interval );
++
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;table(&quot;admin_action&quot;);
++__PACKAGE__-&gt;add_columns(
++  id            =&gt; { },
++  name          =&gt; { },
++);
++
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++
++1;
+
+Modified: trunk/lib/Parley/Schema/LogAdminAction.pm
+===================================================================
+--- trunk/lib/Parley/Schema/LogAdminAction.pm	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/lib/Parley/Schema/LogAdminAction.pm	2008-03-11 11:19:14 UTC (rev 824)
+@@ -18,6 +18,7 @@
+   admin_id      =&gt; { },
+   created       =&gt; { },
+   message       =&gt; { },
++  action_id     =&gt; { },
+ );
+ 
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+@@ -31,6 +32,10 @@
+     &quot;admin&quot; =&gt; &quot;Person&quot;,
+     { 'foreign.id' =&gt; &quot;self.person_id&quot; }
+ );
++__PACKAGE__-&gt;belongs_to(
++    &quot;action&quot; =&gt; &quot;AdminAction&quot;,
++    { 'foreign.id' =&gt; &quot;self.action_id&quot; }
++);
+ 
+ foreach my $datecol (qw/created/) {
+     __PACKAGE__-&gt;inflate_column($datecol, {
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/lib/Parley/Schema/Person.pm	2008-03-11 11:19:14 UTC (rev 824)
+@@ -4,6 +4,7 @@
+ 
+ use strict;
+ use warnings;
++use Carp;
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ 
+@@ -169,6 +170,58 @@
+     return ($rs-&gt;count == scalar(@roles) || 0);
+ }
+ 
++# suspend a user (and log a message at the same time)
++sub set_suspended {
++    my ($record, $args) = @_;
++    my ($value, $reason, $admin_id);
++    $value      = $args-&gt;{value};
++    $reason     = $args-&gt;{reason};
++    $admin_id   = $args-&gt;{admin}-&gt;id;
++
++    my $schema = $record-&gt;result_source()-&gt;schema();
++
++    if (not defined $value) {
++        Carp::carp('no value passed to set_suspended()');
++        return;
++    }
++
++    if (not defined $reason) {
++        $reason = q{None Given};
++    }
++
++    # suspend the user and add a log action
++    eval {
++        $schema-&gt;txn_do(
++            sub {
++                # set the value of suspended
++                $record-&gt;update({suspended =&gt; $value});
++                # add a log message
++                $schema-&gt;resultset('LogAdminAction')-&gt;create(
++                    {
++                        person_id   =&gt; $record-&gt;id,
++                        admin_id    =&gt; $admin_id,
++                        message     =&gt; $reason,
++
++                        action =&gt; {
++                            name =&gt; 'suspend_user',
++                        },
++                    }
++                );
++                return;
++            }
++        )
++    };
++    if ($@) {                                   # Transaction failed
++        die &quot;something terrible has happened!&quot;  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        #$return_data-&gt;{error}{message} =
++            #qq{Database transaction failed: $@};
++        #$c-&gt;log-&gt;error( $@ );
++        die $@;
++    }
++}
++
+ # thin wrapper around check_user_roles() for convenience
+ sub is_site_moderator {
+     my $record = shift;
+
+Modified: trunk/lib/Parley/Schema.pm
+===================================================================
+--- trunk/lib/Parley/Schema.pm	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/lib/Parley/Schema.pm	2008-03-11 11:19:14 UTC (rev 824)
+@@ -9,6 +9,7 @@
+ # explicitly load Parley::Schema classes
+ __PACKAGE__-&gt;load_classes(
+     [
++        'AdminAction',
+         'Authentication',
+         'EmailQueue',
+         'ForumModerator',
+
+Modified: trunk/root/static/script/ajax_error_dlg.js
+===================================================================
+--- trunk/root/static/script/ajax_error_dlg.js	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/root/static/script/ajax_error_dlg.js	2008-03-11 11:19:14 UTC (rev 824)
+@@ -12,7 +12,6 @@
+                 {
+                     postmethod:             'none',
+                     modal: true,
+-                    //width:                  '350px',
+                     fixedcenter:            true,
+                     visible:                false, 
+                     constraintoviewport:    true,
+@@ -26,25 +25,37 @@
+ 
+         YAHOO.parley.ajax_dialog.dlg.show_message = function(e) {
+             try {
+-                // set the body of the dialog to the message, if we have one
+-                if(undefined!=e &amp;&amp; undefined!=e.message) {
+-                    this.setBody(e.message);
++                // default title and body
++                this.setHeader('Application Error');
++                this.setBody('No error message passed to show_message()');
++
++                // check for undefined input
++                if(undefined==e) {
++                    this.setBody('No data passed to show_message()');
+                 }
+                 else {
+-                    this.setBody('No error message passed to show_message()');
+-                }
++                    // if we appear to have been passed a request-error object
++                    if(undefined!=e.statusText) {
++                        this.setHeader('Error');
++                        this.setBody(e.status + ' ' + e.statusText);
++                    }
++                    else { // should be custom user data
++                        // set the body of the dialog to the message, if we have one
++                        if(undefined!=e.message) {
++                            this.setBody(e.message);
++                        }
+ 
+-                // set the dialog header
+-                if(undefined!=e &amp;&amp; undefined!=e.title) {
+-                    this.setHeader(e.title);
++                        // set the dialog header
++                        if(undefined!=e.title) {
++                            this.setHeader(e.title);
++                        }
++                    }
+                 }
+-                else {
+-                    this.setHeader('Application Error');
+-                }
+-            } catch(e){alert(e);}
+ 
+-            // show the dialog
+-            this.show();
++                // show the dialog
++                this.render();
++                this.show();
++            } catch(e){alert('show_message: ' + e);}
+         }
+ 
+         // Render the Dialog
+
+Modified: trunk/root/static/script/user_suspend.js
+===================================================================
+--- trunk/root/static/script/user_suspend.js	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/root/static/script/user_suspend.js	2008-03-11 11:19:14 UTC (rev 824)
+@@ -9,15 +9,8 @@
+             checked = (this.checked ? true : false);
+ 
+         try {
+-            // do we want to suspend the tinker?
+-            if (checked) {
+-                YAHOO.parley.suspend_reason.suspend_reason_dialog.show();
+-            }
+-
+-            // do we want to un-suspend the user?
+-            else {
+-                //alert('un-suspend');
+-            }
++            Dom.get('suspension_reason').value = '';
++            YAHOO.parley.suspend_reason.suspend_reason_dialog.show();
+         } catch(e) { alert(e); }
+     }
+ 
+@@ -64,6 +57,10 @@
+     };
+     var handleCancel = function() {
+         YAHOO.parley.small_loading.wait.hide();
++        // reset the checkbox
++        Dom.get('suspend_account').checked =
++            ! (Dom.get('suspend_account').checked);
++        // cancel the dialog
+         this.cancel();
+     };
+     var handleSuccess = function(o) {
+@@ -71,14 +68,12 @@
+         YAHOO.parley.suspend_reason.suspend_reason_dialog.hide();
+         var response = o.responseText;
+         var data = eval('(' + o.responseText + ')');
+-
+-        try {
+-        YAHOO.parley.ajax_dialog.dlg.show_message(data.error);
+-        } catch(e) { alert(e); }
+     };
+     var handleFailure = function(o) {
+         YAHOO.parley.small_loading.wait.hide();
+-        alert(&quot;Submission failed: &quot; + o.status);
++        try {
++            YAHOO.parley.ajax_dialog.dlg.show_message( o );
++        } catch(e) { alert('handleFailure: ' + e); }
+     };
+ 
+     // Instantiate the Dialog
+
+Added: trunk/t/schema/adminaction.t
+===================================================================
+--- trunk/t/schema/adminaction.t	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/t/schema/adminaction.t	2008-03-11 11:19:14 UTC (rev 824)
+@@ -0,0 +1,44 @@
++#!/usr/bin/perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load the module that provides all of the common test functionality
++use FindBin qw($Bin);
++use lib $Bin;
++use SchemaTest;
++
++my $schematest = SchemaTest-&gt;new(
++    {
++        dsn       =&gt; 'dbi:Pg:dbname=parley',
++        namespace =&gt; 'Parley::Schema',
++        moniker   =&gt; 'AdminAction',
++    }
++);
++$schematest-&gt;methods(
++    {
++        columns =&gt; [
++            qw[
++                id
++                name
++            ]
++        ],
++
++        relations =&gt; [
++            qw[
++            ]
++        ],
++
++        custom =&gt; [
++            qw[
++            ]
++        ],
++
++        resultsets =&gt; [
++            qw[
++            ]
++        ],
++    }
++);
++
++$schematest-&gt;run_tests();
+
+
+Property changes on: trunk/t/schema/adminaction.t
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Modified: trunk/t/schema/logadminaction.t
+===================================================================
+--- trunk/t/schema/logadminaction.t	2008-03-06 21:02:03 UTC (rev 823)
++++ trunk/t/schema/logadminaction.t	2008-03-11 11:19:14 UTC (rev 824)
+@@ -24,6 +24,7 @@
+                 admin_id
+                 created
+                 message
++                action_id
+             ]
+         ],
+ 
+@@ -31,6 +32,7 @@
+             qw[
+                 person
+                 admin
++                action
+             ]
+         ],
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000711.html">[Parley-svn] r823 - / trunk/db
+</A></li>
+	<LI>Next message: <A HREF="000713.html">[Parley-svn] r825 - / trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#712">[ date ]</a>
+              <a href="thread.html#712">[ thread ]</a>
+              <a href="subject.html#712">[ subject ]</a>
+              <a href="author.html#712">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

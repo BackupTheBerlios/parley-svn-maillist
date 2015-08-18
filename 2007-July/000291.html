@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r403 - / trunk/root/base/user/signup trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r403%20-%20/%20trunk/root/base/user/signup%20trunk/root/css&In-Reply-To=%3C200707162108.l6GL81ni021146%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000290.html">
+   <LINK REL="Next"  HREF="000292.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r403 - / trunk/root/base/user/signup trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r403%20-%20/%20trunk/root/base/user/signup%20trunk/root/css&In-Reply-To=%3C200707162108.l6GL81ni021146%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r403 - / trunk/root/base/user/signup trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Jul 16 23:08:01 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000290.html">[Parley-svn] r402 - / trunk/root/base/help
+</A></li>
+        <LI>Next message: <A HREF="000292.html">[Parley-svn] r404 - / trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#291">[ date ]</a>
+              <a href="thread.html#291">[ thread ]</a>
+              <a href="subject.html#291">[ subject ]</a>
+              <a href="author.html#291">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-16 23:08:01 +0200 (Mon, 16 Jul 2007)
+New Revision: 403
+
+Modified:
+   /
+   trunk/root/base/user/signup/signup
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3502 at wiggin</A>:  chisel | 2007-07-13 19:24:07 +0100
+ / tweaked the signup page template
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3501
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3502
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/user/signup/signup
+===================================================================
+--- trunk/root/base/user/signup/signup	2007-07-16 21:07:52 UTC (rev 402)
++++ trunk/root/base/user/signup/signup	2007-07-16 21:08:01 UTC (rev 403)
+@@ -9,7 +9,7 @@
+     &lt;/ul&gt;
+ [% END %]
+ 
+-&lt;table&gt;
++&lt;table class=&quot;signup&quot;&gt;
+ 	&lt;form action=&quot;user/signup&quot; method=&quot;POST&quot; name=&quot;signup_form&quot;&gt;
+ 		&lt;tr&gt;
+ 			&lt;td colspan=&quot;2&quot;&gt;
+@@ -66,6 +66,8 @@
+ 			&lt;td colspan=&quot;2&quot;&gt;
+ 				Your email address will not be passed on to any third parties.
+ 				It will be used to send an activation link for the new account.
++                If you request thread update alerts this address will also be used
++                for the notification emails.
+ 			&lt;/td&gt;
+ 		&lt;/tr&gt;
+ 
+@@ -120,6 +122,14 @@
+ 				[% form_error.field_error_forum_name %]
+ 			&lt;/td&gt;
+ 		&lt;/tr&gt;
++		&lt;tr&gt;
++            &lt;td&gt;&nbsp;&lt;/td&gt;
++			&lt;td style=&quot;text-align:justify;&quot;&gt;
++            Your &lt;em&gt;Forum Name&lt;/em&gt; will be displayed with all postings you make on the forums.
++            Forum names are all unique, so when two &quot;John Smith&quot;s register, only one will appear
++            as &quot;John Smith&quot; when posting. (Sorry other John Smith!)
++			&lt;/td&gt;
++		&lt;/tr&gt;
+ 
+ 		&lt;tr&gt;
+ 			&lt;td colspan=&quot;2&quot; style=&quot;text-align:center;&quot;&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-07-16 21:07:52 UTC (rev 402)
++++ trunk/root/css/common.css	2007-07-16 21:08:01 UTC (rev 403)
+@@ -237,6 +237,12 @@
+     width:              500px;
+ }
+ 
++.signup {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
+ .user_profile {
+     margin-left:        50px;
+     margin-right:       50px;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000290.html">[Parley-svn] r402 - / trunk/root/base/help
+</A></li>
+	<LI>Next message: <A HREF="000292.html">[Parley-svn] r404 - / trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#291">[ date ]</a>
+              <a href="thread.html#291">[ thread ]</a>
+              <a href="subject.html#291">[ subject ]</a>
+              <a href="author.html#291">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

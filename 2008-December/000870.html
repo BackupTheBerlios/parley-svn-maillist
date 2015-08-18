@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r988 - / trunk/root/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r988%20-%20/%20trunk/root/base&In-Reply-To=%3C200812222200.mBMM0GiW022367%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000869.html">
+   <LINK REL="Next"  HREF="000871.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r988 - / trunk/root/base</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r988%20-%20/%20trunk/root/base&In-Reply-To=%3C200812222200.mBMM0GiW022367%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r988 - / trunk/root/base">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Dec 22 23:00:16 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000869.html">[Parley-svn] r987 - / trunk trunk/lib/Parley/Controller	trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000871.html">[Parley-svn] r989 - / trunk/root trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#870">[ date ]</a>
+              <a href="thread.html#870">[ thread ]</a>
+              <a href="subject.html#870">[ subject ]</a>
+              <a href="author.html#870">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-22 23:00:16 +0100 (Mon, 22 Dec 2008)
+New Revision: 988
+
+Modified:
+   /
+   trunk/root/base/header
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8652 at wiggin</A>:  chisel | 2008-12-17 09:19:58 +0000
+ - remove title attr from additional (skin) CSS so it's actually applied
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8643
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8652
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2008-12-16 20:10:02 UTC (rev 987)
++++ trunk/root/base/header	2008-12-22 22:00:16 UTC (rev 988)
+@@ -56,12 +56,12 @@
+         [% IF ( (!c.config.site_skin) || (c.config.site_skin &amp;&amp; c.config.skin_default_fallback) ) %]
+             [% IF (!c.config.exists('skin_default_css') || c.config.skin_default_css) %]
+             &lt;!-- base styling --&gt;
+-            &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Simple&quot; href=&quot;[%c.uri_for('/static/css/parley-min.css')%]&quot; /&gt;
++            &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Parley&quot; href=&quot;[%c.uri_for('/static/css/parley-min.css')%]&quot; /&gt;
+             [% END %]
+         [% END %]
+         [% IF (skin = c.config.site_skin) %]
+         &lt;!-- Skin : [%skin%] --&gt;
+-        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Skin:[%skin%]&quot; href=&quot;[%c.uri_for(&quot;/static/css/parley-${skin}.css&quot;)%]&quot; /&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; href=&quot;[%c.uri_for(&quot;/static/css/parley-${skin}.css&quot;)%]&quot; /&gt;
+         [% END %]
+ 
+     &lt;/head&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000869.html">[Parley-svn] r987 - / trunk trunk/lib/Parley/Controller	trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000871.html">[Parley-svn] r989 - / trunk/root trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#870">[ date ]</a>
+              <a href="thread.html#870">[ thread ]</a>
+              <a href="subject.html#870">[ subject ]</a>
+              <a href="author.html#870">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

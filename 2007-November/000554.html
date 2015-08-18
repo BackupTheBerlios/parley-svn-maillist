@@ -1,0 +1,439 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r666 - / trunk/root/base trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r666%20-%20/%20trunk/root/base%20trunk/root/css&In-Reply-To=%3C200711122030.lACKUQlX024634%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000553.html">
+   <LINK REL="Next"  HREF="000555.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r666 - / trunk/root/base trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r666%20-%20/%20trunk/root/base%20trunk/root/css&In-Reply-To=%3C200711122030.lACKUQlX024634%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r666 - / trunk/root/base trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Nov 12 21:30:26 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000553.html">[Parley-svn] r665 - / trunk/lib
+</A></li>
+        <LI>Next message: <A HREF="000555.html">[Parley-svn] r667 - / trunk trunk/lib/Parley/Controller	trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#554">[ date ]</a>
+              <a href="thread.html#554">[ thread ]</a>
+              <a href="subject.html#554">[ subject ]</a>
+              <a href="author.html#554">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-12 21:30:26 +0100 (Mon, 12 Nov 2007)
+New Revision: 666
+
+Modified:
+   /
+   trunk/root/base/header
+   trunk/root/css/common.css
+   trunk/root/css/layout27.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4191 at wiggin</A>:  chisel | 2007-11-12 20:30:00 +0000
+ / use reset-fonts-grids.css
+ / start the conversion to %-age based font-size CSS declarations
+ - remove a bit of dojo CSS gumpf
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4190
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4191
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-11-12 20:30:09 UTC (rev 665)
++++ trunk/root/base/header	2007-11-12 20:30:26 UTC (rev 666)
+@@ -33,9 +33,8 @@
+ 
+         &lt;!-- CSS --&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/fonts/fonts-min.css&quot; /&gt;
+-        &lt;!--&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot;
+-            href=&quot;[%c.request.base%]/static/yui/reset-fonts-grids/reset-fonts-grids.css&quot;
+-            /&gt;--&gt;
++        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/reset-fonts-grids/reset-fonts-grids.css&quot; /&gt;
++
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/button/assets/skins/sam/button.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/container/assets/skins/sam/container.css&quot; /&gt;
+         &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;[%c.request.base%]/static/yui/menu/assets/skins/sam/menu.css&quot; /&gt; 
+@@ -54,8 +53,13 @@
+ 
+ 
+         &lt;!-- defined styles for parley --&gt;
+-        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/common.css&quot; /&gt;
+-        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/layout27.css&quot; /&gt;
++        &lt;!--&lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/common.css&quot; /&gt;--&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot;           title=&quot;Default&quot;   href=&quot;[% c.request.base %]/css/layout27.css&quot; /&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;alternate stylesheet&quot; title=&quot;Layout 23&quot; href=&quot;[% c.request.base %]/css/layout23.css&quot; /&gt;
++        &lt;style type=&quot;text/css&quot;&gt;
++            @import url(&quot;[%c.request.base%]/css/common.css&quot;);
++        &lt;/style&gt;
++
+     &lt;/head&gt;
+ 
+     &lt;body class=&quot;yui-skin-sam&quot;&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-11-12 20:30:09 UTC (rev 665)
++++ trunk/root/css/common.css	2007-11-12 20:30:26 UTC (rev 666)
+@@ -2,6 +2,10 @@
+     overflow:auto;
+ }
+ 
++body {
++    text-align: left;
++}
++
+ div#userinfo_box {
+     position:       absolute;
+     top:            0;
+@@ -13,6 +17,7 @@
+     padding-top:    3px;
+     padding-right:  10px;
+     text-align:     right;
++    font-size:      85%;
+ }
+ 
+ /* link styling */
+@@ -21,7 +26,7 @@
+     border:             solid black 1px;
+     border-style:       outset;
+     display:            block;
+-    font-size:          0.8em;
++    font-size:          85%;
+     font-weight:        bold;
+     list-style-image:   none;
+     list-style-type:    none;
+@@ -35,17 +40,20 @@
+ }
+ 
+ h1 {
+-    font-size: 1.1em;
++    font-size: 100%;
+     font-weight: bold;
++    text-align: left;
+ }
+ h2 {
+-    font-size: 1em;
++    font-size: 93%;
+     font-weight: bold;
++    text-align: left;
+ }
+ h3 {
+-    font-size: 1em;
++    font-size: 85%;
+     font-weight: bold;
+     font-style:     italic;
++    text-align: left;
+ }
+ 
+ 
+@@ -63,6 +71,7 @@
+ th {
+     text-align:         left;
+     font-weight:        bold;
++    font-size:          85%;
+ }
+ 
+ td {
+@@ -70,27 +79,6 @@
+     padding:            3px;
+ }
+ 
+-/* start : dojo menu styling */
+-.dojoMenuBar2 {
+-    border-top:1px solid #d4d4d4;
+-}
+-.dojoPopupMenu2 td {
+-    border: none;
+-}
+-/* end : dojo menu styling */
+-
+-.dojoTabPaneWrapper {
+-  padding : 10px 10px 10px 10px;
+-}
+-
+-/* dojo dialog styling - initially taken from dojo demo */
+-.dojoDialog {
+-    background : #eee;
+-    border : 1px solid #999;
+-    -moz-border-radius : 5px;
+-    padding : 4px;
+-}
+-
+ /* login dialog styling */
+ #login_dialog form {  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
+     margin: 0;
+@@ -123,7 +111,7 @@
+                               label aligns textarea better in IE */
+ }
+ #login_dialog form p {
+-    font-size: 0.8em;
++    font-size: 85%;
+ }
+ 
+ /* style classes */
+@@ -138,10 +126,11 @@
+ 
+ 
+ .forum_link {
++    font-size:      93%;
+     font-weight:    bold;
+ }
+ .forum_description {
+-    font-size:      0.8em;
++    font-size:      85%;
+ }
+ 
+ .topic_link {
+@@ -149,18 +138,18 @@
+ }
+ .topic_creator {
+     display:        block;
+-    font-size:      0.8em;
++    font-size:      85%;
+     /*text-align:     right;*/
+     float: right;
+ }
+ .forum_mini_pager {
+     display:        block;
+-    font-size:      0.8em;
++    font-size:      85%;
+     /*text-align:     right;*/
+     float: left;
+ }
+ .topic_last_post {
+-    font-size:      0.8em;
++    font-size:      85%;
+ }
+ 
+ .post_subject {
+@@ -170,12 +159,12 @@
+ .post_creator {
+     font-weight:    bold;
+     font-style:     italic;
+-    font-size:      0.9em;
++    font-size:      85%;
+ }
+ 
+ .post_created {
+     text-align:     right;
+-    font-size:      0.8em;
++    font-size:      85%;
+ }
+ 
+ .reply_post_message {
+@@ -195,26 +184,26 @@
+ .innerpost {
+     padding: 5px;
+     overflow: auto;
++    font-size:      85%;
+ }
+ 
+ .in_response_to {
+     margin-left:    20px;
+     font-weight:    bold;
+     font-style:     italic;
+-    font-size:      0.8em;
++    font-size:      85%;
+ }
+ 
+ .quoted_message {
+         border:         solid black 1pt;
+         background:     #ccc;
+-        /*font-family:    &quot;courier new&quot;, courier, fixed;*/
+         color:          #000;
+         margin-left:    20px;
+         margin-right:   0px;
+         margin-top:     0px;
+         margin-bottom:  0px;
+         padding:        2px;
+-        font-size:      0.9em;
++        font-size:      93%;
+ 
+         display: block;
+         overflow: auto;
+@@ -229,25 +218,27 @@
+ }
+ 
+ .thread_watch {
+-    font-size:          x-small;
++    font-size:          77%;
+ }
+ .pager_advanced {
+-    font-size:          x-small;
++    font-size:          77%;
+ }
+ .moderator_list {
+-    font-size:          x-small;
++    font-size:          77%;
++    text-align:         left;
+ }
+ 
+ .interval_ago {
+     display:            block;
+     text-align:         right;
+-    font-size:          x-small;
++    font-size:          77%;
+ }
+ 
+ .thread_header {
+     font-weight:        bold;
+     background:         #666;
+     padding:            4px;
++    text-align:         left;
+ }
+ 
+ .thread_header a {
+@@ -258,6 +249,7 @@
+     margin-left:        auto;
+     margin-right:       auto;
+     width:              80%;
++    font-size:          93%;
+ }
+ .forum_list td {
+     vertical-align:     top;
+@@ -274,7 +266,10 @@
+     vertical-align:     top;
+     border:             none;
+     border:             1px dashed #ddd;
++    font-size:          85%;
+ }
++.forum_view th {
++}
+ 
+ .recently_updated {
+     margin-left:        auto;
+@@ -372,12 +367,12 @@
+ .post_edited_alert {
+     font-weight:    bold;
+     font-style:     italic;
+-    font-size:      0.8em;
++    font-size:      85%;
+ }
+ 
+ .user_post_info {
+     background:         #ccc;
+-    font-size:          85%;
++    font-size:          77%;
+     margin-left:        auto;
+     margin-right:       auto;
+     text-align:         center;
+@@ -388,7 +383,7 @@
+ .quote {
+     background-color:   #F9FBFF;
+     border:             1px solid #333;
+-    font-size:          95%;
++    font-size:          85%;
+     margin:             0 0 2px 4px;
+     padding:            6px;
+     width:              85%;
+@@ -396,7 +391,7 @@
+ }
+ 
+ .post_info {
+-    font-size:          80%;
++    font-size:          77%;
+     line-height:        1.1em;
+     margin-top:         10px;
+     margin-bottom:      2px;
+@@ -517,7 +512,7 @@
+ .forumcode_code {
+     font-family:        monospace;
+     border:             1px solid #333;
+-    font-size:          95%;
++    font-size:          85%;
+     margin:             15px 20px 15px 20px;
+     padding:            6px;
+     width:              85%;
+@@ -534,7 +529,7 @@
+     background-color:   transparent;
+     font-family:        monospace;
+     border:             1px dashed #333;
+-    font-size:          95%;
++    font-size:          85%;
+     margin:             15px 20px 15px 20px;
+     padding:            6px;
+     width:              85%;
+@@ -548,7 +543,7 @@
+     font-family:        monospace;
+     font-style:         italic;
+     border:             1px dotted #333;
+-    font-size:          95%;
++    font-size:          85%;
+     margin:             15px 20px 15px 20px;
+     padding:            6px;
+     width:              85%;
+
+Modified: trunk/root/css/layout27.css
+===================================================================
+--- trunk/root/css/layout27.css	2007-11-12 20:30:09 UTC (rev 665)
++++ trunk/root/css/layout27.css	2007-11-12 20:30:26 UTC (rev 666)
+@@ -1,14 +1,13 @@
+ html,body{margin:0;padding:0}
+-body{font: 76% arial,sans-serif}
++body{font-size: 85%; font-family: stockstill,tahoma,arial,sans-serif}
+ p{margin:0 10px 10px}
+ /*a{display:block;color: #981793;padding:10px}*/
+-div#header h1{height:80px;line-height:80px;margin:0;
+-  padding-left:10px;background: #EEE;color: #79B30B}
++div#header h1{height:80px;line-height:80px;margin:0; padding-left:10px;background: #EEE;color: #79B30B}
+ div#content { margin-top: 20px; margin-left: 20px; }
+ div#content p{line-height:1.4}
+ div#navigation{background:transparent}
+ div#extra{background:transparent}
+-div#footer{background: #333;color: #FFF; font-size: 80%;}
++div#footer{background: #333;color: #FFF; font-size: 77%;}
+ div#footer p{margin:0;padding:5px 10px}
+ div#footer span{margin:0;padding:5px 10px}
+ div#footer a{color: #ccc};
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000553.html">[Parley-svn] r665 - / trunk/lib
+</A></li>
+	<LI>Next message: <A HREF="000555.html">[Parley-svn] r667 - / trunk trunk/lib/Parley/Controller	trunk/root/base/shared
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#554">[ date ]</a>
+              <a href="thread.html#554">[ thread ]</a>
+              <a href="subject.html#554">[ subject ]</a>
+              <a href="author.html#554">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

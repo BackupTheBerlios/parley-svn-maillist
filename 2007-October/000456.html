@@ -1,0 +1,456 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r568 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r568%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User%20trunk/lib/Parley/I18N&In-Reply-To=%3C200710222027.l9MKR3nn001394%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000455.html">
+   <LINK REL="Next"  HREF="000457.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r568 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r568%20-%20/%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User%20trunk/lib/Parley/I18N&In-Reply-To=%3C200710222027.l9MKR3nn001394%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r568 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct 22 22:27:03 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000455.html">[Parley-svn] r567 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+        <LI>Next message: <A HREF="000457.html">[Parley-svn] r569 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#456">[ date ]</a>
+              <a href="thread.html#456">[ thread ]</a>
+              <a href="subject.html#456">[ subject ]</a>
+              <a href="author.html#456">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-22 22:27:02 +0200 (Mon, 22 Oct 2007)
+New Revision: 568
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+   trunk/lib/Parley/I18N/en.po
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3995 at wiggin</A>:  chisel | 2007-10-19 08:31:20 +0100
+ + the last batch of i18n changes for the application controllers (until I find all the mistakes...)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3994
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3995
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2007-10-22 20:26:45 UTC (rev 567)
++++ trunk/lib/Parley/Controller/Post.pm	2007-10-22 20:27:02 UTC (rev 568)
+@@ -50,7 +50,7 @@
+ 
+     # you can't edit a locked post
+     elsif ($c-&gt;_current_post-&gt;thread-&gt;locked) {
+-        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{EDIT LOCKED POST}) 
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{EDIT LOCKED POST});
+         return;
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-10-22 20:26:45 UTC (rev 567)
++++ trunk/lib/Parley/Controller/Root.pm	2007-10-22 20:27:02 UTC (rev 568)
+@@ -25,6 +25,7 @@
+     # i18n poking
+     $c-&gt;log-&gt;info(join q{ }, @{ $c-&gt;languages });
+     $c-&gt;log-&gt;info( $c-&gt;localize(&quot;non-integer post id passed&quot;) );
++    $c-&gt;log-&gt;info( $c-&gt;localize(q{Your [_1] Username}, 'Jimbob') );
+ 
+     # get a list of (all/available) forums
+     $c-&gt;stash-&gt;{available_forums} = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2007-10-22 20:26:45 UTC (rev 567)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2007-10-22 20:27:02 UTC (rev 568)
+@@ -120,7 +120,7 @@
+ 
+     # we should have the reset UID in the URL
+     if (not defined $reset_uid) {
+-        parley_warn($c, q{Incomplete password reset URL});
++        parley_warn($c, $c-&gt;localize(q{PASSWORD RESET URL INCOMPLETE}));
+         #$c-&gt;stash-&gt;{error}{message} = q{Incomplete password reset URL};
+         return;
+     }
+@@ -134,7 +134,7 @@
+ 
+     # if we don't have any matches then the id was bogus
+     if (not defined $pwd_reset) {
+-        $c-&gt;stash-&gt;{error}{message} = q{Bogus password reset ID};
++        $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{PASSWORD RESET ID BOGUS});
+         return;
+     }
+ 
+@@ -160,10 +160,11 @@
+         # no messages, means that all should be well
+         else {
+             # set an informative message to display on the login screen
+-            $c-&gt;session-&gt;{login_message} = q{
+-                Your password has been set to the new value you entered.
+-                Please log-in using your username and your &lt;b&gt;new&lt;/b&gt; password.
+-            };
++            $c-&gt;session-&gt;{login_message} = 
++                $c-&gt;localize(q{PASSWORD RESET SUCCESS})
++                . q{ }
++                .  $c-&gt;localize(q{LOGIN USE NEW})
++            ;
+             # send the user to the login screen
+             $c-&gt;detach( '/user/login' );
+             return;
+@@ -214,8 +215,8 @@
+     }
+     else {
+         # incorrect username
+-        push @messages, 'Incorrect username supplied';
+-        parley_warn($c, q{Incorrect username supplied});
++        push @messages, $c-&gt;localize(q{USERNAME INCORRECT});
++        parley_warn($c, $c-&gt;localize(q{USERNAME INCORRECT}));
+         return;
+     }
+ 
+@@ -235,7 +236,10 @@
+             person      =&gt; $person,
+             headers =&gt; {
+                 from    =&gt; $c-&gt;application_email_address(),
+-                subject =&gt; qq{Your @{[$c-&gt;config-&gt;{name}]} username},
++                subject =&gt; $c-&gt;localise(
++                    q{Your [_1] Username},
++                    $c-&gt;config-&gt;{name}
++                ),
+             },
+         }
+     );
+@@ -274,7 +278,11 @@
+             person      =&gt; $person,
+             headers =&gt; {
+                 from    =&gt; $c-&gt;application_email_address(),
+-                subject =&gt; qq{Reset your @{[$c-&gt;config-&gt;{name}]} password},
++                subject =&gt; #qq{Reset your @{[$c-&gt;config-&gt;{name}]} password},
++                    $c-&gt;localise(
++                        q{Reset Your [_1] Password},
++                        $c-&gt;config-&gt;{name}
++                    ),
+             },
+             template_data =&gt; {
+                 pwd_reset =&gt; $pwd_reset,
+@@ -334,7 +342,7 @@
+     # make sure we don't have too many matches
+     if ($matches-&gt;count &gt; 1) {
+         #push @messages, q{Database lookup returned too many records};
+-        parley_warn($c, q{Database lookup returned too many records});
++        parley_warn($c, $c-&gt;localize(q{DATABASE TOO MANY RECORDS}));
+         $c-&gt;log-&gt;error(q{Looks like the SQL for password reset is a bit borked});
+         $c-&gt;log-&gt;error(
+                 q{Lookup returned }
+@@ -348,7 +356,7 @@
+ 
+     # make sure we don't have too few matches
+     elsif ($matches-&gt;count &lt; 1) {
+-        parley_warn($c, q{There are no users matching that information});
++        parley_warn($c, $c-&gt;localize(q{NO MATCHING USERS}));
+     }
+ 
+     # otherwise, do the work
+@@ -364,7 +372,7 @@
+         # do the actual password reset
+         $email_send_status = $self-&gt;_user_password_reset($c, $person);
+         if (not $email_send_status) {
+-            parley_warn($c, q{Failed to send password reset email});
++            parley_warn($c, $c-&gt;localize(q{PASWORD EMAIL SEND FAILED}));
+         }
+     }
+ 
+@@ -396,9 +404,9 @@
+         }
+     );
+ 
+-    # as far as I know, no md5_hex value is 'X', so set the hexed password to X
++    # as far as I know, no md5_hex value is 'BeenReset', so set the hexed password to X
+     # to prevent anyone logging in after a reset request
+-    $person-&gt;authentication-&gt;password('X');
++    $person-&gt;authentication-&gt;password('BeenReset');
+     # the person is no longer authenticated
+     $person-&gt;authentication-&gt;authenticated(0);
+     # update the person's record
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2007-10-22 20:26:45 UTC (rev 567)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2007-10-22 20:27:02 UTC (rev 568)
+@@ -72,7 +72,8 @@
+ 
+     # we should have an auth-id in the url
+     if (not defined $auth_id) {
+-        $c-&gt;stash-&gt;{error}{message} = q{Incomplete authentication URL};
++        $c-&gt;stash-&gt;{error}{message}
++            = $c-&gt;localize(q{Incomplete authentication URL});
+         return;
+     }
+ 
+@@ -154,15 +155,18 @@
+ 
+     # is the requested username already in use?
+     if ($self-&gt;_username_exists($c, $valid_results-&gt;{new_username})) {
+-        push @messages, q{The username you have chosen is already in use. Please try a different one.};
++        push @messages, $c-&gt;localize(q{USERNAME IN USE});
+     }
+     # is the requested email address already in use?
+     if ($self-&gt;_email_exists($c, $valid_results-&gt;{email})) {
+-        push @messages, q{The email address you have chosen is already in use.&lt;br /&gt;Please try a different one, or use the &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt; page.};
++        push @messages, $c-&gt;localize(
++            q{EMAIL IN USE [_1],
++            'user/password/forgotten'},
++        );
+     }
+     # is the requested forum name already in use?
+     if ($self-&gt;_forumname_exists($c, $valid_results-&gt;{forum_name})) {
+-        push @messages, q{The forum name you have chosen is already in use. Please try a different one.};
++        push @messages, $c-&gt;localize(q{FORUMNAME IN USE});
+     }
+ 
+     # if we DON'T have any messages, then there were no errors, so we can try
+@@ -247,7 +251,10 @@
+             person      =&gt; $person,
+             headers =&gt; {
+                 from    =&gt; $c-&gt;application_email_address(),
+-                subject =&gt; qq{Activate your @{[$c-&gt;config-&gt;{name}]} registration},
++                subject =&gt; $c-&gt;localize(
++                    q{Activate Your [_1] Registration},
++                    $c-&gt;config-&gt;{name}
++                ),
+             },
+             template_data =&gt; {
+                 regauth =&gt; $invitation,
+@@ -269,13 +276,15 @@
+ 
+     # deal with missing/invalid fields
+     if ($c-&gt;form-&gt;has_missing()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        $c-&gt;stash-&gt;{view}{error}{message}
++            = $c-&gt;localize(q{DFV FILL REQUIRED});
+         foreach my $f ( $c-&gt;form-&gt;missing ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
+     }
+     elsif ($c-&gt;form-&gt;has_invalid()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        $c-&gt;stash-&gt;{view}{error}{message}
++            = $c-&gt;localize(q{DFV FIELDS INVALID});
+         foreach my $f ( $c-&gt;form-&gt;invalid ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
+
+Modified: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-22 20:26:45 UTC (rev 567)
++++ trunk/lib/Parley/I18N/en.po	2007-10-22 20:27:02 UTC (rev 568)
+@@ -4,6 +4,9 @@
+ msgid &quot;ACCEPT TERMS&quot;
+ msgstr &quot;You need to accept the Terms and Conditions below to continue using the site&quot;
+ 
++msgid &quot;Activate Your %s Registration&quot;
++msgstr &quot;Activate Your %s Registration&quot;
++
+ msgid &quot;Active&quot;
+ msgstr &quot;Active&quot;
+ 
+@@ -85,6 +88,12 @@
+ msgid &quot;Current User&quot;
+ msgstr &quot;Current User&quot;
+ 
++msgid &quot;DATABASE CRITERIA MISSING&quot;
++msgstr &quot;Missing criteria in database lookup&quot;
++
++msgid &quot;DATABASE TOO MANY RECORDS&quot;
++msgstr &quot;The database lookup returned too many records&quot;
++
+ msgid &quot;Default&quot;
+ msgstr &quot;Default&quot;
+ 
+@@ -121,6 +130,9 @@
+ msgid &quot;EMAIL FAILED STORE&quot;
+ msgstr &quot;Sorry, we are currently unable to store your information. Please try again later.&quot;
+ 
++msgid &quot;EMAIL IN USE %s&quot;
++msgstr &quot;The email address you have chosen is already in use.&lt;br /&gt;Please try a different one, or use the &lt;a href=\&quot;%s\&quot;&gt;Forgotten Password&lt;/a&gt; page.&quot;
++
+ msgid &quot;EMAIL SEND PROBLEM&quot;
+ msgstr &quot;There was a problem sending an email from the system&quot;
+ 
+@@ -169,6 +181,9 @@
+ msgid &quot;Forum Summary&quot;
+ msgstr &quot;Forum Summary&quot;
+ 
++msgid &quot;FORUMNAME IN USE&quot;
++msgstr &quot;The forum name you have chosen is already in use. Please try a different one.&quot;
++
+ msgid &quot;FORUMNAME USED&quot;
+ msgstr &quot;has already been used by another user.&quot;
+ 
+@@ -184,6 +199,9 @@
+ msgid &quot;Help&quot;
+ msgstr &quot;Help&quot;
+ 
++msgid &quot;Incomplete authentication URL&quot;
++msgstr &quot;Incomplete authentication URL&quot;
++
+ msgid &quot;Incomplete URL&quot;
+ msgstr &quot;Incomplete URL&quot;
+ 
+@@ -232,6 +250,9 @@
+ msgid &quot;LOGIN THREAD CONTINUE&quot;
+ msgstr &quot;You must be logged in before you can use the thread continuation function.&quot;
+ 
++msgid &quot;LOGIN USE NEW&quot;
++msgstr &quot;Please log-in using your username and your &lt;u&gt;new&lt;/u&gt; password.&quot;
++
+ msgid &quot;LOGIN VIEW WATCHES&quot;
+ msgstr &quot;You must be logged in before you can view your watched threads.&quot;
+ 
+@@ -289,6 +310,9 @@
+ msgid &quot;No posts&quot;
+ msgstr &quot;No posts&quot;
+ 
++msgid &quot;NO MATCHING USERS&quot;
++msgstr &quot;There are no users matching that information&quot;
++
+ msgid &quot;NO RECENT THREADS&quot;
+ msgstr &quot;No recent threads to display&quot;
+ 
+@@ -307,14 +331,17 @@
+ msgid &quot;No User Specified&quot;
+ msgstr &quot;No User Specified&quot;
+ 
++msgid &quot;non-integer forum id passed&quot;
++msgstr &quot;Non-integer forum id passed&quot;
++
+ msgid &quot;non-integer post id passed&quot;
+ msgstr &quot;Non-integer post id passed&quot;
+ 
+ msgid &quot;non-integer thread id passed&quot;
+ msgstr &quot;Non-integer thread id passed&quot;
+ 
+-msgid &quot;non-integer forum id passed&quot;
+-msgstr &quot;Non-integer forum id passed&quot;
++msgid &quot;non-integer user id passed&quot;
++msgstr &quot;Non-integer user id passed&quot;
+ 
+ msgid &quot;None&quot;
+ msgstr &quot;None&quot;
+@@ -334,6 +361,9 @@
+ msgid &quot;PASSWORD DETAILS SENT&quot;
+ msgstr &quot;You should recieve an email in the next few minutes with further instructions to reset your password.&quot;
+ 
++msgid &quot;PASSWORD EMAIL SEND FAILED&quot;
++msgstr &quot;The application failed to send the password reset email.&quot;
++
+ msgid &quot;PASSWORD ENTER DETAILS&quot;
+ msgstr &quot;Please enter your username and password&quot;
+ 
+@@ -349,9 +379,15 @@
+ msgid &quot;PASSWORD RESET&quot;
+ msgstr &quot;To reset your password enter your username and your desired password in the fields below, then click the &lt;em&gt;reset my password&lt;/em&gt; button to proceed.&quot;
+ 
++msgid &quot;PASSWORD RESET ID BOGUS&quot;
++msgstr &quot;Bogus password reset ID&quot;
++
+ msgid &quot;PASSWORD RESET SUCCESS&quot;
+ msgstr &quot;Your password has been set to the value you entered.&quot;
+ 
++msgid &quot;PASSWORD RESET URL INCOMPLETE&quot;
++msgstr &quot;Incomplete password reset URL.&quot;
++
+ msgid &quot;PASSWORD STORES&quot;
+ msgstr &quot;stores an encrypted copy of your password or email address you signed up with.&quot;
+ 
+@@ -445,6 +481,9 @@
+ msgid &quot;Return to the forum&quot;
+ msgstr &quot;Return to the forum&quot;
+ 
++msgid &quot;Reset Your %s Password&quot;
++msgstr &quot;Reset Your %s Password&quot;
++
+ msgid &quot;said&quot;
+ msgstr &quot;said&quot;
+ 
+@@ -619,6 +658,12 @@
+ msgid &quot;User Profile&quot;
+ msgstr &quot;User Profile&quot;
+ 
++msgid &quot;USERNAME IN USE&quot;
++msgstr &quot;The username you have chosen is already in use. Please try a different one.&quot;
++
++msgid &quot;USERNAME INCORRECT&quot;
++msgstr &quot;Incorrect Username Supplied.&quot;
++
+ msgid &quot;Username&quot;
+ msgstr &quot;Username&quot;
+ 
+@@ -661,7 +706,10 @@
+ msgid &quot;Your Preferences&quot;
+ msgstr &quot;Your Preferences&quot;
+ 
++msgid &quot;Your %s Username&quot;
++msgstr &quot;Your %s Username&quot;
+ 
++
+ # UNITS OF TIME
+ 
+ msgid &quot;second&quot;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000455.html">[Parley-svn] r567 - / trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+	<LI>Next message: <A HREF="000457.html">[Parley-svn] r569 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#456">[ date ]</a>
+              <a href="thread.html#456">[ thread ]</a>
+              <a href="subject.html#456">[ subject ]</a>
+              <a href="author.html#456">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

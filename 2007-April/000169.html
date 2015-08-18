@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r281 - / trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r281%20-%20/%20trunk/script&In-Reply-To=%3C200704050844.l358iISK030998%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000168.html">
+   <LINK REL="Next"  HREF="000170.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r281 - / trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r281%20-%20/%20trunk/script&In-Reply-To=%3C200704050844.l358iISK030998%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r281 - / trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Apr  5 10:44:18 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000168.html">[Parley-svn] r280 - / trunk/root/email_templates
+</A></li>
+        <LI>Next message: <A HREF="000170.html">[Parley-svn] r282 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#169">[ date ]</a>
+              <a href="thread.html#169">[ thread ]</a>
+              <a href="subject.html#169">[ subject ]</a>
+              <a href="author.html#169">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-05 10:44:18 +0200 (Thu, 05 Apr 2007)
+New Revision: 281
+
+Modified:
+   /
+   trunk/script/parley_email_engine.pl
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3050 at wiggin</A>:  chisel | 2007-04-05 08:26:30 +0100
+ / moved use() into BEGIN{}
+ + added script version number
+ / include script version in X-Application
+ + added _common_mail_options()
+ / replaced common MIME::Lite options in -&gt;new() calls with %{ _common_mail_options() }
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3046
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3050
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/script/parley_email_engine.pl
+===================================================================
+--- trunk/script/parley_email_engine.pl	2007-04-04 21:22:39 UTC (rev 280)
++++ trunk/script/parley_email_engine.pl	2007-04-05 08:44:18 UTC (rev 281)
+@@ -4,24 +4,25 @@
+ use warnings;
+ 
+ BEGIN {
+-}
++    # use the lib directory relative to ourself
++    use FindBin;
++    use lib &quot;$FindBin::Bin/../lib&quot;;
+ 
+-# use the lib directory relative to ourself
+-use FindBin;
+-use lib &quot;$FindBin::Bin/../lib&quot;;
++    # for building email(s)
++    use MIME::Lite;
+ 
+-# for building email(s)
+-use MIME::Lite;
++    # since we're going to be a daemon ...
++    use Proc::Daemon;
++    use Proc::PID::File;
+ 
+-# since we're going to be a daemon ...
+-use Proc::Daemon;
+-use Proc::PID::File;
++    # somewhere to send stuff
++    use Sys::Syslog qw( :DEFAULT :standard :macros );
+ 
+-# somewhere to send stuff
+-use Sys::Syslog qw( :DEFAULT :standard :macros );
++    # our in to the database ...
++    use Parley::Schema;
++}
+ 
+-# our in to the database ...
+-use Parley::Schema;
++use version; our $VERSION = qv('0.0.1');
+ 
+ # whether we should be exiting
+ our $exit = 0;
+@@ -186,20 +187,31 @@
+     return;
+ }
+ 
++sub _common_mail_options {
++    my $queue_item = shift;
++
++    my %options = (
++        From            =&gt; $queue_item-&gt;sender(),
++        To              =&gt; nice_to_header( $queue_item-&gt;recipient() ),
++        Subject         =&gt; $queue_item-&gt;subject(),
++        'X-Application' =&gt; qq{parley_email_engine ($VERSION)},
++    );
++
++    return \%options;
++}
++
++
+ sub build_text_email {
+     my $queue_item = shift;
+     my ($msg);
+ 
+     # create a straight-forward text email
+     $msg = MIME::Lite-&gt;new(
+-        From            =&gt; $queue_item-&gt;sender(),
+-        To              =&gt; nice_to_header( $queue_item-&gt;recipient() ),
+-        Subject         =&gt; $queue_item-&gt;subject(),
+-        'X-Application' =&gt; 'parley_email_engine',
+-        Encoding        =&gt; 'quoted-printable',
++        %{ _common_mail_options($queue_item) },
+ 
+         Type        =&gt; 'TEXT',
+         Data        =&gt; $queue_item-&gt;text_content(),
++        Encoding    =&gt; 'quoted-printable',
+     )
+         or die $!;
+ 
+@@ -212,10 +224,7 @@
+ 
+     # create the multipart container
+     $msg = MIME::Lite-&gt;new(
+-        From            =&gt; $queue_item-&gt;sender(),
+-        To              =&gt; nice_to_header( $queue_item-&gt;recipient() ),
+-        Subject         =&gt; $queue_item-&gt;subject(),
+-        'X-Application' =&gt; 'parley_email_engine',
++        %{ _common_mail_options($queue_item) },
+ 
+         Type    =&gt; 'multipart/alternative',
+     )
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000168.html">[Parley-svn] r280 - / trunk/root/email_templates
+</A></li>
+	<LI>Next message: <A HREF="000170.html">[Parley-svn] r282 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#169">[ date ]</a>
+              <a href="thread.html#169">[ thread ]</a>
+              <a href="subject.html#169">[ subject ]</a>
+              <a href="author.html#169">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r543 - / trunk/root/base/menu
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r543%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200710112129.l9BLTYJW012011%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000430.html">
+   <LINK REL="Next"  HREF="000432.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r543 - / trunk/root/base/menu</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r543%20-%20/%20trunk/root/base/menu&In-Reply-To=%3C200710112129.l9BLTYJW012011%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r543 - / trunk/root/base/menu">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Oct 11 23:29:34 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000430.html">[Parley-svn] r542 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000432.html">[Parley-svn] r544 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#431">[ date ]</a>
+              <a href="thread.html#431">[ thread ]</a>
+              <a href="subject.html#431">[ subject ]</a>
+              <a href="author.html#431">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-11 23:29:34 +0200 (Thu, 11 Oct 2007)
+New Revision: 543
+
+Modified:
+   /
+   trunk/root/base/menu/menubar
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3932 at wiggin</A>:  chisel | 2007-10-10 19:27:09 +0100
+ / changed menu name to &quot;Site&quot;
+ + added Site sub-menu with link to Services
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3931
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3932
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-10-11 21:28:58 UTC (rev 542)
++++ trunk/root/base/menu/menubar	2007-10-11 21:29:34 UTC (rev 543)
+@@ -109,11 +109,20 @@
+             &lt;/li&gt;
+             [% END %]
+             [% IF site_moderator %]
+-            &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Moderate&lt;/a&gt;
++            &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Site&lt;/a&gt;
+                 &lt;div id=&quot;menu_site_moderate&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
+                         &lt;ul&gt;
+                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;terms/add&quot;&gt;Add T&amp;Cs&lt;/a&gt;&lt;/li&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;#&quot;&gt;Site&lt;/a&gt;
++                                &lt;div id=&quot;site&quot; class=&quot;yuimenu&quot;&gt;
++                                    &lt;div class=&quot;bd&quot;&gt;
++                                        &lt;ul class=&quot;first-of-type&quot;&gt;
++                                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel&quot; href=&quot;site/services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
++                                        &lt;/ul&gt;            
++                                    &lt;/div&gt;
++                                &lt;/div&gt;                    
++                            &lt;/li&gt;
+                         &lt;/ul&gt;
+                     &lt;/div&gt;
+                 &lt;/div&gt;                                        
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000430.html">[Parley-svn] r542 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000432.html">[Parley-svn] r544 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#431">[ date ]</a>
+              <a href="thread.html#431">[ thread ]</a>
+              <a href="subject.html#431">[ subject ]</a>
+              <a href="author.html#431">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

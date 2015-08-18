@@ -1,0 +1,792 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r238 - / branches/schema_based/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r238%20-%20/%20branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200609121459.k8CExhZJ028616%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000125.html">
+   <LINK REL="Next"  HREF="000127.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r238 - / branches/schema_based/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r238%20-%20/%20branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200609121459.k8CExhZJ028616%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r238 - / branches/schema_based/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Sep 12 16:59:43 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000125.html">[Parley-svn] r237 - / branches/schema_based
+</A></li>
+        <LI>Next message: <A HREF="000127.html">[Parley-svn] r239 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#126">[ date ]</a>
+              <a href="thread.html#126">[ thread ]</a>
+              <a href="subject.html#126">[ subject ]</a>
+              <a href="author.html#126">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-12 16:59:43 +0200 (Tue, 12 Sep 2006)
+New Revision: 238
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r872 at ferrari</A>:  chisel | 2006-09-06 10:08:57 +0100
+ + added %dfv_profile_for
+ + added actions: add, next_post, watch
+ / extended actions: reply, view
+ + added (private) methods: _add_new_reply, _add_new_thread, _get_thread_reply_post, _increase_post_count, _increase_thread_view_count, _watching_thread, _update_last_post, _update_person_post_info, _watching_thread
+ / modified (private) methods: _update_thread_view
+ + added transaction functions: _txn_add_new_reply, _txn_add_new_thread
+ + extended POD
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:871
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:872
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-09-12 14:59:39 UTC (rev 237)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-09-12 14:59:43 UTC (rev 238)
+@@ -6,9 +6,75 @@
+ use Data::SpreadPagination;
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++my %dfv_profile_for = (
++    # DFV validation profile for adding a new topic
++    new_topic =&gt; {
++        required    =&gt; [qw( thread_subject thread_message )],
++        filters     =&gt; [qw( trim )],
++        msgs =&gt; {
++            format  =&gt; q{%s},
++            missing =&gt; q{One or more required fields are missing},
++        },
++    },
++
++    # DFV validation profile for adding a reply to an existing topic
++    new_reply =&gt; {
++        required    =&gt; [qw( thread_message )],
++        optional    =&gt; [qw( thread_subject )],
++        filters     =&gt; [qw( trim )],
++    },
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Controller Actions
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++sub add : Local {
++    my ($self, $c) = @_;
++
++    # make sure we're logged in
++    $c-&gt;login_if_required(q{You must be logged in before you can add a new topic.});
++
++    # make sure we're authenticated
++    # XXX
++
++    # if we have a form POST ...
++    if (defined $c-&gt;request-&gt;method() and $c-&gt;request-&gt;method() eq 'POST') {
++        $self-&gt;_add_new_thread($c);
++    }
++    # other wise we continue merrily on our way, and simply display the
++    # thread/add page
++    else {
++        # thread/add template shown automagically
++    }
++}
++
++sub next_post : Local {
++    my ($self, $c) = @_;
++
++    # make sure we're logged in
++    $c-&gt;login_if_required(q{You must be logged in before you can use the thread continuation function});
++
++    # get the most recent post the user has seen
++    my $last_viewed_post = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;last_post_viewed_in_thread(
++        $c-&gt;_authed_user(),
++        $c-&gt;_current_thread(),
++    );
++
++    # get the post after the last one viewed, and make this the current post
++    $c-&gt;_current_post(
++        $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;next_post(
++            $last_viewed_post
++        )
++    );
++
++    # view the next post (now the current post)
++    $c-&gt;detach('/post/view');
++}
++
+ sub reply : Local {
+     my ($self, $c) = @_;
+ 
+@@ -16,8 +82,32 @@
+     $c-&gt;login_if_required(q{You must be logged in before you can add a reply.});
+ 
+     # make sure we're authenticated
++    # XXX
+ 
+-    $c-&gt;stash-&gt;{error}{message} = q{This action isn't completed yet.};
++    # if we have a current post, then we're performing a quoted reply
++    # (otherwise we should have the thread that we're adding a reply to)
++    # are we quoting a post that we're replying to?
++    if (defined $c-&gt;_current_post()) {
++        $c-&gt;stash-&gt;{quote_post} = $c-&gt;_current_post();
++    }
++
++    # get the post we're replying to
++    $self-&gt;_get_thread_reply_post($c);
++
++    # if we have a form POST ...
++    if (defined $c-&gt;request-&gt;method()
++            and $c-&gt;request-&gt;method() eq 'POST'
++            and defined $c-&gt;request-&gt;param('post_reply')
++    ) {
++        $c-&gt;log-&gt;debug('calling: _add_new_reply($c)');
++        $self-&gt;_add_new_reply($c);
++    }
++    # other wise we continue merrily on our way, and simply display the
++    # thread/reply page
++    else {
++        $c-&gt;log-&gt;debug('allowing fall-through to view in reply()');
++        # thread/reply template shown automagically
++    }
+ }
+ 
+ sub view : Local {
+@@ -47,6 +137,13 @@
+     );
+ 
+     ##################################################
++    # updates triggered by viewing a thread
++    ##################################################
++    {
++        $self-&gt;_increase_thread_view_count($c);
++    }
++
++    ##################################################
+     # some updates for logged in users
+     ##################################################
+     if ($c-&gt;_authed_user) {
+@@ -73,10 +170,284 @@
+     1; # return 'true'
+ }
+ 
++sub watch :Local {
++    my ($self, $c) = @_;
++
++    # the watch parameter tells us if we're adding or removing a watch
++    # if it's not specified, default action os to ADD a watch
++    my $watched = $c-&gt;request-&gt;param('watch');
++    if (not defined $watched) {
++        $watched = 1;
++    }
++
++    # need to be logged in to watch threads
++    $c-&gt;login_if_required($c, q{You must be logged in before you can watch a topic.});
++
++    # get the ThreadView so we can update it
++    my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find(
++        {
++            person  =&gt; $c-&gt;_authed_user()-&gt;id(),
++            thread  =&gt; $c-&gt;_current_thread()-&gt;id(),
++        }
++    );
++
++    # if we couldn't find a thread view, then something odd is happening -
++    # logged in users should always have a thread_view entry
++    if (not defined $thread_view) {
++        $c-&gt;stash-&gt;{error}{message} = q{Failed to watch requested thread};
++        $c-&gt;log-&gt;error(q{User doesn't have a thread_view entry});
++        return;
++    }
++
++    # we have a threac_view entry for the user, so update it, and redirect the
++    # user back to the thread
++
++    # update the watched status
++    $thread_view-&gt;watched( $watched );
++    $thread_view-&gt;update();
++
++    # if we have a current post we can use that to return to the &quot;right
++    # place&quot; in the thread
++    if (defined $c-&gt;_current_post()) {
++        $c-&gt;detach('/post/view');
++    }
++    # otherwise we want to redirect back to the same page in the current
++    # thread
++    else {
++        my ($page_number, $redirect_url);
++
++        # page to show - either a param, or show the first
++        $page_number = $c-&gt;request-&gt;param('page') || 1;
++
++        # build the URL to redirect to
++        $redirect_url = $c-&gt;uri_for(
++            '/thread',
++            'view?thread='
++            . $c-&gt;_current_thread()-&gt;id()
++            . &quot;&amp;page=$page_number&quot;
++        );
++
++        # redirect to the apropriate place
++        $c-&gt;response-&gt;redirect( $redirect_url );
++        return;
++    }
++}
++
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Controller (Private/Helper) Methods
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++sub _add_new_reply {
++    my ($self, $c) = @_;
++    my ($new_reply);
++
++    # validate the form data
++    $c-&gt;form(
++        $dfv_profile_for{new_reply}
++    );
++
++    # deal with missing/invalid fields
++    if ($c-&gt;form-&gt;has_missing()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c-&gt;form-&gt;missing ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c-&gt;form-&gt;has_invalid()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise, the form data is ok ...
++    else {
++        # try to add the reply to the thread
++        eval {
++            $new_reply = $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                sub { return $self-&gt;_txn_add_new_reply($c) }
++            );
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die &quot;something terrible has happened!&quot;  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++            $c-&gt;log-&gt;error( $@ );
++            return;
++        }
++    }
++
++    # getting here means we validated the form, and added required data for the
++    # new thread
++
++    # set the current post
++    $c-&gt;_current_post( $new_reply );
++
++    # view the &quot;next post&quot; in the new thread
++    $c-&gt;detach('next_post');
++}
++
++sub _add_new_thread {
++    my ($self, $c) = @_;
++    my ($new_thread);
++
++    # validate the form data
++    $c-&gt;form(
++        $dfv_profile_for{new_topic}
++    );
++
++    # deal with missing/invalid fields
++    if ($c-&gt;form-&gt;has_missing()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c-&gt;form-&gt;missing ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c-&gt;form-&gt;has_invalid()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise, the form data is ok ...
++    else {
++        # try to add the thread
++        eval {
++            $new_thread = $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++                sub { return $self-&gt;_txn_add_new_thread($c) }
++            );
++        };
++        # deal with any transaction errors
++        if ($@) {                                   # Transaction failed
++            die &quot;something terrible has happened!&quot;  #
++                if ($@ =~ /Rollback failed/);       # Rollback failed
++
++            $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++            $c-&gt;log-&gt;error( $@ );
++            return;
++        }
++    }
++
++    # getting here means we validated the form, and added required data for the
++    # new thread
++
++    # set the current thread
++    $c-&gt;_current_thread( $new_thread );
++
++    # view the &quot;next post&quot; in the new thread
++    $c-&gt;detach('next_post');
++}
++
++sub _get_thread_reply_post {
++    my ($self, $c) = @_;
++    my ($posts);
++
++    # it would be good to display the relevant post in the thread, so people know
++    # what they're replying to
++    # - if adding a reply, assume the first post
++    # - if we have a post value, then that's the one we're replying to
++    if (defined $c-&gt;_current_post()) {
++        # get the specific post we're responding to
++        $posts = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
++            {
++                post_id     =&gt; $c-&gt;_current_post()-&gt;id(),
++            },
++            {
++                rows        =&gt; 1,
++            }
++        );
++    }
++    elsif (defined $c-&gt;_current_thread()) {
++        # get the first post in the thread
++        $posts = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
++            {
++                thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++            },
++            {
++                order_by    =&gt; 'created ASC',
++                rows        =&gt; 1,
++            }
++        );
++    }
++    else {
++        $c-&gt;stash-&gt;{error}{message} = q{No information for thread or post to reply to};
++        return;
++    }
++
++    # if we don't have one post, something really odd happened
++    if (1 != $posts-&gt;count()) {
++        $c-&gt;stash-&gt;{error}{message} = q{I don't know how you managed to reply to a thread with no posts};
++        return;
++    }
++
++    # save the first (and only) post from our results
++    $c-&gt;stash-&gt;{responding_to_post} = $posts-&gt;first();
++
++    # be successful
++    return 1;
++}
++
++sub _increase_post_count {
++    my ($self, $c, $thread) = @_;
++
++    # make the update in a transaction
++    eval {
++        # make sure $post_count is sane
++        my $post_count = $thread-&gt;post_count() || 0;
++
++        # increase the number of replies for the thread
++        $thread-&gt;post_count(
++            $post_count + 1
++        );
++        $thread-&gt;update();
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die &quot;something terrible has happened!&quot;  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++        $c-&gt;log-&gt;error( $@ );
++        return;
++    }
++}
++
++
++sub _increase_thread_view_count {
++    my ($self, $c) = @_;
++
++    # do nothing if we don't have a current_thread
++    if (not defined $c-&gt;_current_thread) {
++        $c-&gt;log-&gt;error( q{Can't increase view count for undefined thread} );
++        return;
++    }
++
++    # increase the post count
++    eval {
++        $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++            sub {
++                $c-&gt;log-&gt;info( q{Increasing view count} );
++                $c-&gt;_current_thread-&gt;view_count(
++                    $c-&gt;_current_thread-&gt;view_count + 1
++                );
++                $c-&gt;_current_thread-&gt;update;
++            }
++        )
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die &quot;something terrible has happened!&quot;  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++        $c-&gt;log-&gt;error( $@ );
++        return;
++    }
++}
++
+ sub _thread_view_pager {
+     my ($self, $c) = @_;
+ 
+@@ -109,22 +480,67 @@
+     ;
+ }
+ 
+-sub _watching_thread {
+-    my ($self, $c) = @_;
+-    
+-    # find out if the user is watching the thread, and store it in the stash
+-    $c-&gt;stash-&gt;{watching_thread} =
+-        $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;watching_thread(
+-            $c-&gt;_current_thread(),
+-            $c-&gt;_authed_user(),
+-        )
+-    ;
++sub _update_last_post {
++    my ($self, $c, $new_post) = @_;
++
++    # do the updates in a transaction
++    eval {
++        $c-&gt;model('ParleyDB')-&gt;schema-&gt;txn_do(
++            sub {
++                # get the thread the post lives in
++                my $thread = $new_post-&gt;thread;
++
++                # get the forum the thread lives in
++                my $forum = $thread-&gt;forum;
++
++                # set the last_post for both forum and thread
++                $forum-&gt; last_post($new_post-&gt;post_id());
++                $thread-&gt;last_post($new_post-&gt;post_id());
++                $forum -&gt;update();
++                $thread-&gt;update();
++            }
++        );
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die &quot;something terrible has happened!&quot;  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++        $c-&gt;log-&gt;error( $@ );
++        return;
++    }
+ }
+ 
++sub _update_person_post_info {
++    my ($self, $c, $post) = @_;
++    my $person = $c-&gt;_authed_user();
++
++    # make the update in a transaction
++    eval {
++        # increase the post count for the user
++        $person-&gt;post_count( $person-&gt;post_count() + 1 );
++        # make a note of their last post
++        $person-&gt;last_post( $post-&gt;id() );
++        # push the changes back tot the db
++        $person-&gt;update();
++    };
++    # deal with any transaction errors
++    if ($@) {                                   # Transaction failed
++        die &quot;something terrible has happened!&quot;  #
++            if ($@ =~ /Rollback failed/);       # Rollback failed
++
++        $c-&gt;stash-&gt;{error}{message} = qq{Database transaction failed: $@};
++        $c-&gt;log-&gt;error( $@ );
++        return;
++    }
++}
++
+ sub _update_thread_view {
+     my ($self, $c) = @_;
++    my ($last_post, $last_post_timestamp);
+ 
+-    my ($last_post, $last_post_timestamp);
++    $c-&gt;log-&gt;info(q{called: _update_thread_view()});
+     
+     # get the last post on the page
+     $last_post = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;last_post_in_list(
+@@ -132,7 +548,7 @@
+     );
+     # get the timestamp of the last post
+     $last_post_timestamp = $last_post-&gt;created();
+-    $c-&gt;log-&gt;debug( $last_post_timestamp );
++    $c-&gt;log-&gt;debug( qq{\$last_post_timestamp = $last_post_timestamp} );
+ 
+     # make a note of when the user last viewed this thread, if a record doesn't already exist
+     my $thread_view =
+@@ -156,6 +572,122 @@
+     $thread_view-&gt;update;
+ }
+ 
++sub _watching_thread {
++    my ($self, $c) = @_;
++    
++    # find out if the user is watching the thread, and store it in the stash
++    $c-&gt;stash-&gt;{watching_thread} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;watching_thread(
++            $c-&gt;_current_thread(),
++            $c-&gt;_authed_user(),
++        )
++    ;
++}
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Functions for database transactions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _txn_add_new_reply {
++    my ($self, $c) = @_;
++    $c-&gt;log-&gt;info( q{_txn_add_new_reply} );
++
++    my ($new_post);
++
++    # make sure we have a current thread
++    if(not $c-&gt;_current_thread) {
++        die q{No current thread in _txn_add_new_reply()};
++    }
++
++    # create a new post in the current thread
++    $new_post = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;create(
++        {
++            thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++            subject     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_subject},
++            message     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_message},
++            creator     =&gt; $c-&gt;_authed_user-&gt;id(),
++        }
++    );
++
++    # if we have current post information, then the post is in reply to another
++    # post (i.e. quoted reply, not just reply-to-thread)
++    if (defined $c-&gt;_current_post()) {
++        # mark what the new post is in reply-to
++        $new_post-&gt;reply_to( $c-&gt;_current_post()-&gt;id() );
++    }
++
++    # do we have a quoted post? if we do we need to store the
++    # (potentially ammended) quoted text, and the actual post being
++    # quoted (so we can get author, date, etc)
++    if (defined $c-&gt;request-&gt;param('have_quoted_post')) {
++        $new_post-&gt;quoted_post( $c-&gt;_current_post()-&gt;id() );
++        $new_post-&gt;quoted_text( $c-&gt;req-&gt;param('quote_message') );
++    }
++
++    # the thread's last post is the one we just created
++    $c-&gt;_current_thread()-&gt;last_post( $new_post-&gt;id );
++
++    # we've got one post in our new thread
++    $self-&gt;_increase_post_count($c, $c-&gt;_current_thread());
++
++    # update information about the most recent forum/thread post
++    $self-&gt;_update_last_post($c, $new_post);
++
++    # update information about the poster (count, etc)
++    $self-&gt;_update_person_post_info($c, $new_post);
++
++    # update the records
++    $new_post-&gt;update;
++
++    # return the new topic/thread
++    return $new_post;
++}
++
++sub _txn_add_new_thread {
++    my ($self, $c) = @_;
++    $c-&gt;log-&gt;info( q{_txn_add_new_thread} );
++    
++    my ($new_thread, $new_post);
++
++    # create a new thread
++    $new_thread = $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;create(
++        {
++            forum       =&gt; $c-&gt;_current_forum-&gt;id(),
++            subject     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_subject},
++            creator     =&gt; $c-&gt;_authed_user-&gt;id(),
++        }
++    );
++
++    # create a new post in the new thread
++    $new_post = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;create(
++        {
++            thread      =&gt; $new_thread-&gt;id(),
++            subject     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_subject},
++            message     =&gt; $c-&gt;form-&gt;valid-&gt;{thread_message},
++            creator     =&gt; $c-&gt;_authed_user-&gt;id(),
++        }
++    );
++
++    # the thread's last post is the one we just created
++    $new_thread-&gt;last_post( $new_post-&gt;id );
++
++    # we've got one post in our new thread
++    $new_thread-&gt;post_count( 1 );
++
++    # update information about the most recent forum/thread post
++    $self-&gt;_update_last_post($c, $new_post);
++
++    # update information about the poster (count, etc)
++    $self-&gt;_update_person_post_info($c, $new_post);
++
++    # update the records
++    $new_thread-&gt;update;
++    $new_post-&gt;update;
++
++    # return the new topic/thread
++    return $new_thread;
++}
++
+ 1;
+ 
+ __END__
+@@ -172,25 +704,72 @@
+ 
+ =head1 ACTIONS
+ 
++=head2 add
++
++Adds a new thread to a specified forum
++
++=head2 next_post
++
++Take the logged-in user to the post after the last one they have viewed. If
++they haven't viewed any posts they should be taken to the first in the thread.
++If the last post they saw was the last in the thread they should be taken to
++the last post in the thread.
++
+ =head2 reply
+ 
++Reply to a post in an existing thread.
++
+ =head2 view
+ 
+ This action prepares data in the stash for viewing the current thread.
+ 
++=head2
++
++This action is used to add/remove a watch for a given thread
++
+ =head1 PRIVATE METHODS
+ 
+-=head2 _thread_watch_count
++=head2 _add_new_reply($self,$c)
+ 
+-Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watcher_count}&gt; with the number of people who have a
+-watch set for the current thread.
++The guts of the process to add a new reply to an existing thread
+ 
+-=head2 _thread_view_pager
++=head2 _add_new_thread($self,$c)
+ 
++The guts of the process to add a new thread/topic to a forum
++
++=head2 _get_thread_reply_post($self,$c)
++
++Returns the post being replied to in a thread.
++
++=head2 _increase_post_count($self,$c,$thread)
++
++Increase the number of posts (by one) for a given thread
++
++=head2 _increase_thread_view_count($self,$c)
++
++Inside a transaction, increase the number of views a thread has by one.
++
++=head2 _thread_view_pager($self,$c)
++
+ Set-up C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{page}&gt; and
+ C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{page_range_spread}&gt; for the current thread.
+ These are used by the pager in the templates (Page X of Y, etc).
+ 
++=head2 _thread_watch_count($self,$c)
++
++Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watcher_count}&gt; with the number of people who have a
++watch set for the current thread.
++
++=head2 _update_last_post($self,$c,$new_post)
++
++Given a (new) post, update the values for the last post in the relevant thread
++and forum.
++
++=head2 _update_person_post_info($self,$c,$post)
++
++Called when someone makes a new post, increments the total number of posts made
++by the user, and updates the record of the last post they made.
++
+ =head2 _watching_thread
+ 
+ Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watching_thread}&gt; with a true|false value indicating
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000125.html">[Parley-svn] r237 - / branches/schema_based
+</A></li>
+	<LI>Next message: <A HREF="000127.html">[Parley-svn] r239 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#126">[ date ]</a>
+              <a href="thread.html#126">[ thread ]</a>
+              <a href="subject.html#126">[ subject ]</a>
+              <a href="author.html#126">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

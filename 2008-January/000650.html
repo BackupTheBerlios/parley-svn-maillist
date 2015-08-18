@@ -1,0 +1,349 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r762 - / trunk/root/base/user/signup
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r762%20-%20/%20trunk/root/base/user/signup&In-Reply-To=%3C200801282333.m0SNXYBw002566%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000649.html">
+   <LINK REL="Next"  HREF="000651.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r762 - / trunk/root/base/user/signup</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r762%20-%20/%20trunk/root/base/user/signup&In-Reply-To=%3C200801282333.m0SNXYBw002566%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r762 - / trunk/root/base/user/signup">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jan 29 00:33:34 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000649.html">[Parley-svn] r761 - / trunk/root/base/user/lostpassword
+</A></li>
+        <LI>Next message: <A HREF="000651.html">[Parley-svn] r763 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Template/Plugin trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#650">[ date ]</a>
+              <a href="thread.html#650">[ thread ]</a>
+              <a href="subject.html#650">[ subject ]</a>
+              <a href="author.html#650">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-29 00:33:33 +0100 (Tue, 29 Jan 2008)
+New Revision: 762
+
+Modified:
+   /
+   trunk/root/base/user/signup/signup
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4555 at wiggin</A>:  chisel | 2008-01-24 21:16:52 +0000
+ / improved layout for signup page
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4554
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4555
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/user/signup/signup
+===================================================================
+--- trunk/root/base/user/signup/signup	2008-01-28 23:33:17 UTC (rev 761)
++++ trunk/root/base/user/signup/signup	2008-01-28 23:33:33 UTC (rev 762)
+@@ -9,127 +9,146 @@
+     &lt;/ul&gt;
+ [% END %]
+ 
+-&lt;form action=&quot;user/signup&quot; method=&quot;post&quot; name=&quot;signup_form&quot;&gt;
+-    &lt;table class=&quot;signup&quot;&gt;
+-		&lt;tr&gt;
+-			&lt;td colspan=&quot;2&quot;&gt;
+-                [%l('SIGNUP COMPLETE FORM')%] 
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++&lt;form action=&quot;[%c.uri_for('user/signup')%]&quot; method=&quot;post&quot; name=&quot;signup_form&quot;&gt;
++    &lt;div&gt;
++        [%l('SIGNUP COMPLETE FORM')%] 
++    &lt;/div&gt;
+ 
+-		[% IF messages %]
+-		&lt;tr&gt;
+-			&lt;td colspan=&quot;2&quot;&gt;
+-				[%l('SIGNUP ERRORS')%]:&lt;br /&gt;
+-				&lt;ul&gt;
+-                    &lt;ul&gt;
+-                        [% FOREACH message IN messages %]
+-                            &lt;li&gt;[% message %]&lt;/li&gt;
+-                        [% END %]
+-                    &lt;/ul&gt;
+-				&lt;/ul&gt;
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
+-		[% END %]
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;username&quot;&gt;[%l('SIGNUP USERNAME')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;text&quot; id=&quot;new_username&quot; name=&quot;new_username&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_new_username %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td width=&quot;20%&quot;&gt;
+-				&lt;label for=&quot;username&quot;&gt;[%l('SIGNUP USERNAME')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;text&quot; id=&quot;new_username&quot; name=&quot;new_username&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_new_username %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;password&quot;&gt;[%l('SIGNUP PASSWORD')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;password&quot; id=&quot;new_password&quot; name=&quot;new_password&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_new_password %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td&gt;
+-				&lt;label for=&quot;password&quot;&gt;[%l('SIGNUP PASSWORD')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;password&quot; id=&quot;new_password&quot; name=&quot;new_password&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_new_password %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;confirm_password&quot;&gt;[%l('SIGNUP PASSWORD CONFIRM')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;password&quot; id=&quot;confirm_password&quot; name=&quot;confirm_password&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_confirm_password %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td&gt;
+-				&lt;label for=&quot;confirm_password&quot;&gt;[%l('SIGNUP PASSWORD CONFIRM')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;password&quot; id=&quot;confirm_password&quot; name=&quot;confirm_password&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_confirm_password %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++    &lt;div class=&quot;yui-gd top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot; style=&quot;text-align:justify;&quot;&gt;
++            [%l('SIGNUP EMAIL USAGE')%] 
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td colspan=&quot;2&quot;&gt;
+-                [%l('SIGNUP EMAIL USAGE')%] 
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;email&quot;&gt;[%l('SIGNUP EMAIL')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;text&quot; id=&quot;email&quot; name=&quot;email&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_email %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td&gt;
+-				&lt;label for=&quot;email&quot;&gt;[%l('SIGNUP EMAIL')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;text&quot; id=&quot;email&quot; name=&quot;email&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_email %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;confirm_email&quot;&gt;[%l('SIGNUP EMAIL CONFIRM')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;text&quot; id=&quot;confirm_email&quot; name=&quot;confirm_email&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_confirm_email %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td&gt;
+-				&lt;label for=&quot;confirm_email&quot;&gt;[%l('SIGNUP EMAIL CONFIRM')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;text&quot; id=&quot;confirm_email&quot; name=&quot;confirm_email&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_confirm_email %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++    &lt;div style=&quot;background-color:#ccc;margin-top:5px;margin-bottom:5px;&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&lt;hr /&gt;&lt;/td&gt;&lt;/tr&gt;
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;first_name&quot;&gt;[%l('First Name')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;text&quot; id=&quot;first_name&quot; name=&quot;first_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_first_name %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td&gt;
+-				&lt;label for=&quot;first_name&quot;&gt;[%l('First Name')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;text&quot; id=&quot;first_name&quot; name=&quot;first_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_first_name %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;last_name&quot;&gt;[%l('Last Name')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;text&quot; id=&quot;last_name&quot; name=&quot;last_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_last_name %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td&gt;
+-				&lt;label for=&quot;last_name&quot;&gt;[%l('Last Name')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;text&quot; id=&quot;last_name&quot; name=&quot;last_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_last_name %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
+-
+-		&lt;tr&gt;
+-			&lt;td&gt;
+-				&lt;label for=&quot;first_name&quot;&gt;[%l('SIGNUP FORUMNAME')%]:&lt;/label&gt;
+-			&lt;/td&gt;
+-			&lt;td&gt;
+-				&lt;input type=&quot;text&quot; id=&quot;forum_name&quot; name=&quot;forum_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+-				[% form_error.field_error_forum_name %]
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
+-		&lt;tr&gt;
+-            &lt;td&gt;&nbsp;&lt;/td&gt;
+-			&lt;td style=&quot;text-align:justify;&quot;&gt;
++    &lt;div class=&quot;yui-gd top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot; style=&quot;text-align:justify;&quot;&gt;
+             [%l('SIGNUP FORUMNAME DESCRIPTION')%] 
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-		&lt;tr&gt;
+-			&lt;td colspan=&quot;2&quot; style=&quot;text-align:center;&quot;&gt;
+-				&lt;input type=&quot;submit&quot; name=&quot;form_submit&quot; value=&quot;[%l('Register')%]&quot; class=&quot;input_button&quot; /&gt;
+-			&lt;/td&gt;
+-		&lt;/tr&gt;
+-    &lt;/table&gt;
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &lt;label for=&quot;forum_name&quot;&gt;[%l('SIGNUP FORUMNAME')%]:&lt;/label&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;text&quot; id=&quot;forum_name&quot; name=&quot;forum_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
++            [% form_error.field_error_forum_name %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
++
++    &lt;div class=&quot;yui-gb top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot; style=&quot;text-align:center;&quot;&gt;
++            &lt;input type=&quot;submit&quot; name=&quot;form_submit&quot; value=&quot;[%l('Register')%]&quot; class=&quot;input_button&quot; /&gt;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ &lt;/form&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000649.html">[Parley-svn] r761 - / trunk/root/base/user/lostpassword
+</A></li>
+	<LI>Next message: <A HREF="000651.html">[Parley-svn] r763 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Template/Plugin trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#650">[ date ]</a>
+              <a href="thread.html#650">[ thread ]</a>
+              <a href="subject.html#650">[ subject ]</a>
+              <a href="author.html#650">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

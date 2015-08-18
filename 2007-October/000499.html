@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r611 - / trunk/root/base/forum trunk/root/base/thread	trunk/root/static/images/icons
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r611%20-%20/%20trunk/root/base/forum%20trunk/root/base/thread%0A%09trunk/root/static/images/icons&In-Reply-To=%3C200710262210.l9QMAcI0005280%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000498.html">
+   <LINK REL="Next"  HREF="000500.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r611 - / trunk/root/base/forum trunk/root/base/thread	trunk/root/static/images/icons</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r611%20-%20/%20trunk/root/base/forum%20trunk/root/base/thread%0A%09trunk/root/static/images/icons&In-Reply-To=%3C200710262210.l9QMAcI0005280%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r611 - / trunk/root/base/forum trunk/root/base/thread	trunk/root/static/images/icons">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Oct 27 00:10:38 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000498.html">[Parley-svn] r610 - / trunk/root/base trunk/root/base/forum	trunk/root/base/my trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images	trunk/root/static/images/icons
+</A></li>
+        <LI>Next message: <A HREF="000500.html">[Parley-svn] r612 - / trunk/root/base/menu
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#499">[ date ]</a>
+              <a href="thread.html#499">[ thread ]</a>
+              <a href="subject.html#499">[ subject ]</a>
+              <a href="author.html#499">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-27 00:10:38 +0200 (Sat, 27 Oct 2007)
+New Revision: 611
+
+Added:
+   trunk/root/static/images/icons/anchor.png
+Modified:
+   /
+   trunk/root/base/forum/view
+   trunk/root/base/thread/recent
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4080 at wiggin</A>:  chisel | 2007-10-26 22:05:55 +0100
+ / altered 'sticky' icon
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4079
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4080
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2007-10-26 22:10:25 UTC (rev 610)
++++ trunk/root/base/forum/view	2007-10-26 22:10:38 UTC (rev 611)
+@@ -23,7 +23,7 @@
+     &lt;td width=&quot;36&quot;&gt;
+     &lt;!-- interesting things about the thread; sticky, locked, etc --&gt;
+     [%- IF thread.sticky %]
+-    &lt;img src=&quot;static/images/sticky.png&quot; alt=&quot;Sticky&quot; title=&quot;Sticky Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++    &lt;img src=&quot;static/images/icons/anchor.png&quot; alt=&quot;Sticky&quot; title=&quot;Sticky Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+     [%- END %]
+     [%- IF thread.locked %]
+     &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+
+Modified: trunk/root/base/thread/recent
+===================================================================
+--- trunk/root/base/thread/recent	2007-10-26 22:10:25 UTC (rev 610)
++++ trunk/root/base/thread/recent	2007-10-26 22:10:38 UTC (rev 611)
+@@ -8,7 +8,7 @@
+         &lt;td width=&quot;36&quot;&gt;
+         &lt;!-- interesting things about the thread; sticky, locked, etc --&gt;
+         [%- IF thread.sticky %]
+-        &lt;img src=&quot;static/images/sticky.png&quot; alt=&quot;[%l('Sticky')%]&quot; title=&quot;[%l('Sticky Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++        &lt;img src=&quot;static/images/icons/anchor.png&quot; alt=&quot;[%l('Sticky')%]&quot; title=&quot;[%l('Sticky Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+         [%- END %]
+         [%- IF thread.locked %]
+         &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+
+Added: trunk/root/static/images/icons/anchor.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/icons/anchor.png
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000498.html">[Parley-svn] r610 - / trunk/root/base trunk/root/base/forum	trunk/root/base/my trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images	trunk/root/static/images/icons
+</A></li>
+	<LI>Next message: <A HREF="000500.html">[Parley-svn] r612 - / trunk/root/base/menu
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#499">[ date ]</a>
+              <a href="thread.html#499">[ thread ]</a>
+              <a href="subject.html#499">[ subject ]</a>
+              <a href="author.html#499">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

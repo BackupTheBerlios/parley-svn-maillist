@@ -1,0 +1,486 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r453 - / trunk trunk/lib/Parley/Controller	trunk/root/base/my trunk/root/base/shared trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r453%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/my%20trunk/root/base/shared%20trunk/root/css&In-Reply-To=%3C200708301941.l7UJfb5S018960%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000339.html">
+   <LINK REL="Next"  HREF="000341.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r453 - / trunk trunk/lib/Parley/Controller	trunk/root/base/my trunk/root/base/shared trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r453%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/my%20trunk/root/base/shared%20trunk/root/css&In-Reply-To=%3C200708301941.l7UJfb5S018960%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r453 - / trunk trunk/lib/Parley/Controller	trunk/root/base/my trunk/root/base/shared trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Aug 30 21:41:37 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000339.html">[Parley-svn] r452 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000341.html">[Parley-svn] r454 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#340">[ date ]</a>
+              <a href="thread.html#340">[ thread ]</a>
+              <a href="subject.html#340">[ subject ]</a>
+              <a href="author.html#340">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-30 21:41:37 +0200 (Thu, 30 Aug 2007)
+New Revision: 453
+
+Added:
+   trunk/root/base/my/tab_avatar
+   trunk/root/base/shared/user_avatar
+Modified:
+   /
+   trunk/Changes
+   trunk/Makefile.PL
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/preferences
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3753 at wiggin</A>:  chisel | 2007-08-30 19:13:16 +0100
+ + allow users to upload and avatar image
+ + added new Makefile.PL dependencies
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3752
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3753
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-08-30 19:41:31 UTC (rev 452)
++++ trunk/Changes	2007-08-30 19:41:37 UTC (rev 453)
+@@ -1,5 +1,6 @@
+ This file documents the revision history for Parley.
+ 
++    - users can now upload an avatar image (from my/preferences)
+     - properly fixed Password Reset process
+     - added database updating for edit-fields on &quot;Your Details&quot; in
+       my/preferences
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-08-30 19:41:31 UTC (rev 452)
++++ trunk/Makefile.PL	2007-08-30 19:41:37 UTC (rev 453)
+@@ -27,6 +27,8 @@
+ requires 'DateTime::Format::Pg';
+ requires 'DateTime::TimeZone';
+ requires 'Email::Valid';
++requires 'Graphics::Magick';
++requires 'Image::Size';
+ requires 'List::MoreUtils';
+ requires 'MIME::Lite';
+ requires 'Perl6::Export::Attrs';
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-08-30 19:41:31 UTC (rev 452)
++++ trunk/lib/Parley/Controller/My.pm	2007-08-30 19:41:37 UTC (rev 453)
+@@ -3,6 +3,9 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++use Graphics::Magick;
++use Image::Size qw( html_imgsize imgsize );
++
+ use Parley::App::Error qw( :methods );
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -52,6 +55,14 @@
+             )
+         ],
+     },
++
++    user_avatar =&gt; {
++        required =&gt; [
++            qw(
++                avatar_file
++            )
++        ],
++    },
+ );
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -166,7 +177,7 @@
+ 
+     # make sure the form name matches something we have a DFV profile for
+     if (not exists $dfv_profile_for{ $form_name }) {
+-        $c-&gt;stash-&gt;{error}{message} = &quot;no such form: $form_name&quot;;
++        parley_warn($c, qq{no such form: $form_name});
+         return;
+     }
+ 
+@@ -176,13 +187,13 @@
+     );
+ 
+     # are we updating TZ preferences?
++    my $ok_update;
+     if ('time_format' eq $form_name) {
+         # return to the right tab
+         # use session flash, or we lose the info with the redirect
+         $c-&gt;flash-&gt;{show_pref_tab} = 'tab_time';
+ 
+-        $self-&gt;_process_form_time_format( $c );
+-        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
++        $ok_update = $self-&gt;_process_form_time_format( $c );
+     }
+     # are we updating notification preferences?
+     elsif ('notifications' eq $form_name) {
+@@ -190,16 +201,30 @@
+         # use session flash, or we lose the info with the redirect
+         $c-&gt;flash-&gt;{show_pref_tab} = 'tab_notify';
+ 
+-        $self-&gt;_process_form_notifications( $c );
+-        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
++        $ok_update = $self-&gt;_process_form_notifications( $c );
+     }
++    # are we updating the avatar
++    elsif ('user_avatar' eq $form_name) {
++        # return to the right tab
++        # use session flash, or we lose the info with the redirect
++        $c-&gt;flash-&gt;{show_pref_tab} = 'tab_avatar';
+ 
++        $ok_update = $self-&gt;_process_form_avatar( $c );
++    }
++
+     # otherwise we haven't decided how to handle the specified form ...
+     else {
+         $c-&gt;stash-&gt;{error}{message} = &quot;don't know how to handle: $form_name&quot;;
+         return;
+     }
+ 
++    if ($ok_update) {
++        $c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
++    }
++    else {
++        $c-&gt;stash-&gt;{template} = 'my/preferences';
++    }
++
+     return;
+ }
+ 
+@@ -213,17 +238,17 @@
+ 
+     # deal with missing/invalid fields
+     if ($c-&gt;form-&gt;has_missing()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        parley_warn($c, q{You must fill in all the required fields});
+         foreach my $f ( $c-&gt;form-&gt;missing ) {
+-            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++            parley_warn($c, $f);
+         }
+ 
+         return; # invalid form data
+     }
+     elsif ($c-&gt;form-&gt;has_invalid()) {
+-        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        parley_warn($c, q{One or more fields are invalid});
+         foreach my $f ( $c-&gt;form-&gt;invalid ) {
+-            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++            parley_warn($c, $f);
+         }
+ 
+         return; # invalid form data
+@@ -233,6 +258,103 @@
+     return 1;
+ }
+ 
++
++sub upload : Global {
++    my ($self, $c) = @_;
++
++    if ( $c-&gt;request-&gt;parameters-&gt;{form_submit} eq 'yes' ) {
++
++        if ( my $upload = $c-&gt;request-&gt;upload('avatar_file') ) {
++
++            my $filename = $upload-&gt;filename;
++            my $target   = &quot;/tmp/upload/$filename&quot;;
++
++            unless ( $upload-&gt;link_to($target) || $upload-&gt;copy_to($target) ) {
++                die( &quot;Failed to copy '$filename' to '$target': $!&quot; );
++            }
++        }
++    }
++
++    #$c-&gt;stash-&gt;{template} = 'file_upload.html';
++    $c-&gt;stash-&gt;{template} = 'my/preferences';
++}
++
++
++sub _process_form_avatar {
++    my ($self, $c) = @_;
++    my ($upload);
++    $c-&gt;log-&gt;debug('_process_form_avatar');
++
++    if (not $self-&gt;_form_data_valid($c)) {
++        $c-&gt;log-&gt;debug('form data is not valid');
++        return;
++    }
++
++    $c-&gt;log-&gt;info( $c-&gt;request-&gt;param('avatar_file') );
++    
++    if ( $upload = $c-&gt;request-&gt;upload('avatar_file') ) {
++        $c-&gt;log-&gt;debug( ref($upload) );
++        $c-&gt;log-&gt;debug( $upload-&gt;filename );
++        $c-&gt;log-&gt;debug( $upload-&gt;type );
++        $c-&gt;log-&gt;debug( $upload-&gt;size );
++
++        # reject files that are too large
++        if ($upload-&gt;size &gt; 20480 ) {
++            parley_warn($c, q{File size too large. File must be no larger than 20K});
++            $c-&gt;log-&gt;info(q{File size too large. File must be no larger than 20K});
++            return;
++        }
++
++        # reject anything that doesn't appear to be an image
++        if ($upload-&gt;type !~ m{\Aimage/}xms) {
++            parley_warn(
++                $c,
++                  q{Uploaded file does not appear to be an image file [}
++                . $upload-&gt;type
++                . q{]}
++            );
++            return;
++        }
++
++        # store the file (but don't make it active yet)
++        my $filename    = $upload-&gt;filename;
++        my $target_dir  =   $c-&gt;path_to('root')
++                          . q{/static/user_file/}
++                          . $c-&gt;_authed_user-&gt;id();
++        my $target      = $target_dir . q{/} . $filename;
++
++        # create the directory if it doesn't exist
++        if (not -d $target_dir) {
++            mkdir $target_dir;
++            if (not -d $target_dir) {
++                parley_warn($c, q{Failed to create destination directory.  Unable to store upload.});
++                $c-&gt;log-&gt;error( qq{$target_dir - $!} );
++                return;
++            }
++        }
++
++        # save the file for processing
++        if ( not $upload-&gt;link_to($target) and not $upload-&gt;copy_to($target) ) {
++            parley_warn($c, q{Failed to store upload.});
++            $c-&gt;log-&gt;error( qq{$target - $!} );
++            return;
++        }
++        $c-&gt;log-&gt;info($target);
++
++        # check the image dimensions, and if it's too large, scale it down to
++        # something we accept, also convert it to a JPG
++        _convert_and_scale_image($target);
++
++        # finally replace the existing avatar
++        if (not rename($target, $target_dir . q{/avatar.jpg})) {
++            parley_warn($c, q{Failed to replace existing avatar image});
++            parley_warn($c, $!);
++        }
++    }
++
++    return 1;
++}
++
+ sub _process_form_notifications {
+     my ($self, $c) = @_;
+ 
+@@ -376,6 +498,52 @@
+     }
+ }
+ 
++sub _convert_and_scale_image {
++    my ($file) = @_;
++    my $options = {
++        'width'  =&gt; 100,
++        'height' =&gt; 150,
++    };
++
++    # get the image dimensions
++    my ($width, $height) = imgsize($file);
++
++    # create a new image mangling object
++    my $img = Graphics::Magick-&gt;new()
++        or die $!;
++
++    # read in the image file
++    $img-&gt;Read($file);
++
++    if ($width &gt; $options-&gt;{width} or $height &gt; $options-&gt;{height}) {
++        # scale the longest side - if it's square, scale by height
++        if ($width &gt; $height) {
++            # scale down by width
++            warn('# scale down by width');
++            $img-&gt;Resize(
++                geometry =&gt; $options-&gt;{width}
++            );
++        }
++        elsif ($height &gt;= $width) {
++            # scale down by height
++            warn('# scale down by height');
++            $img-&gt;Resize(
++                geometry =&gt; q{x} . $options-&gt;{height}
++            );
++        }
++    }
++
++    # make sure we're a JPEG
++#    $img-&gt;Convert(
++#        type =&gt; 'jpg',
++#    );
++
++    # write out the scaled image
++    $img-&gt;Write($file);
++
++    return;
++}
++
+ =head1 NAME
+ 
+ Parley::Controller::My - Catalyst Controller
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-08-30 19:41:31 UTC (rev 452)
++++ trunk/root/base/my/preferences	2007-08-30 19:41:37 UTC (rev 453)
+@@ -19,15 +19,13 @@
+         [% PROCESS my/tab_time %]
+     &lt;/div&gt;
+ 
+-&lt;!--
+-    &lt;div id=&quot;tab_watch&quot; dojoType=&quot;ContentPane&quot; label=&quot;Thread Watches&quot;&gt;
+-        [% PROCESS my/tab_watch %]
+-    &lt;/div&gt;
+---&gt;
+-
+     &lt;div id=&quot;tab_notify&quot; dojoType=&quot;ContentPane&quot; label=&quot;Notifications&quot;&gt;
+         [% PROCESS my/tab_notifications %]
+     &lt;/div&gt;
++
++    &lt;div id=&quot;tab_avatar&quot; dojoType=&quot;ContentPane&quot; label=&quot;Avatar&quot;&gt;
++        [% PROCESS my/tab_avatar %]
++    &lt;/div&gt;
+ &lt;/div&gt;
+ 
+ [% IF c.session.my_pref_came_from %]
+
+Added: trunk/root/base/my/tab_avatar
+===================================================================
+--- trunk/root/base/my/tab_avatar	2007-08-30 19:41:31 UTC (rev 452)
++++ trunk/root/base/my/tab_avatar	2007-08-30 19:41:37 UTC (rev 453)
+@@ -0,0 +1,36 @@
++&lt;!-- preferences : tab_you --&gt;
++
++&lt;form action=&quot;my/preferences/update&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
++    &lt;input type=&quot;hidden&quot; name=&quot;form_name&quot; value=&quot;user_avatar&quot;&gt;
++    &lt;table class=&quot;user_profile&quot;&gt;
++        &lt;thead&gt;
++            &lt;tr&gt;
++                &lt;td width=&quot;150&quot; align=&quot;center&quot;&gt;
++                    Current Avatar
++                &lt;/td&gt;
++                &lt;td&gt;
++                    &nbsp;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++        &lt;/thead&gt;
++
++        &lt;tbody&gt;
++            &lt;tr&gt;
++                &lt;td width=&quot;150&quot; align=&quot;center&quot;&gt;
++                    [% INCLUDE shared/user_avatar person=authed_user %]
++                &lt;/td&gt;
++                &lt;td&gt;
++                    Change your avatar image by selecting a file and clicking
++                    the Upload button below:
++                    &lt;br /&gt;
++
++                    &lt;input type=&quot;file&quot; id=&quot;avatar_file&quot; name=&quot;avatar_file&quot; /&gt;
++
++                    &lt;input type=&quot;submit&quot; value=&quot;Upload&quot; style=&quot;float: right;&quot;/&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++        &lt;/tbody&gt;
++    &lt;/table&gt;
++&lt;/form&gt;
++
++&lt;!-- (end) preferences : tab_you --&gt;
+
+Added: trunk/root/base/shared/user_avatar
+===================================================================
+--- trunk/root/base/shared/user_avatar	2007-08-30 19:41:31 UTC (rev 452)
++++ trunk/root/base/shared/user_avatar	2007-08-30 19:41:37 UTC (rev 453)
+@@ -0,0 +1,11 @@
++&lt;!-- user avatar --&gt;
++[% avatar_file = c.path_to('root') _ &quot;/static/user_file/${person.id}/avatar.jpg&quot; %]
++[% TRY %]
++    [% USE avatar = Image(avatar_file) %]
++    [% tmp = avatar.attr %]
++    &lt;img class=&quot;picborder&quot; src=&quot;/static/user_file/[% person.id %]/avatar.jpg&quot; border=&quot;0&quot; [% avatar.attr %] alt=&quot;Avatar&quot; /&gt;
++    &lt;br /&gt;
++[% CATCH %]
++    No User Avatar
++[% END %]
++&lt;!-- end : user avatar --&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-08-30 19:41:31 UTC (rev 452)
++++ trunk/root/css/common.css	2007-08-30 19:41:37 UTC (rev 453)
+@@ -303,6 +303,9 @@
+     margin-right:       auto;
+     width:              80%;
+ }
++.user_profile td {
++    vertical-align:     top;
++}
+ 
+ .prefs_notification {
+     margin-left:        auto;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000339.html">[Parley-svn] r452 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000341.html">[Parley-svn] r454 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#340">[ date ]</a>
+              <a href="thread.html#340">[ thread ]</a>
+              <a href="subject.html#340">[ subject ]</a>
+              <a href="author.html#340">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,428 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r941 - / trunk trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r941%20-%20/%20trunk%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Model%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema&In-Reply-To=%3C200810071848.m97Im5nj027665%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000823.html">
+   <LINK REL="Next"  HREF="000825.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r941 - / trunk trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r941%20-%20/%20trunk%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Model%0A%09trunk/lib/Parley/ResultSet%20trunk/lib/Parley/Schema&In-Reply-To=%3C200810071848.m97Im5nj027665%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r941 - / trunk trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/ResultSet trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Oct  7 20:48:05 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000823.html">[Parley-svn] r940 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000825.html">[Parley-svn] r942 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#824">[ date ]</a>
+              <a href="thread.html#824">[ thread ]</a>
+              <a href="subject.html#824">[ subject ]</a>
+              <a href="author.html#824">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-10-07 20:48:04 +0200 (Tue, 07 Oct 2008)
+New Revision: 941
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/Controller/Terms.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Model/ParleyDB.pm
+   trunk/lib/Parley/ResultSet/Forum.pm
+   trunk/lib/Parley/ResultSet/IpBanType.pm
+   trunk/lib/Parley/ResultSet/Role.pm
+   trunk/lib/Parley/ResultSet/Terms.pm
+   trunk/lib/Parley/ResultSet/Thread.pm
+   trunk/lib/Parley/Schema.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/lib/Parley/Schema/Thread.pm
+   trunk/parley.conf
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8175 at wiggin</A>:  chisel | 2008-10-07 19:17:37 +0100
+ + added config options to use quote_char and name_sep in DB calls
+ / updated order_by params in searches to work with quote_char
+ - removed config block in Model::ParleyDB (it comes from parley.conf, and this saves confusion)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8174
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8175
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/Changes	2008-10-07 18:48:04 UTC (rev 941)
+@@ -1,7 +1,10 @@
+ This file documents the revision history for Parley.
+ 
+ 1.0.1
+-    - ?
++    - added config options to use quote_char and name_sep in DB calls
++    - updated order_by params in searches to work with quote_char
++    - removed config block in Model::ParleyDB (it comes from parley.conf, and
++      this saves confusion)
+ 
+ 1.0.0   Mon Oct  6 19:08:22 BST 2008
+     - upgrade to YUI 2.5.1
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Controller/Forum.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -37,7 +37,7 @@
+             },
+             {
+                 join        =&gt; 'last_post',
+-                order_by    =&gt; 'sticky DESC, last_post.created DESC',
++                order_by    =&gt; [\'sticky DESC', \'last_post.created DESC'],
+                 # pager information
+                 rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
+                 page        =&gt; $c-&gt;stash-&gt;{current_page},
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Controller/My.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -102,7 +102,7 @@
+         $c-&gt;model('ParleyDB')-&gt;resultset('PreferenceTimeString')-&gt;search(
+             {},     # fetch everything
+             {
+-                order_by    =&gt; 'sample',    # order by the &quot;preview/sample&quot; string
++                order_by    =&gt; [\'sample ASC'],    # order by the &quot;preview/sample&quot; string
+             }
+         );
+ 
+@@ -160,7 +160,7 @@
+             watched     =&gt; 1,
+         },
+         {
+-            order_by    =&gt; 'last_post.created DESC',
++            order_by    =&gt; [\'last_post.created DESC'],
+             join        =&gt; {
+                 'thread' =&gt; 'last_post',
+             },
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Controller/Search.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -89,7 +89,7 @@
+         $where,
+         {
+             join        =&gt; \@join,
+-            order_by    =&gt; q{created DESC},
++            order_by    =&gt; [\'created DESC'],
+             # results paging
+             rows        =&gt; $c-&gt;config-&gt;{search_results_per_page},
+             page        =&gt; $c-&gt;stash-&gt;{current_page},
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Controller/Site.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -84,7 +84,7 @@
+             forum_name =&gt; { -ilike =&gt; $c-&gt;request-&gt;param('query') . q{%} },
+         },
+         {
+-            'order_by' =&gt; 'forum_name',
++            'order_by' =&gt; [\'forum_name ASC'],
+             columns =&gt; [qw/id forum_name first_name last_name/],
+         }
+     );
+
+Modified: trunk/lib/Parley/Controller/Terms.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Terms.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Controller/Terms.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -28,7 +28,7 @@
+         $c-&gt;model('ParleyDB')-&gt;resultset('Terms')-&gt;search(
+             {},
+             {
+-                'order_by' =&gt; 'created DESC',
++                'order_by' =&gt; [\'created DESC'],
+             }
+         )
+     ;
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Controller/Thread.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -174,7 +174,7 @@
+             'me.thread_id' =&gt; $c-&gt;_current_thread-&gt;id(),
+         },
+         {
+-            order_by    =&gt; 'me.created ASC',
++            order_by    =&gt; [\'me.created ASC'],
+             rows        =&gt; $c-&gt;config-&gt;{posts_per_page},
+             page        =&gt; $c-&gt;stash-&gt;{current_page},
+ 
+@@ -305,7 +305,7 @@
+             watched     =&gt; 1,
+         },
+         {
+-            order_by    =&gt; 'last_post.created DESC',
++            order_by    =&gt; [\'last_post.created DESC'],
+             join        =&gt; {
+                 'thread' =&gt; 'last_post',
+             },
+@@ -499,7 +499,7 @@
+                 'thread_id' =&gt; $c-&gt;_current_thread()-&gt;id(),
+             },
+             {
+-                order_by    =&gt; 'created ASC',
++                order_by    =&gt; [\'created ASC'],
+                 rows        =&gt; 1,
+             }
+         );
+
+Modified: trunk/lib/Parley/Model/ParleyDB.pm
+===================================================================
+--- trunk/lib/Parley/Model/ParleyDB.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Model/ParleyDB.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -5,15 +5,17 @@
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Model::DBIC::Schema';
+ 
+-__PACKAGE__-&gt;config(
+-    schema_class =&gt; 'Parley::Schema',
+-    connect_info =&gt; [
+-        'dbi:Pg:dbname=parley',
+-        'parley',
+-        
+-    ],
+-);
++#__PACKAGE__-&gt;config(
++#    schema_class =&gt; 'Parley::Schema',
++#    connect_info =&gt; [
++#        'dbi:Pg:dbname=parley',
++#        'parley',
++#        
++#    ],
++#);
+ 
++# CONFIG COMES FROM parley.conf
++
+ =head1 NAME
+ 
+ Parley::Model::ParleyDB - Catalyst DBIC Schema Model
+
+Modified: trunk/lib/Parley/ResultSet/Forum.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Forum.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/ResultSet/Forum.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -17,7 +17,7 @@
+             active  =&gt; 1,
+         },
+         {
+-            order_by    =&gt; 'name ASC',
++            order_by    =&gt; [\'name ASC'],
+         }
+     );
+ 
+@@ -33,7 +33,7 @@
+             active =&gt; 1,
+         },
+         {
+-            'order_by'  =&gt; 'me.id ASC',
++            'order_by'  =&gt; [\'me.id ASC'],
+             prefetch =&gt; [
+                 {'last_post' =&gt; { 'creator' =&gt; 'authentication' } },
+             ],
+
+Modified: trunk/lib/Parley/ResultSet/IpBanType.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/IpBanType.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/ResultSet/IpBanType.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -14,7 +14,7 @@
+     $rs = $resultsource-&gt;search(
+         {},
+         {
+-            'order_by'  =&gt; ['name ASC'],
++            'order_by'  =&gt; [\'name ASC'],
+         }
+     );
+ 
+
+Modified: trunk/lib/Parley/ResultSet/Role.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Role.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/ResultSet/Role.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -15,7 +15,7 @@
+         {
+         },
+         {
+-            'order_by' =&gt; [ 'idx ASC', 'description ASC' ],
++            'order_by' =&gt; [ \'idx ASC', \'description ASC' ],
+         },
+     );
+ 
+
+Modified: trunk/lib/Parley/ResultSet/Terms.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Terms.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/ResultSet/Terms.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -15,7 +15,7 @@
+         },
+         {
+             rows        =&gt; 1,
+-            order_by    =&gt; 'created DESC',
++            order_by    =&gt; [\'created DESC'],
+         }
+     );
+ 
+
+Modified: trunk/lib/Parley/ResultSet/Thread.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Thread.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/ResultSet/Thread.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -48,7 +48,7 @@
+             },
+             {
+                 rows        =&gt; 1,
+-                order_by    =&gt; 'created ASC',
++                order_by    =&gt; [\'created ASC'],
+             }
+         );
+ 
+@@ -75,7 +75,7 @@
+             },
+             {
+                 rows        =&gt; 1,
+-                order_by    =&gt; 'created DESC',
++                order_by    =&gt; [\'created DESC'],
+             }
+         );
+ 
+@@ -115,7 +115,7 @@
+         $where,
+         {
+             join        =&gt; \@join,
+-            order_by    =&gt; 'last_post.created DESC',
++            order_by    =&gt; [\'last_post.created DESC'],
+ 
+             rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
+             page        =&gt; $c-&gt;stash-&gt;{current_page},
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Schema/Person.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -255,7 +255,7 @@
+         {
+             join =&gt; [qw( action )],
+             rows =&gt; 1,
+-            order_by    =&gt; 'created DESC',
++            order_by    =&gt; [\'created DESC'],
+         }
+     );
+ 
+
+Modified: trunk/lib/Parley/Schema/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Thread.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Schema/Thread.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -152,7 +152,7 @@
+             },
+             {
+                 rows        =&gt; 1,
+-                order_by    =&gt; 'created ASC',
++                order_by    =&gt; [\'created ASC'],
+             }
+         );
+ 
+@@ -177,7 +177,7 @@
+         },
+         {
+             rows        =&gt; 1,
+-            order_by    =&gt; 'created DESC',
++            order_by    =&gt; [\'created DESC'],
+         }
+     );
+ 
+
+Modified: trunk/lib/Parley/Schema.pm
+===================================================================
+--- trunk/lib/Parley/Schema.pm	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/lib/Parley/Schema.pm	2008-10-07 18:48:04 UTC (rev 941)
+@@ -32,4 +32,7 @@
+     ]
+ );
+ 
++# XXX doesn't play at all well with postgres
++#__PACKAGE__-&gt;load_components(qw/+DBIx::Class::Schema::Versioned/);
++
+ 1;
+
+Modified: trunk/parley.conf
+===================================================================
+--- trunk/parley.conf	2008-10-07 18:47:56 UTC (rev 940)
++++ trunk/parley.conf	2008-10-07 18:48:04 UTC (rev 941)
+@@ -22,9 +22,11 @@
+     schema_class            Parley::Schema
+     connect_info            dbi:Pg:dbname=parley;host=localhost
+     connect_info            parley
+-    connect_info   
++    connect_info
+     &lt;connect_info&gt;
+         AutoCommit          1
++        quote_char          __literal(&quot;)__
++        name_sep            __literal(.)__
+     &lt;/connect_info&gt;
+ &lt;/Model::ParleyDB&gt;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000823.html">[Parley-svn] r940 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000825.html">[Parley-svn] r942 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#824">[ date ]</a>
+              <a href="thread.html#824">[ thread ]</a>
+              <a href="subject.html#824">[ subject ]</a>
+              <a href="author.html#824">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

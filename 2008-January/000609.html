@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r721 - / trunk/root/base/forum trunk/t/mechanize
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r721%20-%20/%20trunk/root/base/forum%20trunk/t/mechanize&In-Reply-To=%3C200801032205.m03M5YQK021663%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000608.html">
+   <LINK REL="Next"  HREF="000610.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r721 - / trunk/root/base/forum trunk/t/mechanize</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r721%20-%20/%20trunk/root/base/forum%20trunk/t/mechanize&In-Reply-To=%3C200801032205.m03M5YQK021663%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r721 - / trunk/root/base/forum trunk/t/mechanize">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan  3 23:05:34 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000608.html">[Parley-svn] r720 - / trunk/root/base/user
+</A></li>
+        <LI>Next message: <A HREF="000610.html">[Parley-svn] r722 - / trunk/t/mechanize
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#609">[ date ]</a>
+              <a href="thread.html#609">[ thread ]</a>
+              <a href="subject.html#609">[ subject ]</a>
+              <a href="author.html#609">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-03 23:05:34 +0100 (Thu, 03 Jan 2008)
+New Revision: 721
+
+Modified:
+   /
+   trunk/root/base/forum/list
+   trunk/t/mechanize/02.forum.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4450 at wiggin</A>:  chisel | 2008-01-03 18:55:42 +0000
+ / added c.uri_for() and ammended test script
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4449
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4450
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/forum/list
+===================================================================
+--- trunk/root/base/forum/list	2008-01-03 22:05:15 UTC (rev 720)
++++ trunk/root/base/forum/list	2008-01-03 22:05:34 UTC (rev 721)
+@@ -7,7 +7,7 @@
+         &lt;tr class=&quot;row [% row_styles.$toggler %]&quot;&gt;
+             &lt;td width=&quot;50%&quot;&gt;
+                 &lt;div class=&quot;forum_name&quot;&gt;
+-                    &lt;a href=&quot;forum/view?forum=[% forum.id %]&quot; class=&quot;forum_link&quot;&gt;[% HTML.escape(forum.name) %]&lt;/a&gt;
++                    &lt;a href=&quot;[%c.uri_for('/forum/view',{'forum'=&gt;forum.id})%]&quot; class=&quot;forum_link&quot;&gt;[% HTML.escape(forum.name) %]&lt;/a&gt;
+                 &lt;/div&gt;
+                 &lt;div class=&quot;forum_description&quot;&gt;
+                     [% HTML.escape(forum.description) %]
+@@ -17,7 +17,7 @@
+                 &lt;div class=&quot;forum_lastpost&quot;&gt;
+                 [% IF forum.last_post %]
+                 &lt;div class=&quot;forum_lastpost_subject&quot;&gt;
+-                    &lt;a href=&quot;thread/view?thread=[% forum.last_post.thread_id %]&quot; class=&quot;topic_link&quot;&gt;[% HTML.escape(forum.last_post.thread.subject) |truncate(55) %]&lt;/a&gt;
++                    &lt;a href=&quot;[%c.uri_for('/thread/view',{thread=&gt;forum.last_post.thread_id})%]&quot; class=&quot;topic_link&quot;&gt;[% HTML.escape(forum.last_post.thread.subject) |truncate(55) %]&lt;/a&gt;
+                 &lt;/div&gt;
+                 &lt;div class=&quot;topic_creator&quot;&gt;
+                     [%l('posted by')%]
+
+Modified: trunk/t/mechanize/02.forum.t
+===================================================================
+--- trunk/t/mechanize/02.forum.t	2008-01-03 22:05:15 UTC (rev 720)
++++ trunk/t/mechanize/02.forum.t	2008-01-03 22:05:34 UTC (rev 721)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-use Test::More tests =&gt; 8;
++use Test::More tests =&gt; 7;
+ 
+ use_ok( 'Test::WWW::Mechanize::Catalyst', 'Parley' );
+ 
+@@ -15,17 +15,7 @@
+ $mech-&gt;get_ok(&quot;<A HREF="http://localhost/forum/list">http://localhost/forum/list</A>&quot;, 'Got forum list page URL');
+ $mech-&gt;content_contains('Forum List', 'Returned page is the forum list');
+ 
+-TODO: {
+-    local $TODO = q{::Mechanize::Test seems to give incorrect &lt;base&gt;};
+-    $status = $mech-&gt;base_is('<A HREF="http://localhost/">http://localhost/</A>');
+-}
+-
+-if (not $status) {
+-    diag &quot;&lt;base&gt; is wrong for tests, overriding&quot;;
+-    $mech-&gt;{base} = '<A HREF="http://localhost/">http://localhost/</A>';
+-}
+-
+<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">- at forum_links</A> = $mech-&gt;find_all_links( url_regex =&gt; qr{\Aforum/view\?forum=} );
+<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">+ at forum_links</A> = $mech-&gt;find_all_links( url_regex =&gt; qr{/forum/view\?forum=} );
+ $mech-&gt;links_ok(
+     \@forum_links,
+     'Check all links for forum/view'
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000608.html">[Parley-svn] r720 - / trunk/root/base/user
+</A></li>
+	<LI>Next message: <A HREF="000610.html">[Parley-svn] r722 - / trunk/t/mechanize
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#609">[ date ]</a>
+              <a href="thread.html#609">[ thread ]</a>
+              <a href="subject.html#609">[ subject ]</a>
+              <a href="author.html#609">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

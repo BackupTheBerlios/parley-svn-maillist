@@ -1,0 +1,942 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r791 - / trunk trunk/db_script trunk/lib
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r791%20-%20/%20trunk%20trunk/db_script%20trunk/lib&In-Reply-To=%3C200802121059.m1CAxlSQ024783%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000678.html">
+   <LINK REL="Next"  HREF="000680.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r791 - / trunk trunk/db_script trunk/lib</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r791%20-%20/%20trunk%20trunk/db_script%20trunk/lib&In-Reply-To=%3C200802121059.m1CAxlSQ024783%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r791 - / trunk trunk/db_script trunk/lib">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Feb 12 11:59:47 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000678.html">[Parley-svn] r790 - / tags
+</A></li>
+        <LI>Next message: <A HREF="000680.html">[Parley-svn] r792 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#679">[ date ]</a>
+              <a href="thread.html#679">[ thread ]</a>
+              <a href="subject.html#679">[ subject ]</a>
+              <a href="author.html#679">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-12 11:59:47 +0100 (Tue, 12 Feb 2008)
+New Revision: 791
+
+Added:
+   trunk/db_script/Parley-Schema-0.59_01-MySQL.sql
+   trunk/db_script/Parley-Schema-0.59_01-PostgreSQL.sql
+   trunk/db_script/Parley-Schema-0.59_01-SQLite.sql
+Modified:
+   /
+   trunk/Changes
+   trunk/Changes.i18n
+   trunk/lib/Parley.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4638 at wiggin</A>:  chisel | 2008-02-11 08:44:21 +0000
+ / initial prep for 0.59 development
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4637
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4638
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-02-12 10:54:14 UTC (rev 790)
++++ trunk/Changes	2008-02-12 10:59:47 UTC (rev 791)
+@@ -1,5 +1,7 @@
+ This file documents the revision history for Parley.
+ 
++0.59 (UNDER DEVELOPMENT)
++
+ 0.58    Fri Feb  8 07:47:31 GMT 2008
+     - re-work the UI design to be cleaner
+     - added an application logo
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-02-12 10:54:14 UTC (rev 790)
++++ trunk/Changes.i18n	2008-02-12 10:59:47 UTC (rev 791)
+@@ -6,6 +6,8 @@
+ will be used as the 'en' i18n file.
+ It's unlikely that we'll need an 'en' file in the project.
+ 
++0.59 (UNDER DEVELOPMENT)
++
+ 0.58
+     (en renamed to i_default)
+ 
+
+Added: trunk/db_script/Parley-Schema-0.59_01-MySQL.sql
+===================================================================
+--- trunk/db_script/Parley-Schema-0.59_01-MySQL.sql	2008-02-12 10:54:14 UTC (rev 790)
++++ trunk/db_script/Parley-Schema-0.59_01-MySQL.sql	2008-02-12 10:59:47 UTC (rev 791)
+@@ -0,0 +1,275 @@
++-- 
++-- Created by SQL::Translator::Producer::MySQL
++-- Created on Mon Feb 11 08:43:35 2008
++-- 
++SET foreign_key_checks=0;
++
++DROP TABLE IF EXISTS authentication;
++--
++-- Table: authentication
++--
++CREATE TABLE authentication (
++  id integer(4) NOT NULL,
++  password text NOT NULL,
++  authenticated enum('0','1') NOT NULL DEFAULT 'false',
++  username text NOT NULL,
++  INDEX (id),
++  INDEX (username),
++  PRIMARY KEY (id),
++  UNIQUE authentication_username_key (username)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS email_queue;
++--
++-- Table: email_queue
++--
++CREATE TABLE email_queue (
++  id integer(4) NOT NULL,
++  recipient_id integer(4) NOT NULL,
++  cc_id integer(4),
++  bcc_id integer(4),
++  sender text,
++  subject text NOT NULL,
++  html_content text,
++  attempted_delivery enum('0','1') NOT NULL DEFAULT 'false',
++  text_content text NOT NULL,
++  queued timestamp with time zone(8) NOT NULL DEFAULT 'now()',
++  INDEX (id),
++  INDEX (bcc_id),
++  INDEX (cc_id),
++  INDEX (recipient_id),
++  PRIMARY KEY (id),
++  CONSTRAINT email_queue_fk_bcc_id FOREIGN KEY (bcc_id) REFERENCES person (id),
++  CONSTRAINT email_queue_fk_cc_id FOREIGN KEY (cc_id) REFERENCES person (id),
++  CONSTRAINT email_queue_fk_recipient_id FOREIGN KEY (recipient_id) REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS forum;
++--
++-- Table: forum
++--
++CREATE TABLE forum (
++  id integer(4) NOT NULL,
++  last_post_id integer(4),
++  post_count integer(4) NOT NULL DEFAULT '0',
++  active enum('0','1') NOT NULL DEFAULT 'true',
++  name text NOT NULL,
++  description text,
++  INDEX (id),
++  INDEX (name),
++  INDEX (last_post_id),
++  PRIMARY KEY (id),
++  UNIQUE forum_name_key (name),
++  CONSTRAINT forum_fk_last_post_id FOREIGN KEY (last_post_id) REFERENCES post (id) ON DELETE CASCADE ON UPDATE CASCADE
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS forum_moderator;
++--
++-- Table: forum_moderator
++--
++CREATE TABLE forum_moderator (
++  person_id integer(4) NOT NULL,
++  forum_id integer(4) NOT NULL,
++  can_moderate enum('0','1') NOT NULL DEFAULT 'false',
++  INDEX (person_id),
++  INDEX (forum_id),
++  UNIQUE forum_moderator_person_key (person_id, forum_id),
++  CONSTRAINT forum_moderator_fk_forum_id FOREIGN KEY (forum_id) REFERENCES forum (id),
++  CONSTRAINT forum_moderator_fk_person_id FOREIGN KEY (person_id) REFERENCES person (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS password_reset;
++--
++-- Table: password_reset
++--
++CREATE TABLE password_reset (
++  id integer NOT NULL,
++  recipient_id integer(4) NOT NULL,
++  expires timestamp without time zone(8),
++  INDEX (id),
++  INDEX (recipient_id),
++  PRIMARY KEY (id),
++  CONSTRAINT password_reset_fk_recipient_id FOREIGN KEY (recipient_id) REFERENCES person (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS person;
++--
++-- Table: person
++--
++CREATE TABLE person (
++  id integer(4) NOT NULL,
++  authentication_id integer(4),
++  last_name text NOT NULL,
++  email text NOT NULL,
++  forum_name text NOT NULL,
++  preference_id integer(4),
++  last_post_id integer(4),
++  post_count integer(4) NOT NULL DEFAULT '0',
++  first_name text NOT NULL,
++  INDEX (id),
++  INDEX (forum_name),
++  INDEX (email),
++  INDEX (authentication_id),
++  INDEX (last_post_id),
++  INDEX (preference_id),
++  PRIMARY KEY (id),
++  UNIQUE person_forum_name_key (forum_name),
++  UNIQUE person_email_key (email),
++  CONSTRAINT person_fk_authentication_id FOREIGN KEY (authentication_id) REFERENCES authentication (id) ON DELETE CASCADE ON UPDATE CASCADE,
++  CONSTRAINT person_fk_last_post_id FOREIGN KEY (last_post_id) REFERENCES post (id),
++  CONSTRAINT person_fk_preference_id FOREIGN KEY (preference_id) REFERENCES preference (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS post;
++--
++-- Table: post
++--
++CREATE TABLE post (
++  id integer(4) NOT NULL,
++  creator_id integer(4) NOT NULL,
++  subject text,
++  quoted_post_id integer(4),
++  message text NOT NULL,
++  quoted_text text,
++  created timestamp with time zone(8) DEFAULT 'now()',
++  thread_id integer(4) NOT NULL,
++  reply_to_id integer(4),
++  edited timestamp with time zone(8),
++  ip_addr inet(8),
++  INDEX (id),
++  INDEX (creator_id),
++  INDEX (quoted_post_id),
++  INDEX (reply_to_id),
++  INDEX (thread_id),
++  PRIMARY KEY (id),
++  CONSTRAINT post_fk_creator_id FOREIGN KEY (creator_id) REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE,
++  CONSTRAINT post_fk_quoted_post_id FOREIGN KEY (quoted_post_id) REFERENCES post (id),
++  CONSTRAINT post_fk_reply_to_id FOREIGN KEY (reply_to_id) REFERENCES post (id) ON DELETE CASCADE ON UPDATE CASCADE,
++  CONSTRAINT post_fk_thread_id FOREIGN KEY (thread_id) REFERENCES thread (id) ON DELETE CASCADE ON UPDATE CASCADE
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS preference;
++--
++-- Table: preference
++--
++CREATE TABLE preference (
++  id integer(4) NOT NULL,
++  timezone text NOT NULL DEFAULT 'UTC',
++  time_format_id integer(4) NOT NULL,
++  show_tz enum('0','1') NOT NULL DEFAULT 'true',
++  notify_thread_watch enum('0','1') NOT NULL DEFAULT 'false',
++  watch_on_post enum('0','1') NOT NULL DEFAULT 'false',
++  INDEX (id),
++  INDEX (preference_id),
++  INDEX (time_format_id),
++  PRIMARY KEY (id),
++  CONSTRAINT preference_fk_preference_id FOREIGN KEY (preference_id) REFERENCES person (id),
++  CONSTRAINT preference_fk_time_format_id FOREIGN KEY (time_format_id) REFERENCES preference_time_string (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS preference_time_string;
++--
++-- Table: preference_time_string
++--
++CREATE TABLE preference_time_string (
++  id integer(4) NOT NULL,
++  time_string text NOT NULL,
++  sample text NOT NULL,
++  comment text,
++  INDEX (id),
++  PRIMARY KEY (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS registration_authentication;
++--
++-- Table: registration_authentication
++--
++CREATE TABLE registration_authentication (
++  id text NOT NULL,
++  recipient_id integer(4) NOT NULL,
++  expires date(4),
++  INDEX (id),
++  INDEX (recipient_id),
++  PRIMARY KEY (id),
++  CONSTRAINT registration_authentication_fk_recipient_id FOREIGN KEY (recipient_id) REFERENCES person (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS terms;
++--
++-- Table: terms
++--
++CREATE TABLE terms (
++  id integer NOT NULL,
++  created timestamp with time zone NOT NULL,
++  content text NOT NULL,
++  change_summary text NOT NULL,
++  INDEX (id),
++  PRIMARY KEY (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS terms_agreed;
++--
++-- Table: terms_agreed
++--
++CREATE TABLE terms_agreed (
++  id integer NOT NULL,
++  person_id integer NOT NULL,
++  terms_id integer NOT NULL,
++  accepted_on timestamp with time zone NOT NULL,
++  INDEX (id),
++  INDEX (person_id),
++  INDEX (terms_id),
++  PRIMARY KEY (id),
++  CONSTRAINT terms_agreed_fk_person_id FOREIGN KEY (person_id) REFERENCES person (id),
++  CONSTRAINT terms_agreed_fk_terms_id FOREIGN KEY (terms_id) REFERENCES terms (id)
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS thread;
++--
++-- Table: thread
++--
++CREATE TABLE thread (
++  id integer(4) NOT NULL,
++  locked enum('0','1') NOT NULL DEFAULT 'false',
++  creator_id integer(4) NOT NULL,
++  subject text NOT NULL,
++  active enum('0','1') NOT NULL DEFAULT 'true',
++  forum_id integer(4) NOT NULL,
++  created timestamp with time zone(8) DEFAULT 'now()',
++  last_post_id integer(4),
++  sticky enum('0','1') NOT NULL DEFAULT 'false',
++  post_count integer(4) NOT NULL DEFAULT '0',
++  view_count integer(4) NOT NULL DEFAULT '0',
++  INDEX (id),
++  INDEX (creator_id),
++  INDEX (forum_id),
++  INDEX (last_post_id),
++  PRIMARY KEY (id),
++  CONSTRAINT thread_fk_creator_id FOREIGN KEY (creator_id) REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE,
++  CONSTRAINT thread_fk_forum_id FOREIGN KEY (forum_id) REFERENCES forum (id),
++  CONSTRAINT thread_fk_forum_id_1 FOREIGN KEY (forum_id) REFERENCES forum_moderator (forum),
++  CONSTRAINT thread_fk_last_post_id FOREIGN KEY (last_post_id) REFERENCES post (id) ON DELETE CASCADE ON UPDATE CASCADE
++) Type=InnoDB;
++
++DROP TABLE IF EXISTS thread_view;
++--
++-- Table: thread_view
++--
++CREATE TABLE thread_view (
++  id integer(4) NOT NULL,
++  watched enum('0','1') NOT NULL DEFAULT 'false',
++  last_notified timestamp with time zone(8),
++  thread_id integer(4) NOT NULL,
++  timestamp timestamp with time zone(8) NOT NULL DEFAULT 'now()',
++  person_id integer(4) NOT NULL,
++  INDEX (id),
++  INDEX (person_id),
++  INDEX (thread_id),
++  PRIMARY KEY (id),
++  UNIQUE thread_view_person_key (person_id, thread_id),
++  CONSTRAINT thread_view_fk_person_id FOREIGN KEY (person_id) REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE,
++  CONSTRAINT thread_view_fk_thread_id FOREIGN KEY (thread_id) REFERENCES thread (id) ON DELETE CASCADE ON UPDATE CASCADE
++) Type=InnoDB;
++
++SET foreign_key_checks=1;
++
+
+Added: trunk/db_script/Parley-Schema-0.59_01-PostgreSQL.sql
+===================================================================
+--- trunk/db_script/Parley-Schema-0.59_01-PostgreSQL.sql	2008-02-12 10:54:14 UTC (rev 790)
++++ trunk/db_script/Parley-Schema-0.59_01-PostgreSQL.sql	2008-02-12 10:59:47 UTC (rev 791)
+@@ -0,0 +1,305 @@
++--
++-- Table: authentication
++--
++DROP TABLE authentication CASCADE;
++CREATE TABLE authentication (
++  id smallint NOT NULL,
++  password text NOT NULL,
++  authenticated boolean(1) DEFAULT 'false' NOT NULL,
++  username text NOT NULL,
++  PRIMARY KEY (id),
++  Constraint &quot;authentication_username_key&quot; UNIQUE (username)
++);
++
++
++
++--
++-- Table: email_queue
++--
++DROP TABLE email_queue CASCADE;
++CREATE TABLE email_queue (
++  id smallint NOT NULL,
++  recipient_id smallint NOT NULL,
++  cc_id smallint,
++  bcc_id smallint,
++  sender text,
++  subject text NOT NULL,
++  html_content text,
++  attempted_delivery boolean(1) DEFAULT 'false' NOT NULL,
++  text_content text NOT NULL,
++  queued timestamp with time zone(6) DEFAULT now() NOT NULL,
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: forum
++--
++DROP TABLE forum CASCADE;
++CREATE TABLE forum (
++  id smallint NOT NULL,
++  last_post_id smallint,
++  post_count smallint DEFAULT '0' NOT NULL,
++  active boolean(1) DEFAULT 'true' NOT NULL,
++  name text NOT NULL,
++  description text,
++  PRIMARY KEY (id),
++  Constraint &quot;forum_name_key&quot; UNIQUE (name)
++);
++
++
++
++--
++-- Table: forum_moderator
++--
++DROP TABLE forum_moderator CASCADE;
++CREATE TABLE forum_moderator (
++  person_id smallint NOT NULL,
++  forum_id smallint NOT NULL,
++  can_moderate boolean(1) DEFAULT 'false' NOT NULL,
++  Constraint &quot;forum_moderator_person_key&quot; UNIQUE (person_id, forum_id)
++);
++
++
++
++--
++-- Table: password_reset
++--
++DROP TABLE password_reset CASCADE;
++CREATE TABLE password_reset (
++  id integer NOT NULL,
++  recipient_id smallint NOT NULL,
++  expires timestamp without time zone(6),
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: person
++--
++DROP TABLE person CASCADE;
++CREATE TABLE person (
++  id smallint NOT NULL,
++  authentication_id smallint,
++  last_name text NOT NULL,
++  email text NOT NULL,
++  forum_name text NOT NULL,
++  preference_id smallint,
++  last_post_id smallint,
++  post_count smallint DEFAULT '0' NOT NULL,
++  first_name text NOT NULL,
++  PRIMARY KEY (id),
++  Constraint &quot;person_forum_name_key&quot; UNIQUE (forum_name),
++  Constraint &quot;person_email_key&quot; UNIQUE (email)
++);
++
++
++
++--
++-- Table: post
++--
++DROP TABLE post CASCADE;
++CREATE TABLE post (
++  id smallint NOT NULL,
++  creator_id smallint NOT NULL,
++  subject text,
++  quoted_post_id smallint,
++  message text NOT NULL,
++  quoted_text text,
++  created timestamp with time zone(6) DEFAULT now(),
++  thread_id smallint NOT NULL,
++  reply_to_id smallint,
++  edited timestamp with time zone(6),
++  ip_addr inet(8),
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: preference
++--
++DROP TABLE preference CASCADE;
++CREATE TABLE preference (
++  id smallint NOT NULL,
++  timezone text DEFAULT 'UTC' NOT NULL,
++  time_format_id smallint NOT NULL,
++  show_tz boolean(1) DEFAULT 'true' NOT NULL,
++  notify_thread_watch boolean(1) DEFAULT 'false' NOT NULL,
++  watch_on_post boolean(1) DEFAULT 'false' NOT NULL,
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: preference_time_string
++--
++DROP TABLE preference_time_string CASCADE;
++CREATE TABLE preference_time_string (
++  id smallint NOT NULL,
++  time_string text NOT NULL,
++  sample text NOT NULL,
++  comment text,
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: registration_authentication
++--
++DROP TABLE registration_authentication CASCADE;
++CREATE TABLE registration_authentication (
++  id text NOT NULL,
++  recipient_id smallint NOT NULL,
++  expires date(4),
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: terms
++--
++DROP TABLE terms CASCADE;
++CREATE TABLE terms (
++  id integer NOT NULL,
++  created timestamp with time zone NOT NULL,
++  content text NOT NULL,
++  change_summary text NOT NULL,
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: terms_agreed
++--
++DROP TABLE terms_agreed CASCADE;
++CREATE TABLE terms_agreed (
++  id integer NOT NULL,
++  person_id integer NOT NULL,
++  terms_id integer NOT NULL,
++  accepted_on timestamp with time zone NOT NULL,
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: thread
++--
++DROP TABLE thread CASCADE;
++CREATE TABLE thread (
++  id smallint NOT NULL,
++  locked boolean(1) DEFAULT 'false' NOT NULL,
++  creator_id smallint NOT NULL,
++  subject text NOT NULL,
++  active boolean(1) DEFAULT 'true' NOT NULL,
++  forum_id smallint NOT NULL,
++  created timestamp with time zone(6) DEFAULT now(),
++  last_post_id smallint,
++  sticky boolean(1) DEFAULT 'false' NOT NULL,
++  post_count smallint DEFAULT '0' NOT NULL,
++  view_count smallint DEFAULT '0' NOT NULL,
++  PRIMARY KEY (id)
++);
++
++
++
++--
++-- Table: thread_view
++--
++DROP TABLE thread_view CASCADE;
++CREATE TABLE thread_view (
++  id smallint NOT NULL,
++  watched boolean(1) DEFAULT 'false' NOT NULL,
++  last_notified timestamp with time zone(6),
++  thread_id smallint NOT NULL,
++  timestamp timestamp with time zone(6) DEFAULT now() NOT NULL,
++  person_id smallint NOT NULL,
++  PRIMARY KEY (id),
++  Constraint &quot;thread_view_person_key&quot; UNIQUE (person_id, thread_id)
++);
++
++--
++-- Foreign Key Definitions
++--
++
++ALTER TABLE email_queue ADD FOREIGN KEY (bcc_id)
++  REFERENCES person (id);
++
++ALTER TABLE email_queue ADD FOREIGN KEY (cc_id)
++  REFERENCES person (id);
++
++ALTER TABLE email_queue ADD FOREIGN KEY (recipient_id)
++  REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE forum ADD FOREIGN KEY (last_post_id)
++  REFERENCES post (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE forum_moderator ADD FOREIGN KEY (forum_id)
++  REFERENCES forum (id);
++
++ALTER TABLE forum_moderator ADD FOREIGN KEY (person_id)
++  REFERENCES person (id);
++
++ALTER TABLE password_reset ADD FOREIGN KEY (recipient_id)
++  REFERENCES person (id);
++
++ALTER TABLE person ADD FOREIGN KEY (authentication_id)
++  REFERENCES authentication (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE person ADD FOREIGN KEY (last_post_id)
++  REFERENCES post (id);
++
++ALTER TABLE person ADD FOREIGN KEY (preference_id)
++  REFERENCES preference (id);
++
++ALTER TABLE post ADD FOREIGN KEY (creator_id)
++  REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE post ADD FOREIGN KEY (quoted_post_id)
++  REFERENCES post (id);
++
++ALTER TABLE post ADD FOREIGN KEY (reply_to_id)
++  REFERENCES post (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE post ADD FOREIGN KEY (thread_id)
++  REFERENCES thread (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE preference ADD FOREIGN KEY (preference_id)
++  REFERENCES person (id);
++
++ALTER TABLE preference ADD FOREIGN KEY (time_format_id)
++  REFERENCES preference_time_string (id);
++
++ALTER TABLE registration_authentication ADD FOREIGN KEY (recipient_id)
++  REFERENCES person (id);
++
++ALTER TABLE terms_agreed ADD FOREIGN KEY (person_id)
++  REFERENCES person (id);
++
++ALTER TABLE terms_agreed ADD FOREIGN KEY (terms_id)
++  REFERENCES terms (id);
++
++ALTER TABLE thread ADD FOREIGN KEY (creator_id)
++  REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE thread ADD FOREIGN KEY (forum_id)
++  REFERENCES forum (id);
++
++ALTER TABLE thread ADD FOREIGN KEY (forum_id)
++  REFERENCES forum_moderator (forum);
++
++ALTER TABLE thread ADD FOREIGN KEY (last_post_id)
++  REFERENCES post (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE thread_view ADD FOREIGN KEY (person_id)
++  REFERENCES person (id) ON DELETE CASCADE ON UPDATE CASCADE;
++
++ALTER TABLE thread_view ADD FOREIGN KEY (thread_id)
++  REFERENCES thread (id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+Added: trunk/db_script/Parley-Schema-0.59_01-SQLite.sql
+===================================================================
+--- trunk/db_script/Parley-Schema-0.59_01-SQLite.sql	2008-02-12 10:54:14 UTC (rev 790)
++++ trunk/db_script/Parley-Schema-0.59_01-SQLite.sql	2008-02-12 10:59:47 UTC (rev 791)
+@@ -0,0 +1,211 @@
++-- 
++-- Created by SQL::Translator::Producer::SQLite
++-- Created on Mon Feb 11 08:43:35 2008
++-- 
++BEGIN TRANSACTION;
++
++
++--
++-- Table: authentication
++--
++DROP TABLE authentication;
++CREATE TABLE authentication (
++  id INTEGER PRIMARY KEY NOT NULL,
++  password text NOT NULL,
++  authenticated boolean(1) NOT NULL DEFAULT 'false',
++  username text NOT NULL
++);
++
++CREATE UNIQUE INDEX authentication_username_key_au on authentication (username);
++
++--
++-- Table: email_queue
++--
++DROP TABLE email_queue;
++CREATE TABLE email_queue (
++  id INTEGER PRIMARY KEY NOT NULL,
++  recipient_id integer(4) NOT NULL,
++  cc_id integer(4),
++  bcc_id integer(4),
++  sender text,
++  subject text NOT NULL,
++  html_content text,
++  attempted_delivery boolean(1) NOT NULL DEFAULT 'false',
++  text_content text NOT NULL,
++  queued timestamp with time zone(8) NOT NULL DEFAULT CURRENT_TIMESTAMP
++);
++
++
++--
++-- Table: forum
++--
++DROP TABLE forum;
++CREATE TABLE forum (
++  id INTEGER PRIMARY KEY NOT NULL,
++  last_post_id integer(4),
++  post_count integer(4) NOT NULL DEFAULT '0',
++  active boolean(1) NOT NULL DEFAULT 'true',
++  name text NOT NULL,
++  description text
++);
++
++CREATE UNIQUE INDEX forum_name_key_forum on forum (name);
++
++--
++-- Table: forum_moderator
++--
++DROP TABLE forum_moderator;
++CREATE TABLE forum_moderator (
++  person_id integer(4) NOT NULL,
++  forum_id integer(4) NOT NULL,
++  can_moderate boolean(1) NOT NULL DEFAULT 'false'
++);
++
++CREATE UNIQUE INDEX forum_moderator_person_key_for on forum_moderator (person_id, forum_id);
++
++--
++-- Table: password_reset
++--
++DROP TABLE password_reset;
++CREATE TABLE password_reset (
++  id INTEGER PRIMARY KEY NOT NULL,
++  recipient_id integer(4) NOT NULL,
++  expires timestamp without time zone(8)
++);
++
++
++--
++-- Table: person
++--
++DROP TABLE person;
++CREATE TABLE person (
++  id INTEGER PRIMARY KEY NOT NULL,
++  authentication_id integer(4),
++  last_name text NOT NULL,
++  email text NOT NULL,
++  forum_name text NOT NULL,
++  preference_id integer(4),
++  last_post_id integer(4),
++  post_count integer(4) NOT NULL DEFAULT '0',
++  first_name text NOT NULL
++);
++
++CREATE UNIQUE INDEX person_forum_name_key_person on person (forum_name);
++CREATE UNIQUE INDEX person_email_key_person on person (email);
++
++--
++-- Table: post
++--
++DROP TABLE post;
++CREATE TABLE post (
++  id INTEGER PRIMARY KEY NOT NULL,
++  creator_id integer(4) NOT NULL,
++  subject text,
++  quoted_post_id integer(4),
++  message text NOT NULL,
++  quoted_text text,
++  created timestamp with time zone(8) DEFAULT CURRENT_TIMESTAMP,
++  thread_id integer(4) NOT NULL,
++  reply_to_id integer(4),
++  edited timestamp with time zone(8),
++  ip_addr inet(8)
++);
++
++
++--
++-- Table: preference
++--
++DROP TABLE preference;
++CREATE TABLE preference (
++  id INTEGER PRIMARY KEY NOT NULL,
++  timezone text NOT NULL DEFAULT 'UTC',
++  time_format_id integer(4) NOT NULL,
++  show_tz boolean(1) NOT NULL DEFAULT 'true',
++  notify_thread_watch boolean(1) NOT NULL DEFAULT 'false',
++  watch_on_post boolean(1) NOT NULL DEFAULT 'false'
++);
++
++
++--
++-- Table: preference_time_string
++--
++DROP TABLE preference_time_string;
++CREATE TABLE preference_time_string (
++  id INTEGER PRIMARY KEY NOT NULL,
++  time_string text NOT NULL,
++  sample text NOT NULL,
++  comment text
++);
++
++
++--
++-- Table: registration_authentication
++--
++DROP TABLE registration_authentication;
++CREATE TABLE registration_authentication (
++  id text NOT NULL,
++  recipient_id integer(4) NOT NULL,
++  expires date(4),
++  PRIMARY KEY (id)
++);
++
++
++--
++-- Table: terms
++--
++DROP TABLE terms;
++CREATE TABLE terms (
++  id INTEGER PRIMARY KEY NOT NULL,
++  created timestamp with time zone NOT NULL,
++  content text NOT NULL,
++  change_summary text NOT NULL
++);
++
++
++--
++-- Table: terms_agreed
++--
++DROP TABLE terms_agreed;
++CREATE TABLE terms_agreed (
++  id INTEGER PRIMARY KEY NOT NULL,
++  person_id integer NOT NULL,
++  terms_id integer NOT NULL,
++  accepted_on timestamp with time zone NOT NULL
++);
++
++
++--
++-- Table: thread
++--
++DROP TABLE thread;
++CREATE TABLE thread (
++  id INTEGER PRIMARY KEY NOT NULL,
++  locked boolean(1) NOT NULL DEFAULT 'false',
++  creator_id integer(4) NOT NULL,
++  subject text NOT NULL,
++  active boolean(1) NOT NULL DEFAULT 'true',
++  forum_id integer(4) NOT NULL,
++  created timestamp with time zone(8) DEFAULT CURRENT_TIMESTAMP,
++  last_post_id integer(4),
++  sticky boolean(1) NOT NULL DEFAULT 'false',
++  post_count integer(4) NOT NULL DEFAULT '0',
++  view_count integer(4) NOT NULL DEFAULT '0'
++);
++
++
++--
++-- Table: thread_view
++--
++DROP TABLE thread_view;
++CREATE TABLE thread_view (
++  id INTEGER PRIMARY KEY NOT NULL,
++  watched boolean(1) NOT NULL DEFAULT 'false',
++  last_notified timestamp with time zone(8),
++  thread_id integer(4) NOT NULL,
++  timestamp timestamp with time zone(8) NOT NULL DEFAULT CURRENT_TIMESTAMP,
++  person_id integer(4) NOT NULL
++);
++
++CREATE UNIQUE INDEX thread_view_person_key_thread_ on thread_view (person_id, thread_id);
++
++COMMIT;
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-02-12 10:54:14 UTC (rev 790)
++++ trunk/lib/Parley.pm	2008-02-12 10:59:47 UTC (rev 791)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.58';
++our $VERSION = '0.59_01';
+ 
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000678.html">[Parley-svn] r790 - / tags
+</A></li>
+	<LI>Next message: <A HREF="000680.html">[Parley-svn] r792 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#679">[ date ]</a>
+              <a href="thread.html#679">[ thread ]</a>
+              <a href="subject.html#679">[ subject ]</a>
+              <a href="author.html#679">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r394 - / trunk/root/base trunk/root/base/menu	trunk/root/base/shared trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r394%20-%20/%20trunk/root/base%20trunk/root/base/menu%0A%09trunk/root/base/shared%20trunk/root/css&In-Reply-To=%3C200707121907.l6CJ7UQx004109%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000279.html">
+   <LINK REL="Next"  HREF="000283.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r394 - / trunk/root/base trunk/root/base/menu	trunk/root/base/shared trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r394%20-%20/%20trunk/root/base%20trunk/root/base/menu%0A%09trunk/root/base/shared%20trunk/root/css&In-Reply-To=%3C200707121907.l6CJ7UQx004109%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r394 - / trunk/root/base trunk/root/base/menu	trunk/root/base/shared trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul 12 21:07:30 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000279.html">[Parley-svn] r393 - tags
+</A></li>
+        <LI>Next message: <A HREF="000283.html">[Parley-svn] r395 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#282">[ date ]</a>
+              <a href="thread.html#282">[ thread ]</a>
+              <a href="subject.html#282">[ subject ]</a>
+              <a href="author.html#282">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-12 21:07:29 +0200 (Thu, 12 Jul 2007)
+New Revision: 394
+
+Modified:
+   /
+   trunk/root/base/footer
+   trunk/root/base/header
+   trunk/root/base/menu/menubar
+   trunk/root/base/shared/search_dialog
+   trunk/root/base/shared/thread_watch
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3486 at wiggin</A>:  chisel | 2007-07-05 08:36:19 +0100
+ / cleaned up layout and improved w3c validation level
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3459
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3486
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-07-04 22:21:49 UTC (rev 393)
++++ trunk/root/base/footer	2007-07-12 19:07:29 UTC (rev 394)
+@@ -1,5 +1,4 @@
+ &lt;!-- Footer : Start --&gt;
+-                    &lt;/p&gt;
+                 &lt;/div&gt;&lt;!-- content div --&gt;
+             &lt;/div&gt;&lt;!-- wrapper div --&gt;
+ 
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-07-04 22:21:49 UTC (rev 393)
++++ trunk/root/base/header	2007-07-12 19:07:29 UTC (rev 394)
+@@ -64,5 +64,4 @@
+ 
+             &lt;div id=&quot;wrapper&quot;&gt;
+                 &lt;div id=&quot;content&quot;&gt;
+-                    &lt;p&gt;
+ &lt;!-- Header : End --&gt;
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-07-04 22:21:49 UTC (rev 393)
++++ trunk/root/base/menu/menubar	2007-07-12 19:07:29 UTC (rev 394)
+@@ -22,9 +22,9 @@
+ &lt;div dojoType=&quot;PopupMenu2&quot; widgetId=&quot;menu_thread&quot;&gt;
+ 	&lt;div dojoType=&quot;MenuItem2&quot; [%thread_disabled%] caption=&quot;Add Reply&quot; onClick=&quot;document.location.href='thread/reply?thread=[%current_thread.id%]';&quot;&gt;&lt;/div&gt;
+     [%- IF watching_thread %]
+-	&lt;div dojoType=&quot;MenuItem2&quot; [%thread_disabled%] caption=&quot;Remove Watch&quot; onClick=&quot;document.location.href='thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0';&quot;&gt;&lt;/div&gt;
++	&lt;div dojoType=&quot;MenuItem2&quot; [%thread_disabled%] caption=&quot;Remove Watch&quot; onClick=&quot;document.location.href='thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0';&quot;&gt;&lt;/div&gt;
+     [%- ELSE %]
+-	&lt;div dojoType=&quot;MenuItem2&quot; [%thread_disabled%] caption=&quot;Add Watch&quot; onClick=&quot;document.location.href='thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=1'&quot;&gt;&lt;/div&gt;
++	&lt;div dojoType=&quot;MenuItem2&quot; [%thread_disabled%] caption=&quot;Add Watch&quot; onClick=&quot;document.location.href='thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=1'&quot;&gt;&lt;/div&gt;
+     [%- END %]
+ &lt;/div&gt;
+ 
+@@ -41,13 +41,13 @@
+ 
+ &lt;div dojoType=&quot;PopupMenu2&quot; widgetId=&quot;menu_moderate&quot;&gt;
+     [% IF current_thread.locked %]
+-	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Unlock Thread&quot; onClick=&quot;document.location.href='admin/lock?thread=[%current_thread.id%]&amp;lock=0';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
++	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Unlock Thread&quot; onClick=&quot;document.location.href='admin/lock?thread=[%current_thread.id%]&amp;lock=0';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
+     [% ELSE %]
+ 	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Lock Thread&quot; onClick=&quot;document.location.href='admin/lock?thread=[%current_thread.id%]';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
+     [% END %]
+ 
+     [% IF current_thread.sticky %]
+-	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Unstick Thread&quot; onClick=&quot;document.location.href='admin/sticky?thread=[%current_thread.id%]&amp;sticky=0';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
++	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Unstick Thread&quot; onClick=&quot;document.location.href='admin/sticky?thread=[%current_thread.id%]&amp;sticky=0';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
+     [% ELSE %]
+ 	&lt;div dojoType=&quot;MenuItem2&quot; caption=&quot;Stick Thread&quot; onClick=&quot;document.location.href='admin/sticky?thread=[%current_thread.id%]';&quot; [% thread_disabled %]&gt;&lt;/div&gt;
+     [% END %]
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2007-07-04 22:21:49 UTC (rev 393)
++++ trunk/root/base/shared/search_dialog	2007-07-12 19:07:29 UTC (rev 394)
+@@ -28,6 +28,7 @@
+                     &lt;option value=&quot;&quot;&gt;All Forums&lt;/option&gt;
+                 &lt;/optgroup&gt;
+                 [% IF available_forums %]
++                [% SET dummy=available_forums.reset %]
+                 &lt;optgroup label=&quot;Forums&quot;&gt;
+                 [% WHILE (forum = available_forums.next) %]
+                 &lt;option value=&quot;[% forum.id %]&quot;&gt;[% forum.name %]&lt;/option&gt;
+
+Modified: trunk/root/base/shared/thread_watch
+===================================================================
+--- trunk/root/base/shared/thread_watch	2007-07-04 22:21:49 UTC (rev 393)
++++ trunk/root/base/shared/thread_watch	2007-07-12 19:07:29 UTC (rev 394)
+@@ -7,10 +7,10 @@
+     [%- IF watching_thread %]
+         You are watching this thread.
+         (
+-        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0&quot;&gt;Remove Watch&lt;/a&gt;
++        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&amp;watch=0&quot;&gt;Remove Watch&lt;/a&gt;
+         )
+     [%- ELSE %]
+-        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&quot;&gt;Watch this thread&lt;/a&gt;
++        &lt;a href=&quot;thread/watch?thread=[% current_thread.id %]&amp;page=[% page.current_page %]&quot;&gt;Watch this thread&lt;/a&gt;
+     [%- END%]
+ &lt;/div&gt;
+ [%- END %] [%# authed_user block %]
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-07-04 22:21:49 UTC (rev 393)
++++ trunk/root/css/common.css	2007-07-12 19:07:29 UTC (rev 394)
+@@ -351,3 +351,14 @@
+     font-weight: bold;
+ }
+ 
++
++
++a[href $='.jpg']{
++    padding-left: 20px;
++    background:   transparent url(/static/images/filetypes/image.png) no-repeat center left;
++}
++
++a[href $='.pdf']{
++    padding-left: 20px;
++    background:   transparent url(/static/images/filetypes/pdf.png) no-repeat center left;
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000279.html">[Parley-svn] r393 - tags
+</A></li>
+	<LI>Next message: <A HREF="000283.html">[Parley-svn] r395 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#282">[ date ]</a>
+              <a href="thread.html#282">[ thread ]</a>
+              <a href="subject.html#282">[ subject ]</a>
+              <a href="author.html#282">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

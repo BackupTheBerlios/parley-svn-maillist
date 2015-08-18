@@ -1,0 +1,1069 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1026 - / trunk trunk/lib trunk/lib/Catalyst	trunk/lib/Catalyst/Controller trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/root/base trunk/root/base/dfv trunk/root/base/search	trunk/root/base/shared trunk/root/base/thread trunk/root/static/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1026%20-%20/%20trunk%20trunk/lib%20trunk/lib/Catalyst%0A%09trunk/lib/Catalyst/Controller%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/root/base%20trunk/root/base/dfv%20trunk/root/base/search%0A%09trunk/root/base/shared%20trunk/root/base/thread%20trunk/root/static/css&In-Reply-To=%3C200812300227.mBU2RV8N022793%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000907.html">
+   <LINK REL="Next"  HREF="000909.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1026 - / trunk trunk/lib trunk/lib/Catalyst	trunk/lib/Catalyst/Controller trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/root/base trunk/root/base/dfv trunk/root/base/search	trunk/root/base/shared trunk/root/base/thread trunk/root/static/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1026%20-%20/%20trunk%20trunk/lib%20trunk/lib/Catalyst%0A%09trunk/lib/Catalyst/Controller%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/root/base%20trunk/root/base/dfv%20trunk/root/base/search%0A%09trunk/root/base/shared%20trunk/root/base/thread%20trunk/root/static/css&In-Reply-To=%3C200812300227.mBU2RV8N022793%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1026 - / trunk trunk/lib trunk/lib/Catalyst	trunk/lib/Catalyst/Controller trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/root/base trunk/root/base/dfv trunk/root/base/search	trunk/root/base/shared trunk/root/base/thread trunk/root/static/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Dec 30 03:27:31 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000907.html">[Parley-svn] r1025 - / trunk trunk/root trunk/root/skin2	trunk/root/static trunk/root/static/yui trunk/t.output
+</A></li>
+        <LI>Next message: <A HREF="000909.html">[Parley-svn] r1027 - / branches/parley-1.1/root/skin2/search
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#908">[ date ]</a>
+              <a href="thread.html#908">[ thread ]</a>
+              <a href="subject.html#908">[ subject ]</a>
+              <a href="author.html#908">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-30 03:27:30 +0100 (Tue, 30 Dec 2008)
+New Revision: 1026
+
+Added:
+   trunk/lib/Catalyst/
+   trunk/lib/Catalyst/Controller/
+   trunk/lib/Catalyst/Controller/FormValidator.pm
+   trunk/root/base/dfv/
+   trunk/root/base/dfv/display_validation_messages
+   trunk/root/base/dfv/validation_messages_data
+   trunk/root/base/search/advanced
+   trunk/root/base/search/results
+   trunk/root/base/shared/add_this
+Modified:
+   /
+   trunk/
+   trunk/Changes
+   trunk/Makefile.PL
+   trunk/ROADMAP
+   trunk/TODO
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/lib/Parley/Version.pm
+   trunk/parley.conf
+   trunk/root/base/header
+   trunk/root/base/shared/search_dialog
+   trunk/root/base/thread/view
+   trunk/root/static/css/parley-min.css
+   trunk/root/static/css/parley.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8883 at wiggin</A>:  chisel | 2008-12-30 02:26:42 +0000
+ branch --&gt; trunk update
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8881
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8883
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/schema_based:562
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.3:8686
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.4:8698
+f74ee645-c3e3-0310-be06-c791151d01b6:/branches/schema_based:258
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/parley-1.1:8879
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/branches/schema_based:562
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.3:8686
+6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley/tags/parley-1.0.4:8698
+f74ee645-c3e3-0310-be06-c791151d01b6:/branches/schema_based:258
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/Changes	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -1,5 +1,13 @@
+ This file documents the revision history for Parley.
+ 
++1.1.0
++    - added Advanced Search page
++    - added Add This (www.addthis.com) to thread/view page
++      (if username set in configuration)
++    - modified CSS for &quot;user information&quot;; now the header is a fixed-width we
++      can place this div inside it (instead of flushed to the RHS of the
++      page/window)
++
+ 1.0.4   Wed Dec 24 18:54:24 GMT 2008
+     - fixed skin2
+     - remove yui/ softlink
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/Makefile.PL	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -8,7 +8,7 @@
+ author          ('Chisel Wright&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt;');
+ abstract        ('Message board / forum application');
+ license         ('perl');
+-version         ('1.0.4');
++version         ('1.1.0');
+ 
+ requires(
+     'Catalyst'                                                  =&gt; '5.7014',
+@@ -34,6 +34,7 @@
+     'Config::General'                                           =&gt; '2.37',
+     'Data::FormValidator'                                       =&gt; '4.50',
+     'Data::SpreadPagination'                                    =&gt; '0.1.2',
++    'Date::Manip'                                               =&gt; '5.54',
+     'DateTime'                                                  =&gt; '0.41',
+     'DateTime::Format::Pg'                                      =&gt; '0.16001',
+     'DateTime::TimeZone'                                        =&gt; '0.70',
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/ROADMAP	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -50,6 +50,7 @@
+ 1.1.0:
+ 
+     - advanced search
++    - reCaptcha during registration
+ 
+ 1.2.0:
+ 
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/TODO	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -1,5 +1,7 @@
+ TODO LIST
+ 
++  - update i18n from Advanced Search additions
++  - move search_dialog inline styles into CSS file
+   - fix &quot;oversized image&quot; bug
+   - fix &quot;user information&quot; CSS location
+   - local file permissions (for avatar uploads)
+
+Added: trunk/lib/Catalyst/Controller/FormValidator.pm
+===================================================================
+--- trunk/lib/Catalyst/Controller/FormValidator.pm	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/lib/Catalyst/Controller/FormValidator.pm	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -0,0 +1,127 @@
++package Catalyst::Controller::FormValidator;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use version; our $VERSION = qv(0.0.1)-&gt;numify;
++
++use base 'Catalyst::Controller';
++
++use Carp;
++use Data::Dump qw(pp);
++use Data::FormValidator '4.50';
++use Data::FormValidator::Constraints qw(:closures);
++
++sub form_check :Private {
++    my ($self, $c, $dfv_profile, $param_type) = @_;
++    my $parameters;
++
++    # Which parameters? GET / POST or &quot;all&quot;?
++    # - POST [default]
++    if (
++        not defined $param_type
++            or
++        q{POST} eq $param_type
++    ) {
++        $parameters = $c-&gt;request-&gt;body_parameters;
++    }
++    # - GET
++    elsif (q{GET} eq $param_type) {
++        $parameters = $c-&gt;request-&gt;query_parameters;
++    }
++    # - &quot;all&quot;
++    elsif (q{all} eq $param_type) {
++        $parameters = $c-&gt;request-&gt;parameters;
++    }
++
++    my $results = Data::FormValidator-&gt;check(
++        $parameters,
++        $dfv_profile
++    );
++
++    # if we have any failures ...
++    #if ($results-&gt;has_invalid or $results-&gt;has_missing) {
++        $c-&gt;stash-&gt;{validation} = $results;
++        #}
++
++    return;
++}
++
++sub add_form_invalid :Private {
++    my ($self, $c, $invalid_key, $invalid_value) = @_;
++
++    # if we haven't checked hte form yet, we can't add to the results
++    if (not defined $c-&gt;stash-&gt;{validation}) {
++        carp('form must be validated first');
++        return;
++    }
++
++    # the invalids are a keyed list of constraint names
++    push
++        @{ $c-&gt;stash-&gt;{validation}{invalid}{$invalid_key} },
++        $invalid_value
++    ;
++
++    return;
++}
++
++sub validation_errors_to_html :Private {
++    my ($self, $c) = @_;
++}
++
++1;
++
++__END__
++
++=pod
++
++=head1 NAME
++
++Catalyst::Controller::FormValidator - check form data
++
++=head1 SUMMARY
++
++Form-validation using a Catalyst controller and Data::FormValidator
++
++=head1 SYNOPSIS
++
++    use base 'Catalyst::Controller::FormValidator';
++    use Data::FormValidator::Constraints qw(:closures);
++
++    # define a DFV profile
++    my $dfv_profile = {
++        required =&gt; [qw&lt;
++            email_address
++            phone_home
++            phone_mobile
++        &gt;],
++
++        constraint_methods =&gt; {
++            email_address   =&gt; email(),
++            phone_home      =&gt; american_phone(),
++            phone_mobile    =&gt; american_phone(),
++        },
++    };
++
++    # check the form for errors
++    $c-&gt;forward('form_check', [$dfv_profile]);
++
++    # perform custom/complex checking and
++    # add to form validation failures
++    if (not is_complex_test_ok()) {
++        $c-&gt;forward(
++            'add_form_invalid',
++            [ $error_key, $error_constraint_name ]
++        );
++    }
++
++=head1 AUTHOR
++
++Chisel Wright
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/lib/Parley/Controller/Search.pm	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -1,19 +1,56 @@
+ package Parley::Controller::Search;
+-
++# vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
+ 
+ use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
++use base 'Catalyst::Controller::FormValidator';
+ 
++use Data::Dump qw(pp);
++use Date::Manip;
+ use Text::Search::SQL;
+ use URI;
+ use URI::QueryParam;
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
++my %dfv_profile_for = (
++    # DFV validation profile for adding a new topic
++    advanced =&gt; {
++        required    =&gt; [qw&lt; match_type &gt;],
++        require_some =&gt; {
++            search_terms =&gt; [
++                1,
++                qw&lt;
++                    author_search_terms
++                    message_search_terms
++                    subject_search_terms
++                    search_post_date
++                &gt;
++            ]
++        },
++        optional    =&gt; [qw&lt;
++            author_search_terms
++            message_search_terms
++            subject_search_terms
++            author_search_type
++            message_search_type
++            subject_search_type
++            search_post_date
++        &gt;],
++        filters     =&gt; [qw&lt; trim &gt;],
++    },
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
+ sub index : Private {
+     my ( $self, $c ) = @_;
+-
+-    $c-&gt;response-&gt;body('Matched Parley::Controller::Search in Search.');
++    $c-&gt;forward('advanced');
+ }
+ 
+ sub end :Private {
+@@ -26,6 +63,36 @@
+     $c-&gt;forward('/end');
+ }
+ 
++sub advanced : Local {
++    my ($self, $c) = @_;
++    # because we're potentially being forwarded to from / set the template
++    # explicitly
++    $c-&gt;stash-&gt;{template} = q{search/advanced};
++
++    # if we have a method and any (GET) parameters, do the searchy stuff
++    if (
++        keys %{$c-&gt;request-&gt;query_parameters}
++            and
++        defined $c-&gt;request-&gt;method
++    ) {
++        $c-&gt;forward('form_check', [$dfv_profile_for{advanced}, 'GET']);
++
++        # everything passed (DFV) validation
++        if ($c-&gt;stash-&gt;{validation}-&gt;success) {
++            my $foo = $c-&gt;stash-&gt;{search_results};
++            $c-&gt;forward('do_advanced_search');
++        }
++        # something didn't validate
++        else {
++            $c-&gt;log-&gt;debug(
++                pp($c-&gt;stash-&gt;{validation})
++            );
++        }
++    }
++
++    return;
++}
++
+ sub forum :Local {
+     my ($self, $c) = @_;
+     my ($search_terms, $resultset, $tss, $search_where, $where, @join);
+@@ -57,12 +124,16 @@
+     );
+     $tss-&gt;parse();
+     $search_where = $tss-&gt;get_sql_where();
++    $c-&gt;log-&gt;debug(
++        pp $search_where
++    );
+ 
+     # build the where clause to pass to our search
+     $where = {
+         # we want to OR the items in $sql_where
+         -or =&gt; $search_where,
+     };
++    $c-&gt;log-&gt;debug(pp($where));
+ 
+     # if we have a search_forum, limit to that
+     if (defined $c-&gt;request-&gt;param('search_forum')) {
+@@ -101,13 +172,252 @@
+     }
+ }
+ 
++sub do_advanced_search : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my ($where, $search_where, $resultset, @join, $order_by);
++
++    # default ORDER BY
++    $order_by = [\'created DESC'];
++
++    # page to show - either a param, or show the first
++    $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
++
++    $search_where = undef;
++    foreach my $search_field (qw&lt;author message subject date&gt;) {
++        # process the search field
++        my $results = 
++            $c-&gt;forward(q{search_clauses_} . $search_field);
++        if (defined $results) {
++            my ($extra_clauses, $extra_joins) = @{ $results };
++
++            # add any search clauses
++            if ($extra_clauses) {
++                push @{$search_where}, @$extra_clauses;
++            }
++            # add any required table joins
++            if ($extra_joins) {
++                push @join, @$extra_joins;
++            }
++        }
++    }
++
++    # make sure we're searching for something
++    # if it turns out we're searching for nothingness, return an empty
++    # result set
++    if (not defined $search_where) {
++        return; # no need to do anything else
++    }
++
++    # build the where clause to pass to our search
++    if (q{any} eq $results-&gt;valid('match_type')) {
++        $where = {
++            # we want to OR the items in $sql_where
++            -or =&gt; $search_where,
++        };
++    }
++    elsif (q{all} eq $results-&gt;valid('match_type')) {
++        $where = {
++            # we want to OR the items in $sql_where
++            -and =&gt; $search_where,
++        };
++    }
++
++    $c-&gt;log-&gt;debug('SEARCH TERMS: ' . pp($where));
++
++    $resultset = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
++        $where,
++        {
++            join        =&gt; \@join,
++            order_by    =&gt; $order_by,
++            # results paging
++            rows        =&gt; $c-&gt;config-&gt;{search_results_per_page},
++            page        =&gt; $c-&gt;stash-&gt;{current_page},
++        }
++    );
++
++    # if we have any matches, stash them
++    if ($resultset-&gt;count() &gt; 0) {
++        $c-&gt;stash-&gt;{search_results} = $resultset;
++    }
++
++    return;
++}
++
++sub add_search_clauses : Private {
++    my ($self, $c, $current_clauses, $type, $search_field, $terms) = @_;
++    my @search_where;
++
++    # do we have any terms to search for?
++    if ($terms) {
++        if (q{contains} eq $type) {
++            push @search_where,
++                $search_field,
++                { ilike =&gt; q{%} . $terms .  q{%} }
++            ;
++        }
++        elsif (q{exact} eq $type) {
++            push @search_where,
++                $search_field,
++                { q{=}  =&gt; $terms }
++            ;
++        }
++        else {
++            $c-&gt;log-&gt;error(qq{fsc/$search_field: hmm, what's the search type?});
++            return;
++        }
++    }
++    # no terms, nothing to do
++    else {
++        return;
++    }
++
++    # add to the current list of search clauses
++    push @{$current_clauses}, @search_where;
++
++    return;
++}
++
++sub search_clauses_author : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my $search_field = 'author';
++    my @search_where;
++    my @joins;
++
++    my $terms = $results-&gt;valid(
++            $search_field
++        . q{_search_terms}
++    );
++    my $type = $results-&gt;valid(
++            $search_field
++        . q{_search_type}
++    ) || q{};
++
++    # add search clauses for the forum_name of the post's creator
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, 'creator.forum_name', $terms]
++    );
++    # add the required JOIN relation name
++    push @joins, 'creator';
++
++    return [\@search_where, \@joins];
++}
++
++sub search_clauses_date : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my $terms = $results-&gt;valid('search_post_date');
++    my (@search_where);
++
++    # if we don't have date &quot;stuff&quot;, don't add any terms
++    if (not $terms) {
++        $c-&gt;log-&gt;debug('no date crap');
++        return []; # add nothing at all
++    }
++
++    # the mapping from form values to search clauses
++    my %search_clauses = (
++        last_hour =&gt; {
++            '&gt;=' =&gt; UnixDate('1 hour ago', &quot;%Y-%m-%d %H:%M:%S&quot;)
++        },
++        last_day =&gt; {
++            '&gt;=' =&gt; UnixDate('1 day ago', &quot;%Y-%m-%d %H:%M:%S&quot;)
++        },
++        last_month =&gt; {
++            '&gt;=' =&gt; UnixDate('1 month ago', &quot;%Y-%m-%d %H:%M:%S&quot;)
++        },
++        last_six_months =&gt; {
++            '&gt;=' =&gt; UnixDate('6 months ago', &quot;%Y-%m-%d %H:%M:%S&quot;)
++        },
++        last_year =&gt; {
++            '&gt;=' =&gt; UnixDate('1 year ago', &quot;%Y-%m-%d %H:%M:%S&quot;)
++        },
++        over_a_year =&gt; {
++            '&lt;' =&gt; UnixDate('1 year ago', &quot;%Y-%m-%d %H:%M:%S&quot;)
++        },
++    );
++
++    # if we don't have a matching search clause, abort ...
++    if (not exists $search_clauses{$terms}) {
++        $c-&gt;log-&gt;error(
++              $terms
++            . q{ is not a valid date label in search_clauses_date()}
++        );
++        return [];
++    };
++
++    push @search_where,
++        'me.created',
++        $search_clauses{$terms}
++    ;
++
++    return [\@search_where, undef];
++}
++
++sub search_clauses_message : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my $search_field = 'message';
++    my @search_where;
++
++    my $terms = $results-&gt;valid(
++            $search_field
++        . q{_search_terms}
++    );
++    my $type = $results-&gt;valid(
++            $search_field
++        . q{_search_type}
++    ) || q{};
++
++    # nice and easy - we're just searching the message body
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, $search_field, $terms]
++    );
++
++    return [\@search_where, undef];
++}
++
++sub search_clauses_subject : Private {
++    my ($self, $c) = @_;
++    my $results = $c-&gt;stash-&gt;{validation};
++    my $search_field = 'subject';
++    my @search_where;
++    my @joins;
++
++    my $terms = $results-&gt;valid(
++            $search_field
++        . q{_search_terms}
++    );
++    my $type = $results-&gt;valid(
++            $search_field
++        . q{_search_type}
++    ) || q{};
++
++    # post subjects
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, 'me.subject', $terms]
++    );
++
++    # thread subjects
++    $c-&gt;forward(
++        add_search_clauses =&gt; [\@search_where, $type, 'thread.subject', $terms]
++    );
++    # add the required JOIN relation name
++    push @joins, 'thread';
++
++    return [\@search_where, \@joins];
++}
++
+ sub _results_view_pager {
+     my ($self, $c) = @_;
+ 
++    # if we don't have any search results, do nothing
+     if (not $c-&gt;stash-&gt;{search_results}) {
+         return;
+     }
+ 
++    # get the pager (from the search results)
+     $c-&gt;stash-&gt;{page} = $c-&gt;stash-&gt;{search_results}-&gt;pager();
+ 
+     # TODO - find a better way to do this if possible
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/lib/Parley/I18N/i_default.po	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -333,6 +333,12 @@
+ msgid &quot;Logout&quot;
+ msgstr &quot;Logout&quot;
+ 
++msgid &quot;MISSING_SEARCH_MATCH_TYPE&quot;
++msgstr &quot;Please specify the method you would like to match by&quot;
++
++msgid &quot;MISSING_SEARCH_TERMS&quot;
++msgstr &quot;Please provide something to search for&quot;
++
+ msgid &quot;Manage&quot;
+ msgstr &quot;Manage&quot;
+ 
+
+Modified: trunk/lib/Parley/Version.pm
+===================================================================
+--- trunk/lib/Parley/Version.pm	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/lib/Parley/Version.pm	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -3,11 +3,9 @@
+ use strict;
+ use warnings;
+ 
+-# from mst on #catalyst
+-#our $VERSION = '1.000000'; $VERSION = eval $VERSION;
+-use version; our $VERSION = qv(1.0.4)-&gt;numify;
++# derived from mst suggestion on #catalyst
++use version; our $VERSION = qv(1.1.0)-&gt;numify;
+ 
+-
+ package Parley::Version;
+ 
+ our $VERSION = $Parley::VERSION;
+
+Modified: trunk/parley.conf
+===================================================================
+--- trunk/parley.conf	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/parley.conf	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -19,6 +19,10 @@
+ # set this to &quot;0&quot;
+ skin_default_css            1
+ 
++# &quot;Add This&quot;
++add_this_account            chiselwright
++
++
+ # comment out any log levels you don't want to see in your logs
+ # 'info' and 'debug' are common choices for suppresing in a live environment
+ log_levels                  info
+
+Added: trunk/root/base/dfv/display_validation_messages
+===================================================================
+--- trunk/root/base/dfv/display_validation_messages	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/dfv/display_validation_messages	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -0,0 +1,22 @@
++[% # deal with validation errors %]
++[% IF validation.defined AND not validation.success %]
++    [% # import message data %] [% PROCESS dfv/validation_messages_data %]
++&lt;span id=&quot;validation_errors&quot;&gt;
++    [% IF validation.missing %]
++        [% FOR msg_key IN validation.missing %]
++        [% l(error_message.missing.$msg_key) || l('Missing form field: [_1]', msg_key) %]&lt;br /&gt;
++        [% END %]
++    [% END %]
++
++    [% IF validation.invalid %]
++        [% FOR field_name IN validation.invalid %]
++            [% nice_field_name = error_message.name.$field_name || field_name%]
++            [% FOR invalid_key IN validation.invalid(field_name) %]
++                [% l(nice_field_name) %]:
++                [% l(error_message.invalid.$invalid_key) || invalid_key %]
++                &lt;br /&gt;
++            [% END %]
++        [% END %]
++    [% END %]
++&lt;/span&gt;
++[% END %]
+
+Added: trunk/root/base/dfv/validation_messages_data
+===================================================================
+--- trunk/root/base/dfv/validation_messages_data	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/dfv/validation_messages_data	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -0,0 +1,23 @@
++[%
++    SET error_message = {
++        # messages for missing fields
++        missing =&gt; {
++            match_type                  =&gt; 'MISSING_SEARCH_MATCH_TYPE',
++            search_terms                =&gt; 'MISSING_SEARCH_TERMS',
++
++            moon_stick                  =&gt; 'I demand the MOON! On a STICK!',
++        },
++
++        # messages for invalid fields (failed constraints)
++        invalid =&gt; {
++            # reCAPTCHA messages (from: <A HREF="http://recaptcha.net/apidocs/captcha/">http://recaptcha.net/apidocs/captcha/</A>)
++            'incorrect-captcha-sol'     =&gt; 'the CAPTCHA solution was incorrect',
++            'recaptcha-not-reachable'   =&gt; 'unable to contact the reCAPTCHA verify server',
++        },
++
++        # mappings from field names to something we'd like to show the user
++        name =&gt; {
++            email_address               =&gt; 'Email Address',
++        },
++    }
++%]
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/header	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -112,4 +112,6 @@
+                     [% END %]
+                 &lt;/div&gt;
+                 [% END %]
++
++                [% PROCESS dfv/display_validation_messages %]
+ &lt;!-- Header : End --&gt;
+
+Added: trunk/root/base/search/advanced
+===================================================================
+--- trunk/root/base/search/advanced	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/search/advanced	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -0,0 +1,51 @@
++&lt;h1&gt;Search Forums&lt;/h1&gt;
++
++&lt;form method=&quot;get&quot; action=&quot;[%c.uri_for('/search/advanced')%]&quot;&gt;
++
++Search for messages matching
++&lt;select name=&quot;match_type&quot;&gt;
++    &lt;option value=&quot;any&quot;&gt;any&lt;/option&gt;
++    &lt;option value=&quot;all&quot;&gt;all&lt;/option&gt;
++&lt;/select&gt;
++of the following criteria:
++&lt;br /&gt;
++
++Subject
++[% INCLUDE search_type name=&quot;subject_search_type&quot; %]
++&lt;input type=&quot;text&quot; name=&quot;subject_search_terms&quot; /&gt;
++&lt;br /&gt;
++
++Message
++[% INCLUDE search_type name=&quot;message_search_type&quot; %]
++&lt;input type=&quot;text&quot; name=&quot;message_search_terms&quot; /&gt;
++&lt;br /&gt;
++
++Author's name
++[% INCLUDE search_type name=&quot;author_search_type&quot; %]
++&lt;input type=&quot;text&quot; name=&quot;author_search_terms&quot; /&gt;
++&lt;br /&gt;
++
++Posted
++&lt;select name=&quot;search_post_date&quot;&gt;
++    &lt;option value=&quot;&quot;&gt;at any time&lt;/option&gt;
++    &lt;option value=&quot;last_hour&quot;&gt;in the last hour&lt;/option&gt;
++    &lt;option value=&quot;last_day&quot;&gt;in the last day&lt;/option&gt;
++    &lt;option value=&quot;last_month&quot;&gt;in the last month&lt;/option&gt;
++    &lt;option value=&quot;last_six_months&quot;&gt;in the last six months&lt;/option&gt;
++    &lt;option value=&quot;last_year&quot;&gt;in the last year&lt;/option&gt;
++    &lt;option value=&quot;over_a_year&quot;&gt;over a year ago&lt;/option&gt;
++&lt;/select&gt;
++&lt;br /&gt;
++
++&lt;input type=&quot;submit&quot; value=&quot;Search&quot; /&gt;
++
++[% PROCESS search/results %]
++
++[% BLOCK search_type %]
++&lt;select name=&quot;[%name%]&quot;&gt;
++    &lt;option value=&quot;contains&quot;&gt;contains&lt;/option&gt;
++    &lt;option value=&quot;exact&quot;&gt;is&lt;/option&gt;
++&lt;/select&gt;
++[% END %]
++
++&lt;/form&gt;
+
+Added: trunk/root/base/search/results
+===================================================================
+--- trunk/root/base/search/results	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/search/results	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -0,0 +1,19 @@
++&lt;h1&gt;[%l('Search Results')%]&lt;/h1&gt;
++
++[% IF search_terms.raw %]
++&lt;h2&gt;[%l('Searching for')%] &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% search_forum.name || 'all forums' %]&lt;/em&gt;&lt;/h2&gt;
++[% END %]
++
++[% IF search_results %]
++    &lt;table class=&quot;search_results&quot;&gt;
++        &lt;tbody&gt;
++            [% dummy_value = search_results.reset %]
++            [%- WHILE (post = search_results.next) %]
++            [% thread = post.thread %]
++            [% PROCESS shared/postinfo_table_row show_search_data=post %]
++            [% END %]
++        &lt;/tbody&gt;
++    &lt;/table&gt;
++[% ELSE %]
++[%l('No results found matching specified terms')%].
++[% END %]
+
+Added: trunk/root/base/shared/add_this
+===================================================================
+--- trunk/root/base/shared/add_this	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/shared/add_this	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -0,0 +1,14 @@
++[% IF c.config.add_this_account %]
++&lt;!-- ADDTHIS BUTTON BEGIN --&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++addthis_pub             = '[%c.config.add_this_account%]'; 
++//addthis_logo            = '<A HREF="http://www.addthis.com/images/yourlogo.png">http://www.addthis.com/images/yourlogo.png</A>';
++addthis_logo_background = 'EFEFFF';
++addthis_logo_color      = '666699';
++addthis_brand           = '[%c.config.name%]';
++addthis_options         = 'delicious, twitter, favorites, email, more';
++&lt;/script&gt;
++&lt;a href=&quot;<A HREF="http://www.addthis.com/bookmark.php">http://www.addthis.com/bookmark.php</A>&quot; onmouseover=&quot;return addthis_open(this, '', '[URL]', '[TITLE]')&quot; onmouseout=&quot;addthis_close()&quot; onclick=&quot;return addthis_sendto()&quot;&gt;&lt;img src=&quot;<A HREF="http://s7.addthis.com/static/btn/lg-share-en.gif">http://s7.addthis.com/static/btn/lg-share-en.gif</A>&quot; width=&quot;125&quot; height=&quot;16&quot; border=&quot;0&quot; alt=&quot;Share&quot; /&gt;&lt;/a&gt;
++&lt;script type=&quot;text/javascript&quot; src=&quot;<A HREF="http://s7.addthis.com/js/152/addthis_widget.js">http://s7.addthis.com/js/152/addthis_widget.js</A>&quot;&gt;&lt;/script&gt;
++&lt;!-- ADDTHIS BUTTON END --&gt;
++[% END %]
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/shared/search_dialog	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -64,7 +64,7 @@
+             &lt;br /&gt;
+         &lt;/fieldset&gt;
+ 
+-        &lt;fieldset&gt;
++        &lt;fieldset style=&quot;background-color:transparent; text-align: center; margin-top: 5px;&quot;&gt;
+             &lt;label for=&quot;search_forum&quot;&gt;&lt;em&gt;[%l('in')%]:&lt;/em&gt;&lt;/label&gt;
+             &lt;select id=&quot;search_forum&quot; name=&quot;search_forum&quot;&gt;
+                 &lt;optgroup label=&quot;[%l('General')%]&quot;&gt;
+@@ -83,6 +83,10 @@
+             &lt;br /&gt;
+         &lt;/fieldset&gt;
+     &lt;/form&gt;
++
++    &lt;div style=&quot;background-color:transparent; text-align: right;&quot;&gt;
++        &lt;a href=&quot;[%c.uri_for('/search/advanced')%]&quot;&gt;Advanced Search&lt;/a&gt;
++    &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;/div&gt;
+ &lt;!-- SEARCH DIALOG --&gt;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/base/thread/view	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -189,6 +189,12 @@
+         &lt;/td&gt;
+     &lt;/tr&gt;
+ 
++    &lt;tr&gt;
++        &lt;td colspan=&quot;2&quot; class=&quot;add_this&quot;&gt;
++            [% PROCESS shared/add_this %]
++        &lt;/td&gt;
++    &lt;/tr&gt;
++
+     &lt;/tbody&gt;
+ &lt;/table&gt;
+ &lt;!-- end : thread contents --&gt;
+
+Modified: trunk/root/static/css/parley-min.css
+===================================================================
+--- trunk/root/static/css/parley-min.css	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/static/css/parley-min.css	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -1 +1 @@
+-body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B color:#36C;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#user_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;!
+ margin-top:5px;margin-bottom:5px;color:#79B30B color:#36C;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}ol&gt;li,ul&gt;li{margin-left:8px;list-style-position:inside;}ol&gt;li{list-style-type:decimal;}ul&gt;li{list-style-type:disc;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.admin_edited_post{color:#000;background:#ccc;!
+ padding:2px;padding-left:10px;padding-right:10px;border:1px da!
+ shed #00
+0;margin-left:15px;font-size:93%;text-align:right;}.align_right{text-align:right;}.error_messages{margin-top:5px;display:block;line-height:1.7em;padding:5px;background-color:#930;color:#fff;text-transform:none;font-family:Arial,Avenir,&quot;Lucida Grande&quot;,Verdana,&quot;Bitstream Vera Sans&quot;,Helvetica,sans-serif;font-weight:bold;voice-family:&quot;\&quot;}\&quot;&quot;;voice-family:inherit;font-size:1.0em;border:none;}.forum_description{font-size:93%;}.forum_lastpost{font-size:85%;text-align:right;}.forum_lastpost_subject a{color:#79B30B color:#36C;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#79B30B color:#36C;}.forum_postcount{font-size!
+ :85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-si!
+ ze:85%;}.post_edited_alert{font-weight:bold;font-style:italic;!
+ }.post_i
+nfo{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;pa!
+ dding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:ri!
+ ght;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_!
+ reply{fo
+nt-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#79B30B color:#36C;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-align:right;}.user_login form{width:350px;margin-left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-si!
+ ze:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#ysearch{text-align:center;}#ysearchinput{position:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-!
+ family:monospace;border:1px dashed #333;font-size:85%;margin:1!
+ 5px 20px
+ 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav!
+  a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
++body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B color:#36C;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#Xuser_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information{background-color:transparent;color:#000;font-size:85%;height:70px;line-height:1em;margin-left:760px;padding-top:3px;right:8px;text-align:center;top:0;width:200px;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;marg!
+ in-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;color:#79B30B color:#36C;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}ol&gt;li,ul&gt;li{margin-left:8px;list-style-position:inside;}ol&gt;li{list-style-type:decimal;}ul&gt;li{list-style-type:disc;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog!
+  form p{font-size:85%;}.row{border-top:1px dotted #666;border-!
+ bottom:1
+px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.add_this{text-align:right;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:right;}.align_right{text-align:right;}.error_messages{margin-top:5px;display:block;line-height:1.7em;padding:5px;background-color:#930;color:#fff;text-transform:none;font-family:Arial,Avenir,&quot;Lucida Grande&quot;,Verdana,&quot;Bitstream Vera Sans&quot;,Helvetica,sans-serif;font-weight:bold;voice-family:&quot;\&quot;}\&quot;&quot;;voice-family:inherit;font-size:1.0em;border:none;}.forum_description{font-size:93%;}.forum_lastpost{font-size:85%;text-align:right;}.forum_lastpost_subject a{color:#79B30B color:#36C;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:!
+ 10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#79B30B color:#36C;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-s!
+ ize:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5p!
+ x;vertic
+al-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padd!
+ ing-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px soli!
+ d #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margi!
+ n-top:10
+px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#79B30B color:#36C;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-align:right;}.user_login form{width:350px;margin-left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bott!
+ om:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#validation_errors{display:block;font-size:83%;border:1px dashed #89d;margin-top:10px;margin-bottom:10px;margin-left:25px;margin-right:25px;padding:3px;}#ysearch!
+ {text-align:center;}#ysearchinput{position:static;width:20em;}!
+ #ysearch
+container{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-!
+ navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2008-12-30 02:23:07 UTC (rev 1025)
++++ trunk/root/static/css/parley.css	2008-12-30 02:27:30 UTC (rev 1026)
+@@ -24,7 +24,7 @@
+ div#ft p {border:none;margin-top:30px;padding:5px 10px 5px 10px; text-align:right;display:block;}
+ div#ft a {color: #ccc;}
+ 
+-div#user_information {
++div#Xuser_information {
+     line-height:        1em;
+     font-size:          85%;
+     color:              #000;
+@@ -37,6 +37,19 @@
+     padding-top:        3px;
+     text-align:         center;
+ }
++div#user_information {
++    background-color:   transparent;
++    color:              #000000;
++    font-size:          85%;
++    height:             70px;
++    line-height:        1em;
++    margin-left:        760px;
++    padding-top:        3px;
++    right:              8px;
++    text-align:         center;
++    top:                0px;
++    width:              200px;
++}
+ 
+ div#user_information .user_info_actions {
+     margin-top:         3px;
+@@ -159,6 +172,10 @@
+ 
+ /* style classes */
+ 
++.add_this {
++    text-align:         right;
++}
++
+ .admin_edited_post {
+     color:              #000;
+     background:         #ccc;
+@@ -620,6 +637,17 @@
+     width:              450px;
+ }
+ 
++#validation_errors {
++    display:            block;
++    font-size:          83%;
++    border:             1px dashed #89d;
++    margin-top:         10px;
++    margin-bottom:      10px;
++    margin-left:        25px;
++    margin-right:       25px;
++    padding:            3px;
++}
++
+ #ysearch {
+     text-align:         center;
+ }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000907.html">[Parley-svn] r1025 - / trunk trunk/root trunk/root/skin2	trunk/root/static trunk/root/static/yui trunk/t.output
+</A></li>
+	<LI>Next message: <A HREF="000909.html">[Parley-svn] r1027 - / branches/parley-1.1/root/skin2/search
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#908">[ date ]</a>
+              <a href="thread.html#908">[ thread ]</a>
+              <a href="subject.html#908">[ subject ]</a>
+              <a href="author.html#908">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

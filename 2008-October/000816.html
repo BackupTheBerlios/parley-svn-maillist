@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r933 - / trunk trunk/lib/Parley/I18N trunk/todo.i18n
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r933%20-%20/%20trunk%20trunk/lib/Parley/I18N%20trunk/todo.i18n&In-Reply-To=%3C200810071846.m97IkCpr026958%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000817.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r933 - / trunk trunk/lib/Parley/I18N trunk/todo.i18n</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r933%20-%20/%20trunk%20trunk/lib/Parley/I18N%20trunk/todo.i18n&In-Reply-To=%3C200810071846.m97IkCpr026958%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r933 - / trunk trunk/lib/Parley/I18N trunk/todo.i18n">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Oct  7 20:46:12 CEST 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000817.html">[Parley-svn] r934 - / trunk trunk/lib/Template/Plugin trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#816">[ date ]</a>
+              <a href="thread.html#816">[ thread ]</a>
+              <a href="subject.html#816">[ subject ]</a>
+              <a href="author.html#816">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-10-07 20:46:12 +0200 (Tue, 07 Oct 2008)
+New Revision: 933
+
+Modified:
+   /
+   trunk/Changes
+   trunk/Changes.i18n
+   trunk/lib/Parley/I18N/nl.po
+   trunk/todo.i18n/nl
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8167 at wiggin</A>:  chisel | 2008-10-06 09:03:58 +0100
+ + added outstanding .nl translations
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:6038
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8167
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-08-14 16:41:26 UTC (rev 932)
++++ trunk/Changes	2008-10-07 18:46:12 UTC (rev 933)
+@@ -8,7 +8,7 @@
+     - resolved some bugs and errors when deploying from scratch
+     - added more comprehensive instructions for getting started
+     - updated to new Authentication and Authorization modules
+-    - added recent i18n translations
++    - added recent i18n translations (.it and .nl)`
+ 
+ 
+ After knackering up the version numbers towards the end of 0.59
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-08-14 16:41:26 UTC (rev 932)
++++ trunk/Changes.i18n	2008-10-07 18:46:12 UTC (rev 933)
+@@ -6,8 +6,18 @@
+ will be used as the 'en' i18n file.
+ It's unlikely that we'll need an 'en' file in the project.
+ 
+-1.0.0 (UNDER DEVELOPMENT)
++1.0.0
+ 
++    Differences are now tracked and reported using a script that compares
++    a given language with 'i_default'.
++    The comparisons are generated and viewed as follows:
++
++       ./script/update_i18n_todo.sh
++       more todo.i18n/*
++
++    (2008-10-06)
++
++
+     i_default.po:
+         - added:
+             - &quot;User has never posted&quot;
+@@ -46,6 +56,16 @@
+             - &quot;We're not in Kansas any more&quot;
+             - &quot;You don't have the required privileges to do that&quot;
+ 
++    nl.po:
++        - fixed:
++            - &quot;Searching for&quot;
++
++        - added:
++            - &quot;IP Information&quot;
++            - &quot;Manage user roles&quot;
++            - &quot;Unauthorized!&quot;
++            - &quot;User has never posted&quot;
++
+ 0.59
+     i_default.po:
+         - added:
+
+Modified: trunk/lib/Parley/I18N/nl.po
+===================================================================
+--- trunk/lib/Parley/I18N/nl.po	2008-08-14 16:41:26 UTC (rev 932)
++++ trunk/lib/Parley/I18N/nl.po	2008-10-07 18:46:12 UTC (rev 933)
+@@ -258,6 +258,9 @@
+ msgid &quot;IP Bans&quot;
+ msgstr &quot;IP Verboden&quot;
+ 
++msgid &quot;IP Information&quot;
++msgstr &quot;IP-Informatie&quot;
++
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Geregistreerd&quot;
+ 
+@@ -333,6 +336,9 @@
+ msgid &quot;Manage&quot;
+ msgstr &quot;Leid&quot;
+ 
++msgid &quot;Manage user roles&quot;
++msgstr &quot;Beheren rollen van gebruikers&quot;
++
+ msgid &quot;Me&quot;
+ msgstr &quot;Me&quot;
+ 
+@@ -601,11 +607,14 @@
+ msgstr &quot;De Resultaten van het onderzoek&quot;
+ 
+ msgid &quot;Searching for&quot;
+-msgstr &quot;Het zoeken naar
++msgstr &quot;Het zoeken naar&quot;
+ 
+ msgid &quot;Select Zone&quot;
+ msgstr &quot;Selecteer Streek&quot;
+ 
++#msgid &quot;Select Zone&quot;
++#msgstr &quot;Kies Tijdzone&quot;
++
+ msgid &quot;Service&quot;
+ msgstr &quot;De dienst&quot;
+ 
+@@ -738,6 +747,9 @@
+ msgid &quot;Topic&quot;
+ msgstr &quot;Onderwerp&quot;
+ 
++msgid &quot;Unauthorized!&quot;
++msgstr &quot;Toestemming geweigerd!&quot;
++
+ msgid &quot;Unknown field name&quot;
+ msgstr &quot;Onbekende gebiedsnaam&quot;
+ 
+@@ -771,6 +783,9 @@
+ msgid &quot;USER AUTHENTICATED&quot;
+ msgstr &quot;Uw registratie is voor authentiek verklaard&quot;
+ 
++msgid &quot;User has never posted&quot;
++msgstr &quot;Geen berichten van deze gebruiker&quot;
++
+ msgid &quot;User Profile&quot;
+ msgstr &quot;Het Profiel van de gebruiker&quot;
+ 
+
+Modified: trunk/todo.i18n/nl
+===================================================================
+--- trunk/todo.i18n/nl	2008-08-14 16:41:26 UTC (rev 932)
++++ trunk/todo.i18n/nl	2008-10-07 18:46:12 UTC (rev 933)
+@@ -1,20 +1,7 @@
+ Missing phrases in 'nl' translation:
+ 
+-  IP Information
+-    IP Information
++ - NONE -
+ 
+-  Manage user roles
+-    Manage user roles
+-
+-  Select Zone
+-    Select Zone
+-
+-  Unauthorized!
+-    Unauthorized!
+-
+-  User has never posted
+-    User has never posted
+-
+ Additional phrases in 'nl' translation:
+ 
+  - NONE -
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000817.html">[Parley-svn] r934 - / trunk trunk/lib/Template/Plugin trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#816">[ date ]</a>
+              <a href="thread.html#816">[ thread ]</a>
+              <a href="subject.html#816">[ subject ]</a>
+              <a href="author.html#816">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

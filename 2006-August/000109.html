@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r221 - / branches/schema_based/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r221%20-%20/%20branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200608161344.k7GDiEZX019706%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000108.html">
+   <LINK REL="Next"  HREF="000110.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r221 - / branches/schema_based/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r221%20-%20/%20branches/schema_based/lib/Parley/Controller&In-Reply-To=%3C200608161344.k7GDiEZX019706%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r221 - / branches/schema_based/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:44:14 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000108.html">[Parley-svn] r220 - / branches/schema_based/lib
+</A></li>
+        <LI>Next message: <A HREF="000110.html">[Parley-svn] r222 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#109">[ date ]</a>
+              <a href="thread.html#109">[ thread ]</a>
+              <a href="subject.html#109">[ subject ]</a>
+              <a href="author.html#109">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:44:13 +0200 (Wed, 16 Aug 2006)
+New Revision: 221
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Root.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5142 at ferrari</A>:  chisel | 2006-08-14 18:57:42 +0100
+ / fix some stupid/small syntax errors
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5141
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5142
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Root.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:44:09 UTC (rev 220)
++++ branches/schema_based/lib/Parley/Controller/Root.pm	2006-08-16 13:44:13 UTC (rev 221)
+@@ -21,11 +21,11 @@
+     ############################################################
+     # if we have a user ... fetch some info (if we don't already have it)
+     ############################################################
+-    if ( $c-&gt;user and not defined $c-&gt;authed_user ) {
++    if ( $c-&gt;user and not defined $c-&gt;_authed_user ) {
+         $c-&gt;log-&gt;info('Fetching user information for ' . $c-&gt;user-&gt;id);
+ 
+         # get the person info for the username
+-        my $row = $c-&gt;model('ParleyDB')-&gt;resultset('person')-&gt;find(
++        my $row = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;find(
+             {
+                 'authentication.username'   =&gt; $c-&gt;user-&gt;username(),
+             },
+@@ -88,7 +88,9 @@
+         # get the matching thread
+         $c-&gt;_current_thread(
+             $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;find(
+-                thread_id  =&gt; $c-&gt;request-&gt;param('thread'),
++                {
++                    thread_id  =&gt; $c-&gt;request-&gt;param('thread'),
++                }
+             )
+         );
+ 
+@@ -112,7 +114,9 @@
+         # get the matching forum
+         $c-&gt;_current_forum(
+             $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;find(
+-                forum_id  =&gt; $c-&gt;request-&gt;param('forum'),
++                {
++                    forum_id  =&gt; $c-&gt;request-&gt;param('forum'),
++                }
+             )
+         );
+     }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000108.html">[Parley-svn] r220 - / branches/schema_based/lib
+</A></li>
+	<LI>Next message: <A HREF="000110.html">[Parley-svn] r222 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#109">[ date ]</a>
+              <a href="thread.html#109">[ thread ]</a>
+              <a href="subject.html#109">[ subject ]</a>
+              <a href="author.html#109">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

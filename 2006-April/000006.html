@@ -1,0 +1,208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r116 - in trunk: . lib/Parley/Controller root/base root/base/about t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r116%20-%20in%20trunk%3A%20.%20lib/Parley/Controller%20root/base%20root/base/about%20t&In-Reply-To=%3C200604131045.k3DAjnTP015643%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000005.html">
+   <LINK REL="Next"  HREF="000007.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r116 - in trunk: . lib/Parley/Controller root/base root/base/about t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r116%20-%20in%20trunk%3A%20.%20lib/Parley/Controller%20root/base%20root/base/about%20t&In-Reply-To=%3C200604131045.k3DAjnTP015643%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r116 - in trunk: . lib/Parley/Controller root/base root/base/about t">chiselwright at berlios.de
+       </A><BR>
+    <I>Thu Apr 13 12:45:49 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000005.html">[Parley-svn] r115 - in trunk: . lib lib/Parley/App lib/Parley/Controller root/base/forum root/base/menu root/base/shared root/base/thread
+</A></li>
+        <LI>Next message: <A HREF="000007.html">[Parley-svn] r117 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-04-13 12:45:45 +0200 (Thu, 13 Apr 2006)
+New Revision: 116
+
+Added:
+   trunk/lib/Parley/Controller/About.pm
+   trunk/root/base/about/
+   trunk/root/base/about/modules
+   trunk/t/controller_About.t
+Modified:
+   trunk/
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14386 at ferrari</A>:  chisel | 2006-04-06 09:29:20 +0100
+ + added about/modules, an easier way to obtain version information for loaded modules
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14382
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14386
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Added: trunk/lib/Parley/Controller/About.pm
+===================================================================
+--- trunk/lib/Parley/Controller/About.pm	2006-04-05 20:26:59 UTC (rev 115)
++++ trunk/lib/Parley/Controller/About.pm	2006-04-13 10:45:45 UTC (rev 116)
+@@ -0,0 +1,52 @@
++package Parley::Controller::About;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++sub modules : Local {
++    my ( $self, $c ) = @_;
++    my $inc_data;
++
++    my @inc_loaded = grep { s/\//::/g; s/\.pm//g; } sort keys %INC;
++
++    foreach my $module_name (@inc_loaded) {
++        eval {
++            $inc_data-&gt;{ $module_name } = $module_name-&gt;VERSION();
++        };
++        push @{$c-&gt;stash-&gt;{loaded_module_data}},
++        {
++            name    =&gt; $module_name,
++            version =&gt; $inc_data-&gt;{ $module_name },
++        };
++    }
++
++}
++
++
++=head1 NAME
++
++Parley::Controller::About - Catalyst Controller
++
++=head1 SYNOPSIS
++
++See L&lt;Parley&gt;
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=head1 AUTHOR
++
++Chisel Wright C&lt; &lt;&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt;&gt; &gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/root/base/about/modules
+===================================================================
+--- trunk/root/base/about/modules	2006-04-05 20:26:59 UTC (rev 115)
++++ trunk/root/base/about/modules	2006-04-13 10:45:45 UTC (rev 116)
+@@ -0,0 +1,39 @@
++
++&lt;h1&gt;Loaded modules with a version number&lt;/h1&gt;
++&lt;table&gt;
++[% FOREACH module = loaded_module_data.sort('name') %]
++[% IF module.version &amp;&amp; ! (module.version == '-1, set by base.pm') %]
++&lt;tr&gt;
++&lt;td&gt;[% module.name %]&lt;/td&gt;
++&lt;td&gt;[% module.version || '&lt;i&gt;undefined&lt;/i&gt;' %]&lt;/td&gt;
++&lt;/tr&gt;
++[% END %]
++[% END %]
++&lt;/table&gt;
++
++
++
++&lt;h1&gt;Loaded modules with no version number&lt;/h1&gt;
++&lt;table&gt;
++[% FOREACH module = loaded_module_data.sort('name') %]
++[% IF ! module.version %]
++&lt;tr&gt;
++&lt;td&gt;[% module.name %]&lt;/td&gt;
++&lt;td&gt;[% module.version || '&lt;i&gt;undefined&lt;/i&gt;' %]&lt;/td&gt;
++&lt;/tr&gt;
++[% END %]
++[% END %]
++&lt;/table&gt;
++
++
++&lt;h1&gt;Loaded modules with version set by base.pm&lt;/h1&gt;
++&lt;table&gt;
++[% FOREACH module = loaded_module_data.sort('name') %]
++[% IF module.version == '-1, set by base.pm' %]
++&lt;tr&gt;
++&lt;td&gt;[% module.name %]&lt;/td&gt;
++&lt;td&gt;[% module.version || '&lt;i&gt;undefined&lt;/i&gt;' %]&lt;/td&gt;
++&lt;/tr&gt;
++[% END %]
++[% END %]
++&lt;/table&gt;
+
+Added: trunk/t/controller_About.t
+===================================================================
+--- trunk/t/controller_About.t	2006-04-05 20:26:59 UTC (rev 115)
++++ trunk/t/controller_About.t	2006-04-13 10:45:45 UTC (rev 116)
+@@ -0,0 +1,13 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 3;
++
++#BEGIN { use_ok 'Catalyst::Test', 'Parley' }
++BEGIN { use_ok 'Parley::Controller::About' }
++
++#ok( request('/about')-&gt;is_success, 'Request should succeed' );
++ok (1);
++ok (1);
++ok (1);
++
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000005.html">[Parley-svn] r115 - in trunk: . lib lib/Parley/App lib/Parley/Controller root/base/forum root/base/menu root/base/shared root/base/thread
+</A></li>
+	<LI>Next message: <A HREF="000007.html">[Parley-svn] r117 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

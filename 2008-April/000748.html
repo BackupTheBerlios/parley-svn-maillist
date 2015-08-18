@@ -1,0 +1,656 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r860 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/base/user trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r860%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/Schema%20trunk/root/base%20trunk/root/base/site%0A%09trunk/root/base/user%20trunk/t/schema&In-Reply-To=%3C200804102034.m3AKYf5v023053%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000747.html">
+   <LINK REL="Next"  HREF="000749.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r860 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/base/user trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r860%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/Schema%20trunk/root/base%20trunk/root/base/site%0A%09trunk/root/base/user%20trunk/t/schema&In-Reply-To=%3C200804102034.m3AKYf5v023053%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r860 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/I18N	trunk/lib/Parley/Schema trunk/root/base trunk/root/base/site	trunk/root/base/user trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Apr 10 22:34:41 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000747.html">[Parley-svn] r859 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000749.html">[Parley-svn] r861 - / trunk trunk/lib/Parley
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#748">[ date ]</a>
+              <a href="thread.html#748">[ thread ]</a>
+              <a href="subject.html#748">[ subject ]</a>
+              <a href="author.html#748">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-04-10 22:34:39 +0200 (Thu, 10 Apr 2008)
+New Revision: 860
+
+Added:
+   trunk/root/base/site/ip_info
+Modified:
+   /
+   trunk/Changes
+   trunk/Changes.i18n
+   trunk/ROADMAP
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Contributors.pm
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/lib/Parley/Version.pm
+   trunk/root/base/footer
+   trunk/root/base/user/profile
+   trunk/t/schema/SchemaTest.pm
+   trunk/t/schema/person.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4882 at wiggin</A>:  chisel | 2008-04-10 18:52:37 +0100
+ + list IPs a user has posted from (user/profile)
+ + list users posting from an IP (site/ip_info)
+ / update Changes, Changes.i18n, ROADMAP
+ + add TJC to project contributors
+ / return to non-numified $VERSION (SVK Makefile.PL has the same warning...)
+ / modify footer to use the application name defined in the application config file (was hard-coded)
+ / modify schema tests to use Test::DBIx::Class::Schema'
+ + updated schema test(s)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4881
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4882
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/Changes	2008-04-10 20:34:39 UTC (rev 860)
+@@ -6,6 +6,8 @@
+     - user roles can now be assigned and removed
+     - users can have their &quot;suspended&quot; flag set and removed
+     - application can now prevent login/signup/posting/access by IP
++    - user profile lists IPs posted from
++    - new action (site/ip_info) to list users posting from a given IP
+ 
+ 0.58    Fri Feb  8 07:47:31 GMT 2008
+     - re-work the UI design to be cleaner
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/Changes.i18n	2008-04-10 20:34:39 UTC (rev 860)
+@@ -35,6 +35,7 @@
+             - &quot;Access Denied&quot;
+             - &quot;Access to this application is not permitted from %1&quot;
+             - &quot;IP Bans&quot;
++            - &quot;IP Information&quot;
+ 
+     it.po:
+         - added:
+@@ -43,7 +44,7 @@
+             - &quot;Post Edited By&quot;
+ 
+     nl.po:
+-        - full translation from i_default.po
++        - full translation from i_default.po (v0.58)
+ 
+ 0.58
+     (en renamed to i_default)
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/ROADMAP	2008-04-10 20:34:39 UTC (rev 860)
+@@ -5,7 +5,9 @@
+ This isn't set in stone - the roadmap can be swayed by valid, sensible
+ reasoning from interested parties.
+ 
++&quot;[D]&quot; means that the feature has been implemented.
+ 
++
+ 0.58 (Feb 2008):
+ 
+     - UI improvements and cleanup
+@@ -29,6 +31,8 @@
+           - [D] prevent posting/editing from IP
+           - [D] prevent total access from IP
+         - IP reporting
++          - [D] IPs used by user
++          - [D] Users posting from IP
+ 
+ 0.60:
+ 
+
+Modified: trunk/lib/Parley/Contributors.pm
+===================================================================
+--- trunk/lib/Parley/Contributors.pm	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/lib/Parley/Contributors.pm	2008-04-10 20:34:39 UTC (rev 860)
+@@ -37,6 +37,8 @@
+ 
+ =head1 PATCHES AND BUG-FIXES
+ 
++Toby Corkindale C&lt;&lt; TJC &gt;&gt;
++
+ Kaare Rasmussen C&lt;&lt; CPANID: KAARE &gt;&gt;
+ 
+ =head1 PROJECTS
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/lib/Parley/Controller/Site.pm	2008-04-10 20:34:39 UTC (rev 860)
+@@ -23,6 +23,17 @@
+             -&gt;ban_type_list;
+ }
+ 
++sub ip_info : Local {
++    my ($self, $c) = @_;
++    my $ip = $c-&gt;request-&gt;param('address');
++
++    # the address
++    $c-&gt;stash-&gt;{ip_address} = $ip;
++    # a breakdown of posts/users for the address
++    $c-&gt;stash-&gt;{people_posting} = 
++        $c-&gt;model('ParleyDB::Post')-&gt;people_posting_from_ip($ip);
++}
++
+ sub services : Local {
+     my ($self, $c) = @_;
+ 
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/lib/Parley/I18N/i_default.po	2008-04-10 20:34:39 UTC (rev 860)
+@@ -258,6 +258,9 @@
+ msgid &quot;IP Bans&quot;
+ msgstr &quot;IP Bans&quot;
+ 
++msgid &quot;IP Information&quot;
++msgstr &quot;IP Information&quot;
++
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Logged&quot;
+ 
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/lib/Parley/Schema/Person.pm	2008-04-10 20:34:39 UTC (rev 860)
+@@ -1,4 +1,5 @@
+ package Parley::Schema::Person;
++# vim: ts=8 sts=4 et sw=4 sr sta
+ 
+ # Created by DBIx::Class::Schema::Loader v0.03004 @ 2006-08-10 09:12:24
+ 
+@@ -15,7 +16,6 @@
+ __PACKAGE__-&gt;add_columns(
+   &quot;id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+-    #default_value =&gt; &quot;nextval('person_person_id_seq'::regclass)&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 4,
+   },
+@@ -72,7 +72,6 @@
+ );
+ 
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+-
+ __PACKAGE__-&gt;resultset_class('Parley::ResultSet::Person');
+ 
+ __PACKAGE__-&gt;add_unique_constraint(
+@@ -330,4 +329,45 @@
+     return 0;
+ }
+ 
++sub ips_posted_from {
++    my $record = shift;
++    my ($rs, $schema, @ips);
++
++    # grab the schema so we can search a different table
++    $schema = $record-&gt;result_source()-&gt;schema();
++
++    $rs = $schema-&gt;resultset('Post')-&gt;search(
++        {
++            creator_id  =&gt; $record-&gt;id,
++        },
++        {
++            distinct    =&gt; 1,
++            columns     =&gt; [ qw/ip_addr/ ],
++        }
++    );
++
++    while (my $result = $rs-&gt;next) {
++        push @ips, $result-&gt;ip_addr;
++    }
++
++    return \@ips;
++}
++
++sub posts_from_ip {
++    my ($record, $ip_address) = @_;
++    my ($schema, $rs);
++
++    # grab the schema so we can search a different table
++    $schema = $record-&gt;result_source()-&gt;schema();
++
++    $rs = $schema-&gt;resultset('Post')-&gt;search(
++        {
++            creator_id  =&gt; $record-&gt;id,
++            ip_addr     =&gt; $ip_address,
++        },
++    );
++
++    return $rs;
++}
++
+ 1;
+
+Modified: trunk/lib/Parley/Version.pm
+===================================================================
+--- trunk/lib/Parley/Version.pm	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/lib/Parley/Version.pm	2008-04-10 20:34:39 UTC (rev 860)
+@@ -3,7 +3,7 @@
+ # &quot;perl Makefile.PL&quot; complained, &quot;WARNING: VERSION takes a string/number
+ # not a version reference.&quot;
+ # I just numified the VERSION - it's legible and seems to stop the warning
+-use version; our $VERSION = qv(0.59_001)-&gt;numify;
++use version; our $VERSION = qv(0.59_001);
+ 
+ =head1 NAME
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/lib/Parley.pm	2008-04-10 20:34:39 UTC (rev 860)
+@@ -66,6 +66,15 @@
+     }
+ );
+ __PACKAGE__-&gt;deny_access_unless(
++    '/site/ip_info',
++    sub {
++        my $c = shift;
++        $c-&gt;check_any_user_role(
++            qw/site_moderator ip_ban_posting ip_ban_signup ip_ban_login/
++        )
++    }
++);
++__PACKAGE__-&gt;deny_access_unless(
+     '/site/roleSaveHandler',
+     [qw/site_moderator/]
+ );
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/root/base/footer	2008-04-10 20:34:39 UTC (rev 860)
+@@ -3,7 +3,7 @@
+ 
+             &lt;div id=&quot;ft&quot;&gt;
+                 &lt;p&gt;
+-                &lt;a href=&quot;<A HREF="http://developer.berlios.de/projects/parley">http://developer.berlios.de/projects/parley</A>&quot;&gt;Parley&lt;/a&gt;
++                &lt;a href=&quot;<A HREF="http://developer.berlios.de/projects/parley">http://developer.berlios.de/projects/parley</A>&quot;&gt;[%c.config.name%]&lt;/a&gt;
+                 (version [%c.config.version%])
+                 &copy; Chisel Wright 2006-2008. [%l('All Rights Reserved')%].
+                 &lt;/p&gt;
+
+Added: trunk/root/base/site/ip_info
+===================================================================
+--- trunk/root/base/site/ip_info	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/root/base/site/ip_info	2008-04-10 20:34:39 UTC (rev 860)
+@@ -0,0 +1,25 @@
++&lt;h1&gt;[%l('IP Information')%]&lt;/h1&gt;
++
++&lt;h2&gt;[% ip_address %]&lt;/h2&gt;
++
++[% dummy_value = people_posting.reset %]
++&lt;table class=&quot;forum_list&quot;&gt;
++    &lt;thead&gt;
++        &lt;th&gt;[%l('Name')%]&lt;/td&gt;
++        &lt;th&gt;[%l('Posts Made')%]&lt;/td&gt;
++    &lt;/thead&gt;
++    &lt;tbody&gt;
++        [% WHILE (post = people_posting.next) %]
++        [% toggler = (1 - (toggler||0)) %]
++
++        &lt;tr class=&quot;row [% row_styles.$toggler %]&quot;&gt;
++            &lt;td width=&quot;50%&quot;&gt;
++                &lt;a href=&quot;[%c.uri_for('/user/profile',{'user'=&gt;post.creator.id})%]&quot;&gt;[% post.creator.forum_name %]&lt;/a&gt;
++            &lt;/td&gt;
++            &lt;td width=&quot;40%&quot;&gt;
++                [% post.creator.posts_from_ip(ip_address).count %]
++            &lt;/td&gt;
++        &lt;/tr&gt;
++        [% END %]
++    &lt;/tbody&gt;
++&lt;/table&gt;
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/root/base/user/profile	2008-04-10 20:34:39 UTC (rev 860)
+@@ -85,6 +85,38 @@
+         [% END %]
+     [% END %]
+ 
++    [% IF authed_user.can_ip_ban %]
++        &lt;h2&gt;[%l('IP Addresses')%]&lt;/h2&gt;
++        &lt;div class=&quot;yui-gf top_padded&quot;&gt;
++            &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                [%l('User has posted from')%]
++            &lt;/div&gt;
++            &lt;div class=&quot;yui-u&quot;&gt;
++                [% SET ips = profiled_user.ips_posted_from %]
++                [% FOR ip IN ips %]
++                &lt;span id=&quot;ctx_[%ip%]&quot;&gt;
++                    &lt;a href=&quot;[%c.uri_for('/site/ip_info',{'address'=&gt;ip})%]&quot;&gt;[% ip %]&lt;/a&gt;
++                &lt;/span&gt;[% UNLESS loop.last %], [% END %]
++                &lt;script type=&quot;text/javascript&quot;&gt;
++                    YAHOO.namespace(&quot;example.container&quot;);
++                    [% SET people_posting = c.model('ParleyDB::Post').people_posting_from_ip(&quot;$ip&quot;) %]
++                    [% SET ttTxt = '' %]
++                    [% WHILE (post = people_posting.next) %]
++                    [% ttTxt = &quot;${ttTxt} &lt;li&gt;$post.creator.forum_name&lt;/li&gt;&quot; %]
++                    [% END %]
++                    YAHOO.example.container.tt1 = new YAHOO.widget.Tooltip(
++                        &quot;tt_[%ip%]&quot;,
++                        {
++                            context:&quot;ctx_[%ip%]&quot;,
++                            text:&quot;Users posting from [%ip%]: &lt;ul&gt;[%ttTxt%]&lt;/ul&gt;&quot;
++                        }
++                    );
++                &lt;/script&gt;
++                [% END %]
++            &lt;/div&gt;
++        &lt;/div&gt;
++    [% END %]
++
+     [% IF authed_user.is_site_moderator %]
+         &lt;h2&gt;[%l('Forum Moderation')%]&lt;/h2&gt;
+ 
+
+Modified: trunk/t/schema/SchemaTest.pm
+===================================================================
+--- trunk/t/schema/SchemaTest.pm	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/t/schema/SchemaTest.pm	2008-04-10 20:34:39 UTC (rev 860)
+@@ -3,112 +3,8 @@
+ use strict;
+ use warnings;
+ 
+-use Test::More;
++use base 'Test::DBIx::Class::Schema';
+ 
+-sub new {
+-    my ($proto, $options) = @_;
+-
+-    my $self = (defined $options) ? $options : {};
+-
+-    bless $self, ref($proto) || $proto;
+-
+-    return $self;
+-}
+-
+-sub methods {
+-    my ($self, $hashref) = @_;
+-
+-    $self-&gt;{methods} = $hashref;
+-
+-    return;
+-}
+-
+-sub run_tests {
+-    my ($self) = @_;
+-    my ($schema, $record, $resultset);
+-
+-    $self-&gt;{num_tests} =
+-          7                             # fixed number of tests
+-        + @{ $self-&gt;{methods}-&gt;{columns}   }
+-        + @{ $self-&gt;{methods}-&gt;{relations} }
+-        + @{ $self-&gt;{methods}-&gt;{custom}    }
+-    ;
+-
+-    plan tests =&gt; $self-&gt;{num_tests};
+-
+-    # make sure we can use the schema (namespace) module
+-    use_ok( $self-&gt;{namespace} );
+-
+-    # get a schema to query
+-    $schema = $self-&gt;{namespace}-&gt;connect(
+-        $self-&gt;{dsn}
+-    );
+-    isa_ok($schema, $self-&gt;{namespace});
+-
+-    SKIP: {
+-        # if we don't have any records, it's pretty hard to test
+-        # available methods
+-        skip
+-            qq{no records in $self-&gt;{moniker}},
+-            ($self-&gt;{num_tests} - 2)
+-                unless (
+-                    $schema-&gt;resultset( $self-&gt;{moniker} )-&gt;search({})-&gt;count()
+-                )
+-        ;
+-            
+-
+-        # get an object to test methods against
+-        $record = $schema-&gt;resultset( $self-&gt;{moniker} )-&gt;search({})-&gt;first();
+-        isa_ok($record, $self-&gt;{namespace} . '::' . $self-&gt;{moniker});
+-
+-        my @std_method_types = qw(columns relations custom);
+-
+-        eval {
+-            $schema-&gt;txn_do(
+-                sub {
+-                    foreach my $method_type (@std_method_types) {
+-                        SKIP: {
+-                            skip qq{no $method_type methods}, 1
+-                                unless @{ $self-&gt;{methods}-&gt;{$method_type} };
+-
+-                            can_ok(
+-                                $record,
+-                                @{ $self-&gt;{methods}-&gt;{$method_type} },
+-                            );
+-                            # try calling each method
+-                            foreach my $method ( @{ $self-&gt;{methods}-&gt;{$method_type} } ) {
+-                                eval { $record-&gt;$method };
+-                                is($@, q{}, qq{calling $method() didn't barf});
+-                            }
+-                        }
+-                    } # foreach
+-
+-                    # resultset class methods - we need something slightly different here
+-                    SKIP: {
+-                        skip qq{no resultsets methods}, 1
+-                            unless @{ $self-&gt;{methods}-&gt;{resultsets} };
+-
+-                        $resultset = $schema-&gt;resultset( $self-&gt;{moniker} )-&gt;search({});
+-                        can_ok(
+-                            $resultset,
+-                            @{ $self-&gt;{methods}-&gt;{resultsets} },
+-                        );
+-                    } # SKIP, no resultsets
+-
+-
+-                    # rollback any evil changes that crept through from the
+-                    # tested calls
+-                    $schema-&gt;txn_rollback;
+-                }
+-            )
+-        };
+-        if ($@) {
+-            warn $@;
+-        }
+-
+-    } # SKIP, no records
+-}
+-
+ 1;
+ 
+ __END__
+@@ -117,81 +13,11 @@
+ 
+ =head1 NAME
+ 
+-SchemaTest - a painless way for testing DBIC schema class methods
++SchemaTest - a thin wrapper for Test::DBIx::Class::Schema
+ 
+-=head1 DESCRIPTION
+-
+-It's really useful to be able to test and confirm that DBIC classes have and
+-support a known set of methods.
+-
+-Testing these one-by-one is more than tedious and likely to discourage you
+-from writing the relevant test scripts.
+-
+-As a lazy person myself I don't want to write numerous near-identical scripts.
+-
+-SchemaTest takes the copy-and-paste out of DBIC schema class testing.
+-
+-=head1 SYNOPSIS
+-
+-Create a test script that looks like this:
+-
+-    #!/usr/bin/perl
+-    # vim: ts=8 sts=4 et sw=4 sr sta
+-    use strict;
+-    use warnings;
+-
+-    # load the module that provides all of the common test functionality
+-    use FindBin qw($Bin);
+-    use lib $Bin;
+-    use SchemaTest;
+-
+-    my $schematest = SchemaTest-&gt;new(
+-        {
+-            dsn       =&gt; 'dbi:Pg:dbname=mydb',
+-            namespace =&gt; 'MyDB::Schema',
+-            moniker   =&gt; 'SomeTable',
+-        }
+-    );
+-    $schematest-&gt;methods(
+-        {
+-            columns =&gt; [
+-                qw[
+-                    id
+-                    column1
+-                    column2
+-                    columnX
+-                    foo_id
+-                ]
+-            ],
+-
+-            relations =&gt; [
+-                qw[
+-                    foo
+-                ]
+-            ],
+-
+-            custom =&gt; [
+-                qw[
+-                    some_method
+-                ]
+-            ],
+-
+-            resultsets =&gt; [
+-                qw[
+-                ]
+-            ],
+-        }
+-    );
+-
+-    $schematest-&gt;run_tests();
+-
+-Run the test script:
+-
+-  prove -l t/schematest/xx.mydb.t
+-
+ =head1 SEE ALSO
+ 
+-L&lt;DBIx::Class&gt;
++L&lt;Test::DBIx::Class::Schema&gt;
+ 
+ =head1 AUTHOR
+ 
+
+Modified: trunk/t/schema/person.t
+===================================================================
+--- trunk/t/schema/person.t	2008-04-10 20:34:31 UTC (rev 859)
++++ trunk/t/schema/person.t	2008-04-10 20:34:39 UTC (rev 860)
+@@ -10,9 +10,10 @@
+ 
+ my $schematest = SchemaTest-&gt;new(
+     {
+-        dsn       =&gt; 'dbi:Pg:dbname=parley',
+-        namespace =&gt; 'Parley::Schema',
+-        moniker   =&gt; 'Person',
++        dsn         =&gt; 'dbi:Pg:dbname=parley',
++        username    =&gt; 'parley',
++        namespace   =&gt; 'Parley::Schema',
++        moniker     =&gt; 'Person',
+     }
+ );
+ $schematest-&gt;methods(
+@@ -49,9 +50,16 @@
+             qw[
+                 roles
+                 check_user_roles
++                check_any_user_role
+                 is_site_moderator
+                 can_suspend_account
+-            ]
++                last_suspension
++                can_ip_ban
++                can_view_site_menu
++                can_moderate_forum
++                set_suspended
++                posts_from_ip
++            ],
+         ],
+ 
+         resultsets =&gt; [
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000747.html">[Parley-svn] r859 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000749.html">[Parley-svn] r861 - / trunk trunk/lib/Parley
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#748">[ date ]</a>
+              <a href="thread.html#748">[ thread ]</a>
+              <a href="subject.html#748">[ subject ]</a>
+              <a href="author.html#748">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

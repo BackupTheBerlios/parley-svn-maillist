@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r592 - / trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r592%20-%20/%20trunk/t&In-Reply-To=%3C200710231915.l9NJFG2d019073%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000479.html">
+   <LINK REL="Next"  HREF="000481.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r592 - / trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r592%20-%20/%20trunk/t&In-Reply-To=%3C200710231915.l9NJFG2d019073%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r592 - / trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Oct 23 21:15:16 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000479.html">[Parley-svn] r591 - / trunk/lib/Parley/App
+</A></li>
+        <LI>Next message: <A HREF="000481.html">[Parley-svn] r593 - / trunk/t trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#480">[ date ]</a>
+              <a href="thread.html#480">[ thread ]</a>
+              <a href="subject.html#480">[ subject ]</a>
+              <a href="author.html#480">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-23 21:15:16 +0200 (Tue, 23 Oct 2007)
+New Revision: 592
+
+Modified:
+   /
+   trunk/t/controller_Help.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4032 at wiggin</A>:  chisel | 2007-10-23 19:45:10 +0100
+ + added a test for the FAQ page
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4031
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4032
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/t/controller_Help.t
+===================================================================
+--- trunk/t/controller_Help.t	2007-10-23 19:14:58 UTC (rev 591)
++++ trunk/t/controller_Help.t	2007-10-23 19:15:16 UTC (rev 592)
+@@ -1,10 +1,13 @@
+ use strict;
+ use warnings;
+-use Test::More tests =&gt; 3;
++use Test::More tests =&gt; 4;
+ 
+ BEGIN { use_ok 'Catalyst::Test', 'Parley' }
+ BEGIN { use_ok 'Parley::Controller::Help' }
+ 
+ # this should show the help contents
+-ok( request('/help')-&gt;is_success, 'Request should succeed' );
++ok( request('/help')-&gt;is_success, 'Help contents found' );
+ 
++# this should show the help contents
++ok( request('/help/faq')-&gt;is_success, 'FAQ page found' );
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000479.html">[Parley-svn] r591 - / trunk/lib/Parley/App
+</A></li>
+	<LI>Next message: <A HREF="000481.html">[Parley-svn] r593 - / trunk/t trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#480">[ date ]</a>
+              <a href="thread.html#480">[ thread ]</a>
+              <a href="subject.html#480">[ subject ]</a>
+              <a href="author.html#480">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

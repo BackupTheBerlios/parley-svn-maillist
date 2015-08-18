@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r756 - / trunk/lib trunk/lib/Parley/Controller/User	trunk/root/base/error
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r756%20-%20/%20trunk/lib%20trunk/lib/Parley/Controller/User%0A%09trunk/root/base/error&In-Reply-To=%3C200801240705.m0O75kdM029260%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000643.html">
+   <LINK REL="Next"  HREF="000645.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r756 - / trunk/lib trunk/lib/Parley/Controller/User	trunk/root/base/error</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r756%20-%20/%20trunk/lib%20trunk/lib/Parley/Controller/User%0A%09trunk/root/base/error&In-Reply-To=%3C200801240705.m0O75kdM029260%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r756 - / trunk/lib trunk/lib/Parley/Controller/User	trunk/root/base/error">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 24 08:05:46 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000643.html">[Parley-svn] r755 - / trunk trunk/lib/Parley/Controller/User	trunk/root/base/user
+</A></li>
+        <LI>Next message: <A HREF="000645.html">[Parley-svn] r757 - / trunk trunk/lib/Parley/Controller/User
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#644">[ date ]</a>
+              <a href="thread.html#644">[ thread ]</a>
+              <a href="subject.html#644">[ subject ]</a>
+              <a href="author.html#644">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-24 08:05:45 +0100 (Thu, 24 Jan 2008)
+New Revision: 756
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/root/base/error/simple
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4545 at wiggin</A>:  chisel | 2008-01-23 18:56:56 +0000
+ / more (and hopefully final) fixes to Lost Password screens
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4544
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4545
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2008-01-24 07:05:37 UTC (rev 755)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2008-01-24 07:05:45 UTC (rev 756)
+@@ -128,7 +128,7 @@
+     # fetch the info from the database
+     my $pwd_reset = $c-&gt;model('ParleyDB')-&gt;resultset('PasswordReset')-&gt;find(
+         {
+-            password_reset_id =&gt; $reset_uid,
++            id =&gt; $reset_uid,
+         }
+     );
+ 
+@@ -372,7 +372,7 @@
+         # do the actual password reset
+         $email_send_status = $self-&gt;_user_password_reset($c, $person);
+         if (not $email_send_status) {
+-            parley_warn($c, $c-&gt;localize(q{PASWORD EMAIL SEND FAILED}));
++            parley_warn($c, $c-&gt;localize(q{PASSWORD EMAIL SEND FAILED}));
+         }
+     }
+ 
+@@ -398,9 +398,9 @@
+     # create an invitation
+     $pwd_reset = $c-&gt;model('ParleyDB')-&gt;resultset('PasswordReset')-&gt;create(
+         {
+-            'password_reset_id' =&gt; $random,
+-            'recipient'		=&gt; $person-&gt;id,
+-            'expires'		=&gt; Time::Piece-&gt;new(time + $LIFETIME)-&gt;datetime,
++            'id'                =&gt; $random,
++            'recipient_id'      =&gt; $person-&gt;id,
++            'expires'           =&gt; Time::Piece-&gt;new(time + $LIFETIME)-&gt;datetime,
+         }
+     );
+ 
+@@ -437,7 +437,7 @@
+     # delete all outstanding reset URLs for the user
+     $c-&gt;model('ParleyDB')-&gt;resultset('PasswordReset')-&gt;search(
+         {
+-            recipient =&gt; $pwd_reset-&gt;recipient()-&gt;id()
++            recipient_id =&gt; $pwd_reset-&gt;recipient()-&gt;id()
+         }
+     ) -&gt;delete;
+ }
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-01-24 07:05:37 UTC (rev 755)
++++ trunk/lib/Parley.pm	2008-01-24 07:05:45 UTC (rev 756)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.58_15';
++our $VERSION = '0.58_16';
+ 
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+
+Modified: trunk/root/base/error/simple
+===================================================================
+--- trunk/root/base/error/simple	2008-01-24 07:05:37 UTC (rev 755)
++++ trunk/root/base/error/simple	2008-01-24 07:05:45 UTC (rev 756)
+@@ -4,7 +4,7 @@
+ &lt;p&gt;
+ [%l('The following error message was returned by the application')%]:
+ 
+-&lt;blockquote&gt;[% error.message %]&lt;/blockquote&gt;
++&lt;blockquote style=&quot;white-space:pre;&quot;&gt;[% error.message %]&lt;/blockquote&gt;
+ &lt;/p&gt;
+ [% END %]
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000643.html">[Parley-svn] r755 - / trunk trunk/lib/Parley/Controller/User	trunk/root/base/user
+</A></li>
+	<LI>Next message: <A HREF="000645.html">[Parley-svn] r757 - / trunk trunk/lib/Parley/Controller/User
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#644">[ date ]</a>
+              <a href="thread.html#644">[ thread ]</a>
+              <a href="subject.html#644">[ subject ]</a>
+              <a href="author.html#644">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

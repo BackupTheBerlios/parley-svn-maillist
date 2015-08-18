@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r162 - / trunk/lib/Parley/Model/ParleyDB
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r162%20-%20/%20trunk/lib/Parley/Model/ParleyDB&In-Reply-To=%3C200606271847.k5RIlWsT030454%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000050.html">
+   <LINK REL="Next"  HREF="000052.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r162 - / trunk/lib/Parley/Model/ParleyDB</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r162%20-%20/%20trunk/lib/Parley/Model/ParleyDB&In-Reply-To=%3C200606271847.k5RIlWsT030454%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r162 - / trunk/lib/Parley/Model/ParleyDB">chiselwright at berlios.de
+       </A><BR>
+    <I>Tue Jun 27 20:47:32 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000050.html">[Parley-svn] r161 - / trunk/issues trunk/issues/search_deflate trunk/issues/search_deflate/db trunk/issues/search_deflate/lib trunk/issues/search_deflate/lib/TimeDB trunk/issues/search_deflate/t
+</A></li>
+        <LI>Next message: <A HREF="000052.html">[Parley-svn] r163 - / trunk/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#51">[ date ]</a>
+              <a href="thread.html#51">[ thread ]</a>
+              <a href="subject.html#51">[ subject ]</a>
+              <a href="author.html#51">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-06-27 20:47:30 +0200 (Tue, 27 Jun 2006)
+New Revision: 162
+
+Modified:
+   /
+   trunk/lib/Parley/Model/ParleyDB/Post.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r15495 at ferrari</A>:  chisel | 2006-06-27 18:16:35 +0100
+ / modified inflate/deflate declaration
+ + added thread_post_count()
+ + added thread_position()
+ + added page_containing_post()
+ + added POD-umentation
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15494
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15495
+
+Modified: trunk/lib/Parley/Model/ParleyDB/Post.pm
+===================================================================
+--- trunk/lib/Parley/Model/ParleyDB/Post.pm	2006-06-27 18:47:22 UTC (rev 161)
++++ trunk/lib/Parley/Model/ParleyDB/Post.pm	2006-06-27 18:47:30 UTC (rev 162)
+@@ -8,25 +8,65 @@
+ my @date_cols = qw[ created edited ];
+ 
+ foreach my $datecol (@date_cols) {
+-    __PACKAGE__-&gt;inflate_column(
+-        $datecol,
++    __PACKAGE__-&gt;inflate_column($datecol, {
++        inflate =&gt; sub { DateTime::Format::Pg-&gt;parse_datetime(shift); },
++        deflate =&gt; sub { DateTime::Format::Pg-&gt;format_datetime(shift); },
++    });
++}
++
++sub thread_post_count {
++    my ($self, $thread) = @_;
++
++    return $self-&gt;count(
+         {
+-            inflate     =&gt; sub {
+-                my $dtf = DateTime::Format::Pg-&gt;parse_timestamptz( shift );
+-                $dtf-&gt;set_time_zone('UTC');
+-                $dtf-&gt;set('locale', 'en_GB');
+-                return $dtf;
++            thread  =&gt; $thread-&gt;id(),
++        },
++        {
++        }
++    );
++}
++
++sub thread_position {
++    my ($self, $post) = @_;
++
++    warn &quot;thread_position()&quot;;
++
++    if (not defined $post) {
++        warn('$post id undefined in call to Parley::Model::ParleyDB::Post-&gt;thread_position()');
++        return;
++    }
++
++    # explicitly 'deflate' the creation time, as DBIx::Class (&lt;=v0.06003) doesn't deflate on search()
++    my $position = $self-&gt;count(
++        {
++            thread  =&gt; $post-&gt;thread()-&gt;id(),
++            created =&gt; {
++                '&lt;='   =&gt; DateTime::Format::Pg-&gt;format_datetime($post-&gt;created())
+             },
+-            deflate     =&gt; sub {
+-                my $dtf = shift;
+-                DateTime::Format::Pg-&gt;format_timestamptz( $dtf );
+-            },
+         }
+     );
++
++    return $position;
+ }
+ 
++sub page_containing_post {
++    my ($self, $post, $posts_per_page) = @_;
+ 
++    warn &quot;page_containing_post()&quot;;
+ 
++    my $position_in_thread = $self-&gt;thread_position($post);
++
++    # work out what page the Nth post is on
++    my $page_number = int(($position_in_thread - 1) / $posts_per_page) + 1;
++
++    return $page_number;
++}
++
++1;
++__END__
++
++=pod
++
+ =head1 NAME
+ 
+ Parley::Model::ParleyDB::Post - Catalyst DBIC Table Model
+@@ -39,9 +79,46 @@
+ 
+ Catalyst DBIC Table Model.
+ 
++=head1 EXTRA METHODS
++
++The following extra methods are available:
++
++=head2 thread_position($post)
++
++Given a Parley::Model::ParleyDB::Post object, $post, return the position of the
++post in the thread. For example, the initial post in a thread will always be
++position #1.
++
++  # get the position of the current_post
++  my $post_position = $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;thread_position(
++    $c-&gt;stash-&gt;{current_post},
++  );
++  # show the information into the catalyst log
++  $c-&gt;log-&gt;info(
++      'post '
++    . $c-&gt;stash-&gt;{current_post}-&gt;id()
++    . ' is at position '
++    . $post_position
++  );
++
++=head2 page_containing_post($post, $posts_per_page)
++
++Given a Parley::Model::ParleyDB::Post object, $post, and the number of posts to
++show per page in a thread, $posts_per_page, return the number of the page that
++the post would appear on.
++
++  # get the page that the current post belongs on, using parley.yml for the
++  # value of the number of posts per page
++  my $page_number =  $c-&gt;model('ParleyDB')-&gt;table('post')-&gt;page_containing_post(
++    $c-&gt;stash-&gt;{current_post},
++    $c-&gt;config-&gt;{posts_per_page},
++  );
++  # show the information into the catalyst log
++  $c-&gt;log-&gt;info( $c-&gt;stash-&gt;{current_post}-&gt;id() . ' is on page #' . $page_number);
++
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+@@ -50,4 +127,4 @@
+ 
+ =cut
+ 
+-1;
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000050.html">[Parley-svn] r161 - / trunk/issues trunk/issues/search_deflate trunk/issues/search_deflate/db trunk/issues/search_deflate/lib trunk/issues/search_deflate/lib/TimeDB trunk/issues/search_deflate/t
+</A></li>
+	<LI>Next message: <A HREF="000052.html">[Parley-svn] r163 - / trunk/db
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#51">[ date ]</a>
+              <a href="thread.html#51">[ thread ]</a>
+              <a href="subject.html#51">[ subject ]</a>
+              <a href="author.html#51">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

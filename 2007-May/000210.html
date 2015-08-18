@@ -1,0 +1,1180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r322 - / trunk/root/base/thread trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r322%20-%20/%20trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200705040920.l449Knvb024344%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000209.html">
+   <LINK REL="Next"  HREF="000211.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r322 - / trunk/root/base/thread trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r322%20-%20/%20trunk/root/base/thread%20trunk/root/css&In-Reply-To=%3C200705040920.l449Knvb024344%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r322 - / trunk/root/base/thread trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri May  4 11:20:49 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000209.html">[Parley-svn] r321 - / trunk/lib
+</A></li>
+        <LI>Next message: <A HREF="000211.html">[Parley-svn] r323 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#210">[ date ]</a>
+              <a href="thread.html#210">[ thread ]</a>
+              <a href="subject.html#210">[ subject ]</a>
+              <a href="author.html#210">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-04 11:20:48 +0200 (Fri, 04 May 2007)
+New Revision: 322
+
+Modified:
+   /
+   trunk/root/base/thread/view
+   trunk/root/css/default.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3201 at wiggin</A>:  chisel | 2007-05-04 08:38:38 +0100
+ / moved thread/view css style markup into default.css
+ / removed thread/view background colour for body (reverting to white)
+ 
+ CSS file is a mess now, and really needs some attention
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3200
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3201
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-04 09:20:28 UTC (rev 321)
++++ trunk/root/base/thread/view	2007-05-04 09:20:48 UTC (rev 322)
+@@ -1,538 +1,6 @@
+ &lt;style type=&quot;text/css&quot;&gt;
+ 
+ 
+-body {
+-font-family:Trebuchet, Verdana, Lucida Grande, Sapir Sans, Tahoma, Sans-Serif;
+-font-size:80%;
+-background-color:#E7E7E7;
+-color:#000;
+-letter-spacing:2%;
+-line-height:1.3em;
+-margin:0;
+-padding:0;
+-}
+-
+-#pic_wrapper {
+-margin-bottom:6px;
+-}
+-
+-.forum_title {
+-font-size:110%;
+-font-weight:700;
+-}
+-
+-
+-.ribbon {
+-background-color:#F9FBFF;
+-padding: 3px;
+-border:1px solid #EBEEF2;
+-
+-}
+-
+-.g1 {
+-border-bottom:1px solid red;
+-}
+-
+-.g2 {
+-border-bottom:1px solid blue;
+-}
+-
+-.light {
+-color:#666;
+-}
+-
+-.small {
+-font-size:85%;
+-line-height:1.1em;
+-}
+-
+-#navbox,#navbox a {
+-height:20px;
+-background-color:#000;
+-text-align:center;
+-font-weight:700;
+-color:#FFF;
+-font-size:105%;
+-margin:0;
+-}
+-
+-.searchhead {
+-width:120px;
+-text-align:right;
+-font-weight:700;
+-font-size:90%;
+-background-color:#E1E4EA;
+-}
+-
+-.linkbar {
+-background-color:#F5F5F5;
+-border:1px solid #E5E4E4;
+-padding: 4px;
+-margin-bottom: 8px;
+-}
+-
+-.linkbar2 {
+-width: 90%;
+-background-color:#F5F5F5;
+-border:1px solid #9CA0AD;
+-padding: 4px;
+-margin-bottom: 8px;
+-}
+-
+-#searchtable {
+-background-color:#F5F5F5;
+-}
+-
+-#searchtable td {
+-padding:3px;
+-}
+-
+-.menubox {
+-background-color:#F9FBFF;
+-border:1px solid #9CA0AD;
+-clear:both;
+-width:150px;
+-white-space:nowrap;
+-vertical-align:middle;
+-margin:2px 0;
+-padding:2px;
+-}
+-
+-.mycoms {
+-border-bottom:1px solid #333333;
+-}
+-
+-.menubox2 {
+-background-color:#F9FBFF;
+-border:1px solid red;
+-clear:both;
+-width:150px;
+-white-space:nowrap;
+-vertical-align:middle;
+-margin:2px 0;
+-padding:2px;
+-}
+-
+-.headerbar {
+-background-color:#666;
+-color:#FFF;
+-padding:4px;
+-}
+-
+-.thepagenums {
+-font-size:92%;
+-}
+-
+-.thepagenums b {
+-font-style:normal;
+-font-weight:700;
+-font-size:120%;
+-padding:2px;
+-}
+-
+-.thepagenums a {
+-font-weight:400;
+-margin:0;
+-padding:3px 2px;
+-}
+-
+-.googlead {
+-background-color:#333;
+-width:728px;
+-margin:4px auto;
+-}
+-
+-.forumtop {
+-background-color:#999;
+-border: none;
+-padding: 0;
+-margin: 0;
+-border-bottom:1px solid #9CA0AD;
+-}
+-
+-.forumtop2 {
+-background-color:#333;
+-color:#FFF;
+-font-size:85%;
+-padding:2px;
+-}
+-
+-.postwrap {
+-margin: 0;
+-padding: 0;
+-border-bottom:1px dashed #9CA0AD;
+-background-color: transparent;
+-}
+-
+-.postbit {
+-margin: 0;
+-padding: 0;
+-padding:6px 0 8px 9px;
+-}
+-
+-.post {
+-border: none;
+-margin: 0;
+-padding: 0;
+-padding:10px 6px 8px 8px;
+-}
+-
+-.labelpicpage {
+-width: 150px;
+-font-size: 90%;
+-font-weight: bold;
+-background-color:#EBEEF2;
+-text-align: right;
+-}
+-
+-.post_b {
+-background-color:#f9f9fb;
+-border-bottom:1px solid #999;
+-padding:2px;
+-}
+-
+-.quote {
+-width:90%;
+-border:1px solid #333;
+-font-size:95%;
+-background-color:#F9FBFF;
+-margin:0 0 2px 14px;
+-padding:6px;
+-}
+-
+-.last_post {
+-font-family:Tahoma, Sans-Serif;
+-font-size:95%;
+-color:#7C879D;
+-text-align:justify;
+-}
+-
+-.caption {
+-margin-bottom:14px;
+-margin-left:auto;
+-margin-right:auto;
+-width:400px;
+-font-weight:700;
+-text-align:center;
+-padding:0 9px 6px 24px;
+-}
+-
+-textarea,.bginput {
+-font:10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+-}
+-
+-img.leftie {
+-border:none;
+-margin-right:9px;
+-margin-bottom:6px;
+-}
+-
+-.logobar {
+-background:#FFF;
+-width:800px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:0;
+-}
+-
+-table.navbarwrap {
+-width:800px;
+-font-weight:700;
+-background:#000;
+-margin-left:auto;
+-border-top:1px solid #000;
+-border-bottom:1px solid #000;
+-margin-right:auto;
+-}
+-
+-table.navbar {
+-margin:0;
+-}
+-
+-.lineit {
+-color:#000;
+-border-right:1px solid #666;
+-}
+-
+-.lineit a {
+-color:#333;
+-display:block;
+-position:relative;
+-text-decoration:none;
+-padding:2px 10px;
+-}
+-
+-.lineit a:hover {
+-background-color:#292B2C;
+-}
+-
+-table.maintable {
+-width:100%;
+-background-color:#FFF;
+-margin-left:auto;
+-margin-right:auto;
+-padding:15px 24px 16px;
+-border: none;
+-}
+-
+-td, th, tr {
+-    border: none;
+-    margin: none;
+-    padding: none;
+-}
+-
+-.footerbox {
+-width:100%;
+-color:#333;
+-background-color:#F4F4F5;
+-font-size:90%;
+-text-align:right;
+-border-top:1px solid #ccc;
+-margin-botom:16px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:5px;
+-}
+-
+-.footerbox a:990000 {
+-color:#FFF;
+-}
+-
+-hr {
+-border-top:1px solid #ddd;
+-color:#fff;
+-background-color:#fff;
+-height:1px;
+-width:90%;
+-margin-top:22px;
+-margin-bottom:12px;
+-}
+-
+-#bg_wrap {
+-width:800px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:0;
+-}
+-
+-.head {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-color:#333;
+-font-weight:700;
+-text-align:left;
+-white-space:nowrap;
+-margin:16px 2px 4px 0;
+-padding:2px 5px;
+-}
+-
+-.head_thin {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-color:#333;
+-font-weight:700;
+-text-align:left;
+-white-space:nowrap;
+-margin:4px 2px 4px 0;
+-padding:2px 5px 2px 0;
+-}
+-
+-.dotline {
+-border:1px dashed #CCC;
+-clear:both;
+-text-align:left;
+-white-space:nowrap;
+-margin:4px 2px 4px 0;
+-padding:2px 5px 2px 0;
+-}
+-
+-.head_top {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-color:#333;
+-font-weight:700;
+-text-align:left;
+-white-space:nowrap;
+-margin:0 2px 4px 0;
+-padding:2px 5px;
+-}
+-
+-.head_forums {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-font-size:90%;
+-color:#666;
+-font-weight:700;
+-text-align:center;
+-white-space:nowrap;
+-margin:0 0 4px;
+-padding:1px 5px 1px 2px;
+-}
+-
+-.big_image {
+-border:1px solid #CCC;
+-background-color:#fff;
+-padding:5px;
+-}
+-
+-form {
+-margin:0;
+-padding:0;
+-}
+-
+-ul {
+-margin:2px 0 0 15px;
+-padding:0;
+-}
+-
+-.number {
+-border-right:1px solid #666;
+-padding:0 4px;
+-}
+-
+-.numbers {
+-line-height:1.1em;
+-margin-top:5px;
+-margin-bottom:3px;
+-}
+-
+-.number_no {
+-font-weight:700;
+-color:#000;
+-background-color:#F0F1F4;
+-border-right:1px solid #666;
+-padding:0 4px;
+-}
+-
+-.number_wrap {
+-background-color:#fff;
+-border-top:1px solid #666;
+-border-bottom:1px solid #666;
+-border-left:1px solid #666;
+-}
+-
+-.alert {
+-width:90%;
+-color:red;
+-text-align:center;
+-font-size:100%;
+-border:3px solid red;
+-margin-botom:16px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:5px;
+-}
+-
+-.mm_input {
+-width:100px;
+-border:1px solid #999;
+-background:#333;
+-color:#fff;
+-font-size:9px;
+-}
+-
+-.mm_button {
+-font-size:9px;
+-}
+-
+-.dots {
+-color:#000;
+-background:#F5F5F5;
+-border:2px dotted orange;
+-margin-left:auto;
+-margin-right:auto;
+-margin-bottom:5px;
+-padding:5px;
+-}
+-
+-.dots2 {
+-color:#000;
+-background:#E1E4EA;
+-border-bottom:2px dashed #ccc;
+-margin:0 auto 5px;
+-padding:10px;
+-}
+-
+-.foo {
+-color:#599CB3;
+-}
+-
+-#tab {
+-margin-top:0.5em;
+-width:100%;
+-margin-bottom:0;
+-}
+-
+-#tab a {
+-text-align:center;
+-border:0;
+-text-decoration:none;
+-padding:0.5em 0.5em 0;
+-}
+-
+-#tab .button {
+-background:#F5F5F5;
+-color:#000;
+-}
+-
+-#tab .active {
+-background:#E1E4EA;
+-color:#000;
+-font-weight:700;
+-border-bottom:2px solid #E1E4EA;
+-}
+-
+-a:link,a:visited,a:active {
+-color:#22229C;
+-}
+-
+-a:hover,.red {
+-color:#C00;
+-}
+-
+-h1,.big {
+-font-size:110%;
+-font-weight:700;
+-color:#900;
+-margin:0;
+-padding:0;
+-}
+-
+-h2 {
+-font-size: 120%;
+-font-weight: bold;
+-color:#666666;
+-margin-bottom:4px;
+-}
+-
+-.g3,.g4 {
+-color:green;
+-}
+-
+-.light a:link,.light a:visited,.light a:active,.light a:hover {
+-color:#ccc;
+-}
+-
+-.headerbar a:link,.headerbar a:visited,.headerbar a:active,.headerbar a:hover {
+-color:#FFF;
+-text-decoration:none;
+-}
+-
+-.navbar a:link,.navbar a:visited,.navbar a:active {
+-color:#fff;
+-}
+-
+-.navbar a:hover,.numbers a:link,.numbers a:visited,.numbers a:active,.numbers a:hover {
+-text-decoration:none;
+-}
+-
+-.footerbox a:visited,.footerbox a:link {
+-color:#900;
+-}
+ &lt;/style&gt;
+ 
+ 
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2007-05-04 09:20:28 UTC (rev 321)
++++ trunk/root/css/default.css	2007-05-04 09:20:48 UTC (rev 322)
+@@ -468,3 +468,540 @@
+     margin-bottom : 0;
+ }
+ 
++
++
++/* Borrowed from ModelMayhem */
++body {
++font-family:Trebuchet, Verdana, Lucida Grande, Sapir Sans, Tahoma, Sans-Serif;
++font-size:80%;
++/*background-color:#E7E7E7;*/
++color:#000;
++letter-spacing:2%;
++line-height:1.3em;
++margin:0;
++padding:0;
++}
++
++#pic_wrapper {
++margin-bottom:6px;
++}
++
++.forum_title {
++font-size:110%;
++font-weight:700;
++}
++
++
++.ribbon {
++background-color:#F9FBFF;
++padding: 3px;
++border:1px solid #EBEEF2;
++
++}
++
++.g1 {
++border-bottom:1px solid red;
++}
++
++.g2 {
++border-bottom:1px solid blue;
++}
++
++.light {
++color:#666;
++}
++
++.small {
++font-size:85%;
++line-height:1.1em;
++}
++
++#navbox,#navbox a {
++height:20px;
++background-color:#000;
++text-align:center;
++font-weight:700;
++color:#FFF;
++font-size:105%;
++margin:0;
++}
++
++.searchhead {
++width:120px;
++text-align:right;
++font-weight:700;
++font-size:90%;
++background-color:#E1E4EA;
++}
++
++.linkbar {
++background-color:#F5F5F5;
++border:1px solid #E5E4E4;
++padding: 4px;
++margin-bottom: 8px;
++}
++
++.linkbar2 {
++width: 90%;
++background-color:#F5F5F5;
++border:1px solid #9CA0AD;
++padding: 4px;
++margin-bottom: 8px;
++}
++
++#searchtable {
++background-color:#F5F5F5;
++}
++
++#searchtable td {
++padding:3px;
++}
++
++.menubox {
++background-color:#F9FBFF;
++border:1px solid #9CA0AD;
++clear:both;
++width:150px;
++white-space:nowrap;
++vertical-align:middle;
++margin:2px 0;
++padding:2px;
++}
++
++.mycoms {
++border-bottom:1px solid #333333;
++}
++
++.menubox2 {
++background-color:#F9FBFF;
++border:1px solid red;
++clear:both;
++width:150px;
++white-space:nowrap;
++vertical-align:middle;
++margin:2px 0;
++padding:2px;
++}
++
++.headerbar {
++background-color:#666;
++color:#FFF;
++padding:4px;
++}
++
++.thepagenums {
++font-size:92%;
++}
++
++.thepagenums b {
++font-style:normal;
++font-weight:700;
++font-size:120%;
++padding:2px;
++}
++
++.thepagenums a {
++font-weight:400;
++margin:0;
++padding:3px 2px;
++}
++
++.googlead {
++background-color:#333;
++width:728px;
++margin:4px auto;
++}
++
++.forumtop {
++background-color:#999;
++border: none;
++padding: 0;
++margin: 0;
++border-bottom:1px solid #9CA0AD;
++}
++
++.forumtop2 {
++background-color:#333;
++color:#FFF;
++font-size:85%;
++padding:2px;
++}
++
++.postwrap {
++margin: 0;
++padding: 0;
++border-bottom:1px dashed #9CA0AD;
++background-color: transparent;
++}
++
++.postbit {
++margin: 0;
++padding: 0;
++padding:6px 0 8px 9px;
++}
++
++.post {
++border: none;
++margin: 0;
++padding: 0;
++padding:10px 6px 8px 8px;
++}
++
++.labelpicpage {
++width: 150px;
++font-size: 90%;
++font-weight: bold;
++background-color:#EBEEF2;
++text-align: right;
++}
++
++.post_b {
++background-color:#f9f9fb;
++border-bottom:1px solid #999;
++padding:2px;
++}
++
++.quote {
++width:90%;
++border:1px solid #333;
++font-size:95%;
++background-color:#F9FBFF;
++margin:0 0 2px 14px;
++padding:6px;
++}
++
++.last_post {
++font-family:Tahoma, Sans-Serif;
++font-size:95%;
++color:#7C879D;
++text-align:justify;
++}
++
++.caption {
++margin-bottom:14px;
++margin-left:auto;
++margin-right:auto;
++width:400px;
++font-weight:700;
++text-align:center;
++padding:0 9px 6px 24px;
++}
++
++textarea,.bginput {
++font:10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
++}
++
++img.leftie {
++border:none;
++margin-right:9px;
++margin-bottom:6px;
++}
++
++.logobar {
++background:#FFF;
++width:800px;
++margin-left:auto;
++margin-right:auto;
++padding:0;
++}
++
++table.navbarwrap {
++width:800px;
++font-weight:700;
++background:#000;
++margin-left:auto;
++border-top:1px solid #000;
++border-bottom:1px solid #000;
++margin-right:auto;
++}
++
++table.navbar {
++margin:0;
++}
++
++.lineit {
++color:#000;
++border-right:1px solid #666;
++}
++
++.lineit a {
++color:#333;
++display:block;
++position:relative;
++text-decoration:none;
++padding:2px 10px;
++}
++
++.lineit a:hover {
++background-color:#292B2C;
++}
++
++table.maintable {
++width:100%;
++background-color:#FFF;
++margin-left:auto;
++margin-right:auto;
++padding:15px 24px 16px;
++border: none;
++}
++
++td, th, tr {
++    border: none;
++    margin: none;
++    padding: none;
++}
++
++.footerbox {
++width:100%;
++color:#333;
++background-color:#F4F4F5;
++font-size:90%;
++text-align:right;
++border-top:1px solid #ccc;
++margin-botom:16px;
++margin-left:auto;
++margin-right:auto;
++padding:5px;
++}
++
++.footerbox a:990000 {
++color:#FFF;
++}
++
++hr {
++border-top:1px solid #ddd;
++color:#fff;
++background-color:#fff;
++height:1px;
++width:90%;
++margin-top:22px;
++margin-bottom:12px;
++}
++
++#bg_wrap {
++width:800px;
++margin-left:auto;
++margin-right:auto;
++padding:0;
++}
++
++.head {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++color:#333;
++font-weight:700;
++text-align:left;
++white-space:nowrap;
++margin:16px 2px 4px 0;
++padding:2px 5px;
++}
++
++.head_thin {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++color:#333;
++font-weight:700;
++text-align:left;
++white-space:nowrap;
++margin:4px 2px 4px 0;
++padding:2px 5px 2px 0;
++}
++
++.dotline {
++border:1px dashed #CCC;
++clear:both;
++text-align:left;
++white-space:nowrap;
++margin:4px 2px 4px 0;
++padding:2px 5px 2px 0;
++}
++
++.head_top {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++color:#333;
++font-weight:700;
++text-align:left;
++white-space:nowrap;
++margin:0 2px 4px 0;
++padding:2px 5px;
++}
++
++.head_forums {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++font-size:90%;
++color:#666;
++font-weight:700;
++text-align:center;
++white-space:nowrap;
++margin:0 0 4px;
++padding:1px 5px 1px 2px;
++}
++
++.big_image {
++border:1px solid #CCC;
++background-color:#fff;
++padding:5px;
++}
++
++form {
++margin:0;
++padding:0;
++}
++
++ul {
++margin:2px 0 0 15px;
++padding:0;
++}
++
++.number {
++border-right:1px solid #666;
++padding:0 4px;
++}
++
++.numbers {
++line-height:1.1em;
++margin-top:5px;
++margin-bottom:3px;
++}
++
++.number_no {
++font-weight:700;
++color:#000;
++background-color:#F0F1F4;
++border-right:1px solid #666;
++padding:0 4px;
++}
++
++.number_wrap {
++background-color:#fff;
++border-top:1px solid #666;
++border-bottom:1px solid #666;
++border-left:1px solid #666;
++}
++
++.alert {
++width:90%;
++color:red;
++text-align:center;
++font-size:100%;
++border:3px solid red;
++margin-botom:16px;
++margin-left:auto;
++margin-right:auto;
++padding:5px;
++}
++
++.mm_input {
++width:100px;
++border:1px solid #999;
++background:#333;
++color:#fff;
++font-size:9px;
++}
++
++.mm_button {
++font-size:9px;
++}
++
++.dots {
++color:#000;
++background:#F5F5F5;
++border:2px dotted orange;
++margin-left:auto;
++margin-right:auto;
++margin-bottom:5px;
++padding:5px;
++}
++
++.dots2 {
++color:#000;
++background:#E1E4EA;
++border-bottom:2px dashed #ccc;
++margin:0 auto 5px;
++padding:10px;
++}
++
++.foo {
++color:#599CB3;
++}
++
++#tab {
++margin-top:0.5em;
++width:100%;
++margin-bottom:0;
++}
++
++#tab a {
++text-align:center;
++border:0;
++text-decoration:none;
++padding:0.5em 0.5em 0;
++}
++
++#tab .button {
++background:#F5F5F5;
++color:#000;
++}
++
++#tab .active {
++background:#E1E4EA;
++color:#000;
++font-weight:700;
++border-bottom:2px solid #E1E4EA;
++}
++
++a:link,a:visited,a:active {
++color:#22229C;
++}
++
++a:hover,.red {
++color:#C00;
++}
++
++h1,.big {
++font-size:110%;
++font-weight:700;
++color:#900;
++margin:0;
++padding:0;
++}
++
++h2 {
++font-size: 120%;
++font-weight: bold;
++color:#666666;
++margin-bottom:4px;
++}
++
++.g3,.g4 {
++color:green;
++}
++
++.light a:link,.light a:visited,.light a:active,.light a:hover {
++color:#ccc;
++}
++
++.headerbar a:link,.headerbar a:visited,.headerbar a:active,.headerbar a:hover {
++color:#FFF;
++text-decoration:none;
++}
++
++.navbar a:link,.navbar a:visited,.navbar a:active {
++color:#fff;
++}
++
++.navbar a:hover,.numbers a:link,.numbers a:visited,.numbers a:active,.numbers a:hover {
++text-decoration:none;
++}
++
++.footerbox a:visited,.footerbox a:link {
++color:#900;
++}
++/* Borrowed from ModelMayhem (end) */
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000209.html">[Parley-svn] r321 - / trunk/lib
+</A></li>
+	<LI>Next message: <A HREF="000211.html">[Parley-svn] r323 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#210">[ date ]</a>
+              <a href="thread.html#210">[ thread ]</a>
+              <a href="subject.html#210">[ subject ]</a>
+              <a href="author.html#210">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

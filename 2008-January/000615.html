@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r727 - / trunk trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r727%20-%20/%20trunk%20trunk/lib/Parley/Controller&In-Reply-To=%3C200801091951.m09Jp4HF014807%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000614.html">
+   <LINK REL="Next"  HREF="000616.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r727 - / trunk trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r727%20-%20/%20trunk%20trunk/lib/Parley/Controller&In-Reply-To=%3C200801091951.m09Jp4HF014807%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r727 - / trunk trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Jan  9 20:51:04 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000614.html">[Parley-svn] r726 - / trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000616.html">[Parley-svn] r728 - / trunk/lib/Parley/ResultSet trunk/root/base	trunk/root/base/thread trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#615">[ date ]</a>
+              <a href="thread.html#615">[ thread ]</a>
+              <a href="subject.html#615">[ subject ]</a>
+              <a href="author.html#615">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-09 20:51:04 +0100 (Wed, 09 Jan 2008)
+New Revision: 727
+
+Modified:
+   /
+   trunk/TODO
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4462 at wiggin</A>:  chisel | 2008-01-09 19:20:40 +0000
+ / fix error when trying to post new thread with no subject line
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4461
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4462
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-01-09 19:50:56 UTC (rev 726)
++++ trunk/TODO	2008-01-09 19:51:04 UTC (rev 727)
+@@ -13,6 +13,7 @@
+   - advanced search page
+   - proper moderator support/management
+   - IP/user reporting
++D - [bug] fix error when trying to post new thread with no subject line
+ ? - see if we can work out why 'make catalyst_par' is failing
+ D - i18n Login and Cancel buttons in login_dialog
+ D - fix CSS for &lt;fieldset&gt;s
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2008-01-09 19:50:56 UTC (rev 726)
++++ trunk/lib/Parley/Controller/Thread.pm	2008-01-09 19:51:04 UTC (rev 727)
+@@ -441,16 +441,16 @@
+             $c-&gt;log-&gt;error( $@ );
+             return;
+         }
++        # set the current thread
++        $c-&gt;_current_thread( $new_thread );
++
++        # view the &quot;next post&quot; in the new thread
++        $c-&gt;detach('next_post');
+     }
+ 
+     # getting here means we validated the form, and added required data for the
+     # new thread
+ 
+-    # set the current thread
+-    $c-&gt;_current_thread( $new_thread );
+-
+-    # view the &quot;next post&quot; in the new thread
+-    $c-&gt;detach('next_post');
+ }
+ 
+ sub _get_thread_reply_post {
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000614.html">[Parley-svn] r726 - / trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000616.html">[Parley-svn] r728 - / trunk/lib/Parley/ResultSet trunk/root/base	trunk/root/base/thread trunk/root/static/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#615">[ date ]</a>
+              <a href="thread.html#615">[ thread ]</a>
+              <a href="subject.html#615">[ subject ]</a>
+              <a href="author.html#615">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

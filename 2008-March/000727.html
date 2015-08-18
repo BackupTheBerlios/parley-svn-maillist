@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r839 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r839%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/ResultSet%20trunk/t/schema&In-Reply-To=%3C200803140823.m2E8NZtY023247%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000726.html">
+   <LINK REL="Next"  HREF="000728.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r839 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r839%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Controller/User%20trunk/lib/Parley/I18N%0A%09trunk/lib/Parley/ResultSet%20trunk/t/schema&In-Reply-To=%3C200803140823.m2E8NZtY023247%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r839 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/lib/Parley/I18N	trunk/lib/Parley/ResultSet trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Mar 14 09:23:35 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000726.html">[Parley-svn] r838 - / trunk trunk/lib/Parley/Controller/User	trunk/lib/Parley/I18N trunk/lib/Parley/ResultSet	trunk/root/base/user trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000728.html">[Parley-svn] r840 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#727">[ date ]</a>
+              <a href="thread.html#727">[ thread ]</a>
+              <a href="subject.html#727">[ subject ]</a>
+              <a href="author.html#727">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-03-14 09:23:34 +0100 (Fri, 14 Mar 2008)
+New Revision: 839
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/ROADMAP
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/lib/Parley/ResultSet/IpBan.pm
+   trunk/t/schema/ip_ban.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4759 at wiggin</A>:  chisel | 2008-03-14 07:33:27 +0000
+ + added Posting/Editing Ban By IP
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4754
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4759
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/Changes.i18n	2008-03-14 08:23:34 UTC (rev 839)
+@@ -30,6 +30,8 @@
+             - &quot;Login Not Allowed&quot;
+             - &quot;Registrations are not permitted from %1&quot;
+             - &quot;Registration Not Allowed&quot;
++            - &quot;Posting is not permitted from %1&quot;
++            - &quot;Posting Not Allowed&quot;
+ 
+     it.po:
+         - added:
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/ROADMAP	2008-03-14 08:23:34 UTC (rev 839)
+@@ -20,12 +20,14 @@
+         - abuse handling
+           - [D] suspend account(s)
+           - [D] prevent login from IP
+-          - prevent signup from IP
+-          - prevent posting/editing from IP
++          - [D] prevent signup from IP
++          - [D] prevent posting/editing from IP
++          - prevent total access from IP
+         - UI for IP bans
+           - prevent login from IP
+           - prevent signup from IP
+           - prevent posting/editing from IP
++          - prevent total access from IP
+         - IP reporting
+ 
+ 0.60:
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/lib/Parley/Controller/Post.pm	2008-03-14 08:23:34 UTC (rev 839)
+@@ -44,6 +44,15 @@
+     # what people will make-up or bookmark)
+     $c-&gt;login_if_required($c-&gt;localize(q{EDIT LOGIN REQUIRED}));
+ 
++    # deal with posting banned by IP
++    my $ip = $c-&gt;request-&gt;address;
++    my $posting_banned =
++        $c-&gt;model('ParleyDB::IpBan')-&gt;is_posting_banned($ip);
++    if ($posting_banned) {
++        $c-&gt;stash-&gt;{template} = 'user/posting_ip_banned';
++        return;
++    }
++
+     # you can only edit you own posts
+     # (unless you're a moderator)
+     if (
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/lib/Parley/Controller/Thread.pm	2008-03-14 08:23:34 UTC (rev 839)
+@@ -47,6 +47,15 @@
+     # make sure we're authenticated
+     # XXX
+ 
++    # deal with posting banned by IP
++    my $ip = $c-&gt;request-&gt;address;
++    my $posting_banned =
++        $c-&gt;model('ParleyDB::IpBan')-&gt;is_posting_banned($ip);
++    if ($posting_banned) {
++        $c-&gt;stash-&gt;{template} = 'user/posting_ip_banned';
++        return;
++    }
++
+     # if we have a form POST ...
+     if (defined $c-&gt;request-&gt;method() and $c-&gt;request-&gt;method() eq 'POST') {
+         $self-&gt;_add_new_thread($c);
+@@ -101,6 +110,15 @@
+     # make sure we're authenticated
+     # XXX
+ 
++    # deal with posting banned by IP
++    my $ip = $c-&gt;request-&gt;address;
++    my $posting_banned =
++        $c-&gt;model('ParleyDB::IpBan')-&gt;is_posting_banned($ip);
++    if ($posting_banned) {
++        $c-&gt;stash-&gt;{template} = 'user/posting_ip_banned';
++        return;
++    }
++
+     # can't reply to a locked thread
+     if ($c-&gt;_current_thread()-&gt;locked()) {
+         #die q{can't reply to a locked thread!};
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2008-03-14 08:23:34 UTC (rev 839)
+@@ -74,9 +74,9 @@
+ 
+     # deal with logins banned by IP
+     my $ip = $c-&gt;request-&gt;address;
+-    my $login_banned =
++    my $signup_banned =
+         $c-&gt;model('ParleyDB::IpBan')-&gt;is_signup_banned($ip);
+-    if ($login_banned) {
++    if ($signup_banned) {
+         $c-&gt;stash-&gt;{template} = 'user/signup_ip_banned';
+         return;
+     }
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/lib/Parley/I18N/i_default.po	2008-03-14 08:23:34 UTC (rev 839)
+@@ -489,6 +489,12 @@
+ msgid &quot;posted by&quot;
+ msgstr &quot;posted by&quot;
+ 
++msgid &quot;Posting is not permitted from %1&quot;
++msgstr &quot;Posting is not permitted from %1&quot;
++
++msgid &quot;Posting Not Allowed&quot;
++msgstr &quot;Posting Not Allowed&quot;
++
+ msgid &quot;Post Edited By: %1&quot;
+ msgstr &quot;Post Edited By: %1&quot;
+ 
+
+Modified: trunk/lib/Parley/ResultSet/IpBan.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/IpBan.pm	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/lib/Parley/ResultSet/IpBan.pm	2008-03-14 08:23:34 UTC (rev 839)
+@@ -49,6 +49,13 @@
+     return 0; # not banned
+ }
+ 
++sub is_access_banned {
++    my $resultsource = shift;
++    my $ip_address   = shift;
++
++    return $resultsource-&gt;is_X_banned('access', $ip_address);
++}
++
+ sub is_login_banned {
+     my $resultsource = shift;
+     my $ip_address   = shift;
+@@ -56,6 +63,13 @@
+     return $resultsource-&gt;is_X_banned('login', $ip_address);
+ }
+ 
++sub is_posting_banned {
++    my $resultsource = shift;
++    my $ip_address   = shift;
++
++    return $resultsource-&gt;is_X_banned('posting', $ip_address);
++}
++
+ sub is_signup_banned {
+     my $resultsource = shift;
+     my $ip_address   = shift;
+
+Modified: trunk/t/schema/ip_ban.t
+===================================================================
+--- trunk/t/schema/ip_ban.t	2008-03-13 23:34:39 UTC (rev 838)
++++ trunk/t/schema/ip_ban.t	2008-03-14 08:23:34 UTC (rev 839)
+@@ -39,7 +39,9 @@
+         resultsets =&gt; [
+             qw[
+                 is_X_banned
++                is_access_banned
+                 is_login_banned
++                is_posting_banned
+                 is_signup_banned
+             ]
+         ],
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000726.html">[Parley-svn] r838 - / trunk trunk/lib/Parley/Controller/User	trunk/lib/Parley/I18N trunk/lib/Parley/ResultSet	trunk/root/base/user trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000728.html">[Parley-svn] r840 - / trunk trunk/lib/Parley/Controller	trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#727">[ date ]</a>
+              <a href="thread.html#727">[ thread ]</a>
+              <a href="subject.html#727">[ subject ]</a>
+              <a href="author.html#727">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

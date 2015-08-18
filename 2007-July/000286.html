@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r398 - / trunk/lib/Parley/Controller trunk/root/base	trunk/root/base/help trunk/root/base/menu trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r398%20-%20/%20trunk/lib/Parley/Controller%20trunk/root/base%0A%09trunk/root/base/help%20trunk/root/base/menu%20trunk/root/css&In-Reply-To=%3C200707121908.l6CJ89ju004342%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000285.html">
+   <LINK REL="Next"  HREF="000287.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r398 - / trunk/lib/Parley/Controller trunk/root/base	trunk/root/base/help trunk/root/base/menu trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r398%20-%20/%20trunk/lib/Parley/Controller%20trunk/root/base%0A%09trunk/root/base/help%20trunk/root/base/menu%20trunk/root/css&In-Reply-To=%3C200707121908.l6CJ89ju004342%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r398 - / trunk/lib/Parley/Controller trunk/root/base	trunk/root/base/help trunk/root/base/menu trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul 12 21:08:09 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000285.html">[Parley-svn] r397 - / trunk/lib
+</A></li>
+        <LI>Next message: <A HREF="000287.html">[Parley-svn] r399 - / trunk/lib/Template/Plugin
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#286">[ date ]</a>
+              <a href="thread.html#286">[ thread ]</a>
+              <a href="subject.html#286">[ subject ]</a>
+              <a href="author.html#286">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-12 21:08:08 +0200 (Thu, 12 Jul 2007)
+New Revision: 398
+
+Added:
+   trunk/root/base/help/
+   trunk/root/base/help/contents
+   trunk/root/base/help/faq
+   trunk/root/base/help/formatting_posts
+   trunk/root/base/help/unknown
+Modified:
+   /
+   trunk/lib/Parley/Controller/Help.pm
+   trunk/root/base/menu/menubar
+   trunk/root/css/common.css
+   trunk/root/css/layout27.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3490 at wiggin</A>:  chisel | 2007-07-06 09:34:17 +0100
+ + the initial stages of a help system/section for the application
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3489
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3490
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Help.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Help.pm	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/lib/Parley/Controller/Help.pm	2007-07-12 19:08:08 UTC (rev 398)
+@@ -1,9 +1,42 @@
+ package Parley::Controller::Help;
+-
++# vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++sub index : Private {
++    my ( $self, $c ) = @_;
++    $c-&gt;stash-&gt;{template} = 'help/contents';
++}
++
++sub default :Private {
++    my ($self, $c) = @_;
++    my $help_template;
++
++    # the section / page to show is derived from the URI
++    $help_template = $c-&gt;request-&gt;arguments-&gt;[1];
++
++    # set the template to use based on the URI
++    $c-&gt;stash-&gt;{template} = qq[help/${help_template}];
++    # send to the view
++    $c-&gt;forward('Parley::View::TT');
++
++    # deal with errors (i.e. missing templates)
++    if ($c-&gt;error) {
++        # only show the &quot;unknown help section&quot; page if we couldn't find the
++        # page to show
++        if ($c-&gt;error-&gt;[0] =~ m{file error - help/$help_template: not found}ms) {
++            $c-&gt;clear_errors;
++            $c-&gt;forward( 'unknown' );
++        }
++    }
++}
++
++sub unknown :Local {
++    my ($self, $c) = @_;
++    $c-&gt;stash-&gt;{template} = 'help/unknown';
++}
++
+ =head1 NAME
+ 
+ Parley::Controller::Help - Catalyst Controller
+@@ -14,27 +47,11 @@
+ 
+ =head1 METHODS
+ 
+-=cut
+-
+-
+ =head2 index 
+ 
+-=cut
+-
+-sub index : Private {
+-    my ( $self, $c ) = @_;
+-    $c-&gt;response-&gt;body('Matched Parley::Controller::Help in Help.');
+-}
+-
+-sub default :Private {
+-    my ($self, $c) = @_;
+-    $c-&gt;response-&gt;body('Help-default');
+-}
+-
+-
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Added: trunk/root/base/help/contents
+===================================================================
+--- trunk/root/base/help/contents	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/root/base/help/contents	2007-07-12 19:08:08 UTC (rev 398)
+@@ -0,0 +1,14 @@
++&lt;h1&gt;Help Contents&lt;/h1&gt;
++
++&lt;p&gt;Obviously this page needs a bit more content, but we all have to start
++somewhere.&lt;/p&gt;
++
++&lt;h2&gt;General Help&lt;/h2&gt;
++&lt;ol start=&quot;1&quot;&gt;
++&lt;li&gt;&lt;a href=&quot;help/faq&quot;&gt;Frequently Asked Questions&lt;/a&gt;&lt;/li&gt;
++&lt;/ol&gt;
++
++&lt;h2&gt;Posting&lt;/h2&gt;
++&lt;ol start=&quot;2&quot;&gt;
++    &lt;li&gt;&lt;a href=&quot;help/formatting_posts&quot;&gt;Adding (ForumCode) formating to posts&lt;/a&gt;&lt;/li&gt;
++&lt;/ol&gt;
+
+Added: trunk/root/base/help/faq
+===================================================================
+--- trunk/root/base/help/faq	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/root/base/help/faq	2007-07-12 19:08:08 UTC (rev 398)
+@@ -0,0 +1,4 @@
++&lt;h1&gt;Frequently Asked Questions&lt;/h1&gt;
++
++&lt;p&gt;This page should answer common queries and problems.
++If it doesn't you're just being difficult *wink*&lt;/p&gt;
+
+Added: trunk/root/base/help/formatting_posts
+===================================================================
+--- trunk/root/base/help/formatting_posts	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/root/base/help/formatting_posts	2007-07-12 19:08:08 UTC (rev 398)
+@@ -0,0 +1,101 @@
++&lt;h1&gt;Formatting Posts&lt;/h1&gt;
++
++&lt;p&gt;Allowing raw HTML markup in posts leads to a very special
++world of pain. With that in mind a form of markup inspired by
++BBCode [&lt;b&gt;link?&lt;/b&gt;] was developed for this project. As it's
++not an identical implementation of BBCode it has it's own name
++- &lt;i&gt;ForumCode&lt;/i&gt;&lt;/p&gt;
++
++&lt;h2&gt;Simple Formatting&lt;/h2&gt;
++
++&lt;h3&gt;Bold, Italic and Underline&lt;/h3&gt;
++&lt;ul&gt;
++    &lt;li&gt;
++        To make a section of text appear in &lt;b&gt;bold&lt;/b&gt; use
++        &lt;code&gt;[b]...[/b]&lt;/code&gt;:
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[b]This is bold text[/b]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[b]This is bold text[/b]') %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        To make a section of text appear in &lt;em&gt;italics&lt;/em&gt; use
++        &lt;code&gt;[i]...[/i]&lt;/code&gt;:
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[i]This is emphasised text[/i]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[i]This is emphasised text[/i]') %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        To make a section of text appear &lt;em&gt;underlined&lt;/em&gt; use
++        &lt;code&gt;[u]...[/u]&lt;/code&gt;:
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[u]This is emphasised text[/u]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[u]This is underlined text[/u]') %]
++    &lt;/li&gt;
++&lt;/ul&gt;
++
++&lt;h3&gt;Linking to external resources&lt;/h3&gt;
++&lt;p&gt;The forum software does NOT automatically hunt out all text resembling URLs
++to turn them into clickable links. If you want a clickable link in a post
++you need to use the [url]...[/url] code:&lt;/p&gt;
++&lt;ul&gt;
++    &lt;li&gt;
++        To make a URL appear as a clickable link use
++        &lt;code&gt;[url]<A HREF="http://...[/url">http://...[/url</A>]&lt;/code&gt;:
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[url]<A HREF="http://google.com/[/url">http://google.com/[/url</A>]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[url]<A HREF="http://google.com/[/url">http://google.com/[/url</A>]') %]
++    &lt;/li&gt;
++&lt;/ul&gt;
++
++&lt;p&gt;You may also make a section of text appear as a named link by
++using the &quot;name=...&quot; attribute in the code block:&lt;/p&gt;
++&lt;ul&gt;
++    &lt;li&gt;
++        To make a URL appear as a names clickable link use
++        &lt;code&gt;[url &lt;em&gt;name=&quot;XXX&quot;&lt;/em&gt;]<A HREF="http://...[/url">http://...[/url</A>]&lt;/code&gt;:
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[url name=&quot;Google&quot;]<A HREF="http://google.com/[/url">http://google.com/[/url</A>]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[url name=&quot;Google&quot;]<A HREF="http://google.com/[/url">http://google.com/[/url</A>]') %]
++    &lt;/li&gt;
++&lt;/ul&gt;
++
++&lt;p&gt;As well as inserting clickable links, you may also insert images into posts.&lt;/p&gt;
++&lt;ul&gt;
++    &lt;li&gt;
++        To make an image appear in a posting use
++        &lt;code&gt;[img]...[/img]&lt;/code&gt;:
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[img][%c.request.base%]static/images/btn_88x31_powered.png[/img]&lt;/code&gt;&lt;/q&gt;
++        produces
++        &lt;br /&gt;
++        [% ForumCode.forumcode(&quot;[img]${c.request.base}static/images/btn_88x31_powered.png[/img]&quot;) %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        You may also include extra attributes such as
++        &lt;code&gt;title=&lt;/code&gt;, &lt;code&gt;alt=&lt;/code&gt;, etc.
++        Research the HTML &lt;img&gt; tag [&lt;b&gt;link?&lt;/b&gt;]
++        for the full list of attributes.
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[img title='Powered by Catalyst' width='50'][%c.request.base%]static/images/btn_88x31_powered.png[/img]&lt;/code&gt;&lt;/q&gt;
++        produces
++        &lt;br /&gt;
++        [% ForumCode.forumcode(&quot;[img title='Powered by Catalyst' width='50']${c.request.base}static/images/btn_88x31_powered.png[/img]&quot;) %]
++    &lt;/li&gt;
++&lt;/ul&gt;
+
+Added: trunk/root/base/help/unknown
+===================================================================
+--- trunk/root/base/help/unknown	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/root/base/help/unknown	2007-07-12 19:08:08 UTC (rev 398)
+@@ -0,0 +1,7 @@
++&lt;h1&gt;Help Item Not Found&lt;/h1&gt;
++
++&lt;p&gt;&lt;i&gt;[% c.request.uri %]&lt;/i&gt; doesn't relate to a known
++page in the help system.&lt;/p&gt;
++
++&lt;p&gt;See if you can find what you want from the
++&lt;a href=&quot;help&quot;&gt;contents&lt;/a&gt; page.&lt;/p&gt;
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/root/base/menu/menubar	2007-07-12 19:08:08 UTC (rev 398)
+@@ -62,5 +62,6 @@
+     [% IF moderator %]
+ 	&lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Moderate&quot;     submenuId=&quot;menu_moderate&quot;&gt;&lt;/div&gt;
+     [% END %]
++	&lt;div dojoType=&quot;MenuBarItem2&quot; caption=&quot;Help&quot; onClick=&quot;document.location.href='help';&quot;&gt;&lt;/div&gt;
+ &lt;/div&gt;
+ &lt;!-- end :menubar --&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/root/css/common.css	2007-07-12 19:08:08 UTC (rev 398)
+@@ -25,7 +25,13 @@
+     font-size: 1em;
+     font-weight: bold;
+ }
++h3 {
++    font-size: 1em;
++    font-weight: bold;
++    font-style:     italic;
++}
+ 
++
+ a.nav:hover {
+     background:         #000;
+     color:              #fff;
+
+Modified: trunk/root/css/layout27.css
+===================================================================
+--- trunk/root/css/layout27.css	2007-07-12 19:08:00 UTC (rev 397)
++++ trunk/root/css/layout27.css	2007-07-12 19:08:08 UTC (rev 398)
+@@ -4,6 +4,7 @@
+ /*a{display:block;color: #981793;padding:10px}*/
+ div#header h1{height:80px;line-height:80px;margin:0;
+   padding-left:10px;background: #EEE;color: #79B30B}
++div#content { margin-top: 20px; margin-left: 20px; }
+ div#content p{line-height:1.4}
+ div#navigation{background:transparent}
+ div#extra{background:transparent}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000285.html">[Parley-svn] r397 - / trunk/lib
+</A></li>
+	<LI>Next message: <A HREF="000287.html">[Parley-svn] r399 - / trunk/lib/Template/Plugin
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#286">[ date ]</a>
+              <a href="thread.html#286">[ thread ]</a>
+              <a href="subject.html#286">[ subject ]</a>
+              <a href="author.html#286">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

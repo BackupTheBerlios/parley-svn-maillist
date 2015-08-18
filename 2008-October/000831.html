@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r948 - / tags/parley-1.0.1/t.output
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r948%20-%20/%20tags/parley-1.0.1/t.output&In-Reply-To=%3C200810080926.m989Qdpi022543%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000830.html">
+   <LINK REL="Next"  HREF="000832.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r948 - / tags/parley-1.0.1/t.output</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r948%20-%20/%20tags/parley-1.0.1/t.output&In-Reply-To=%3C200810080926.m989Qdpi022543%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r948 - / tags/parley-1.0.1/t.output">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Oct  8 11:26:39 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000830.html">[Parley-svn] r947 - / tags/parley-1.0.1
+</A></li>
+        <LI>Next message: <A HREF="000832.html">[Parley-svn] r949 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#831">[ date ]</a>
+              <a href="thread.html#831">[ thread ]</a>
+              <a href="subject.html#831">[ subject ]</a>
+              <a href="author.html#831">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-10-08 11:26:39 +0200 (Wed, 08 Oct 2008)
+New Revision: 948
+
+Added:
+   tags/parley-1.0.1/t.output/1.0.1
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8195 at wiggin</A>:  chisel | 2008-10-08 08:53:56 +0100
+ + added results from: make test &gt; t.output/1.0.1
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8194
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8195
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: tags/parley-1.0.1/t.output/1.0.1
+===================================================================
+--- tags/parley-1.0.1/t.output/1.0.1	2008-10-08 09:26:33 UTC (rev 947)
++++ tags/parley-1.0.1/t.output/1.0.1	2008-10-08 09:26:39 UTC (rev 948)
+@@ -0,0 +1,48 @@
++PERL_DL_NONLAZY=1 /usr/bin/perl &quot;-MExtUtils::Command::MM&quot; &quot;-e&quot; &quot;test_harness(0, 'inc', 'blib/lib', 'blib/arch')&quot; t/*.t t/bug/*.t t/mechanize/*.t t/schema/*.t
++t/01app...................................ok
++t/02pod...................................skipped: Test::Pod 1.14 required
++t/03podcoverage...........................skipped: Test::Pod::Coverage 1.04 required
++t/04_forumcode............................ok
++t/05.userroles............................ok
++t/50.text_search.sql......................ok
++t/bug/01.forum_list_no_posts..............ok
++t/controller_Admin........................ok
++t/controller_Forum........................ok
++t/controller_Help.........................ok
++t/controller_My...........................ok
++t/controller_Post.........................ok
++t/controller_Search.......................ok
++t/controller_Site.........................ok
++t/controller_Terms........................ok
++t/controller_Thread.......................ok
++t/controller_User.........................ok
++t/mechanize/00.login......................ok
++t/mechanize/01.main_page..................ok
++t/mechanize/02.forum......................ok
++t/model_ParleyDB..........................ok
++t/model_Post..............................ok
++t/schema/adminaction......................ok
++t/schema/authentication...................ok
++t/schema/email_queue......................ok
++t/schema/forum............................ok
++t/schema/forum_moderator..................ok
++t/schema/ip_ban...........................ok
++t/schema/ip_ban_type......................ok
++t/schema/logadminaction...................ok
++t/schema/password_reset...................ok
++t/schema/person...........................ok
++t/schema/post.............................ok
++t/schema/preference.......................ok
++t/schema/preference_time_string...........ok
++t/schema/registration_authentication......ok
++t/schema/role.............................ok
++t/schema/terms............................ok
++t/schema/terms_agreed.....................ok
++t/schema/thread...........................ok
++t/schema/thread_view......................ok
++t/schema/user_role........................ok
++t/view_Plain..............................ok
++t/view_TT.................................ok
++All tests successful.
++Files=44, Tests=461, 46 wallclock secs ( 0.18 usr  0.03 sys + 38.41 cusr  2.49 csys = 41.11 CPU)
++Result: PASS
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000830.html">[Parley-svn] r947 - / tags/parley-1.0.1
+</A></li>
+	<LI>Next message: <A HREF="000832.html">[Parley-svn] r949 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#831">[ date ]</a>
+              <a href="thread.html#831">[ thread ]</a>
+              <a href="subject.html#831">[ subject ]</a>
+              <a href="author.html#831">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

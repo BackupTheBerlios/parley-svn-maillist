@@ -1,0 +1,355 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r177 - / trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r177%20-%20/%20trunk/script&In-Reply-To=%3C200607191620.k6JGKEcS018177%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000075.html">
+   <LINK REL="Next"  HREF="000066.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r177 - / trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r177%20-%20/%20trunk/script&In-Reply-To=%3C200607191620.k6JGKEcS018177%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r177 - / trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 19 18:20:14 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000075.html">[Parley-svn] r176 - / trunk/root/static trunk/root/static/magic trunk/root/static/magic/src trunk/root/static/magic/src/animation trunk/root/static/magic/src/collections trunk/root/static/magic/src/compat trunk/root/static/magic/src/crypto trunk/root/static/magic/src/data trunk/root/static/magic/src/data/format trunk/root/static/magic/src/data/provider trunk/root/static/magic/src/debug trunk/root/static/magic/src/dnd trunk/root/static/magic/src/event trunk/root/static/magic/src/flash trunk/root/static/magic/src/flash/flash6 trunk/root/static/magic/src/flash/flash8 trunk/root/static/magic/src/fx trunk/root/static/magic/src/graphics trunk/root/static/magic/src/graphics/color trunk/root/static/magic/src/html trunk/root/static/magic/src/html/images trunk/root/static/magic/src/i18n trunk/root/static/magic/src/io trunk/root/static/magic/src/lang trunk/root/static/magic/src/lfx trunk/root/static/magic/src/logging trunk/root/static/magic/src/math trunk/root/static/magic/src/reflect trun! k/root/static/magic/src/rpc trunk/root/static/magic/src/selection trunk/root/static/magic/src/storage trunk/root/static/magic/src/string trunk/root/static/magic/src/text trunk/root/static/magic/src/undo trunk/root/static/magic/src/uri trunk/root/static/magic/src/uuid trunk/root/static/magic/src/validate trunk/root/static/magic/src/widget trunk/root/static/magic/src/widget/demoEngine trunk/root/static/magic/src/widget/demoEngine/templates trunk/root/static/magic/src/widget/demoEngine/templates/images trunk/root/static/magic/src/widget/html trunk/root/static/magic/src/widget/svg trunk/root/static/magic/src/widget/templates trunk/root/static/magic/src/widget/templates/buttons trunk/root/static/magic/src/widget/templates/images trunk/root/static/magic/src/widget/templates/images/Tree trunk/root/static/magic/src/widget/vml trunk/root/static/magic/src/xml
+</A></li>
+        <LI>Next message: <A HREF="000066.html">[Parley-svn] r178 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-07-19 18:20:13 +0200 (Wed, 19 Jul 2006)
+New Revision: 177
+
+Modified:
+   /
+   trunk/script/parley_cgi.pl
+   trunk/script/parley_create.pl
+   trunk/script/parley_fastcgi.pl
+   trunk/script/parley_server.pl
+   trunk/script/parley_test.pl
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4884 at ferrari</A>:  chisel | 2006-07-19 09:40:23 +0100
+ Updated helper scripts
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4883
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4884
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/script/parley_cgi.pl
+===================================================================
+--- trunk/script/parley_cgi.pl	2006-07-19 16:19:27 UTC (rev 176)
++++ trunk/script/parley_cgi.pl	2006-07-19 16:20:13 UTC (rev 177)
+@@ -3,6 +3,7 @@
+ BEGIN { $ENV{CATALYST_ENGINE} ||= 'CGI' }
+ 
+ use strict;
++use warnings;
+ use FindBin;
+ use lib &quot;$FindBin::Bin/../lib&quot;;
+ use Parley;
+@@ -21,7 +22,7 @@
+ 
+ =head1 DESCRIPTION
+ 
+-Run a Catalyst application as cgi.
++Run a Catalyst application as a cgi script.
+ 
+ =head1 AUTHOR
+ 
+@@ -29,7 +30,6 @@
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2004 Sebastian Riedel. All rights reserved.
+ 
+ This library is free software, you can redistribute it and/or modify
+ it under the same terms as Perl itself.
+
+Modified: trunk/script/parley_create.pl
+===================================================================
+--- trunk/script/parley_create.pl	2006-07-19 16:19:27 UTC (rev 176)
++++ trunk/script/parley_create.pl	2006-07-19 16:20:13 UTC (rev 177)
+@@ -1,21 +1,24 @@
+ #!/usr/bin/perl -w
+ 
+ use strict;
++use warnings;
+ use Getopt::Long;
+ use Pod::Usage;
+ use Catalyst::Helper;
+ 
+ my $force = 0;
++my $mech  = 0;
+ my $help  = 0;
+ 
+ GetOptions(
+-    'nonew|force' =&gt; \$force,
+-    'help|?'      =&gt; \$help
++    'nonew|force'    =&gt; \$force,
++    'mech|mechanize' =&gt; \$mech,
++    'help|?'         =&gt; \$help
+  );
+ 
+ pod2usage(1) if ( $help || !$ARGV[0] );
+ 
+-my $helper = Catalyst::Helper-&gt;new( { '.newfiles' =&gt; !$force } );
++my $helper = Catalyst::Helper-&gt;new( { '.newfiles' =&gt; !$force, mech =&gt; $mech } );
+ 
+ pod2usage(1) unless $helper-&gt;mk_component( 'Parley', @ARGV );
+ 
+@@ -30,17 +33,21 @@
+ parley_create.pl [options] model|view|controller name [helper] [options]
+ 
+  Options:
+-   -force    don't create a .new file where a file to be created exists
+-   -help     display this help and exits
++   -force        don't create a .new file where a file to be created exists
++   -mechanize    use Test::WWW::Mechanize::Catalyst for tests if available
++   -help         display this help and exits
+ 
+  Examples:
+    parley_create.pl controller My::Controller
++   parley_create.pl -mechanize controller My::Controller
+    parley_create.pl view My::View
+    parley_create.pl view MyView TT
+    parley_create.pl view TT TT
+    parley_create.pl model My::Model
+-   parley_create.pl model SomeDB CDBI dbi:SQLite:/tmp/my.db
+-   parley_create.pl model AnotherDB CDBI dbi:Pg:dbname=foo root 4321
++   parley_create.pl model SomeDB DBIC::Schema MyApp::Schema create=dynamic\
++   dbi:SQLite:/tmp/my.db
++   parley_create.pl model AnotherDB DBIC::Schema MyApp::Schema create=static\
++   dbi:Pg:dbname=foo root 4321
+ 
+  See also:
+    perldoc Catalyst::Manual
+@@ -57,11 +64,10 @@
+ =head1 AUTHOR
+ 
+ Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2004 Sebastian Riedel. All rights reserved.
+-
+ This library is free software, you can redistribute it and/or modify
+ it under the same terms as Perl itself.
+ 
+
+Modified: trunk/script/parley_fastcgi.pl
+===================================================================
+--- trunk/script/parley_fastcgi.pl	2006-07-19 16:19:27 UTC (rev 176)
++++ trunk/script/parley_fastcgi.pl	2006-07-19 16:20:13 UTC (rev 177)
+@@ -3,6 +3,7 @@
+ BEGIN { $ENV{CATALYST_ENGINE} ||= 'FastCGI' }
+ 
+ use strict;
++use warnings;
+ use Getopt::Long;
+ use Pod::Usage;
+ use FindBin;
+@@ -65,11 +66,10 @@
+ =head1 AUTHOR
+ 
+ Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2004 Sebastian Riedel. All rights reserved.
+-
+ This library is free software, you can redistribute it and/or modify
+ it under the same terms as Perl itself.
+ 
+
+Modified: trunk/script/parley_server.pl
+===================================================================
+--- trunk/script/parley_server.pl	2006-07-19 16:19:27 UTC (rev 176)
++++ trunk/script/parley_server.pl	2006-07-19 16:20:13 UTC (rev 177)
+@@ -2,37 +2,40 @@
+ 
+ BEGIN { 
+     $ENV{CATALYST_ENGINE} ||= 'HTTP';
+-    $ENV{CATALYST_SCRIPT_GEN} = 25;
++    $ENV{CATALYST_SCRIPT_GEN} = 28;
+ }  
+ 
+ use strict;
++use warnings;
+ use Getopt::Long;
+ use Pod::Usage;
+ use FindBin;
+ use lib &quot;$FindBin::Bin/../lib&quot;;
+ 
+-my $debug         = 0;
+-my $fork          = 0;
+-my $help          = 0;
+-my $host          = undef;
+-my $port          = 3000;
+-my $keepalive     = 0;
+-my $restart       = 0;
+-my $restart_delay = 1;
+-my $restart_regex = '\.yml$|\.yaml$|\.pm$';
++my $debug             = 0;
++my $fork              = 0;
++my $help              = 0;
++my $host              = undef;
++my $port              = 3000;
++my $keepalive         = 0;
++my $restart           = 0;
++my $restart_delay     = 1;
++my $restart_regex     = '\.yml$|\.yaml$|\.pm$';
++my $restart_directory = undef;
+ 
+ my @argv = @ARGV;
+ 
+ GetOptions(
+-    'debug|d'           =&gt; \$debug,
+-    'fork'              =&gt; \$fork,
+-    'help|?'            =&gt; \$help,
+-    'host=s'            =&gt; \$host,
+-    'port=s'            =&gt; \$port,
+-    'keepalive|k'       =&gt; \$keepalive,
+-    'restart|r'         =&gt; \$restart,
+-    'restartdelay|rd=s' =&gt; \$restart_delay,
+-    'restartregex|rr=s' =&gt; \$restart_regex
++    'debug|d'             =&gt; \$debug,
++    'fork'                =&gt; \$fork,
++    'help|?'              =&gt; \$help,
++    'host=s'              =&gt; \$host,
++    'port=s'              =&gt; \$port,
++    'keepalive|k'         =&gt; \$keepalive,
++    'restart|r'           =&gt; \$restart,
++    'restartdelay|rd=s'   =&gt; \$restart_delay,
++    'restartregex|rr=s'   =&gt; \$restart_regex,
++    'restartdirectory=s'  =&gt; \$restart_directory,
+ );
+ 
+ pod2usage(1) if $help;
+@@ -49,12 +52,13 @@
+ require Parley;
+ 
+ Parley-&gt;run( $port, $host, {
+-    argv          =&gt; \@argv,
+-    'fork'        =&gt; $fork,
+-    keepalive     =&gt; $keepalive,
+-    restart       =&gt; $restart,
+-    restart_delay =&gt; $restart_delay,
+-    restart_regex =&gt; qr/$restart_regex/
++    argv              =&gt; \@argv,
++    'fork'            =&gt; $fork,
++    keepalive         =&gt; $keepalive,
++    restart           =&gt; $restart,
++    restart_delay     =&gt; $restart_delay,
++    restart_regex     =&gt; qr/$restart_regex/,
++    restart_directory =&gt; $restart_directory,
+ } );
+ 
+ 1;
+@@ -75,12 +79,15 @@
+       -host           host (defaults to all)
+    -p -port           port (defaults to 3000)
+    -k -keepalive      enable keep-alive connections
+-   -r -restart        restart when files got modified
++   -r -restart        restart when files get modified
+                       (defaults to false)
+    -rd -restartdelay  delay between file checks
+    -rr -restartregex  regex match files that trigger
+                       a restart when modified
+                       (defaults to '\.yml$|\.yaml$|\.pm$')
++   -restartdirectory  the directory to search for
++                      modified files
++                      (defaults to '../')
+ 
+  See also:
+    perldoc Catalyst::Manual
+@@ -93,11 +100,10 @@
+ =head1 AUTHOR
+ 
+ Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2004 Sebastian Riedel. All rights reserved.
+-
+ This library is free software, you can redistribute it and/or modify
+ it under the same terms as Perl itself.
+ 
+
+Modified: trunk/script/parley_test.pl
+===================================================================
+--- trunk/script/parley_test.pl	2006-07-19 16:19:27 UTC (rev 176)
++++ trunk/script/parley_test.pl	2006-07-19 16:20:13 UTC (rev 177)
+@@ -1,6 +1,7 @@
+ #!/usr/bin/perl -w
+ 
+ use strict;
++use warnings;
+ use Getopt::Long;
+ use Pod::Usage;
+ use FindBin;
+@@ -43,11 +44,10 @@
+ =head1 AUTHOR
+ 
+ Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright 2004 Sebastian Riedel. All rights reserved.
+-
+ This library is free software, you can redistribute it and/or modify
+ it under the same terms as Perl itself.
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000075.html">[Parley-svn] r176 - / trunk/root/static trunk/root/static/magic trunk/root/static/magic/src trunk/root/static/magic/src/animation trunk/root/static/magic/src/collections trunk/root/static/magic/src/compat trunk/root/static/magic/src/crypto trunk/root/static/magic/src/data trunk/root/static/magic/src/data/format trunk/root/static/magic/src/data/provider trunk/root/static/magic/src/debug trunk/root/static/magic/src/dnd trunk/root/static/magic/src/event trunk/root/static/magic/src/flash trunk/root/static/magic/src/flash/flash6 trunk/root/static/magic/src/flash/flash8 trunk/root/static/magic/src/fx trunk/root/static/magic/src/graphics trunk/root/static/magic/src/graphics/color trunk/root/static/magic/src/html trunk/root/static/magic/src/html/images trunk/root/static/magic/src/i18n trunk/root/static/magic/src/io trunk/root/static/magic/src/lang trunk/root/static/magic/src/lfx trunk/root/static/magic/src/logging trunk/root/static/magic/src/math trunk/root/static/magic/src/reflect trun! k/root/static/magic/src/rpc trunk/root/static/magic/src/selection trunk/root/static/magic/src/storage trunk/root/static/magic/src/string trunk/root/static/magic/src/text trunk/root/static/magic/src/undo trunk/root/static/magic/src/uri trunk/root/static/magic/src/uuid trunk/root/static/magic/src/validate trunk/root/static/magic/src/widget trunk/root/static/magic/src/widget/demoEngine trunk/root/static/magic/src/widget/demoEngine/templates trunk/root/static/magic/src/widget/demoEngine/templates/images trunk/root/static/magic/src/widget/html trunk/root/static/magic/src/widget/svg trunk/root/static/magic/src/widget/templates trunk/root/static/magic/src/widget/templates/buttons trunk/root/static/magic/src/widget/templates/images trunk/root/static/magic/src/widget/templates/images/Tree trunk/root/static/magic/src/widget/vml trunk/root/static/magic/src/xml
+</A></li>
+	<LI>Next message: <A HREF="000066.html">[Parley-svn] r178 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

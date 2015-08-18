@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r992 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r992%20-%20/%20trunk&In-Reply-To=%3C200812222201.mBMM1C4g022787%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000873.html">
+   <LINK REL="Next"  HREF="000875.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r992 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r992%20-%20/%20trunk&In-Reply-To=%3C200812222201.mBMM1C4g022787%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r992 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Dec 22 23:01:12 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000873.html">[Parley-svn] r991 - / trunk/root trunk/root/skin2	trunk/root/skin2/about trunk/root/skin2/error	trunk/root/skin2/forum trunk/root/skin2/help	trunk/root/skin2/help/i_default trunk/root/skin2/menu	trunk/root/skin2/menu/left trunk/root/skin2/my	trunk/root/skin2/post trunk/root/skin2/search	trunk/root/skin2/shared trunk/root/skin2/site	trunk/root/skin2/terms trunk/root/skin2/thread	trunk/root/skin2/user trunk/root/skin2/user/lostpassword	trunk/root/skin2/user/signup trunk/root/skin3	trunk/root/skin3/thread trunk/root/static/css
+</A></li>
+        <LI>Next message: <A HREF="000875.html">[Parley-svn] r993 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/my	trunk/t_aggregate/schematests
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#874">[ date ]</a>
+              <a href="thread.html#874">[ thread ]</a>
+              <a href="subject.html#874">[ subject ]</a>
+              <a href="author.html#874">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-22 23:01:11 +0100 (Mon, 22 Dec 2008)
+New Revision: 992
+
+Modified:
+   /
+   trunk/Changes
+   trunk/MANIFEST
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8656 at wiggin</A>:  chisel | 2008-12-22 09:15:57 +0000
+ Updated Change Log and MANIFEST
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8655
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8656
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-12-22 22:01:00 UTC (rev 991)
++++ trunk/Changes	2008-12-22 22:01:11 UTC (rev 992)
+@@ -11,6 +11,10 @@
+     - make &quot;Posted from a.b.c.d&quot; a clickable link to site/ip_info
+     - CSS/layout tweaks and improvements
+     - added template skinning [beta]
++    - added example skins: skin1, skin2, skin3
++      - skin1 - CSS only
++      - skin2 - copy of all template files
++      - skin3 - one template file overridden
+ 
+ 1.0.2   Thu Oct  9 14:52:26 BST 2008
+     - fixed &quot;vanishing '+' symbol&quot; issue in Message Preview
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2008-12-22 22:01:00 UTC (rev 991)
++++ trunk/MANIFEST	2008-12-22 22:01:11 UTC (rev 992)
+@@ -195,6 +195,75 @@
+ root/email_templates/nl/thread_update_notify.html
+ root/email_templates/nl/username_reminder.eml
+ root/favicon.ico
++root/skin2/about/modules
++root/skin2/error/simple
++root/skin2/footer
++root/skin2/forum/list
++root/skin2/forum/view
++root/skin2/header
++root/skin2/help/i_default/contents
++root/skin2/help/i_default/faq
++root/skin2/help/i_default/formatting_posts
++root/skin2/help/i_default/wide
++root/skin2/help/unknown
++root/skin2/menu/left/main
++root/skin2/menu/menubar
++root/skin2/menu/statusbar
++root/skin2/my/preferences
++root/skin2/my/selectplace_ajaxresult
++root/skin2/my/tab_avatar
++root/skin2/my/tab_notifications
++root/skin2/my/tab_time
++root/skin2/my/tab_watch
++root/skin2/my/tab_you
++root/skin2/post/edit
++root/skin2/search/forum
++root/skin2/shared/ajax_dialog
++root/skin2/shared/autocomplete_style
++root/skin2/shared/focus_username_js
++root/skin2/shared/language_dialog
++root/skin2/shared/loading_please_wait
++root/skin2/shared/login_dialog
++root/skin2/shared/moderator_list
++root/skin2/shared/navigation
++root/skin2/shared/pager_advanced
++root/skin2/shared/postinfo_table_row
++root/skin2/shared/search_dialog
++root/skin2/shared/small_loading_please_wait
++root/skin2/shared/thread_watch
++root/skin2/shared/threadcrumbs
++root/skin2/shared/useful_tt_stuff
++root/skin2/shared/user_avatar
++root/skin2/shared/user_status
++root/skin2/site/ip_bans
++root/skin2/site/ip_info
++root/skin2/site/services
++root/skin2/site/user
++root/skin2/site/users
++root/skin2/terms/accept
++root/skin2/terms/add
++root/skin2/terms/index
++root/skin2/thread/add
++root/skin2/thread/recent
++root/skin2/thread/reply
++root/skin2/thread/reply-yuirte
++root/skin2/thread/view
++root/skin2/thread/watches
++root/skin2/user/access_ip_banned
++root/skin2/user/auth_emailed
++root/skin2/user/auth_success
++root/skin2/user/login
++root/skin2/user/login_ip_banned
++root/skin2/user/lostpassword/lost_password
++root/skin2/user/lostpassword/lost_password_details_sent
++root/skin2/user/lostpassword/reset
++root/skin2/user/lostpassword/reset_success
++root/skin2/user/posting_ip_banned
++root/skin2/user/profile
++root/skin2/user/signup/signup
++root/skin2/user/signup_ip_banned
++root/skin2/user/suspended
++root/skin3/thread/view
+ root/static/css/common.css
+ root/static/css/default.css
+ root/static/css/images/bg.gif
+@@ -204,6 +273,7 @@
+ root/static/css/layout27.css
+ root/static/css/layout33.css
+ root/static/css/parley-min.css
++root/static/css/parley-skin1.css
+ root/static/css/parley.css
+ root/static/Editable-min.js
+ root/static/Editable.js
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000873.html">[Parley-svn] r991 - / trunk/root trunk/root/skin2	trunk/root/skin2/about trunk/root/skin2/error	trunk/root/skin2/forum trunk/root/skin2/help	trunk/root/skin2/help/i_default trunk/root/skin2/menu	trunk/root/skin2/menu/left trunk/root/skin2/my	trunk/root/skin2/post trunk/root/skin2/search	trunk/root/skin2/shared trunk/root/skin2/site	trunk/root/skin2/terms trunk/root/skin2/thread	trunk/root/skin2/user trunk/root/skin2/user/lostpassword	trunk/root/skin2/user/signup trunk/root/skin3	trunk/root/skin3/thread trunk/root/static/css
+</A></li>
+	<LI>Next message: <A HREF="000875.html">[Parley-svn] r993 - / trunk trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/my	trunk/t_aggregate/schematests
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#874">[ date ]</a>
+              <a href="thread.html#874">[ thread ]</a>
+              <a href="subject.html#874">[ subject ]</a>
+              <a href="author.html#874">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

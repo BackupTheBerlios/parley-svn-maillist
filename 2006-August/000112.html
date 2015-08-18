@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r224 - / branches/schema_based/db
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r224%20-%20/%20branches/schema_based/db&In-Reply-To=%3C200608161344.k7GDiTIQ020021%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000111.html">
+   <LINK REL="Next"  HREF="000113.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r224 - / branches/schema_based/db</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r224%20-%20/%20branches/schema_based/db&In-Reply-To=%3C200608161344.k7GDiTIQ020021%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r224 - / branches/schema_based/db">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:44:29 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000111.html">[Parley-svn] r223 - / branches/schema_based/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000113.html">[Parley-svn] r225 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#112">[ date ]</a>
+              <a href="thread.html#112">[ thread ]</a>
+              <a href="subject.html#112">[ subject ]</a>
+              <a href="author.html#112">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:44:27 +0200 (Wed, 16 Aug 2006)
+New Revision: 224
+
+Modified:
+   /
+   branches/schema_based/db/parley.psql
+   branches/schema_based/db/patch_0.09_to_0.10.psql
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5145 at ferrari</A>:  chisel | 2006-08-15 09:01:21 +0100
+ + add preference_time_string table (with values)
+ + add show_tz and time_format columns to preference table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5144
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5145
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/db/parley.psql
+===================================================================
+--- branches/schema_based/db/parley.psql	2006-08-16 13:44:22 UTC (rev 223)
++++ branches/schema_based/db/parley.psql	2006-08-16 13:44:27 UTC (rev 224)
+@@ -20,11 +20,26 @@
+     UNIQUE (username)
+ );
+ 
++
++-- a table of acceptable TZ strings
++CREATE TABLE preference_time_string (
++    preference_time_string_id     SERIAL      primary key,
++    time_string                   text        not null,
++    comment                       text
++);
++-- some TZ strings
++INSERT INTO preference_time_string (time_string) VALUES ('%A %d %B %Y at %R');
++INSERT INTO preference_time_string (time_string) VALUES ('%F %T');
++INSERT INTO preference_time_string (time_string, comment) VALUES ('%c','locale\'s date and time (e.g., Thu Mar  3 23:05:25 2005)'); 
++
++
+ CREATE TABLE preference (
+     preference_id   SERIAL      primary key,
+ 
+     timezone        text        not null
+-            default 'UTC'
++            default 'UTC',
++    time_format     integer     references preference_time_string,
++    show_tz         boolean     default True
+ );
+ 
+ CREATE TABLE person (
+
+Modified: branches/schema_based/db/patch_0.09_to_0.10.psql
+===================================================================
+--- branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:44:22 UTC (rev 223)
++++ branches/schema_based/db/patch_0.09_to_0.10.psql	2006-08-16 13:44:27 UTC (rev 224)
+@@ -42,6 +42,27 @@
+ 
+ );
+ 
++-- a table of acceptable TZ strings
++CREATE TABLE preference_time_string (
++    preference_time_string_id     SERIAL      primary key,
++    time_string                   text        not null,
++    comment                       text
++);
++-- some TZ strings
++INSERT INTO preference_time_string (time_string) VALUES ('%A %d %B %Y at %R');
++INSERT INTO preference_time_string (time_string) VALUES ('%F %T');
++INSERT INTO preference_time_string (time_string, comment) VALUES ('%c','locale\'s date and time (e.g., Thu Mar  3 23:05:25 2005)'); 
++
++-- add time_format_string to user preferences
++ALTER TABLE preference
++ADD COLUMN time_format integer
++    references preference_time_string
++;
++ALTER TABLE preference
++ADD COLUMN show_tz boolean
++    default True
++;
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000111.html">[Parley-svn] r223 - / branches/schema_based/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000113.html">[Parley-svn] r225 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#112">[ date ]</a>
+              <a href="thread.html#112">[ thread ]</a>
+              <a href="subject.html#112">[ subject ]</a>
+              <a href="author.html#112">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

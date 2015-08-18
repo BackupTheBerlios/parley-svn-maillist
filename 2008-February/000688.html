@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r800 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r800%20-%20/%20trunk&In-Reply-To=%3C200802130936.m1D9aPmS016284%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000687.html">
+   <LINK REL="Next"  HREF="000689.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r800 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r800%20-%20/%20trunk&In-Reply-To=%3C200802130936.m1D9aPmS016284%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r800 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Feb 13 10:36:25 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000687.html">[Parley-svn] r799 - / trunk/t/schema
+</A></li>
+        <LI>Next message: <A HREF="000689.html">[Parley-svn] r801 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#688">[ date ]</a>
+              <a href="thread.html#688">[ thread ]</a>
+              <a href="subject.html#688">[ subject ]</a>
+              <a href="author.html#688">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-13 10:36:25 +0100 (Wed, 13 Feb 2008)
+New Revision: 800
+
+Added:
+   trunk/README.admin
+Modified:
+   /
+   trunk/ROADMAP
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4661 at wiggin</A>:  chisel | 2008-02-13 08:08:16 +0000
+ / expanded elements of the roadmap
+ + new file outlining access restriction merits, issues, etc
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4654
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4661
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/README.admin
+===================================================================
+--- trunk/README.admin	2008-02-12 23:16:22 UTC (rev 799)
++++ trunk/README.admin	2008-02-13 09:36:25 UTC (rev 800)
+@@ -0,0 +1,50 @@
++0. INTRODUCTION
++
++  Administering public forums is notoriously nightmarish.
++
++1. BAN TYPES
++
++  The ideas for slowing down Evil People are as follows:
++
++1.1 Account Suspension
++
++    When the account tries to log-in all they see is an &quot;Account Suspended&quot;
++    page.
++
++    The site can be viewed while logged out (i.e. guest user)
++
++1.2 Ban-by-IP
++
++    This can take varying levels of restriction:
++
++1.2.1 Restrict Posting by IP
++
++    Prevent user(s) from matching IPs creating new threads, replying to
++    existing threads or editing existing posts.
++
++1.2.2 Restrict Login by IP
++
++    Prevent user(s) from matching IPs using the login functionality
++
++1.2.3 Restrict Sign-Up by IP
++
++    Prevent new accounts being created from matching IPs
++
++1.2.4 Restrict All Access by IP
++
++    Matching IPs are shown the &quot;Evil People Got You Banned&quot; page.
++    This is pretty harsh, and should be saved as a ast resort .. if
++    implemented/used at all.
++
++2. KNOWN ISSUES
++
++  There are the usual issues of people running through proxies, catching
++  people we didn't intend to, or being used by banned users to circumvent IP
++  based bans.
++
++3. POSSIBLE IMPLEMENTATIONS
++
++3.1 Net::IP::Match::Regexp
++
++    This looks like a useful module for providing (CIDR - a.b.c.d/x) IP ranges
++    and matching IPs that live in those ranges.
+
+Modified: trunk/ROADMAP
+===================================================================
+--- trunk/ROADMAP	2008-02-12 23:16:22 UTC (rev 799)
++++ trunk/ROADMAP	2008-02-13 09:36:25 UTC (rev 800)
+@@ -14,9 +14,14 @@
+ 
+ 0.59:
+ 
++    - assign new moderators (on a per-forum basis)
+     - admin/moderator support (deal with bad people)
+-        - edit posts (and flag accordingly)
+-        - abuse handling (suspend accounts, ban-by-ip, ...)
++        - [D] edit posts (and flag accordingly)
++        - abuse handling
++          - suspend account(s)
++          - prevent login from IP
++          - prevent signup from IP
++          - prevent posting/editing from IP
+         - IP reporting
+ 
+ 0.60:
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000687.html">[Parley-svn] r799 - / trunk/t/schema
+</A></li>
+	<LI>Next message: <A HREF="000689.html">[Parley-svn] r801 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#688">[ date ]</a>
+              <a href="thread.html#688">[ thread ]</a>
+              <a href="subject.html#688">[ subject ]</a>
+              <a href="author.html#688">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

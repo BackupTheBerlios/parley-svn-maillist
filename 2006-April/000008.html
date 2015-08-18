@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r118 - in trunk: . lib/Parley/Controller root/base/my
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r118%20-%20in%20trunk%3A%20.%20lib/Parley/Controller%20root/base/my&In-Reply-To=%3C200604131047.k3DAlDL3015941%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000007.html">
+   <LINK REL="Next"  HREF="000009.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r118 - in trunk: . lib/Parley/Controller root/base/my</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r118%20-%20in%20trunk%3A%20.%20lib/Parley/Controller%20root/base/my&In-Reply-To=%3C200604131047.k3DAlDL3015941%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r118 - in trunk: . lib/Parley/Controller root/base/my">chiselwright at berlios.de
+       </A><BR>
+    <I>Thu Apr 13 12:47:13 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000007.html">[Parley-svn] r117 - trunk
+</A></li>
+        <LI>Next message: <A HREF="000009.html">[Parley-svn] r119 - in trunk: . lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-04-13 12:46:56 +0200 (Thu, 13 Apr 2006)
+New Revision: 118
+
+Modified:
+   trunk/
+   trunk/Changes
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/preferences
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14388 at ferrari</A>:  chisel | 2006-04-06 09:56:25 +0100
+ - added visual feedback when TZ preference is updated
+ - store the referer when visiting my/preferences making it easier to return to where we were previously
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14387
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14388
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-04-13 10:46:14 UTC (rev 117)
++++ trunk/Changes	2006-04-13 10:46:56 UTC (rev 118)
+@@ -1,5 +1,8 @@
+ This file documents the revision history for Perl extension Forum.
+ 
++    - added visual feedback when TZ preference is updated
++    - store the referer when visiting my/preferences making it easier to return
++      to where we were previously
+     - added about/modules, an easier way to obtain version information for
+       loaded modules
+     - modify log-in check in auto() to use Auth::DBIC calling style
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2006-04-13 10:46:14 UTC (rev 117)
++++ trunk/lib/Parley/Controller/My.pm	2006-04-13 10:46:56 UTC (rev 118)
+@@ -29,6 +29,12 @@
+     my ($self, $c) = @_;
+     my ($tz_categories);
+ 
++    # where did we come from? it would be nice to return there when we're done
++    $c-&gt;log-&gt;info( 'We came from: ' . $c-&gt;request-&gt;referer() );
++    if ($c-&gt;request-&gt;referer() !~ m{/my/preferences/}xms) {
++        $c-&gt;session-&gt;{my_pref_came_from} = $c-&gt;request-&gt;referer();
++    }
++
+     $tz_categories = DateTime::TimeZone-&gt;categories();
+     $c-&gt;stash-&gt;{tz_categories} = $tz_categories;
+ 
+@@ -78,6 +84,7 @@
+     if ($c-&gt;request-&gt;param('use_utc')) {
+         $user_pref-&gt;timezone('UTC');
+         $user_pref-&gt;update();
++        $c-&gt;stash-&gt;{tz_message} = 'Timezone set to UTC';
+     }
+     # otherwise, we need to validate the Zone and Place, then update (if valid)
+     else {
+@@ -97,6 +104,7 @@
+         if (1 == $match_count) {
+             $user_pref-&gt;timezone( $tz_string );
+             $user_pref-&gt;update();
++            $c-&gt;stash-&gt;{tz_message} = &quot;Timezone set to $tz_string&quot;;
+         }
+         # otherwise, we don't update, and the page reloads showing their last
+         # valid setting
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2006-04-13 10:46:14 UTC (rev 117)
++++ trunk/root/base/my/preferences	2006-04-13 10:46:56 UTC (rev 118)
+@@ -6,7 +6,14 @@
+ 
+ &lt;form action=&quot;my/preferences/update&quot; method=&quot;POST&quot; name=&quot;timezone&quot;&gt;
+     &lt;table width=&quot;550&quot;&gt;
++
++    [% IF tz_message %]
+     &lt;tr&gt;
++    &lt;td colspan=&quot;2&quot;&gt;&lt;b&gt;&lt;i&gt;[% tz_message %]&lt;/i&gt;&lt;/b&gt;&lt;/td&gt;
++    &lt;/tr&gt;
++    [% END %]
++
++    &lt;tr&gt;
+     &lt;td&gt;
+     &lt;select id=&quot;selectZone&quot; name=&quot;selectZone&quot;&gt;
+         &lt;option&gt;[ Select Zone ]&lt;/option&gt;
+@@ -70,3 +77,7 @@
+     
+ // End --&gt;
+ &lt;/script&gt;
++
++[% IF c.session.my_pref_came_from %]
++&lt;a href=&quot;[% c.session.my_pref_came_from %]&quot;&gt;Return to the forum&lt;/a&gt;
++[% END %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000007.html">[Parley-svn] r117 - trunk
+</A></li>
+	<LI>Next message: <A HREF="000009.html">[Parley-svn] r119 - in trunk: . lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

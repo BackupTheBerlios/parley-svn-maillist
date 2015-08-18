@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r400 - / trunk/root/base/help trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r400%20-%20/%20trunk/root/base/help%20trunk/root/css&In-Reply-To=%3C200707121908.l6CJ8MWW004452%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000287.html">
+   <LINK REL="Next"  HREF="000289.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r400 - / trunk/root/base/help trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r400%20-%20/%20trunk/root/base/help%20trunk/root/css&In-Reply-To=%3C200707121908.l6CJ8MWW004452%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r400 - / trunk/root/base/help trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul 12 21:08:22 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000287.html">[Parley-svn] r399 - / trunk/lib/Template/Plugin
+</A></li>
+        <LI>Next message: <A HREF="000289.html">[Parley-svn] r401 - / trunk/root/static/images	trunk/root/static/images/filetypes
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#288">[ date ]</a>
+              <a href="thread.html#288">[ thread ]</a>
+              <a href="subject.html#288">[ subject ]</a>
+              <a href="author.html#288">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-12 21:08:22 +0200 (Thu, 12 Jul 2007)
+New Revision: 400
+
+Modified:
+   /
+   trunk/root/base/help/formatting_posts
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3492 at wiggin</A>:  chisel | 2007-07-06 19:44:10 +0100
+ / more additions to the help section
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3491
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3492
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/help/formatting_posts
+===================================================================
+--- trunk/root/base/help/formatting_posts	2007-07-12 19:08:15 UTC (rev 399)
++++ trunk/root/base/help/formatting_posts	2007-07-12 19:08:22 UTC (rev 400)
+@@ -9,7 +9,7 @@
+ &lt;h2&gt;Simple Formatting&lt;/h2&gt;
+ 
+ &lt;h3&gt;Bold, Italic and Underline&lt;/h3&gt;
+-&lt;ul&gt;
++&lt;ul class=&quot;help&quot;&gt;
+     &lt;li&gt;
+         To make a section of text appear in &lt;b&gt;bold&lt;/b&gt; use
+         &lt;code&gt;[b]...[/b]&lt;/code&gt;:
+@@ -42,11 +42,62 @@
+     &lt;/li&gt;
+ &lt;/ul&gt;
+ 
++&lt;h3&gt;Making Lists&lt;/h3&gt;
++&lt;p&gt;There are two types of list, ordered - the items are numbered, and unordered - the
++items are bulleted. Lists are always enclosed by &lt;code&gt;[list]...[/list]&lt;/code&gt; markers.
++The type of list you create is dependant on whether you use &lt;code&gt;[1]&lt;/code&gt; or &lt;code&gt;[*]&lt;/code&gt;
++for list items.
++&lt;/p&gt;
++&lt;ul class=&quot;help&quot;&gt;
++    &lt;li&gt;
++        To create an &lt;em&gt;ordered list&lt;/em&gt; use &lt;code&gt;[1]&lt;/code&gt;
++        to mark list items.
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[list]&lt;br /&gt;
++                [1]first&lt;br /&gt;
++                [1]second&lt;br /&gt;
++                [1]third&lt;br /&gt;
++        [/list]&lt;/code&gt;&lt;/q&gt;
++        &lt;br /&gt;
++        produces:
++        [% ForumCode.forumcode('[list]
++        [1]first
++        [1]second
++        [1]third
++        [/list]') %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        To create an &lt;em&gt;unordered list&lt;/em&gt; use &lt;code&gt;[*]&lt;/code&gt;
++        to mark list items.
++        &lt;br /&gt;
++        &lt;em&gt;e.g.&lt;/em&gt;
++        &lt;br /&gt;
++        &lt;q&gt;&lt;code&gt;[list]&lt;br /&gt;
++                [*]apple&lt;br /&gt;
++                [*]orange&lt;br /&gt;
++                [*]banana&lt;br /&gt;
++        [/list]&lt;/code&gt;&lt;/q&gt;
++        &lt;br /&gt;
++        produces:
++        [% ForumCode.forumcode('[list]
++        [*]apple
++        [*]orange
++        [*]banana
++        [/list]') %]
++    &lt;/li&gt;
++&lt;/ul&gt;
++&lt;p&gt;&lt;b&gt;NOTE:&lt;/b&gt; Separating elements with line-breaks is required.
++&lt;q&gt;&lt;code&gt;[list] [*]apple [*]orange [*]banana [/list]&lt;/code&gt;&lt;/q&gt; will output:&lt;br /&gt;
++[% ForumCode.forumcode('[list] [*]apple [*]orange [*]banana [/list]') %]
++&lt;/p&gt;
++
+ &lt;h3&gt;Linking to external resources&lt;/h3&gt;
+ &lt;p&gt;The forum software does NOT automatically hunt out all text resembling URLs
+ to turn them into clickable links. If you want a clickable link in a post
+ you need to use the [url]...[/url] code:&lt;/p&gt;
+-&lt;ul&gt;
++&lt;ul class=&quot;help&quot;&gt;
+     &lt;li&gt;
+         To make a URL appear as a clickable link use
+         &lt;code&gt;[url]<A HREF="http://...[/url">http://...[/url</A>]&lt;/code&gt;:
+@@ -61,7 +112,7 @@
+ 
+ &lt;p&gt;You may also make a section of text appear as a named link by
+ using the &quot;name=...&quot; attribute in the code block:&lt;/p&gt;
+-&lt;ul&gt;
++&lt;ul class=&quot;help&quot;&gt;
+     &lt;li&gt;
+         To make a URL appear as a names clickable link use
+         &lt;code&gt;[url &lt;em&gt;name=&quot;XXX&quot;&lt;/em&gt;]<A HREF="http://...[/url">http://...[/url</A>]&lt;/code&gt;:
+@@ -75,7 +126,7 @@
+ &lt;/ul&gt;
+ 
+ &lt;p&gt;As well as inserting clickable links, you may also insert images into posts.&lt;/p&gt;
+-&lt;ul&gt;
++&lt;ul class=&quot;help&quot;&gt;
+     &lt;li&gt;
+         To make an image appear in a posting use
+         &lt;code&gt;[img]...[/img]&lt;/code&gt;:
+@@ -99,3 +150,44 @@
+         [% ForumCode.forumcode(&quot;[img title='Powered by Catalyst' width='50']${c.request.base}static/images/btn_88x31_powered.png[/img]&quot;) %]
+     &lt;/li&gt;
+ &lt;/ul&gt;
++
++&lt;h3&gt;Colouring&lt;/h3&gt;
++&lt;p&gt;One surefire way to annoy people to the point where they'd like to remove
++your internal organs with a spoon is to use lots of unnecessary colours in your posts.
++The ForumCode to invoke this reaction is
++&lt;code&gt;[colour=&lt;em&gt;code&lt;/em&gt;]...[/colour]&lt;/code&gt;. In the spirit of furthering international
++relations, those of you with a preference for American spellings may use &lt;code&gt;[color=&lt;em&gt;code&lt;/em&gt;]...[/color]&lt;/code&gt;.
++&lt;/p&gt;
++&lt;p&gt;&lt;code&gt;&lt;em&gt;code&lt;/em&gt;&lt;/code&gt; can be any of the following: red, orange, yellow, green, blue, black, white.&lt;/p&gt;
++&lt;p&gt;&lt;code&gt;&lt;em&gt;code&lt;/em&gt;&lt;/code&gt; can also be any #RGB or #RRGGBB HTML colour values.&lt;/p&gt;
++
++&lt;em&gt;e.g.&lt;/em&gt;
++&lt;ul class=&quot;help&quot;&gt;
++    &lt;li&gt;
++        &lt;q&gt;&lt;code&gt;[colour=red]Red Text[/colour]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[colour=red]Red Text[/colour]') %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        &lt;q&gt;&lt;code&gt;[colour=#f00]Red Text[/colour]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[colour=#f00]Red Text[/colour]') %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        &lt;q&gt;&lt;code&gt;[colour=#ff0000]Red Text[/colour]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[colour=#ff0000]Red Text[/colour]') %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        &lt;q&gt;&lt;code&gt;[colour=blue]Blue Text[/colour]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[colour=blue]Blue Text[/colour]') %]
++    &lt;/li&gt;
++    &lt;li&gt;
++        &lt;q&gt;&lt;code&gt;[colour=white]White Text[/colour]&lt;/code&gt;&lt;/q&gt;
++        produces
++        [% ForumCode.forumcode('[colour=white]White Text[/colour]') %]
++        &lt;br /&gt;(white-on-white text, useful for novice spies; highlight the
++        line to see the white-on-white text)
++    &lt;/li&gt;
++&lt;/ul&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-07-12 19:08:15 UTC (rev 399)
++++ trunk/root/css/common.css	2007-07-12 19:08:22 UTC (rev 400)
+@@ -368,3 +368,8 @@
+     padding-left: 20px;
+     background:   transparent url(/static/images/filetypes/pdf.png) no-repeat center left;
+ }
++
++
++.help li {
++    margin-top:     5px;
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000287.html">[Parley-svn] r399 - / trunk/lib/Template/Plugin
+</A></li>
+	<LI>Next message: <A HREF="000289.html">[Parley-svn] r401 - / trunk/root/static/images	trunk/root/static/images/filetypes
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#288">[ date ]</a>
+              <a href="thread.html#288">[ thread ]</a>
+              <a href="subject.html#288">[ subject ]</a>
+              <a href="author.html#288">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

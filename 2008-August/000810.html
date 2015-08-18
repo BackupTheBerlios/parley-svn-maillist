@@ -1,0 +1,391 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r922 - / trunk/config trunk/doc	trunk/lib/Parley/Controller trunk/root/static/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r922%20-%20/%20trunk/config%20trunk/doc%0A%09trunk/lib/Parley/Controller%20trunk/root/static/css&In-Reply-To=%3C200808071054.m77AsawA004207%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000811.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r922 - / trunk/config trunk/doc	trunk/lib/Parley/Controller trunk/root/static/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r922%20-%20/%20trunk/config%20trunk/doc%0A%09trunk/lib/Parley/Controller%20trunk/root/static/css&In-Reply-To=%3C200808071054.m77AsawA004207%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r922 - / trunk/config trunk/doc	trunk/lib/Parley/Controller trunk/root/static/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Aug  7 12:54:36 CEST 2008</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000811.html">[Parley-svn] r923 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#810">[ date ]</a>
+              <a href="thread.html#810">[ thread ]</a>
+              <a href="subject.html#810">[ subject ]</a>
+              <a href="author.html#810">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-08-07 12:54:34 +0200 (Thu, 07 Aug 2008)
+New Revision: 922
+
+Modified:
+   /
+   trunk/config/parley.sites-available
+   trunk/doc/setup.html
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/static/css/parley-min.css
+   trunk/root/static/css/parley.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r6002 at wiggin</A>:  chisel | 2008-07-03 09:18:44 +0100
+ / made path simpler in apache file
+ + added more to setup guide
+ + provide more meaningful feedback for avatar upload issues
+ + updated CSS (and compressed) to make errors/feedback more visible
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5993
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:6002
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/config/parley.sites-available
+===================================================================
+--- trunk/config/parley.sites-available	2008-06-30 13:11:09 UTC (rev 921)
++++ trunk/config/parley.sites-available	2008-08-07 10:54:34 UTC (rev 922)
+@@ -6,11 +6,11 @@
+ 
+ &lt;VirtualHost parley.private.herlpacker.co.uk:80&gt;
+ 	ServerName              parley.private.herlpacker.co.uk
+-	DocumentRoot            /home/parley/development/parley_app/root
+-	Alias           /static /home/parley/development/parley_app/root/static
+-	Alias           /       /home/parley/development/parley_app/script/parley_fastcgi.pl/
++	DocumentRoot            /home/parley/parley_app/parley/root
++	Alias           /static /home/parley/parley_app/parley/root/static
++	Alias           /       /home/parley/parley_app/parley/script/parley_fastcgi.pl/
+ 
+-    FastCgiServer           /home/parley/development/parley_app/script/parley_fastcgi.pl -processes 3
++    FastCgiServer           /home/parley/parley_app/parley/script/parley_fastcgi.pl -processes 3
+ 
+     # stuff that's good to have
+     ServerAdmin         <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">someone.useful at somewhere.useful</A>
+
+Modified: trunk/doc/setup.html
+===================================================================
+--- trunk/doc/setup.html	2008-06-30 13:11:09 UTC (rev 921)
++++ trunk/doc/setup.html	2008-08-07 10:54:34 UTC (rev 922)
+@@ -53,13 +53,22 @@
+                 &lt;li&gt;&lt;a href=&quot;#site_usage_terms&quot;&gt;Site Usage Terms&lt;/a&gt;&lt;/li&gt;
+                 &lt;li&gt;&lt;a href=&quot;#site_administration&quot;&gt;Site Administration&lt;/a&gt;&lt;/li&gt;
+                 &lt;ul&gt;
+-                    &lt;li&gt;&lt;a href=&quot;#services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
+-                    &lt;li&gt;&lt;a href=&quot;#users&quot;&gt;Users&lt;/a&gt;&lt;/li&gt;
+-                    &lt;li&gt;&lt;a href=&quot;#ip_bans&quot;&gt;IP Bans&lt;/a&gt;&lt;/li&gt;
++                    &lt;li&gt;&lt;a href=&quot;#services&quot;&gt;services&lt;/a&gt;&lt;/li&gt;
++                    &lt;li&gt;&lt;a href=&quot;#users&quot;&gt;users&lt;/a&gt;&lt;/li&gt;
++                    &lt;li&gt;&lt;a href=&quot;#ip_bans&quot;&gt;ip bans&lt;/a&gt;&lt;/li&gt;
+                 &lt;/ul&gt;
+                 &lt;li&gt;&lt;a href=&quot;#additional_user_administration&quot;&gt;Additional User Administration&lt;/a&gt;&lt;/li&gt;
+             &lt;/ul&gt;
+             &lt;li&gt;&lt;a href=&quot;#apache_fastcgi&quot;&gt;apache + fastcgi&lt;/a&gt;&lt;/li&gt;
++            &lt;ul&gt;
++                &lt;li&gt;&lt;a href=&quot;#apache_fastcgi_configure&quot;&gt;configuring fastcgi&lt;/a&gt;&lt;/li&gt;
++                &lt;li&gt;&lt;a href=&quot;#apache_fastcgi_troubleshooting&quot;&gt;troubleshooting fastcgi&lt;/a&gt;&lt;/li&gt;
++                &lt;ul&gt;
++                    &lt;li&gt;&lt;a href=&quot;#fastcgi_permission_denied&quot;&gt;Permission Denied&lt;/a&gt;&lt;/li&gt;
++                    &lt;li&gt;&lt;a href=&quot;#fastcgi_unable_to_store_upload&quot;&gt;Unable to store upload&lt;/a&gt;&lt;/li&gt;
++                &lt;/ul&gt;
++            &lt;/ul&gt;
++            &lt;li&gt;&lt;a href=&quot;#further_information&quot;&gt;Further Information&lt;/a&gt;&lt;/li&gt;
+         &lt;/ol&gt;
+ 
+         &lt;a id=&quot;getting_parley&quot;&gt;&lt;/a&gt;
+@@ -78,11 +87,15 @@
+         &lt;a id=&quot;location&quot;&gt;&lt;/a&gt;
+         &lt;h3&gt;Location&lt;/h3&gt;
+ 
++        &lt;p&gt;For the purposes of this guide we are assuming that there is a user
++        called &quot;parley&quot; [HOME=/home/parley/] who has never deployed the
++        application previously.&lt;/p&gt;
++
+         &lt;p&gt;We'll keep as much of parley as possible inside its own directory
+         area:&lt;/p&gt;
+ 
+-        &lt;blockquote&gt;&lt;code&gt;mkdir -p ~/development/parley_app/dist
+-cd ~/development/parley_app/&lt;/code&gt;&lt;/blockquote&gt;
++        &lt;blockquote&gt;&lt;code&gt;mkdir -p ~/parley_app/{dist,versions,user_files}
++cd ~/parley_app/&lt;/code&gt;&lt;/blockquote&gt;
+ 
+         We'll use &lt;code&gt;dist/&lt;/code&gt; to store any tarballs that we have
+         downloaded, to reduce clutter:
+@@ -95,14 +108,19 @@
+ 
+         Then extract our most recent copy [the only one currently]:
+ 
+-        &lt;blockquote&gt;&lt;code&gt;tar zxf dist/Parley-1.x.y.tar.gz&lt;/code&gt;&lt;/blockquote&gt;
++        &lt;blockquote&gt;&lt;code&gt;tar -C versions/ -zxf dist/Parley-1.x.y.tar.gz&lt;/code&gt;&lt;/blockquote&gt;
+ 
+         Making a softlink to the current version makes navigation easier,
+         and will aid us later when we consider a full Apache based deployment:
+ 
+-        &lt;blockquote&gt;&lt;code&gt;ln -sv Parley-1.x.y parley
++        &lt;blockquote&gt;&lt;code&gt;ln -sv versions/Parley-1.x.y parley
++ln -sv $PWD/user_files parley/root/static/user_file
++chmod -R g+w user_files
+ cd parley&lt;/code&gt;&lt;/blockquote&gt;
+ 
++        &lt;p&gt;To prevent permission errors later on, you should ensure
++        that the user that runs the apache processes is in the &lt;em&gt;parley&lt;/em&gt;
++        group.&lt;/p&gt;
+ 
+         &lt;a id=&quot;database&quot;&gt;&lt;/a&gt;
+         &lt;h3&gt;Database&lt;/h3&gt;
+@@ -286,10 +304,10 @@
+         and &lt;em&gt;Forum Moderation&lt;/em&gt;.&lt;/p&gt;
+ 
+         &lt;a id=&quot;apache_fastcgi&quot;&gt;&lt;/a&gt;
+-        &lt;h3&gt;apache + fastcgi&lt;/h3&gt;
++        &lt;h2&gt;apache + fastcgi&lt;/h2&gt;
+ 
+-        &lt;p&gt;Any vaguely sane deployment of parley &lt;strong&gt;will not&lt;/strong&gt; run
+-        using &lt;i&gt;server/parley_server.pl&lt;/i&gt;.&lt;/p&gt;
++        &lt;p&gt;Any vaguely sane deployment of parley &lt;strong&gt;will not&lt;/strong&gt; be
++        run using &lt;i&gt;script/parley_server.pl&lt;/i&gt;.&lt;/p&gt;
+ 
+         &lt;p&gt;A common (and Catalyst recommended) deployment method is to use
+         &lt;em&gt;apache + fastcgi&lt;/em&gt;. The process is outlined in the
+@@ -299,11 +317,99 @@
+         mod_fastcgi installed:&lt;/p&gt;
+         &lt;blockquote&gt;&lt;code&gt;sudo aptitude install libapache2-mod-fastcgi&lt;/code&gt;&lt;/blockquote&gt;
+ 
++        &lt;a id=&quot;apache_fastcgi_configure&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Configuring fastcgi&lt;/h3&gt;
++
++        &lt;p&gt;To avoid permission issues with certain files it's recommended that
++        you edit &lt;em&gt;parley.conf&lt;/em&gt; and change:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;COMPILE_DIR             /tmp/parley-ttcache
++
++# ...
++
++storage   /tmp/parley.session&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;to:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;COMPILE_DIR             /tmp/parley-&lt;b&gt;fastcgi&lt;/b&gt;.ttcache
++
++# ...
++
++storage   /tmp/parley.&lt;b&gt;fastcgi&lt;/b&gt;.session&lt;/code&gt;&lt;/blockquote&gt;
++
+         &lt;p&gt;Assuming you have a system with &lt;em&gt;a2ensite&lt;/em&gt; installed on it
+         you can do the following:&lt;/p&gt;
+ 
+-        &lt;blockquote&gt;&lt;code&gt;sudo cp config/parley.sites-enabled /etc/apache2/sites-available/parley.named_vhost
++        &lt;blockquote&gt;&lt;code&gt;sudo cp config/parley.sites-available /etc/apache2/sites-available/parley.named_vhost
+ sudo vim /etc/apache2/sites-available/parley.named_vhost &lt;font color=&quot;green&quot;&gt;# make appropriate changes&lt;/font&gt;
+-sudo a2ensite parley.named_vhost&lt;/code&gt;&lt;/blockquote&gt;
++sudo a2ensite parley.named_vhost
++sudo /etc/init.d/apache2 reload&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;If all went well, you should now be able to visit the VirtualHost
++        defined in &lt;em&gt;/etc/apache2/sites-available/parley.named_vhost&lt;/em&gt;
++        and find a working instance of Parley.&lt;/p&gt;
++
++        &lt;a id=&quot;apache_fastcgi_troubleshooting&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Troubleshooting fastcgi&lt;/h3&gt;
++
++        &lt;a id=&quot;fastcgi_permission_denied&quot;&gt;&lt;/a&gt;
++        &lt;h4&gt;Open of share file /tmp/parley.session failed: Permission denied&lt;/h4&gt;
++
++        &lt;p&gt;Sometimes the fastcgi processes fail to start, and raise an error
++        similar to:&lt;/p&gt;
++        
++        &lt;blockquote&gt;&lt;code&gt;Open of share file /tmp/parley.session failed: Permission denied
++  at /usr/lib/perl5/Cache/FastMmap.pm line 574.&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;This is usually caused by running the application as one user, then
++        later trying to run it as a different user. The second user will
++        usually discover that they don't have write access to the application
++        session file.&lt;/p&gt;
++
++        &lt;p&gt;There are a number of resolutions for the issue:&lt;/p&gt;
++        &lt;ul&gt;
++            &lt;li&gt;remove /tmp/parley.session and parley-ttcache&lt;/li&gt;
++            &lt;li&gt;make the files world-writable&lt;/li&gt;
++            &lt;li&gt;make the files group-writable, and put relevant users in the relevant group&lt;/li&gt;
++        &lt;/ul&gt;
++
++        &lt;a id=&quot;fastcgi_unable_to_store_upload&quot;&gt;&lt;/a&gt;
++        &lt;h4&gt;Failed to create destination directory. Unable to store upload.&lt;/h4&gt;
++
++        &lt;p&gt;If you see the above message when trying to upload a user avatar
++        it's usually a result of incorrect permissions. You will usually have
++        a corresponding message in the apache error log:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;/home/parley/parley_app/versions/Parley-1.0.0/root/static/user_file/0
++  - Permission denied&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;p&gt;This can be resolved (as can most file permission issues) in more
++        that one way.&lt;/p&gt;
++
++        &lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; because of the way the application was
++        deployed the &quot;offending&quot; directory is
++        &lt;code&gt;parley_app/user_files/&lt;/code&gt;&lt;/p&gt; which we linked to as
++        &lt;code&gt;parley_app/versions/Parley-1.0.0/root/static/user_file&lt;/code&gt;.
++
++        &lt;p&gt;One solution is to make the directory group-writeable and add the
++        apache process owner to that group:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;cd ~/parley_app/
++chmod -Rv g+w user_files
++sudo usermod -a -G parley &lt;em&gt;www-data&lt;/em&gt;
++groups &lt;em&gt;www-data&lt;/em&gt;&lt;/code&gt;&lt;/blockquote&gt;
++
++        &lt;a id=&quot;further_information&quot;&gt;&lt;/a&gt;
++        &lt;h2&gt;Further Information&lt;/h2&gt;
++
++        &lt;p&gt;
++        Please direct any further questions to the
++        &lt;a href=&quot;&quot;&gt;Parley user's mailing list&lt;/a&gt;.
++
++        &lt;!--
++            c&#104;iselwright&#64;users.be&#114;lios&#46;de
++        --&gt;
++        &lt;/p&gt;
++
+     &lt;/body&gt;
+ &lt;/html&gt;
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2008-06-30 13:11:09 UTC (rev 921)
++++ trunk/lib/Parley/Controller/My.pm	2008-08-07 10:54:34 UTC (rev 922)
+@@ -339,7 +339,14 @@
+ 
+         # create the directory if it doesn't exist
+         if (not -d $target_dir) {
+-            mkdir $target_dir;
++            # try to create the target directory
++            mkdir $target_dir or do {
++                $c-&gt;log-&gt;error( qq{$target_dir - $!} );
++                parley_warn($c, $c-&gt;localize(q{FILE NEWDIR FAILED}));
++                return;
++            };
++
++            # if for some reason the directory still doesn't exist..
+             if (not -d $target_dir) {
+                 parley_warn($c, $c-&gt;localize(q{FILE NEWDIR FAILED}));
+                 $c-&gt;log-&gt;error( qq{$target_dir - $!} );
+
+Modified: trunk/root/static/css/parley-min.css
+===================================================================
+--- trunk/root/static/css/parley-min.css	2008-06-30 13:11:09 UTC (rev 921)
++++ trunk/root/static/css/parley-min.css	2008-08-07 10:54:34 UTC (rev 922)
+@@ -1 +1 @@
+-body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B color:#36C;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#user_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;!
+ margin-top:5px;margin-bottom:5px;color:#79B30B color:#36C;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:r!
+ ight;}.align_right{text-align:right;}.forum_description{font-s!
+ ize:93%;
+}.forum_lastpost{font-size:85%;text-align:right;}.forum_lastpost_subject a{color:#79B30B color:#36C;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#79B30B color:#36C;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help!
+  li ul li,.help li ol li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-top:10px;margin-bottom:2px;text-align:right;}.post_subject{font-weight:bold;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_up!
+ dated td{vertical-align:top;border:1px dashed #ddd;border:none!
+ ;line-he
+ight:120%;padding-left:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;padding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-ali!
+ gn:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thread_reply textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#79B30B color:#36C;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:bloc!
+ k;font-size:85%;text-align:right;}.user_login form{width:350px!
+ ;margin-
+left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{padding-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-al!
+ ign:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#ysearch{text-align:center;}#ysearchinput{position:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;white-space:pre;}.forumcode_quote{background-color:#eee;font-family:monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.!
+ yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .y!
+ ui-navse
+t-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
++body{background-color:#fff;font-family:Verdana,Arial,Helvetica,sans-serif;}#hd{height:80px;line-height:80px;margin:0;padding-left:10px;background:#EEE url('/static/images/parley_logo.jpg') no-repeat left;color:#79B30B color:#36C;}#hd h1{font-size:200%;text-align:left;}div#ft{background:#666;color:#FFF;font-size:77%;margin-top:20px;}div#ft p{border:none;margin-top:30px;padding:5px 10px 5px 10px;text-align:right;display:block;}div#ft a{color:#ccc;}div#user_information{line-height:1em;font-size:85%;color:#000;background-color:transparent;position:absolute;top:0;right:10px;height:70px;width:200px;padding-top:3px;text-align:center;}div#user_information .user_info_actions{margin-top:3px;}.caretfix{overflow:auto;}#bd h1{font-weight:bold;background:#666;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h2{font-weight:bold;background:#999;padding:4px;text-align:left;margin-top:5px;margin-bottom:5px;}#bd h3{font-weight:bold;background:#eee;padding:4px;text-align:left;!
+ margin-top:5px;margin-bottom:5px;color:#79B30B color:#36C;}a.nav:hover{background:#000;color:#fff;}a,a:link,a:visited,a:active{background:transparent;color:blue;text-decoration:none;}th{font-size:100%;text-align:left;font-weight:bold;}#login_dialog form{margin:0;padding:0;min-width:400px;max-width:600px;}#login_dialog form fieldset{/ * clear:both;note that this clear causes inputs to break to left in ie5.x mac,commented out */ padding:10px;margin:0;border:none;}#login_dialog form label{display:block;float:left;width:150px;padding:0;margin:5px 0 0;text-align:right;font-weight:bold;margin-bottom:0;}#login_dialog form input,form textarea{width:auto;margin:5px 0 0 10px;}#login_dialog form p{font-size:85%;}.row{border-top:1px dotted #666;border-bottom:1px dotted #666;}.row_odd{background:#eee;}.row_even{background:#ddd;}.admin_edited_post{color:#000;background:#ccc;padding:2px;padding-left:10px;padding-right:10px;border:1px dashed #000;margin-left:15px;font-size:93%;text-align:r!
+ ight;}.align_right{text-align:right;}.error_messages{margin-to!
+ p:5px;di
+splay:block;line-height:1.7em;padding:5px;background-color:#930;color:#fff;text-transform:none;font-family:Arial,Avenir,&quot;Lucida Grande&quot;,Verdana,&quot;Bitstream Vera Sans&quot;,Helvetica,sans-serif;font-weight:bold;voice-family:&quot;\&quot;}\&quot;&quot;;voice-family:inherit;font-size:1.0em;border:none;}.forum_description{font-size:93%;}.forum_lastpost{font-size:85%;text-align:right;}.forum_lastpost_subject a{color:#79B30B color:#36C;}.forum_link{font-size:100%;font-weight:bold;}.forum_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.forum_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.forum_mini_pager{font-size:85%;}.forum_mini_pager a{color:#666;}.forum_name{font-size:100%;text-align:left;font-weight:bold;margin-top:5px;}.forum_name a{color:#79B30B color:#36C;}.forum_postcount{font-size:85%;text-align:right;margin-top:5px;}.forum_view{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;fon!
+ t-size:93%;}.forum_view td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.help li{margin-top:25px;margin-right:25px;list-style-type:none;border-left:2px solid #666;padding-top:5px;padding-bottom:5px;padding-left:10px;background-color:#ddd;}.help li ul li,.help li ol li{margin-top:5px;margin-left:10px;list-style-type:disc;border-left:none;padding-left:none;padding-top:none;padding-bottom:none;background-color:transparent;}.innerpost{margin-left:10px;padding:5px;overflow:auto;font-size:93%;}.moderator_list{font-size:77%;margin-bottom:5px;margin-top:5px;text-align:right;}.pager_advanced{font-size:77%;margin-bottom:5px;margin-top:5px;}.post{padding-top:5px;vertical-align:top;border-left:1px solid #ddd;}.post_created{text-align:right;font-size:85%;}.post_creator{font-weight:bold;font-style:italic;font-size:85%;}.post_edited_alert{font-weight:bold;font-style:italic;}.post_info{font-size:77%;line-height:1.1em;margin-to!
+ p:10px;margin-bottom:2px;text-align:right;}.post_subject{font-!
+ weight:b
+old;}.quote{background-color:#F9FBFF;border:1px solid #333;font-size:85%;margin:0 0 2px 4px;padding:6px;width:85%;overflow:hidden;}.recently_updated{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.recently_updated td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.reply_post_message{border:1px dashed #666;}.search_match_context{font-size:85%;}.search_results{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.search_results td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.service_list{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.service_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:120%;padding-left:10px;padding-right:10px;}.site_terms{width:80%;margin-left:auto;margin-right:auto;margin-bottom:10px;pad!
+ ding:5px;border:1px solid #666;}.thread_add{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_add td{padding-top:4px;padding-bottom:4px;}.thread_add .input_text{width:450px;margin-left:10px;}.thread_add_topic{text-align:right;padding-right:5px;}.thread_add_message{text-align:right;vertical-align:top;padding-right:5px;}.thread_header{font-weight:bold;background:#666;padding:4px;text-align:left;}.thread_header a{color:#ccc;}.thread_info{margin:0;width:100%;border:none;padding:0;margin-bottom:10px;}.thread_info td{border:none;padding:0;}.thread_lastpost{font-size:85%;text-align:right;}.thread_post_row{border-top:1px solid #ddd;border-bottom:1px solid #ddd;}.thread_post_row td{margin-top:10px;margin-bottom:10px;}.thread_posts{margin-left:auto;margin-right:auto;margin-top:15px;width:100%;font-size:93%;}.thread_recent_forum{float:right;font-size:85%;}.thread_recent_forum a{color:#333;}.thread_reply{font-size:93%;}.thread_reply tr{vertical-align:!
+ top;}.thread_reply td{padding-top:10px;padding-left:10px;}.thr!
+ ead_repl
+y textarea{background-color:transparent;border:2px inset black;}.thread_subject a{font-size:93%;color:#79B30B color:#36C;}.thread_watch{margin-top:5px;font-size:77%;text-align:left;}.top_padded{margin-top:10px;}.topic_creator{display:block;font-size:85%;text-align:right;}.user_login form{width:350px;margin-left:auto;margin-right:auto;margin-top:20px;}.user_login p{margin-top:5px;margin-bottom:5px;}.user_permission_list{margin-left:auto;margin-right:auto;margin-top:15px;font-size:93%;width:100%;}.user_permission_list td{vertical-align:top;border:1px dashed #ddd;border:none;line-height:150%;padding-left:10px;padding-right:10px;padding-top:5px;padding-bottom:5px;}.user_permission_list img{vertical-align:middle;}.forum_moderator_list div input{height:150%;}.forum_moderator_list img{vertical-align:middle;}.user_post_info{background:#ccc;background:transparent;font-size:77%;margin-left:auto;margin-right:auto;text-align:center;vertical-align:top;width:110px;}a[href $='.jpg']{paddin!
+ g-left:20px;background:transparent url(/static/images/filetypes/image.png) no-repeat center left;}a[href $='.pdf']{padding-left:20px;background:transparent url(/static/images/filetypes/pdf.png) no-repeat center left;}#loader_wait.yui-overlay{position:fixed;float:right;top:10px;right:10px;border:none;text-align:right;}#preview_overlay{border:1px dashed #ccc;text-align:left;padding:0;}#thread_message{font-family:monospace;text-align:left;padding:0;background-color:#eee;font-size:93%;width:450px;}#ysearch{text-align:center;}#ysearchinput{position:static;width:20em;}#ysearchcontainer{text-align:left;width:20em;}.forumcode_code{font-family:monospace;border:1px solid #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;color:#ff0;background-color:#333;border:1px solid #666;white-space:pre;}.forumcode_pre{background-color:transparent;font-family:monospace;border:1px dashed #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:aut!
+ o;white-space:pre;}.forumcode_quote{background-color:#eee;font!
+ -family:
+monospace;font-style:italic;border:1px dotted #333;font-size:85%;margin:15px 20px 15px 20px;padding:6px;width:85%;overflow:auto;}.forumcode_quoting{font-weight:bold;margin-bottom:3px;}.yuimenuitem .disabled{color:#A6A6A6;cursor:default;}.yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav{border:solid #333;border-width:0 0 5px;Xposition:relative;zoom:1;}.yui-skin-sam .yui-navset .yui-content{background:transparent;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background-image:none;background-color:#999;border:solid #a3a3a3;border-width:0 1px;color:#fff;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#333;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#666;color:#fff;outline:0;}
+\ No newline at end of file
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2008-06-30 13:11:09 UTC (rev 921)
++++ trunk/root/static/css/parley.css	2008-08-07 10:54:34 UTC (rev 922)
+@@ -160,6 +160,23 @@
+     text-align:         right;
+ }
+ 
++
++.error_messages {
++    margin-top: 5px;
++    display: block;
++    line-height: 1.7em;
++    padding: 5px;
++    background-color: #993300;
++    color: #ffffff;
++    text-transform: none;
++    font-family: Arial, Avenir, &quot;Lucida Grande&quot;, Verdana, &quot;Bitstream Vera Sans&quot;, Helvetica, sans-serif;
++    font-weight: bold;
++    voice-family: &quot;\&quot;}\&quot;&quot;;
++    voice-family: inherit;
++    font-size: 1.0em;
++    border: none;
++}
++
+ .forum_description {
+     font-size:          93%;
+ }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000811.html">[Parley-svn] r923 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#810">[ date ]</a>
+              <a href="thread.html#810">[ thread ]</a>
+              <a href="subject.html#810">[ subject ]</a>
+              <a href="author.html#810">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

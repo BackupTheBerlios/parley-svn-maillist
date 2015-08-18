@@ -1,0 +1,282 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r338 - / trunk/root/base/forum trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r338%20-%20/%20trunk/root/base/forum%20trunk/root/base/thread&In-Reply-To=%3C200705140838.l4E8cOQT016956%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000224.html">
+   <LINK REL="Next"  HREF="000227.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r338 - / trunk/root/base/forum trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r338%20-%20/%20trunk/root/base/forum%20trunk/root/base/thread&In-Reply-To=%3C200705140838.l4E8cOQT016956%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r338 - / trunk/root/base/forum trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon May 14 10:38:24 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000224.html">[Parley-svn] r337 - / trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000227.html">[Parley-svn] r339 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#226">[ date ]</a>
+              <a href="thread.html#226">[ thread ]</a>
+              <a href="subject.html#226">[ subject ]</a>
+              <a href="author.html#226">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-14 10:38:23 +0200 (Mon, 14 May 2007)
+New Revision: 338
+
+Modified:
+   /
+   trunk/root/base/forum/list
+   trunk/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3268 at wiggin</A>:  chisel | 2007-05-11 19:02:33 +0100
+ / modified layout to look presentable with new styling
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3267
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3268
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/forum/list
+===================================================================
+--- trunk/root/base/forum/list	2007-05-14 08:38:10 UTC (rev 337)
++++ trunk/root/base/forum/list	2007-05-14 08:38:23 UTC (rev 338)
+@@ -1,29 +1,34 @@
+ &lt;h1&gt;Forum List&lt;/h1&gt;
+ 
+ &lt;table&gt;
+-&lt;tr&gt;
+- &lt;td&gt;Forum&lt;/td&gt;
+- &lt;td&gt;Last Post&lt;/td&gt;
+-&lt;/tr&gt;
+-[% WHILE (forum = forum_list.next) %]
+-&lt;tr&gt;
+- &lt;td&gt;
+-  &lt;a href=&quot;forum/view?forum=[% forum.id %]&quot; class=&quot;forum_link&quot;&gt;[% forum.name %]&lt;/a&gt;
+-  &lt;br /&gt;
+-  &lt;span class=&quot;forum_description&quot;&gt;[% forum.description %]&lt;/span&gt;
+- &lt;/td&gt;
+- &lt;td&gt;
+-  [% IF forum.last_post %]
+-  [% nicedate(forum.last_post.created) %]
+-  &lt;br /&gt;
+-     &lt;span class=&quot;topic_creator&quot;&gt;posted by
+-        &lt;span class=&quot;post_creator&quot;&gt;[% forum.last_post.creator.forum_name %]&lt;/span&gt;
+-     &lt;/span&gt;
+-  [% ELSE %]
+-  &lt;br /&gt;
+-     &lt;span class=&quot;topic_creator&quot;&gt;No posts&lt;/span&gt;
+-  [% END %]
+- &lt;/td&gt;
+-&lt;/tr&gt;
+-[% END %]
++    &lt;tr&gt;
++        &lt;th&gt;Forum&lt;/th&gt;
++        &lt;th&gt;Last Post&lt;/th&gt;
++        &lt;th&gt;Posts&lt;/th&gt;
++    &lt;/tr&gt;
++
++    [% WHILE (forum = forum_list.next) %]
++    &lt;tr&gt;
++        &lt;td&gt;
++            &lt;a href=&quot;forum/view?forum=[% forum.id %]&quot; class=&quot;forum_link&quot;&gt;[% forum.name %]&lt;/a&gt;
++            &lt;br /&gt;
++            &lt;span class=&quot;forum_description&quot;&gt;[% forum.description %]&lt;/span&gt;
++        &lt;/td&gt;
++        &lt;td&gt;
++            [% IF forum.last_post %]
++            [% nicedate(forum.last_post.created) %]
++            &lt;br /&gt;
++            &lt;span class=&quot;topic_creator&quot;&gt;posted by
++                &lt;span class=&quot;post_creator&quot;&gt;[% forum.last_post.creator.forum_name %]&lt;/span&gt;
++            &lt;/span&gt;
++            [% ELSE %]
++            &lt;br /&gt;
++            &lt;span class=&quot;topic_creator&quot;&gt;No posts&lt;/span&gt;
++            [% END %]
++        &lt;/td&gt;
++        &lt;td&gt;
++            [% forum.post_count %]
++        &lt;/td&gt;
++    &lt;/tr&gt;
++    [% END %]
+ &lt;/table&gt;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-14 08:38:10 UTC (rev 337)
++++ trunk/root/base/thread/view	2007-05-14 08:38:23 UTC (rev 338)
+@@ -1,3 +1,115 @@
++&lt;!-- thread/view --&gt;
++
++[% SET dummy_value = post_list.reset %]
++
++&lt;!-- thread subject, locked info, etc --&gt;
++    [% IF 0 %]
++    [% PROCESS shared/threadcrumbs %]
++    [% PROCESS shared/thread_watch %]
++    [% PROCESS shared/pager_advanced %]
++
++    &lt;small&gt;
++    [% IF current_thread.locked %]
++        &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++        Thread Locked
++    [% ELSE %]
++        &lt;a class=&quot;button&quot; href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++    [% END %]
++    &lt;/small&gt;
++    [% END %]
++&lt;!-- end : thread subject, locked info, etc --&gt;
++
++&lt;!-- thread contents --&gt;
++&lt;table class=&quot;thread_posts&quot;&gt;
++    &lt;tbody&gt;
++
++        &lt;tr&gt;
++            &lt;td colspan=&quot;2&quot; class=&quot;thread_header&quot;&gt;
++                [% current_thread.subject %]
++            &lt;/td&gt;
++        &lt;/tr&gt;
++
++        &lt;tr&gt;
++            &lt;td&gt;
++                [% PROCESS shared/thread_watch %]
++            &lt;/td&gt;
++            &lt;td&gt;
++                [% PROCESS shared/pager_advanced %]
++            &lt;/td&gt;
++        &lt;/tr&gt;
++
++    &lt;!-- thread posts --&gt;
++    [% WHILE (post = post_list.next) %]
++        &lt;tr&gt;
++            &lt;td class=&quot;user_post_info&quot;&gt;
++                &lt;!-- user avatar --&gt;
++                [% avatar_file = c.path_to('root') _ &quot;/static/user_file/${post.creator.id}/avatar.jpg&quot; %]
++                [% TRY %]
++                    [% USE avatar = Image(avatar_file) %]
++                    [% tmp = avatar.attr %]
++                    &lt;img class=&quot;picborder&quot; src=&quot;/static/user_file/[% post.creator.id %]/avatar.jpg&quot; border=&quot;0&quot; [% avatar.attr %] alt=&quot;Avatar&quot; /&gt;
++                    &lt;br /&gt;
++                [% CATCH %]
++                    &lt;!-- No User Avatar --&gt;
++                [% END %]
++                &lt;!-- end : user avatar --&gt;
++
++                [% post.creator.forum_name %]
++                &lt;br /&gt;
++                    Posts: 
++                    [% post.creator.post_count %]
++                    post[% IF (post.creator.post_count != 1) %]s[% END %]
++                
++            &lt;/td&gt;
++
++            &lt;td class=&quot;post&quot;&gt;
++                &lt;!-- the body of the post --&gt;
++                &lt;div class=&quot;innerpost&quot;&gt;
++                    [% IF post.quoted_post %]
++                    &lt;div class=&quot;quote&quot;&gt;
++                    &lt;strong&gt;[% post.quoted_post.creator.forum_name %] wrote:&lt;/strong&gt;&lt;br&gt;
++                    [% ForumCode.forumcode(post.quoted_text) %]&lt;br /&gt;
++                    &lt;/div&gt;
++                    &lt;br /&gt;
++                    [% END %]
++                    [% ForumCode.forumcode(post.message) %]&lt;br /&gt;
++                &lt;/div&gt;
++                &lt;!-- end : the body of the post --&gt;
++
++                &lt;div class=&quot;post_info&quot;&gt;
++                    [% nicedate(post.created) %]
++                    [% UNLESS current_thread.locked %]
++                        &lt;br /&gt;
++                        &lt;br /&gt;
++                        &lt;a class=&quot;button&quot; href=&quot;thread/reply?post=[% post.id %]&quot;&gt;Quote&lt;/a&gt;
++                        &lt;a class=&quot;button&quot; href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++                    [% END %]
++                &lt;/div&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++    [% END %]
++    &lt;!-- end : thread posts --&gt;
++    &lt;/tbody&gt;
++&lt;/table&gt;
++&lt;!-- end : thread contents --&gt;
++
++&lt;!-- post thread info --&gt;
++    [% PROCESS shared/threadcrumbs %]
++    [% PROCESS shared/thread_watch %]
++    [% PROCESS shared/pager_advanced %]
++
++    &lt;small&gt;
++    [% IF current_thread.locked %]
++        &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++        Thread Locked
++    [% ELSE %]
++        &lt;a class=&quot;button&quot; href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;Reply&lt;/a&gt;
++    [% END %]
++    &lt;/small&gt;
++&lt;!-- end : post thread info --&gt;
++
++[% IF 0 %]
++&lt;p&gt;
+ &lt;table class=&quot;maintable&quot; align=&quot;center&quot; border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;
+   &lt;tbody&gt;
+     &lt;tr&gt;
+@@ -176,5 +288,8 @@
+ 
+   &lt;/tbody&gt;
+ &lt;/table&gt;
++&lt;/p&gt;
++[% END %] [%# IF 0 %]
+ 
+ 
++&lt;!-- end : thread/view --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000224.html">[Parley-svn] r337 - / trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000227.html">[Parley-svn] r339 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#226">[ date ]</a>
+              <a href="thread.html#226">[ thread ]</a>
+              <a href="subject.html#226">[ subject ]</a>
+              <a href="author.html#226">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

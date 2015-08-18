@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r757 - / trunk trunk/lib/Parley/Controller/User
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r757%20-%20/%20trunk%20trunk/lib/Parley/Controller/User&In-Reply-To=%3C200801240705.m0O75r6w029332%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000644.html">
+   <LINK REL="Next"  HREF="000646.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r757 - / trunk trunk/lib/Parley/Controller/User</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r757%20-%20/%20trunk%20trunk/lib/Parley/Controller/User&In-Reply-To=%3C200801240705.m0O75r6w029332%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r757 - / trunk trunk/lib/Parley/Controller/User">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 24 08:05:53 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000644.html">[Parley-svn] r756 - / trunk/lib trunk/lib/Parley/Controller/User	trunk/root/base/error
+</A></li>
+        <LI>Next message: <A HREF="000646.html">[Parley-svn] r758 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#645">[ date ]</a>
+              <a href="thread.html#645">[ thread ]</a>
+              <a href="subject.html#645">[ subject ]</a>
+              <a href="author.html#645">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-24 08:05:53 +0100 (Thu, 24 Jan 2008)
+New Revision: 757
+
+Modified:
+   /
+   trunk/Changes
+   trunk/TODO
+   trunk/lib/Parley/Controller/User/SignUp.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4546 at wiggin</A>:  chisel | 2008-01-23 19:10:54 +0000
+ / fix signup issues
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4545
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4546
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-01-24 07:05:45 UTC (rev 756)
++++ trunk/Changes	2008-01-24 07:05:53 UTC (rev 757)
+@@ -18,6 +18,7 @@
+     - more efficient database querying (a la DBIC's prefetch)
+     - fix uri_for() error on user/login 
+     - fix DBIC field error during lostpassword process
++    - fix DBIC field errors during signup
+ 
+ 0.57    Wed Oct 31 19:15:06 GMT 2007
+     - added T&amp;Cs to application
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-01-24 07:05:45 UTC (rev 756)
++++ trunk/TODO	2008-01-24 07:05:53 UTC (rev 757)
+@@ -1,5 +1,6 @@
+ TODO LIST
+ 
++  - TESTS, TESTS, TESTS!
+   - investigate in-application language preference/choice
+   - styling: user prefs
+   - styling: user profile
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2008-01-24 07:05:45 UTC (rev 756)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2008-01-24 07:05:53 UTC (rev 757)
+@@ -80,7 +80,7 @@
+     # fetch the info from the database
+     my $regauth = $c-&gt;model('ParleyDB')-&gt;resultset('RegistrationAuthentication')-&gt;find(
+         {
+-            registration_authentication_id =&gt; $auth_id,
++            id =&gt; $auth_id,
+         }
+     );
+ 
+@@ -100,7 +100,7 @@
+     # get the person matching the ID
+     $c-&gt;stash-&gt;{signup_user} = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;find(
+         {
+-            person_id =&gt; $regauth-&gt;recipient-&gt;person_id(),
++            id =&gt; $regauth-&gt;recipient_id,
+         }
+     );
+ 
+@@ -204,9 +204,9 @@
+     # create an invitation
+     $invitation = $c-&gt;model('ParleyDB')-&gt;resultset('RegistrationAuthentication')-&gt;create(
+         {
+-            'registration_authentication_id'	=&gt; $random,
+-            'recipient'				=&gt; $person-&gt;person_id,
+-            'expires'				=&gt; Time::Piece-&gt;new(time + $LIFETIME)-&gt;datetime,
++            'id'	    =&gt; $random,
++            'recipient_id'  =&gt; $person-&gt;id,
++            'expires'       =&gt; Time::Piece-&gt;new(time + $LIFETIME)-&gt;datetime,
+         }
+     );
+ 
+@@ -334,11 +334,11 @@
+     # add new person
+     $new_person = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;create(
+         {
+-            first_name      =&gt; $valid_results-&gt;{first_name},
+-            last_name       =&gt; $valid_results-&gt;{last_name},
+-            forum_name      =&gt; $valid_results-&gt;{forum_name},
+-            email           =&gt; $valid_results-&gt;{email},
+-            authentication  =&gt; $new_auth-&gt;id(),
++            first_name          =&gt; $valid_results-&gt;{first_name},
++            last_name           =&gt; $valid_results-&gt;{last_name},
++            forum_name          =&gt; $valid_results-&gt;{forum_name},
++            email               =&gt; $valid_results-&gt;{email},
++            authentication_id   =&gt; $new_auth-&gt;id(),
+         }
+     );
+ 
+@@ -350,7 +350,7 @@
+         }
+     );
+     # and link to the new person
+-    $new_person-&gt;preference( $new_preference-&gt;id() );
++    $new_person-&gt;preference_id( $new_preference-&gt;id() );
+     $new_person-&gt;update;
+ 
+     # send an authentication email
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000644.html">[Parley-svn] r756 - / trunk/lib trunk/lib/Parley/Controller/User	trunk/root/base/error
+</A></li>
+	<LI>Next message: <A HREF="000646.html">[Parley-svn] r758 - / trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#645">[ date ]</a>
+              <a href="thread.html#645">[ thread ]</a>
+              <a href="subject.html#645">[ subject ]</a>
+              <a href="author.html#645">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

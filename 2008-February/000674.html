@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r786 - / trunk trunk/lib
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r786%20-%20/%20trunk%20trunk/lib&In-Reply-To=%3C200802121048.m1CAmXbh023341%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000673.html">
+   <LINK REL="Next"  HREF="000675.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r786 - / trunk trunk/lib</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r786%20-%20/%20trunk%20trunk/lib&In-Reply-To=%3C200802121048.m1CAmXbh023341%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r786 - / trunk trunk/lib">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Feb 12 11:48:33 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000673.html">[Parley-svn] r785 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000675.html">[Parley-svn] r787 - / tags
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#674">[ date ]</a>
+              <a href="thread.html#674">[ thread ]</a>
+              <a href="subject.html#674">[ subject ]</a>
+              <a href="author.html#674">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-12 11:48:32 +0100 (Tue, 12 Feb 2008)
+New Revision: 786
+
+Modified:
+   /
+   trunk/Changes
+   trunk/TODO
+   trunk/lib/Parley.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4633 at wiggin</A>:  chisel | 2008-02-10 15:50:08 +0000
+ / some final tweaks before going live with v0.58
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4623
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4633
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-02-07 09:18:23 UTC (rev 785)
++++ trunk/Changes	2008-02-12 10:48:32 UTC (rev 786)
+@@ -1,24 +1,24 @@
+ This file documents the revision history for Parley.
+ 
+-0.58 (UNDER DEVELOPMENT)
++0.58    Fri Feb  8 07:47:31 GMT 2008
++    - re-work the UI design to be cleaner
+     - added an application logo
++    - more efficient database querying (a la DBIC's prefetch)
++    - added first part of .it i18n (Thanks Darius!)
+     - add browser and user driven language selection
+-    - added first part of .it i18n (Thanks Darius!)
+-    - re-work the UI design to be cleaner
++    - upgraded to YUI 2.4.1
++    - modify ::Schema so that we can export mysql and sqlite schemas
++    - rename DB columns to be more sensible
+     - make the display of the time zone independant of the time_format string
+-    - fix issues with email notifications
+-    - [bug] fix user's last post information (profile page)
+-    - [bug] fix issue with forum-limited searches
+     - limit thread subject length on user profile page
+-    - rename DB columns to be more sensible
+-    - upgraded to YUI 2.4.1
+     - factored out MessagePreview javascript into single included file
+-    - [bug] fix error when trying to post new thread with no subject line
+-    - modify ::Schema so that we can export mysql and sqlite schemas
+-    - more efficient database querying (a la DBIC's prefetch)
+     - fix uri_for() error on user/login 
+     - fix DBIC field error during lostpassword process
+     - fix DBIC field errors during signup
++    - fix issues with email notifications
++    - [bug] fix user's last post information (profile page)
++    - [bug] fix issue with forum-limited searches
++    - [bug] fix error when trying to post new thread with no subject line
+ 
+ 0.57    Wed Oct 31 19:15:06 GMT 2007
+     - added T&amp;Cs to application
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-02-07 09:18:23 UTC (rev 785)
++++ trunk/TODO	2008-02-12 10:48:32 UTC (rev 786)
+@@ -17,6 +17,8 @@
+   - realtime time-format example update (my/prefs - tab_time)
+   - timezone menu usability
+   - skinning (user pref overrides CSS used?)
++  - posting page ForumCode help/tips
++  - database versioning
+ D - login form flickers on IE7 page load
+ D - [bug] user/profile doesn't show avatar
+ D - add i18n for 'or'
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-02-07 09:18:23 UTC (rev 785)
++++ trunk/lib/Parley.pm	2008-02-12 10:48:32 UTC (rev 786)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.58_99_005';
++our $VERSION = '0.58';
+ 
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000673.html">[Parley-svn] r785 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000675.html">[Parley-svn] r787 - / tags
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#674">[ date ]</a>
+              <a href="thread.html#674">[ thread ]</a>
+              <a href="subject.html#674">[ subject ]</a>
+              <a href="author.html#674">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

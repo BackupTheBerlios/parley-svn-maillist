@@ -1,0 +1,608 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r560 - / trunk/lib/Parley/I18N trunk/root/base/error	trunk/root/base/my
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r560%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/error%0A%09trunk/root/base/my&In-Reply-To=%3C200710131401.l9DE1npP001727%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000447.html">
+   <LINK REL="Next"  HREF="000449.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r560 - / trunk/lib/Parley/I18N trunk/root/base/error	trunk/root/base/my</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r560%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/error%0A%09trunk/root/base/my&In-Reply-To=%3C200710131401.l9DE1npP001727%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r560 - / trunk/lib/Parley/I18N trunk/root/base/error	trunk/root/base/my">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Oct 13 16:01:49 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000447.html">[Parley-svn] r559 - / trunk/lib/Parley/I18N trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000449.html">[Parley-svn] r561 - / trunk/lib/Parley/I18N trunk/root/base/post	trunk/root/base/search trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#448">[ date ]</a>
+              <a href="thread.html#448">[ thread ]</a>
+              <a href="subject.html#448">[ subject ]</a>
+              <a href="author.html#448">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-13 16:01:48 +0200 (Sat, 13 Oct 2007)
+New Revision: 560
+
+Modified:
+   /
+   trunk/lib/Parley/I18N/en.po
+   trunk/root/base/error/simple
+   trunk/root/base/my/preferences
+   trunk/root/base/my/tab_avatar
+   trunk/root/base/my/tab_notifications
+   trunk/root/base/my/tab_time
+   trunk/root/base/my/tab_watch
+   trunk/root/base/my/tab_you
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3980 at wiggin</A>:  chisel | 2007-10-13 15:01:45 +0100
+ + converted more template text to i18n ready
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3975
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3980
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/lib/Parley/I18N/en.po	2007-10-13 14:01:48 UTC (rev 560)
+@@ -13,24 +13,51 @@
+ msgid &quot;All Rights Reserved&quot;
+ msgstr &quot;All Rights Reserved&quot;
+ 
++msgid &quot;An error has occurred&quot;
++msgstr &quot;An error has occurred&quot;
++
++msgid &quot;Avatar&quot;
++msgstr &quot;Avatar&quot;
++
++msgid &quot;CHANGE AVATAR&quot;
++msgstr &quot;Change your avatar image by selecting a file and clicking the Upload button below&quot;
++
+ msgid &quot;Close&quot;
+ msgstr &quot;Close&quot;
+ 
+ msgid &quot;Contents&quot;
+ msgstr &quot;Contents&quot;
+ 
++msgid &quot;Continue&quot;
++msgstr &quot;Continue&quot;
++
++msgid &quot;Continue reading&quot;
++msgstr &quot;Continue reading&quot;
++
+ msgid &quot;Create New Thread&quot;
+ msgstr &quot;Create New Thread&quot;
+ 
++msgid &quot;Current Avatar&quot;
++msgstr &quot;Current Avatar&quot;
++
+ msgid &quot;Current User&quot;
+ msgstr &quot;Current User&quot;
+ 
++msgid &quot;Default&quot;
++msgstr &quot;Default&quot;
++
+ msgid &quot;Edit&quot;
+ msgstr &quot;Edit&quot;
+ 
+ msgid &quot;Edited&quot;
+ msgstr &quot;Edited&quot;
+ 
++msgid &quot;Email Address&quot;
++msgstr &quot;Email Address&quot;
++
++msgid &quot;First Name&quot;
++msgstr &quot;First Name&quot;
++
+ msgid &quot;Forgotten Password&quot;
+ msgstr &quot;Forgotten Password&quot;
+ 
+@@ -43,6 +70,9 @@
+ msgid &quot;Forum Moderators&quot;
+ msgstr &quot;Forum Moderators&quot;
+ 
++msgid &quot;Forum Name&quot;
++msgstr &quot;Forum Name&quot;
++
+ msgid &quot;Forum Summary&quot;
+ msgstr &quot;Forum Summary&quot;
+ 
+@@ -58,9 +88,21 @@
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Logged&quot;
+ 
++msgid &quot;Last Modified&quot;
++msgstr &quot;Last Modified&quot;
++
++msgid &quot;Last Name&quot;
++msgstr &quot;Last Name&quot;
++
+ msgid &quot;Last Post&quot;
+ msgstr &quot;Last Post&quot;
+ 
++msgid &quot;last post by&quot;
++msgstr &quot;last post by&quot;
++
++msgid &quot;Last Viewed&quot;
++msgstr &quot;Last Viewed&quot;
++
+ msgid &quot;Lock Thread&quot;
+ msgstr &quot;Lock Thread&quot;
+ 
+@@ -109,6 +151,9 @@
+ msgid &quot;None&quot;
+ msgstr &quot;None&quot;
+ 
++msgid &quot;Notifications&quot;
++msgstr &quot;Notifications&quot;
++
+ msgid &quot;Password&quot;
+ msgstr &quot;Password&quot;
+ 
+@@ -133,6 +178,15 @@
+ msgid &quot;Posts&quot;
+ msgstr &quot;Posts&quot;
+ 
++msgid &quot;PREFS ADD WATCHES&quot;
++msgstr &quot;Automatically add watches for new posts&quot;
++
++msgid &quot;PREFS DESIRED LOCATION&quot;
++msgstr &quot;Select your desired location. This will be used to display times using your local timezone.&quot;
++
++msgid &quot;PREFS EMAIL NOTIFICATION&quot;
++msgstr &quot;Receive email notification for watched threads&quot;
++
+ msgid &quot;Quote&quot;
+ msgstr &quot;Quote&quot;
+ 
+@@ -148,39 +202,81 @@
+ msgid &quot;Remove Watch&quot;
+ msgstr &quot;Remove Watch&quot;
+ 
++msgid &quot;Return to&quot;
++msgstr &quot;Return to&quot;
++
++msgid &quot;Return to the forum&quot;
++msgstr &quot;Return to the forum&quot;
++
+ msgid &quot;Search&quot;
+ msgstr &quot;Search&quot;
+ 
++msgid &quot;Select Zone&quot;
++msgstr &quot;Select Zone&quot;
++
+ msgid &quot;Services&quot;
+ msgstr &quot;Services&quot;
+ 
++msgid &quot;Show timezone&quot;
++msgstr &quot;Show timezone&quot;
++
+ msgid &quot;Site&quot;
+ msgstr &quot;Site&quot;
+ 
+ msgid &quot;Stick Thread&quot;
+ msgstr &quot;Stick Thread&quot;
+ 
++msgid &quot;Subject&quot;
++msgstr &quot;Subject&quot;
++
+ msgid &quot;Terms and Conditions&quot;
+ msgstr &quot;Terms &amp; Conditions&quot;
+ 
++msgid &quot;The following error message was returned by the application&quot;
++msgstr &quot;The following error message was returned by the application&quot;
++
+ msgid &quot;Thread&quot;
+ msgstr &quot;Thread&quot;
+ 
++msgid &quot;threads&quot;
++msgstr &quot;threads&quot;
++
+ msgid &quot;Thread Locked&quot;
+ msgstr &quot;Thread Locked&quot;
+ 
++msgid &quot;Time&quot;
++msgstr &quot;Time&quot;
++
++msgid &quot;Time formatting example&quot;
++msgstr &quot;Time formatting example&quot;
++
+ msgid &quot;Unlock Thread&quot;
+ msgstr &quot;Unlock Thread&quot;
+ 
++msgid &quot;Unread posts&quot;
++msgstr &quot;Unread posts&quot;
++
+ msgid &quot;Unstick Thread&quot;
+ msgstr &quot;Unstick Thread&quot;
+ 
++msgid &quot;Update&quot;
++msgstr &quot;Update&quot;
++
++msgid &quot;Upload&quot;
++msgstr &quot;Upload&quot;
++
++msgid &quot;Use UTC&quot;
++msgstr &quot;Use UTC&quot;
++
+ msgid &quot;Username&quot;
+ msgstr &quot;Username&quot;
+ 
+ msgid &quot;view&quot;
+ msgstr &quot;view&quot;
+ 
++msgid &quot;View all&quot;
++msgstr &quot;View all&quot;
++
+ msgid &quot;views&quot;
+ msgstr &quot;views&quot;
+ 
+@@ -189,3 +285,12 @@
+ 
+ msgid &quot;wrote&quot;
+ msgstr &quot;wrote&quot;
++
++msgid &quot;You are not watching any threads&quot;
++msgstr &quot;You are not watching any threads&quot;
++
++msgid &quot;Your Details&quot;
++msgstr &quot;Your Details&quot;
++
++msgid &quot;Your Preferences&quot;
++msgstr &quot;Your Preferences&quot;
+
+Modified: trunk/root/base/error/simple
+===================================================================
+--- trunk/root/base/error/simple	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/root/base/error/simple	2007-10-13 14:01:48 UTC (rev 560)
+@@ -1,8 +1,8 @@
+ [% IF error %]
+-&lt;h1&gt;An error has occurred&lt;/h1&gt;
++&lt;h1&gt;[%l('An error has occurred')%]&lt;/h1&gt;
+ 
+ &lt;p&gt;
+-The following error message was returned by the application:
++[%l('The following error message was returned by the application')%]:
+ 
+ &lt;blockquote&gt;[% error.message %]&lt;/blockquote&gt;
+ &lt;/p&gt;
+@@ -13,13 +13,13 @@
+ &lt;ul&gt;
+     [% IF current_thread %]
+     [% IF authed_user %]
+-    &lt;li&gt;Continue reading: &lt;a href=&quot;thread/next_post?thread=[%current_thread.id%]&quot;&gt;[%current_thread.subject%]&lt;/a&gt;&lt;/li&gt;
++    &lt;li&gt;[%l('Continue reading')%]: &lt;a href=&quot;thread/next_post?thread=[%current_thread.id%]&quot;&gt;[%current_thread.subject%]&lt;/a&gt;&lt;/li&gt;
+     [% END %]
+-    &lt;li&gt;Return to: &lt;a href=&quot;thread/view?thread=[%current_thread.id%]&quot;&gt;[%current_thread.subject%]&lt;/a&gt;&lt;/li&gt;
++    &lt;li&gt;[%l('Return to')%]: &lt;a href=&quot;thread/view?thread=[%current_thread.id%]&quot;&gt;[%current_thread.subject%]&lt;/a&gt;&lt;/li&gt;
+     [% END %]
+ 
+     [% IF current_forum %]
+-    &lt;li&gt;View all &lt;a href=&quot;forum/view?forum=[%current_forum.id%]&quot;&gt;[%current_forum.name%]&lt;/a&gt; threads&lt;/li&gt;
++    &lt;li&gt;[%l('View all')%] &lt;a href=&quot;forum/view?forum=[%current_forum.id%]&quot;&gt;[%current_forum.name%]&lt;/a&gt; [%l('threads')%]&lt;/li&gt;
+     [% END %]
+ &lt;/ul&gt;
+ [% END %]
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/root/base/my/preferences	2007-10-13 14:01:48 UTC (rev 560)
+@@ -1,4 +1,4 @@
+-&lt;h1&gt;Your preferences&lt;/h1&gt;
++&lt;h1&gt;[%l('Your Preferences')%]&lt;/h1&gt;
+ 
+ [% IF view.error.message %]
+     [% view.error.message %]
+@@ -11,10 +11,10 @@
+ 
+ &lt;div id=&quot;tabbed_prefs&quot; class=&quot;yui-navset&quot; style=&quot;max-width: 80%; margin-left: auto; margin-right: auto;&quot;&gt;
+     [% tab_info = [
+-            { label =&gt; 'Your Details',       tab_name =&gt; 'tab_you' },
+-            { label =&gt; 'Time',               tab_name =&gt; 'tab_time' },
+-            { label =&gt; 'Notifications',      tab_name =&gt; 'tab_notifications' },
+-            { label =&gt; 'Avatar',             tab_name =&gt; 'tab_avatar' },
++            { label =&gt; l('Your Details'),       tab_name =&gt; 'tab_you' },
++            { label =&gt; l('Time'),               tab_name =&gt; 'tab_time' },
++            { label =&gt; l('Notifications'),      tab_name =&gt; 'tab_notifications' },
++            { label =&gt; l('Avatar'),             tab_name =&gt; 'tab_avatar' },
+        ]
+     %]
+     [% SET selected_tab = c.flash.show_pref_tab || 'tab_you' %]
+@@ -37,7 +37,7 @@
+ 
+ [% IF c.session.my_pref_came_from %]
+ &lt;p&gt;
+-&lt;a href=&quot;[% c.session.my_pref_came_from %]&quot;&gt;Return to the forum&lt;/a&gt;
++&lt;a href=&quot;[% c.session.my_pref_came_from %]&quot;&gt;[%l('Return to the forum')%]&lt;/a&gt;
+ &lt;/p&gt;
+ [% ELSE %]
+ &lt;p&gt;&nbsp;&lt;/p&gt;
+
+Modified: trunk/root/base/my/tab_avatar
+===================================================================
+--- trunk/root/base/my/tab_avatar	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/root/base/my/tab_avatar	2007-10-13 14:01:48 UTC (rev 560)
+@@ -6,7 +6,7 @@
+         &lt;thead&gt;
+             &lt;tr&gt;
+                 &lt;td width=&quot;150&quot; align=&quot;center&quot;&gt;
+-                    Current Avatar
++                   [%l('Current Avatar')%] 
+                 &lt;/td&gt;
+                 &lt;td&gt;
+                     &nbsp;
+@@ -20,13 +20,12 @@
+                     [% INCLUDE shared/user_avatar person=authed_user %]
+                 &lt;/td&gt;
+                 &lt;td&gt;
+-                    Change your avatar image by selecting a file and clicking
+-                    the Upload button below:
++                    [%l('CHANGE AVATAR')%]:
+                     &lt;br /&gt;
+ 
+                     &lt;input type=&quot;file&quot; id=&quot;avatar_file&quot; name=&quot;avatar_file&quot; /&gt;
+ 
+-                    &lt;input type=&quot;submit&quot; value=&quot;Upload&quot; style=&quot;float: right;&quot;/&gt;
++                    &lt;input type=&quot;submit&quot; value=&quot;[%l('Upload')%]&quot; style=&quot;float: right;&quot;/&gt;
+                 &lt;/td&gt;
+             &lt;/tr&gt;
+         &lt;/tbody&gt;
+
+Modified: trunk/root/base/my/tab_notifications
+===================================================================
+--- trunk/root/base/my/tab_notifications	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/root/base/my/tab_notifications	2007-10-13 14:01:48 UTC (rev 560)
+@@ -7,13 +7,13 @@
+             &lt;tr&gt;
+                 &lt;td&gt;
+                     &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %] /&gt;
+-                    Automatically add watches for new posts
++                    [%l('PREFS ADD WATCHES')%] 
+                 &lt;/td&gt;
+             &lt;/tr&gt;
+             &lt;tr&gt;
+                 &lt;td&gt;
+                     &lt;input type=&quot;checkbox&quot; name=&quot;notify_thread_watch&quot; value=&quot;1&quot; [% IF authed_user.preference.notify_thread_watch %]checked=&quot;checked&quot; [% END %] /&gt;
+-                    Receive email notification for watched threads
++                    [%l('PREFS EMAIL NOTIFICATION')%] 
+                 &lt;/td&gt;
+             &lt;/tr&gt;
+ 
+@@ -21,7 +21,7 @@
+ 
+             &lt;tr&gt;
+                 &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-                &lt;input type=&quot;submit&quot; value=&quot;Update&quot; name=&quot;update&quot; class=&quot;input_button&quot; /&gt;
++                &lt;input type=&quot;submit&quot; value=&quot;[%l('Update')%]&quot; name=&quot;update&quot; class=&quot;input_button&quot; /&gt;
+                 &lt;/td&gt;
+             &lt;/tr&gt;
+         &lt;/tbody&gt;
+
+Modified: trunk/root/base/my/tab_time
+===================================================================
+--- trunk/root/base/my/tab_time	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/root/base/my/tab_time	2007-10-13 14:01:48 UTC (rev 560)
+@@ -1,5 +1,5 @@
+ &lt;!-- preferences : time tab --&gt;
+-&lt;p&gt;Select your desired location. This will be used to display times using your local timezone.&lt;/p&gt;
++&lt;p&gt;[%l('PREFS DESIRED LOCATION')%]&lt;/p&gt;
+ 
+ &lt;form action=&quot;my/preferences/update&quot; method=&quot;POST&quot; name=&quot;time_format&quot;&gt;
+     &lt;input type=&quot;hidden&quot; name=&quot;form_name&quot; value=&quot;time_format&quot;&gt;
+@@ -15,7 +15,7 @@
+         &lt;tr&gt;
+             &lt;td&gt;
+                 &lt;select id=&quot;selectZone&quot; name=&quot;selectZone&quot;&gt;
+-                    &lt;option value=&quot;&quot;&gt;[ Select Zone ]&lt;/option&gt;
++                    &lt;option value=&quot;&quot;&gt;[ [%l('Select Zone')%] ]&lt;/option&gt;
+                     [% FOREACH item=tz_categories %]
+                     &lt;option value=&quot;[% item %]&quot;&gt;[% item %]&lt;/option&gt;
+                     [% END %]
+@@ -23,7 +23,7 @@
+             &lt;/td&gt;
+ 
+             &lt;td class=&quot;right_align&quot; /&gt;
+-                &lt;label for=&quot;use_utc&quot;&gt;Use UTC&lt;/label&gt;
++                &lt;label for=&quot;use_utc&quot;&gt;[%l('Use UTC')%]&lt;/label&gt;
+                 &lt;input type=&quot;checkbox&quot; id=&quot;use_utc&quot; name=&quot;use_utc&quot; value=&quot;1&quot; onChange=&quot;toggle_timezone_menus(this)&quot;/&gt;
+             &lt;/td&gt;
+         &lt;/tr&gt;
+@@ -32,14 +32,14 @@
+         &lt;tr&gt;
+             &lt;td&gt;
+                 &lt;select id=&quot;time_format&quot; name=&quot;time_format&quot; style=&quot;text-align: center;&quot;&gt;
+-                    &lt;option value=&quot;&quot;&gt;(Default)&lt;/option&gt;
++                    &lt;option value=&quot;&quot;&gt;([%l('Default')%])&lt;/option&gt;
+                     [% WHILE (tf = time_formats.next) %]
+                     &lt;option value=&quot;[% tf.id %]&quot;&gt;[% tf.sample %]&lt;/option&gt;
+                     [% END %]
+                 &lt;/select&gt;
+             &lt;/td&gt;
+             &lt;td class=&quot;right_align&quot;&gt;
+-                &lt;label for=&quot;show_tz&quot;&gt;Show timezone&lt;/label&gt;
++                &lt;label for=&quot;show_tz&quot;&gt;[%l('Show timezone')%]&lt;/label&gt;
+                 &lt;input type=&quot;checkbox&quot; id=&quot;show_tz&quot; name=&quot;show_tz&quot; value=&quot;1&quot; /&gt;
+             &lt;/td&gt;
+         &lt;/tr&gt;
+@@ -47,7 +47,7 @@
+         &lt;!-- &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt; --&gt;
+ 
+         &lt;tr&gt;
+-            &lt;td&gt;Time formatting example:&lt;/td&gt;
++            &lt;td&gt;[%l('Time formatting example')%]:&lt;/td&gt;
+             &lt;td&gt;&lt;i&gt;[% nicedate(current_time) %]&lt;/i&gt;&lt;/td&gt;
+         &lt;/tr&gt;
+ 
+@@ -56,13 +56,13 @@
+ 
+         &lt;tr&gt;
+             &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-            &lt;input type=&quot;submit&quot; value=&quot;Update&quot; name=&quot;update&quot; class=&quot;input_button&quot; /&gt;
++            &lt;input type=&quot;submit&quot; value=&quot;[%l('Update')%]&quot; name=&quot;update&quot; class=&quot;input_button&quot; /&gt;
+             &lt;/td&gt;
+         &lt;/tr&gt;
+     &lt;/table&gt;
+ &lt;/form&gt;
+ 
+-&lt;script language=&quot;JavaScript&quot;&gt;
++&lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot;&gt;
+ &lt;!-- Begin
+ 
+     function toggle_timezone_menus(checkbox) {
+
+Modified: trunk/root/base/my/tab_watch
+===================================================================
+--- trunk/root/base/my/tab_watch	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/root/base/my/tab_watch	2007-10-13 14:01:48 UTC (rev 560)
+@@ -3,15 +3,15 @@
+         &lt;tbody&gt;
+             &lt;tr&gt;
+                 &lt;th style=&quot;width:14px;&quot;&gt;&nbsp;&lt;/th&gt;
+-                &lt;th&gt;Subject&lt;/th&gt;
+-                &lt;th&gt;Last Modified&lt;/th&gt;
+-                &lt;th&gt;Last Viewed&lt;/th&gt;
++                &lt;th&gt;[%l('Subject')%]&lt;/th&gt;
++                &lt;th&gt;[%l('Last Modified')%]&lt;/th&gt;
++                &lt;th&gt;[%l('Last Viewed')%]&lt;/th&gt;
+             [% WHILE (watch = thread_watches.next) %]
+             [% thread = watch.thread %]
+             &lt;tr&gt;
+                 &lt;td style=&quot;width:14px;&quot;&gt;
+                     [% IF (thread.last_post.created &gt; watch.timestamp) %]
+-                    &lt;img src=&quot;static/images/unread_posts.gif&quot; width=&quot;12&quot; height=&quot;12&quot; alt=&quot;Unread Posts&quot; title=&quot;Unread Posts&quot; /&gt;
++                    &lt;img src=&quot;static/images/unread_posts.gif&quot; width=&quot;12&quot; height=&quot;12&quot; alt=&quot;[%l('Unread posts')%]&quot; title=&quot;[%l('Unread posts')%]&quot; /&gt;
+                     [% ELSE %]
+                     &nbsp;
+                     [% END %]
+@@ -25,7 +25,7 @@
+                         [%- IF authed_user || mini_pager %]
+                         [
+                             [%- IF authed_user %]
+-                            &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;Continue&lt;/a&gt;
++                            &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;[%l('Continue')%]&lt;/a&gt;
+                             [%- END %]
+                         ]
+                         [%- END %]
+@@ -35,7 +35,7 @@
+                 &lt;td style=&quot;vertical-align: top;&quot;&gt;
+                     [% nicedate(thread.last_post.created) %]
+                     &lt;br /&gt;
+-                    &lt;span class=&quot;topic_creator&quot;&gt;last post by
++                    &lt;span class=&quot;topic_creator&quot;[%l('last post by')%]&gt;
+                     &lt;span class=&quot;post_creator&quot;&gt;[% thread.last_post.creator.forum_name %]&lt;/span&gt;
+                     &lt;/span&gt;
+                 &lt;/td&gt;
+@@ -44,7 +44,7 @@
+                     [% nicedate(watch.timestamp) %]
+                     &lt;br /&gt;
+                     [% IF (thread.last_post.created &gt; watch.timestamp) %]
+-                    &lt;span class=&quot;topic_creator&quot;&gt;Unread posts&lt;/span&gt;
++                    &lt;span class=&quot;topic_creator&quot;&gt;[%l('Unread posts')%]&lt;/span&gt;
+                     [% END %]
+                 &lt;/td&gt;
+             &lt;/tr&gt;
+@@ -52,5 +52,5 @@
+         &lt;/tbody&gt;
+     &lt;/table&gt;
+ [% ELSE %]
+-    &lt;p&gt;You are not watching any threads&lt;/p&gt;
++    &lt;p&gt;[%l('You are not watching any threads')%]&lt;/p&gt;
+ [% END %]
+
+Modified: trunk/root/base/my/tab_you
+===================================================================
+--- trunk/root/base/my/tab_you	2007-10-13 13:10:44 UTC (rev 559)
++++ trunk/root/base/my/tab_you	2007-10-13 14:01:48 UTC (rev 560)
+@@ -6,7 +6,7 @@
+     &lt;tbody&gt;
+         &lt;tr&gt;
+             &lt;td width=&quot;25%&quot;&gt;
+-                First Name:
++                [%l('First Name')%]:
+             &lt;/td&gt;
+ 
+             &lt;td id=&quot;FirstName&quot; name=&quot;First name&quot; class=&quot;editable&quot;&gt;[%authed_user.first_name%]&lt;/td&gt;
+@@ -14,7 +14,7 @@
+ 
+         &lt;tr&gt;
+             &lt;td width=&quot;25%&quot;&gt;
+-                Last Name:
++                [%l('Last Name')%]:
+             &lt;/td&gt;
+ 
+             &lt;td id=&quot;LastName&quot; class=&quot;editable&quot;&gt;[% authed_user.last_name %]&lt;/td&gt;
+@@ -22,7 +22,7 @@
+ 
+         &lt;tr&gt;
+             &lt;td width=&quot;25%&quot;&gt;
+-                Forum Name:
++                [%l('Forum Name')%]:
+             &lt;/td&gt;
+ 
+             &lt;td id=&quot;ForumName&quot; class=&quot;editable&quot;&gt;[% authed_user.forum_name %]&lt;/td&gt;
+@@ -30,7 +30,7 @@
+ 
+         &lt;tr&gt;
+             &lt;td width=&quot;25%&quot;&gt;
+-                Email Address:
++                [%l('Email Address')%]:
+             &lt;/td&gt;
+ 
+             &lt;td&gt;
+@@ -90,4 +90,3 @@
+ 
+     E.init();
+ &lt;/script&gt;
+-
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000447.html">[Parley-svn] r559 - / trunk/lib/Parley/I18N trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000449.html">[Parley-svn] r561 - / trunk/lib/Parley/I18N trunk/root/base/post	trunk/root/base/search trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#448">[ date ]</a>
+              <a href="thread.html#448">[ thread ]</a>
+              <a href="subject.html#448">[ subject ]</a>
+              <a href="author.html#448">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

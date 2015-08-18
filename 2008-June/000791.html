@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r903 - / trunk/doc
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r903%20-%20/%20trunk/doc&In-Reply-To=%3C200806162121.m5GLLJl6027041%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000790.html">
+   <LINK REL="Next"  HREF="000792.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r903 - / trunk/doc</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r903%20-%20/%20trunk/doc&In-Reply-To=%3C200806162121.m5GLLJl6027041%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r903 - / trunk/doc">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Jun 16 23:21:19 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000790.html">[Parley-svn] r902 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000792.html">[Parley-svn] r904 - / trunk/doc
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#791">[ date ]</a>
+              <a href="thread.html#791">[ thread ]</a>
+              <a href="subject.html#791">[ subject ]</a>
+              <a href="author.html#791">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-06-16 23:21:19 +0200 (Mon, 16 Jun 2008)
+New Revision: 903
+
+Added:
+   trunk/doc/fonts-min.css
+Modified:
+   /
+   trunk/doc/setup.html
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5501 at wiggin</A>:  chisel | 2008-05-29 21:45:36 +0100
+ + add YUI font normalizer to the docs; keeps things a bit nicer
+ + add more yum to the setup guide
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5500
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5501
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/doc/fonts-min.css
+===================================================================
+--- trunk/doc/fonts-min.css	2008-06-16 21:21:10 UTC (rev 902)
++++ trunk/doc/fonts-min.css	2008-06-16 21:21:19 UTC (rev 903)
+@@ -0,0 +1,7 @@
++/*
++Copyright (c) 2008, Yahoo! Inc. All rights reserved.
++Code licensed under the BSD License:
++<A HREF="http://developer.yahoo.net/yui/license.txt">http://developer.yahoo.net/yui/license.txt</A>
++version: 2.5.1
++*/
++body {font:13px/1.231 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small;}table {font-size:inherit;font:100%;}pre,code,kbd,samp,tt{font-family:monospace;*font-size:108%;line-height:100%;}
+
+Modified: trunk/doc/setup.html
+===================================================================
+--- trunk/doc/setup.html	2008-06-16 21:21:10 UTC (rev 902)
++++ trunk/doc/setup.html	2008-06-16 21:21:19 UTC (rev 903)
+@@ -6,6 +6,8 @@
+     &lt;head&gt;
+         &lt;title&gt;Parley - Setup Guide&lt;/title&gt;
+ 
++        &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;fonts-min.css&quot; /&gt;
++
+         &lt;style type=&quot;text/css&quot;&gt;
+             body {
+                 color:              #000;
+@@ -47,6 +49,17 @@
+             &lt;li&gt;&lt;a href=&quot;#launching&quot;&gt;Launching the Application&lt;/a&gt;&lt;/li&gt;
+             &lt;li&gt;&lt;a href=&quot;#email_engine&quot;&gt;The Email Engine&lt;/a&gt;&lt;/li&gt;
+             &lt;li&gt;&lt;a href=&quot;#using_parley&quot;&gt;Using Parley&lt;/a&gt;&lt;/li&gt;
++            &lt;ul&gt;
++                &lt;li&gt;&lt;a href=&quot;#site_usage_terms&quot;&gt;Site Usage Terms&lt;/a&gt;&lt;/li&gt;
++                &lt;li&gt;&lt;a href=&quot;#site_administration&quot;&gt;Site Administration&lt;/a&gt;&lt;/li&gt;
++                &lt;ul&gt;
++                    &lt;li&gt;&lt;a href=&quot;#services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
++                    &lt;li&gt;&lt;a href=&quot;#users&quot;&gt;Users&lt;/a&gt;&lt;/li&gt;
++                    &lt;li&gt;&lt;a href=&quot;#ip_bans&quot;&gt;IP Bans&lt;/a&gt;&lt;/li&gt;
++                &lt;/ul&gt;
++                &lt;li&gt;&lt;a href=&quot;#additional_user_administration&quot;&gt;Additional User Administration&lt;/a&gt;&lt;/li&gt;
++            &lt;/ul&gt;
++            &lt;li&gt;&lt;a href=&quot;#apache_fastcgi&quot;&gt;apache + fastcgi&lt;/a&gt;&lt;/li&gt;
+         &lt;/ol&gt;
+ 
+         &lt;a id=&quot;getting_parley&quot;&gt;&lt;/a&gt;
+@@ -127,11 +140,11 @@
+         run the application for testing and evaluation using
+         &lt;code&gt;script/parley_server.pl&lt;/code&gt;.&lt;/p&gt;
+ 
+-        &lt;p&gt;In its most simple form you can start that application with:&lt;/p&gt;
++        &lt;p&gt;In its most simple form you can start the application with:&lt;/p&gt;
+ 
+         &lt;blockquote&gt;&lt;code&gt;script/parley_server.pl&lt;/code&gt;&lt;/blockquote&gt;
+ 
+-        &lt;p&gt;If there are no problems you should see somthing similar to:
++        &lt;p&gt;If there are no problems you should see something similar to:
+ 
+         &lt;blockquote&gt;&lt;code&gt;[info] Parley powered by Catalyst 5.7012
+ You can connect to your server at <A HREF="http://localhost:3000&lt;/code">http://localhost:3000&lt;/code</A>&gt;&lt;/blockquote&gt;
+@@ -139,7 +152,12 @@
+         &lt;p&gt;View the URL in your browser and you should see the Forum List page
+         with three forums listed.&lt;/p&gt;
+ 
++        &lt;h3&gt;Running under apache&lt;/h3&gt;
+ 
++        &lt;p&gt;This is described in greater detail later in this document. At this
++        point in the process we just want to run the application and explore
++        it a little.&lt;/p&gt;
++
+         &lt;a id=&quot;email_engine&quot;&gt;&lt;/a&gt;
+         &lt;h2&gt;The Email Engine&lt;/h2&gt;
+ 
+@@ -193,7 +211,8 @@
+         &lt;p&gt;Both users can post, read posts, search, browse, etc. Top Dog also
+         has access to the &lt;em&gt;Site&lt;/em&gt; menu in the menu-bar.&lt;/p&gt;
+ 
+-        &lt;h2&gt;Site Usage Terms&lt;/h2&gt;
++        &lt;a id=&quot;site_usage_terms&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Site Usage Terms&lt;/h3&gt;
+ 
+         &lt;p&gt;One of the first tasks you may like to perform as Top Dog is adding
+         T&amp;Cs for the site. If Parley has T&amp;Cs defined all registered
+@@ -206,5 +225,81 @@
+ 
+         &lt;p&gt;You can add new T&amp;Cs by clicking the &lt;em&gt;Add T&amp;Cs&lt;/em&gt; item
+         in the &lt;em&gt;Site&lt;/em&gt; menu.&lt;/p&gt;
++
++        &lt;a id=&quot;site_administration&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Site Administration&lt;/h3&gt;
++
++        &lt;p&gt;As a &lt;em&gt;site moderator&lt;/em&gt; you will have access to the
++        &quot;Site&rarr;Manage&quot; menu.&lt;/p&gt;
++
++        &lt;p&gt;This is the primary area for checking on the status of services,
++        managing users and also various ban types&lt;/p&gt;
++
++        &lt;a id=&quot;services&quot;&gt;&lt;/a&gt;
++        &lt;h4&gt;Services&lt;/h4&gt;
++
++        &lt;p&gt;Lists known services (currently only the email-engine) and their
++        current status&lt;/p&gt;
++
++        &lt;a id=&quot;users&quot;&gt;&lt;/a&gt;
++        &lt;h4&gt;Users&lt;/h4&gt;
++
++        &lt;p&gt;This section currently provides role-management functionality. It's
++        functional, but in the early phases of development - which means it
++        could be nicer to use.&lt;/p&gt;
++
++        &lt;p&gt;Select the user you'd like to manage by typing the first part of
++        their name in the User Search field, then selecting the correct menu
++        item, and submitting the query.&lt;/p&gt;
++
++        &lt;p&gt;You'll be presented with a list of roles and checkboxes. Select and
++        unselect the options to your heart's delight&lt;/p&gt;
++
++        &lt;p&gt;&lt;b&gt;Note:&lt;/b&gt; you are not able to remove your own &quot;Site Moderator&quot;
++        role. Other site moderators can do it to you, you can do it to them.
++        Unless my brain is broken this means you'll always have a minimum of
++        one Site Moderator.&lt;/p&gt;
++
++        &lt;a id=&quot;ip_bans&quot;&gt;&lt;/a&gt;
++        &lt;h4&gt;IP Bans&lt;/h4&gt;
++
++        &lt;p&gt;Unfortunately there will always be at least one bad apple. The IP
++        bans are one tool in your battle against the Bad Ones. Banning by IP
++        isn't a silver bullet for numerous reasons but it can stop or slow
++        down some abusers.&lt;/p&gt;
++
++        &lt;p&gt;Click on the data area for the type of ban you'd like to edit and
++        edit the values in the text input area that appears. The items in the
++        list should be in CIDR format (&lt;em&gt;a.b.c.d/x&lt;/em&gt;) format.&lt;/p&gt;
++
++        &lt;p&gt;To remove bans, edit the field and remove the relevant entry.&lt;/p&gt;
++
++        &lt;p&gt;The anticipated escalation level for bans is:
++        posting, sign-up, login, all
++        &lt;/p&gt;
++
++        &lt;a id=&quot;additional_user_administration&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;Additional User Administration&lt;/h3&gt;
++
++        &lt;p&gt;Providing you have the required roles you will be able to perform
++        additional tasks from a user's profile page: &lt;em&gt;Suspend Account&lt;/em&gt;
++        and &lt;em&gt;Forum Moderation&lt;/em&gt;.&lt;/p&gt;
++
++        &lt;a id=&quot;apache_fastcgi&quot;&gt;&lt;/a&gt;
++        &lt;h3&gt;apache + fastcgi&lt;/h3&gt;
++
++        &lt;p&gt;Any vaguely sane deployment of parley &lt;strong&gt;will not&lt;/strong&gt; run
++        using &lt;i&gt;server/parley_server.pl&lt;/i&gt;.&lt;/p&gt;
++
++        &lt;p&gt;A common (and Catalyst recommended) deployment method is to use
++        &lt;em&gt;apache + fastcgi&lt;/em&gt;. The process is outlined in the
++        &lt;a href=&quot;&quot;&gt;Catalyst Cookbook&lt;/a&gt;&lt;/p&gt;
++
++        &lt;p&gt;Assuming you have a system with &lt;em&gt;a2ensite&lt;/em&gt; installed on it
++        you can do the following:&lt;/p&gt;
++
++        &lt;blockquote&gt;&lt;code&gt;sudo cp config/parley.sites-enabled /etc/apache2/sites-enabled/parley.named_vhost
++sudo vim /etc/apache2/sites-enabled/parley.named_vhost &lt;font color=&quot;green&quot;&gt;# make appropriate changes&lt;/font&gt;
++sudo a2en parley.named_vhost&lt;/code&gt;&lt;/blockquote&gt;
+     &lt;/body&gt;
+ &lt;/html&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000790.html">[Parley-svn] r902 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000792.html">[Parley-svn] r904 - / trunk/doc
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#791">[ date ]</a>
+              <a href="thread.html#791">[ thread ]</a>
+              <a href="subject.html#791">[ subject ]</a>
+              <a href="author.html#791">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

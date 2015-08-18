@@ -1,0 +1,350 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r230 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r230%20-%20/%20branches/schema_based/lib/Parley/Controller%0A%09branches/schema_based/lib/Parley/Schema&In-Reply-To=%3C200608161345.k7GDj3gU020719%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000117.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r230 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r230%20-%20/%20branches/schema_based/lib/Parley/Controller%0A%09branches/schema_based/lib/Parley/Schema&In-Reply-To=%3C200608161345.k7GDj3gU020719%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r230 - / branches/schema_based/lib/Parley/Controller	branches/schema_based/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:45:03 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000117.html">[Parley-svn] r229 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#118">[ date ]</a>
+              <a href="thread.html#118">[ thread ]</a>
+              <a href="subject.html#118">[ subject ]</a>
+              <a href="author.html#118">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:45:02 +0200 (Wed, 16 Aug 2006)
+New Revision: 230
+
+Modified:
+   /
+   branches/schema_based/lib/Parley/Controller/Thread.pm
+   branches/schema_based/lib/Parley/Schema/Post.pm
+   branches/schema_based/lib/Parley/Schema/Thread.pm
+   branches/schema_based/lib/Parley/Schema/ThreadView.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5151 at ferrari</A>:  chisel | 2006-08-16 10:01:47 +0100
+ + additions &amp; changes to include thread/view functionality
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5150
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: branches/schema_based/lib/Parley/Controller/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Controller/Thread.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -4,12 +4,6 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
+-sub index : Private {
+-    my ( $self, $c ) = @_;
+-
+-    $c-&gt;response-&gt;body('Matched Parley::Controller::Thread in Thread.');
+-}
+-
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
+@@ -24,7 +18,9 @@
+         $c-&gt;detach('/post/view');
+     }
+ 
++    ##################################################
+     # get all the posts in the thread
++    ##################################################
+     $c-&gt;stash-&gt;{post_list} = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
+         {
+             thread =&gt; $c-&gt;_current_thread-&gt;id(),
+@@ -36,8 +32,87 @@
+         }
+     );
+ 
++    ##################################################
++    # some updates for logged in users
++    ##################################################
++    if ($c-&gt;_authed_user) {
++        $c-&gt;log-&gt;debug('thread view by authed user');
++
++        # update thread_view for user
++        $self-&gt;_update_thread_view($c);
++
++        # store thread watch status info
++        $self-&gt;_watching_thread($c);
++    }
++
++    ##################################################
++    # general information for all viewers
++    ##################################################
++    {
++        # get the number of people watching the thread
++        $self-&gt;_thread_watch_count($c);
++    }
++
++    1; # return 'true'
+ }
+ 
++sub _thread_watch_count {
++    my ($self, $c) = @_;
++
++    # how many people are watching the current thread?
++    $c-&gt;stash-&gt;{watcher_count} = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;count(
++        {
++            thread  =&gt; $c-&gt;_current_thread()-&gt;id(),
++            watched =&gt; 1,
++        }
++    );
++}
++
++
++
++sub _watching_thread {
++    my ($self, $c) = @_;
++    
++    # find out if the user is watching the thread, and store it in the stash
++    $c-&gt;stash-&gt;{watching_thread} = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;watching_thread(
++        $c-&gt;_current_thread(),
++        $c-&gt;_authed_user(),
++    );
++}
++
++sub _update_thread_view {
++    my ($self, $c) = @_;
++
++    my ($last_post, $last_post_timestamp);
++    
++    # get the last post on the page
++    $last_post = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;last_post_in_list(
++        $c-&gt;stash-&gt;{post_list}
++    );
++    # get the timestamp of the last post
++    $last_post_timestamp = $last_post-&gt;created();
++    $c-&gt;log-&gt;debug( $last_post_timestamp );
++
++    # make a note of when the user last viewed this thread, if a record doesn't already exist
++    my $thread_view = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;find_or_create(
++        {
++            person      =&gt; $c-&gt;_authed_user()-&gt;id(),
++            thread      =&gt; $c-&gt;_current_thread()-&gt;id(),
++            timestamp   =&gt; $last_post_timestamp,
++        },
++    );
++
++    # set the timestamp the time of the last post on the page (unless the
++    # existing time is later)
++    if ($thread_view-&gt;timestamp() &lt; $last_post_timestamp) {
++        $c-&gt;log-&gt;debug('thread view time is less than last_post time');
++        $thread_view-&gt;timestamp( $last_post_timestamp );
++    }
++
++    # update/store the thread_view record
++    $thread_view-&gt;update;
++}
++
+ 1;
+ 
+ __END__
+@@ -52,10 +127,35 @@
+ 
+ Catalyst Controller.
+ 
+-=head1 METHODS
++=head1 ACTIONS
+ 
+-=head2 index 
++=head2 view
+ 
++This action prepares data in the stash for viewing the current thread.
++
++=head1 PRIVATE METHODS
++
++=head2 _thread_watch_count
++
++Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watcher_count}&gt; with the number of people who have a watch
++set for the current thread.
++
++=head2 _watching_thread
++
++Sets C&lt;$c-E&lt;gt&gt;stash-E&lt;gt&gt;{watching_thread}&gt; with a true|false value indicating
++whether the current authenticated user is watching the current thread.
++
++Sets 
++
++=head2 _update_thread_view
++
++This method updates an existing record in the thread_view table, or creates a
++new one if it doesn't exist.
++
++The timestamp value for the record (keyed on I&lt;person-thread&gt;) is updated to
++the timestamp of the creation time for the last post on the page - unless the
++user has already viewed a page containing later posts.
++
+ =head1 AUTHOR
+ 
+ Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
+
+Modified: branches/schema_based/lib/Parley/Schema/Post.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Schema/Post.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -9,7 +9,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;load_components(&quot;ResultSetManager&quot;, &quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;post&quot;);
+ __PACKAGE__-&gt;add_columns(
+   &quot;creator&quot;,
+@@ -94,5 +94,35 @@
+ 
+ 
+ 
++
++sub last_post_in_list : ResultSet {
++    my ($self, $post_list) = @_;
++
++    my $posts_in_list = $post_list-&gt;count();
++    warn &quot;posts_in_list:   $posts_in_list\n&quot;;
++    my $splice_position = $posts_in_list - 2;
++    warn &quot;splice_position: $splice_position\n&quot;;
++
++    # get the last post on the page
++    my $slice = $post_list-&gt;slice(
++        $splice_position,
++        $splice_position,
++    );
++    warn &quot;posts_in_slice:   &quot; . $slice-&gt;count() . &quot;\n&quot;;
++    warn (ref($slice));
++
++    if (defined $slice-&gt;first()) {
++        warn &quot;first in slice is defined\n&quot;;
++        warn $slice-&gt;first()-&gt;created();
++        return $slice-&gt;first();
++    }
++
++    warn &quot;return naff all\n&quot;;
++    return;
++}
++
++sub my_damn_function {
++}
++
+ 1;
+ 
+
+Modified: branches/schema_based/lib/Parley/Schema/Thread.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Schema/Thread.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -7,7 +7,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;load_components('ResultSetManager', &quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;thread&quot;);
+ __PACKAGE__-&gt;add_columns(
+   &quot;thread_id&quot;,
+@@ -85,5 +85,6 @@
+ 
+ 
+ 
++
+ 1;
+ 
+
+Modified: branches/schema_based/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:44:56 UTC (rev 229)
++++ branches/schema_based/lib/Parley/Schema/ThreadView.pm	2006-08-16 13:45:02 UTC (rev 230)
+@@ -7,7 +7,7 @@
+ 
+ use base 'DBIx::Class';
+ 
+-__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;load_components('ResultSetManager', &quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;thread_view&quot;);
+ __PACKAGE__-&gt;add_columns(
+   &quot;watched&quot;,
+@@ -59,5 +59,27 @@
+ }
+ 
+ 
++sub watching_thread : ResultSet {
++    my ($self, $thread, $person) = @_;
++
++    if (not defined $thread) {
++        warn 'undefined value passed as $thread in watching_thread()';
++        return;
++    }
++    if (not defined $person) {
++        warn 'undefined value passed as $person in watching_thread()';
++        return;
++    }
++
++    my $thread_view = $self-&gt;find(
++        {
++            person  =&gt; $person-&gt;id(),
++            thread  =&gt; $thread-&gt;id(),
++        }
++    );
++
++    return $thread_view-&gt;watched();
++}
++
+ 1;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000117.html">[Parley-svn] r229 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#118">[ date ]</a>
+              <a href="thread.html#118">[ thread ]</a>
+              <a href="subject.html#118">[ subject ]</a>
+              <a href="author.html#118">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

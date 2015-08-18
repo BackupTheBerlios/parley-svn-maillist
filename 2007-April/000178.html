@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r290 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r290%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200704132022.l3DKMTfr029336%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000177.html">
+   <LINK REL="Next"  HREF="000179.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r290 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r290%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200704132022.l3DKMTfr029336%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r290 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Apr 13 22:22:29 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000177.html">[Parley-svn] r289 - / trunk/db trunk/lib/Parley/Schema
+</A></li>
+        <LI>Next message: <A HREF="000179.html">[Parley-svn] r291 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#178">[ date ]</a>
+              <a href="thread.html#178">[ thread ]</a>
+              <a href="subject.html#178">[ subject ]</a>
+              <a href="author.html#178">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-13 22:22:29 +0200 (Fri, 13 Apr 2007)
+New Revision: 290
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3138 at wiggin</A>:  chisel | 2007-04-13 19:19:30 +0100
+ Nothing special ... just make a start on prefs working again
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3137
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3138
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-04-13 20:22:19 UTC (rev 289)
++++ trunk/lib/Parley/Controller/My.pm	2007-04-13 20:22:29 UTC (rev 290)
+@@ -4,33 +4,68 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
+-=head1 NAME
++sub auto : Private {
++    my ($self, $c) = @_;
++    # need to be logged in to perform any 'my' actions
++    my $status = $c-&gt;login_if_required(
++        q{You must be logged in before you can access this area}
++    );
++    if (not defined $status) {
++        return 0;
++    }
+ 
+-Parley::Controller::My - Catalyst Controller
++    # undecided if you need to be authed to perform 'my' actions
++    #if (not Parley::App::Helper-&gt;is_authenticted($c)) {
++    #    $c-&gt;stash-&gt;{error}{message} = q{You need to authenticate your registration before you can start a new topic.};
++    #}
+ 
+-=head1 DESCRIPTION
++    return 1;
++}
+ 
+-Catalyst Controller.
+ 
+-=head1 METHODS
++sub index : Private {
++    my ( $self, $c ) = @_;
+ 
+-=cut
++    $c-&gt;response-&gt;body('Matched Parley::Controller::My in My.');
++}
+ 
+ 
+-=head2 index 
++sub preferences : Local {
++    my ($self, $c) = @_;
++    my ($tz_categories);
+ 
+-=cut
++    # where did we come from? it would be nice to return there when we're done
++    if ($c-&gt;request-&gt;referer() !~ m{/my/preferences}xms) {
++        $c-&gt;session-&gt;{my_pref_came_from} = $c-&gt;request-&gt;referer();
++    }
+ 
+-sub index : Private {
+-    my ( $self, $c ) = @_;
++    # what's the current time? then we can show it in the TZ area
++    $c-&gt;stash-&gt;{current_time} = DateTime-&gt;now();
+ 
+-    $c-&gt;response-&gt;body('Matched Parley::Controller::My in My.');
++    # fetch timezone categories
++    $tz_categories = DateTime::TimeZone-&gt;categories();
++    $c-&gt;stash-&gt;{tz_categories} = $tz_categories;
++
++
++
++    return;
+ }
+ 
++=head1 NAME
+ 
++Parley::Controller::My - Catalyst Controller
++
++=head1 DESCRIPTION
++
++Catalyst Controller.
++
++=head1 METHODS
++
++=head2 index 
++
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C&lt;&lt; <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000177.html">[Parley-svn] r289 - / trunk/db trunk/lib/Parley/Schema
+</A></li>
+	<LI>Next message: <A HREF="000179.html">[Parley-svn] r291 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#178">[ date ]</a>
+              <a href="thread.html#178">[ thread ]</a>
+              <a href="subject.html#178">[ subject ]</a>
+              <a href="author.html#178">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

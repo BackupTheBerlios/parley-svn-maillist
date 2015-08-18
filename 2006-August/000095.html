@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r207 - / branches/schema_based/lib	branches/schema_based/lib/Template	branches/schema_based/lib/Template/Plugin
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r207%20-%20/%20branches/schema_based/lib%0A%09branches/schema_based/lib/Template%0A%09branches/schema_based/lib/Template/Plugin&In-Reply-To=%3C200608161342.k7GDgh3v017318%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000094.html">
+   <LINK REL="Next"  HREF="000096.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r207 - / branches/schema_based/lib	branches/schema_based/lib/Template	branches/schema_based/lib/Template/Plugin</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r207%20-%20/%20branches/schema_based/lib%0A%09branches/schema_based/lib/Template%0A%09branches/schema_based/lib/Template/Plugin&In-Reply-To=%3C200608161342.k7GDgh3v017318%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r207 - / branches/schema_based/lib	branches/schema_based/lib/Template	branches/schema_based/lib/Template/Plugin">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:42:43 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000094.html">[Parley-svn] r206 - / branches/schema_based	branches/schema_based/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000096.html">[Parley-svn] r208 - / branches/schema_based
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#95">[ date ]</a>
+              <a href="thread.html#95">[ thread ]</a>
+              <a href="subject.html#95">[ subject ]</a>
+              <a href="author.html#95">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:42:42 +0200 (Wed, 16 Aug 2006)
+New Revision: 207
+
+Added:
+   branches/schema_based/lib/Template/
+   branches/schema_based/lib/Template/Plugin/
+   branches/schema_based/lib/Template/Plugin/ForumCode.pm
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5122 at ferrari</A>:  chisel | 2006-08-11 09:10:35 +0100
+ + copied Template/ from trunk/lib/
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5121
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5122
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: branches/schema_based/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- branches/schema_based/lib/Template/Plugin/ForumCode.pm	2006-08-16 13:42:38 UTC (rev 206)
++++ branches/schema_based/lib/Template/Plugin/ForumCode.pm	2006-08-16 13:42:42 UTC (rev 207)
+@@ -0,0 +1,228 @@
++package Template::Plugin::ForumCode;
++use strict;
++use warnings;
++
++use base qw{ Template::Plugin };
++use base qw{ Template::Plugin::HTML };
++
++our $VERSION = '0.01_01';
++
++sub new {
++    my ($class, $context, @args) = @_;
++
++    my $new_obj = bless {}, $class;
++
++    # simple [x][/x] --&gt; &lt;x&gt;&lt;/x&gt; tags
++    $new_obj-&gt;{simple_tags} = [qw{
++        b
++        u
++        i
++    }];
++    # replacements; e.g. __x__ --&gt; &lt;u&gt;x&lt;/u&gt;
++    $new_obj-&gt;{replacements} = [
++        {   from =&gt; '__',       to =&gt; 'u'   },
++        {   from =&gt; '\*\*',     to =&gt; 'b'   },
++        {   from =&gt; '\/\/',     to =&gt; 'i'   },
++    ];
++
++    return $new_obj;
++}
++
++sub forumcode {
++    my ($self, $text) = @_;
++
++    # first of all ESCAPE EVERYTHING!
++    $text = Template::Plugin::HTML-&gt;escape($text);
++
++    # turn newlines into &lt;br /&gt; tags
++    $self-&gt;_preserve_newlines(\$text );
++
++    $self-&gt;_simple_tags     ( \$text );
++    $self-&gt;_replacements    ( \$text );
++    $self-&gt;_colouring       ( \$text );
++    $self-&gt;_lists           ( \$text );
++    $self-&gt;_url_links       ( \$text );
++    $self-&gt;_images          ( \$text );
++    
++    return $text;
++}
++
++sub _preserve_newlines {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{\n}{&lt;br /&gt;}xmsg;
++}
++
++sub _simple_tags {
++    my ($self, $textref) = @_;
++
++    # deal with acceptable [x]...[/x] markup
++    foreach my $tag (@{ $self-&gt;{simple_tags} }) {
++        # we should be able to combine these two into one
++        $$textref =~ s{\[$tag\]}{&lt;$tag&gt;}g;
++        $$textref =~ s{\[/$tag\]}{&lt;/$tag&gt;}g;
++    }
++}
++
++sub _replacements {
++    my ($self, $textref) = @_;
++
++    # now deal with replacements
++    foreach my $tag (@{ $self-&gt;{replacements} }) {
++        $$textref =~ s{
++            $tag-&gt;{from}
++            (.+?)
++            $tag-&gt;{from}
++        }
++        {&lt;$tag-&gt;{to}&gt;$1&lt;/$tag-&gt;{to}&gt;}gx;
++    }
++}
++
++sub _url_links {
++    my ($self, $textref) = @_;
++
++    # deal with links with no text-label
++    $$textref =~ s{\[url\](.+?)\[/url\]}
++        {&lt;a href=&quot;$1&quot;&gt;$1&lt;/a&gt;}xmsg;
++    # deal with links with a text-label
++    $$textref =~ s{
++        \[url           # start of url tag
++        \s+             # need some whitespace
++        name=&quot;     # name=&quot;
++        (.+?)           # the name
++        &quot;          # closing &quot;
++        \s*             # optional whitespace
++        \]              # close the opening tag
++        (.+?)           # the url
++        \[/url\]        # close the URL tag
++    }
++    {&lt;a href=&quot;$2&quot;&gt;$1&lt;/a&gt;}xmsg;
++}
++
++sub _images {
++    my ($self, $textref) = @_;
++
++    # deal with image tags
++    $$textref =~ s{
++        \[img
++        (.*?)
++        \]
++        (.+?)
++        \[/img\]
++    }
++    {&lt;img src=&quot;$2&quot;$1 /&gt;}xmsg;
++}
++
++sub _colouring {
++    my ($self, $textref) = @_;
++
++    # deal with colouring
++    $$textref =~ s{
++        \[color
++        =
++        (
++              red | orange | yellow | green | blue
++            | black | white
++            | \#[0-9a-fA-F]{3}
++            | \#[0-9a-fA-F]{6}
++        )
++        \]
++        (.+?)
++        \[/color\]
++    }
++    {&lt;span style=&quot;color: $1&quot;&gt;$2&lt;/span&gt;}ixmsg;
++}
++
++sub _lists {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{
++        \[list]
++        (.+?)
++        \[/list]
++    }
++    {&lt;li&gt;$1&lt;/li&gt;}xmsg;
++}
++
++sub _list_elements {
++    my ($textref);
++}
++
++1;
++__END__
++vim: ts=8 sts=4 et sw=4 sr sta
++
++=pod
++
++=head1 NAME
++
++Template::Plugin::ForumCode - class for &quot;ForumCode&quot; filter
++
++=head1 SYNOPSIS
++
++  # load the TT module
++  [% USE ForumCode %]
++
++  # ForumCodify some text
++  [% ForumCode.forumcode('[b]bold[/u] [u]underlined[/u] [i]italic[/i]') %]
++  [% ForumCode.forumcode('**bold** __underlined__') %]
++
++=head1 DESCRIPTION
++
++This module implements ForumCode, a simple markup language inspired by the
++likes of BBCode.
++
++ForumCode allows end-users (of a web-site) limited access to a set of HTML
++markup through a HTML-esque syntax.
++
++This module works by using L&lt;Template::Plugin::HTML&gt; to escape all HTML
++entities and markup. It then performs a series of transformations to convert
++ForumCode markup into the appropriate HTML markup.
++
++=head1 MARKUP
++
++The ForumCode plugin will perform the following transformations:
++
++=over 4
++
++=item B&lt;[b]&gt;...B&lt;[/b]&gt; or B&lt;**&gt;...B&lt;**&gt;
++
++Make the text between the markers I&lt;bold&gt;.
++
++=item B&lt;[u]&gt;...B&lt;[/u]&gt; or B&lt;__&gt;...B&lt;___&gt;
++
++Make the text between the markers I&lt;underlined&gt;.
++  
++=item B&lt;[i]&gt;...B&lt;[/i]&gt;
++
++Make the text between the markers I&lt;italicised&gt;.
++
++=item B&lt;[url]&gt;...B&lt;[/url]&gt;
++
++Make the text between the markers into a HTML link. If you
++would like to give the link a name, use the following format:
++
++S&lt;[url B&lt;name=&quot;...&quot;&gt;]...[/url]&gt;
++
++=back
++
++=head1 METHODS
++
++=head2 new
++
++Create a new instance of the plugin for TT usage
++
++=head2 forumcode
++
++The transformation function
++
++=head1 AUTHOR
++
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt; &gt;&gt;
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000094.html">[Parley-svn] r206 - / branches/schema_based	branches/schema_based/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000096.html">[Parley-svn] r208 - / branches/schema_based
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#95">[ date ]</a>
+              <a href="thread.html#95">[ thread ]</a>
+              <a href="subject.html#95">[ subject ]</a>
+              <a href="author.html#95">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

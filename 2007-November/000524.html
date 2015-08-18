@@ -1,0 +1,882 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r636 - / trunk trunk/lib/Parley/I18N	trunk/root/base/help trunk/root/email_templates
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r636%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/help%20trunk/root/email_templates&In-Reply-To=%3C200711031024.lA3AOGpH003294%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000523.html">
+   <LINK REL="Next"  HREF="000525.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r636 - / trunk trunk/lib/Parley/I18N	trunk/root/base/help trunk/root/email_templates</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r636%20-%20/%20trunk%20trunk/lib/Parley/I18N%0A%09trunk/root/base/help%20trunk/root/email_templates&In-Reply-To=%3C200711031024.lA3AOGpH003294%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r636 - / trunk trunk/lib/Parley/I18N	trunk/root/base/help trunk/root/email_templates">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Nov  3 11:24:16 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000523.html">[Parley-svn] r635 - / trunk/lib/Parley/Controller trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000525.html">[Parley-svn] r637 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#524">[ date ]</a>
+              <a href="thread.html#524">[ thread ]</a>
+              <a href="subject.html#524">[ subject ]</a>
+              <a href="author.html#524">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-03 11:24:16 +0100 (Sat, 03 Nov 2007)
+New Revision: 636
+
+Added:
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/help/i_default/
+   trunk/root/email_templates/i_default/
+Removed:
+   trunk/lib/Parley/I18N/en.po
+   trunk/root/base/help/en/
+   trunk/root/email_templates/en/
+Modified:
+   /
+   trunk/Changes.i18n
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4128 at wiggin</A>:  chisel | 2007-11-02 22:10:55 +0000
+ / renaming 'en' to 'i_default'
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4127
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4128
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2007-11-03 10:24:06 UTC (rev 635)
++++ trunk/Changes.i18n	2007-11-03 10:24:16 UTC (rev 636)
+@@ -3,10 +3,13 @@
+ 
+ The inention is for 'en' to be the main/key language for the application with
+ other translations being made from it.  As a consequence of this, i-default
+-(i_default.po) should always be an exact copy of the en (en.po) file(s).
++will be used as the 'en' i18n file.
++It's unlikely that we'll need an 'en' file in the project.
+ 
+ 0.58
+-    en.po:
++    (en renamed to i_default)
++
++    i_default.po:
+         - 'There is no current forum to view'
+         - 'There is no current thread to view'
+ 
+
+Deleted: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-11-03 10:24:06 UTC (rev 635)
++++ trunk/lib/Parley/I18N/en.po	2007-11-03 10:24:16 UTC (rev 636)
+@@ -1,755 +0,0 @@
+-msgid &quot;406 Not Found&quot;
+-msgstr &quot;404 Not Found&quot;
+-
+-msgid &quot;ACCEPT TERMS&quot;
+-msgstr &quot;You need to accept the Terms and Conditions below to continue using the site&quot;
+-
+-msgid &quot;Activate Your %s Registration&quot;
+-msgstr &quot;Activate Your %s Registration&quot;
+-
+-msgid &quot;Active&quot;
+-msgstr &quot;Active&quot;
+-
+-msgid &quot;ADD THREAD WATCH&quot;
+-msgstr &quot;Add a Thread Watch&quot;
+-
+-msgid &quot;Add Reply&quot;
+-msgstr &quot;Add Reply&quot;
+-
+-msgid &quot;Add T-and-Cs&quot;
+-msgstr &quot;Add T&amp;Cs&quot;
+-
+-msgid &quot;Add Watch&quot;
+-msgstr &quot;Add Watch&quot;
+-
+-msgid &quot;ADMIN SPECIFY LOCK THREAD&quot;
+-msgstr &quot;You must specify the thread to lock&quot;
+-
+-msgid &quot;ADMIN SPECIFY STICK THREAD&quot;
+-msgstr &quot;You must specify the thread to stick&quot;
+-
+-msgid &quot;ago&quot;
+-msgstr &quot;ago&quot;
+-
+-msgid &quot;All Forums&quot;
+-msgstr &quot;All Forums&quot;
+-
+-msgid &quot;All Rights Reserved&quot;
+-msgstr &quot;All Rights Reserved&quot;
+-
+-msgid &quot;An email has been sent to&quot;
+-msgstr &quot;An email has been sent to&quot;
+-
+-msgid &quot;An error has occurred&quot;
+-msgstr &quot;An error has occurred&quot;
+-
+-msgid &quot;AUTHENTICATION FAILED&quot;
+-msgstr &quot;Unable to authenticate the supplied login credentials&quot;
+-
+-msgid &quot;Avatar&quot;
+-msgstr &quot;Avatar&quot;
+-
+-msgid &quot;CHANGE AVATAR&quot;
+-msgstr &quot;Change your avatar image by selecting a file and clicking the Upload button below&quot;
+-
+-msgid &quot;Click on the login link to continue&quot;
+-msgstr &quot;Click on the login link to continue&quot;
+-
+-msgid &quot;Close&quot;
+-msgstr &quot;Close&quot;
+-
+-msgid &quot;Comment&quot;
+-msgstr &quot;Comment&quot;
+-
+-msgid &quot;Confirm Password&quot;
+-msgstr &quot;Confirm Password&quot;
+-
+-msgid &quot;Contents&quot;
+-msgstr &quot;Contents&quot;
+-
+-msgid &quot;Continue&quot;
+-msgstr &quot;Continue&quot;
+-
+-msgid &quot;Continue reading&quot;
+-msgstr &quot;Continue reading&quot;
+-
+-msgid &quot;Create New Thread&quot;
+-msgstr &quot;Create New Thread&quot;
+-
+-msgid &quot;created by&quot;
+-msgstr &quot;created by&quot;
+-
+-msgid &quot;Current Avatar&quot;
+-msgstr &quot;Current Avatar&quot;
+-
+-msgid &quot;Current Forum&quot;
+-msgstr &quot;Current Forum&quot;
+-
+-msgid &quot;Current User&quot;
+-msgstr &quot;Current User&quot;
+-
+-msgid &quot;DATABASE CRITERIA MISSING&quot;
+-msgstr &quot;Missing criteria in database lookup&quot;
+-
+-msgid &quot;DATABASE TOO MANY RECORDS&quot;
+-msgstr &quot;The database lookup returned too many records&quot;
+-
+-msgid &quot;Default&quot;
+-msgstr &quot;Default&quot;
+-
+-msgid &quot;DFV FIELDS MISSING&quot;
+-msgstr &quot;One or more required fields are missing.&quot;
+-
+-msgid &quot;DFV FIELDS INVALID&quot;
+-msgstr &quot;One or more fields are invalid.&quot;
+-
+-msgid &quot;DFV FILL REQUIRED&quot;
+-msgstr &quot;You must fill in all the required fields.&quot;
+-
+-msgid &quot;EDIT LOCKED POST&quot;
+-msgstr &quot;You can't edit locked posts.&quot;
+-
+-msgid &quot;EDIT LOGIN REQUIRED&quot;
+-msgstr &quot;You must be logged in before you can edit your posts.&quot;
+-
+-msgid &quot;EDIT OWN POSTS ONLY&quot;
+-msgstr &quot;You can only edit posts you have made.&quot;
+-
+-msgid &quot;Edit&quot;
+-msgstr &quot;Edit&quot;
+-
+-msgid &quot;Edited&quot;
+-msgstr &quot;Edited&quot;
+-
+-msgid &quot;Email Address&quot;
+-msgstr &quot;Email Address&quot;
+-
+-msgid &quot;Email Engine&quot;
+-msgstr &quot;Email Engine&quot;
+-
+-msgid &quot;EMAIL FAILED STORE&quot;
+-msgstr &quot;Sorry, we are currently unable to store your information. Please try again later.&quot;
+-
+-msgid &quot;EMAIL IN USE (%1)&quot;
+-msgstr &quot;The email address you have chosen is already in use.&lt;br /&gt;Please try a different one, or use the &lt;a href=\&quot;%1\&quot;&gt;Forgotten Password&lt;/a&gt; page.&quot;
+-
+-msgid &quot;EMAIL SEND PROBLEM&quot;
+-msgstr &quot;There was a problem sending an email from the system&quot;
+-
+-msgid &quot;EMAIL MISSING SUBJECT&quot;
+-msgstr &quot;Subject Line Missing&quot;
+-
+-msgid &quot;ENTER REPLY&quot;
+-msgstr &quot;Please enter your reply in the form below&quot;
+-
+-msgid &quot;FILE NOT IMAGE&quot;
+-msgstr &quot;Uploaded file does not appear to be an image file&quot;
+-
+-msgid &quot;FILE NEWDIR FAILED&quot;
+-msgstr &quot;Failed to create destination directory.  Unable to store upload.&quot;
+-
+-msgid &quot;FILE STORE FAILED&quot;
+-msgstr &quot;Failed to store upload.&quot;
+-
+-msgid &quot;FILE TOO LARGE&quot;
+-msgstr &quot;File size too large. File must be no larger than 20K.&quot;
+-
+-msgid &quot;First&quot;
+-msgstr &quot;First&quot;
+-
+-msgid &quot;First Name&quot;
+-msgstr &quot;First Name&quot;
+-
+-msgid &quot;Forgotten Password&quot;
+-msgstr &quot;Forgotten Password&quot;
+-
+-msgid &quot;Forum&quot;
+-msgstr &quot;Forum&quot;
+-
+-msgid &quot;Forums&quot;
+-msgstr &quot;Forums&quot;
+-
+-msgid &quot;Forum List&quot;
+-msgstr &quot;Forum List&quot;
+-
+-msgid &quot;Forum Moderators&quot;
+-msgstr &quot;Forum Moderators&quot;
+-
+-msgid &quot;Forum Name&quot;
+-msgstr &quot;Forum Name&quot;
+-
+-msgid &quot;Forum Summary&quot;
+-msgstr &quot;Forum Summary&quot;
+-
+-msgid &quot;FORUMNAME IN USE&quot;
+-msgstr &quot;The forum name you have chosen is already in use. Please try a different one.&quot;
+-
+-msgid &quot;FORUMNAME USED&quot;
+-msgstr &quot;has already been used by another user.&quot;
+-
+-msgid &quot;General&quot;
+-msgstr &quot;General&quot;
+-
+-msgid &quot;Guest User&quot;
+-msgstr &quot;Guest User&quot;
+-
+-msgid &quot;Go&quot;
+-msgstr &quot;Go&quot;
+-
+-msgid &quot;Help&quot;
+-msgstr &quot;Help&quot;
+-
+-msgid &quot;Incomplete authentication URL&quot;
+-msgstr &quot;Incomplete authentication URL&quot;
+-
+-msgid &quot;Incomplete URL&quot;
+-msgstr &quot;Incomplete URL&quot;
+-
+-msgid &quot;IP Logged&quot;
+-msgstr &quot;IP Logged&quot;
+-
+-msgid &quot;Last&quot;
+-msgstr &quot;Last&quot;
+-
+-msgid &quot;Last Modified&quot;
+-msgstr &quot;Last Modified&quot;
+-
+-msgid &quot;Last Name&quot;
+-msgstr &quot;Last Name&quot;
+-
+-msgid &quot;Last Post&quot;
+-msgstr &quot;Last Post&quot;
+-
+-msgid &quot;last post by&quot;
+-msgstr &quot;last post by&quot;
+-
+-msgid &quot;Last Viewed&quot;
+-msgstr &quot;Last Viewed&quot;
+-
+-msgid &quot;LOCK AFTER POSTING&quot;
+-msgstr &quot;Lock thread after posting&quot;
+-
+-msgid &quot;Lock Thread&quot;
+-msgstr &quot;Lock Thread&quot;
+-
+-msgid &quot;Locked&quot;
+-msgstr &quot;Locked&quot;
+-
+-msgid &quot;Locked Topic&quot;
+-msgstr &quot;Locked Topic&quot;
+-
+-msgid &quot;LOGIN ADD REPLY&quot;
+-msgstr &quot;You must be logged in before you can add a reply.&quot;
+-
+-msgid &quot;LOGIN NEW TOPIC&quot;
+-msgstr &quot;You must be logged in to add a new topic.&quot;
+-
+-msgid &quot;LOGIN REQUIRED&quot;
+-msgstr &quot;You must be logged in before you can access this area.&quot;
+-
+-msgid &quot;LOGIN THREAD CONTINUE&quot;
+-msgstr &quot;You must be logged in before you can use the thread continuation function.&quot;
+-
+-msgid &quot;LOGIN USE NEW&quot;
+-msgstr &quot;Please log-in using your username and your &lt;u&gt;new&lt;/u&gt; password.&quot;
+-
+-msgid &quot;LOGIN VIEW WATCHES&quot;
+-msgstr &quot;You must be logged in before you can view your watched threads.&quot;
+-
+-msgid &quot;LOGIN WATCH TOPIC&quot;
+-msgstr &quot;You must be logged in before you can watch a topic.&quot;
+-
+-msgid &quot;Logged in as&quot;
+-msgstr &quot;Logged in as&quot;
+-
+-msgid &quot;Login&quot;
+-msgstr &quot;Login&quot;
+-
+-msgid &quot;Logout&quot;
+-msgstr &quot;Logout&quot;
+-
+-msgid &quot;Me&quot;
+-msgstr &quot;Me&quot;
+-
+-msgid &quot;Main Page&quot;
+-msgstr &quot;Main Page&quot;
+-
+-msgid &quot;Message&quot;
+-msgstr &quot;Message&quot;
+-
+-msgid &quot;Moderate&quot;
+-msgstr &quot;Moderate&quot;
+-
+-msgid &quot;My Preferences&quot;
+-msgstr &quot;My Preferences&quot;
+-
+-msgid &quot;My Profile&quot;
+-msgstr &quot;My Profile&quot;
+-
+-msgid &quot;My Watched Threads&quot;
+-msgstr &quot;My Watched Threads&quot;
+-
+-msgid &quot;Name&quot;
+-msgstr &quot;Name&quot;
+-
+-msgid &quot;Never Posted&quot;
+-msgstr &quot;Never Posted&quot;
+-
+-msgid &quot;New Password&quot;
+-msgstr &quot;New Password&quot;
+-
+-msgid &quot;Next&quot;
+-msgstr &quot;Next&quot;
+-
+-msgid &quot;Nickname&quot;
+-msgstr &quot;Nickname&quot;
+-
+-msgid &quot;No&quot;
+-msgstr &quot;No&quot;
+-
+-msgid &quot;No posts&quot;
+-msgstr &quot;No posts&quot;
+-
+-msgid &quot;NO MATCHING USERS&quot;
+-msgstr &quot;There are no users matching that information&quot;
+-
+-msgid &quot;NO RECENT THREADS&quot;
+-msgstr &quot;No recent threads to display&quot;
+-
+-msgid &quot;NO SEARCH RESULTS&quot;
+-msgstr &quot;No results found matching specified terms&quot;
+-
+-msgid &quot;NO SITE TERMS&quot;
+-msgstr &quot;This site has no Terms and Conditions to view&quot;
+-
+-msgid &quot;No Such Form&quot;
+-msgstr &quot;No Such Form&quot;
+-
+-msgid &quot;No User Avatar&quot;
+-msgstr &quot;No User Avatar&quot;
+-
+-msgid &quot;No User Specified&quot;
+-msgstr &quot;No User Specified&quot;
+-
+-msgid &quot;non-integer forum id passed&quot;
+-msgstr &quot;Non-integer forum id passed&quot;
+-
+-msgid &quot;non-integer post id passed&quot;
+-msgstr &quot;Non-integer post id passed&quot;
+-
+-msgid &quot;non-integer thread id passed&quot;
+-msgstr &quot;Non-integer thread id passed&quot;
+-
+-msgid &quot;non-integer user id passed&quot;
+-msgstr &quot;Non-integer user id passed&quot;
+-
+-msgid &quot;None&quot;
+-msgstr &quot;None&quot;
+-
+-msgid &quot;Notifications&quot;
+-msgstr &quot;Notifications&quot;
+-
+-msgid &quot;Not Authenticated&quot;
+-msgstr &quot;Not Authenticated&quot;
+-
+-msgid &quot;of&quot;
+-msgstr &quot;of&quot;
+-
+-msgid &quot;Page&quot;
+-msgstr &quot;Page&quot;
+-
+-msgid &quot;PASSWORD DETAILS SENT&quot;
+-msgstr &quot;You should recieve an email in the next few minutes with further instructions to reset your password.&quot;
+-
+-msgid &quot;PASSWORD EMAIL SEND FAILED&quot;
+-msgstr &quot;The application failed to send the password reset email.&quot;
+-
+-msgid &quot;PASSWORD ENTER DETAILS&quot;
+-msgstr &quot;Please enter your username and password&quot;
+-
+-msgid &quot;PASSWORD GAIN&quot;
+-msgstr &quot;To gain access to your account your password can be re-set, and an authentication email re-sent.&quot;
+-
+-msgid &quot;PASSWORD IMPOSSIBLE&quot;
+-msgstr &quot;This makes it impossible to remind you of your current password.&quot;
+-
+-msgid &quot;PASSWORD PROCEED&quot;
+-msgstr &quot;If you wish to proceed please enter the username or email address you signed up with.&quot;
+-
+-msgid &quot;PASSWORD RESET&quot;
+-msgstr &quot;To reset your password enter your username and your desired password in the fields below, then click the &lt;em&gt;reset my password&lt;/em&gt; button to proceed.&quot;
+-
+-msgid &quot;PASSWORD RESET ID BOGUS&quot;
+-msgstr &quot;Bogus password reset ID&quot;
+-
+-msgid &quot;PASSWORD RESET SUCCESS&quot;
+-msgstr &quot;Your password has been set to the value you entered.&quot;
+-
+-msgid &quot;PASSWORD RESET URL INCOMPLETE&quot;
+-msgstr &quot;Incomplete password reset URL.&quot;
+-
+-msgid &quot;PASSWORD STORES&quot;
+-msgstr &quot;stores an encrypted copy of your password or email address you signed up with.&quot;
+-
+-msgid &quot;Password&quot;
+-msgstr &quot;Password&quot;
+-
+-msgid &quot;Password Reminder&quot;
+-msgstr &quot;Password Reminder&quot;
+-
+-msgid &quot;Password Reminder&quot;
+-msgstr &quot;Password Reminder&quot;
+-
+-msgid &quot;person&quot;
+-msgstr &quot;person&quot;
+-
+-msgid &quot;Please enter your information&quot;
+-msgstr &quot;Please enter your information&quot;
+-
+-msgid &quot;Please enter your username and password&quot;
+-msgstr &quot;Please enter your username and password&quot;
+-
+-msgid &quot;people&quot;
+-msgstr &quot;people&quot;
+-
+-msgid &quot;posted by&quot;
+-msgstr &quot;posted by&quot;
+-
+-msgid &quot;Posted From&quot;
+-msgstr &quot;Posted From&quot;
+-
+-msgid &quot;Posts&quot;
+-msgstr &quot;Posts&quot;
+-
+-msgid &quot;posts&quot;
+-msgstr &quot;posts&quot;
+-
+-msgid &quot;Posts Made&quot;
+-msgstr &quot;Posts Made&quot;
+-
+-msgid &quot;PREFS ADD WATCHES&quot;
+-msgstr &quot;Automatically add watches for new posts&quot;
+-
+-msgid &quot;PREFS DESIRED LOCATION&quot;
+-msgstr &quot;Select your desired location. This will be used to display times using your local timezone.&quot;
+-
+-msgid &quot;PREFS EMAIL NOTIFICATION&quot;
+-msgstr &quot;Receive email notification for watched threads&quot;
+-
+-msgid &quot;Preview&quot;
+-msgstr &quot;Preview&quot;
+-
+-msgid &quot;Previous&quot;
+-msgstr &quot;Previous&quot;
+-
+-msgid &quot;PROFILE NOT FOUND&quot;
+-msgstr &quot;Can't locate a profile for the requested user.&quot;
+-
+-msgid &quot;Post New Terms&quot;
+-msgstr &quot;Post New Terms&quot;
+-
+-msgid &quot;Post New Topic&quot;
+-msgstr &quot;Post New Topic&quot;
+-
+-msgid &quot;Quote&quot;
+-msgstr &quot;Quote&quot;
+-
+-msgid &quot;Recently Updated Threads&quot;
+-msgstr &quot;Recently Updated Threads&quot;
+-
+-msgid &quot;Register&quot;
+-msgstr &quot;Register&quot;
+-
+-msgid &quot;Registration Complete&quot;
+-msgstr &quot;Registration Complete&quot;
+-
+-msgid &quot;Remove Watch&quot;
+-msgstr &quot;Remove Watch&quot;
+-
+-msgid &quot;REPLY LOCKED THREAD&quot;
+-msgstr &quot;You can't reply to a locked thread.&quot;
+-
+-msgid &quot;Reply&quot;
+-msgstr &quot;Reply&quot;
+-
+-msgid &quot;Reset My Password&quot;
+-msgstr &quot;Reset My Password&quot;
+-
+-msgid &quot;Return to&quot;
+-msgstr &quot;Return to&quot;
+-
+-msgid &quot;Return to the forum&quot;
+-msgstr &quot;Return to the forum&quot;
+-
+-msgid &quot;Reset Your %s Password&quot;
+-msgstr &quot;Reset Your %s Password&quot;
+-
+-msgid &quot;said&quot;
+-msgstr &quot;said&quot;
+-
+-msgid &quot;Search&quot;
+-msgstr &quot;Search&quot;
+-
+-msgid &quot;Search For&quot;
+-msgstr &quot;Search For&quot;
+-
+-msgid &quot;Search Results&quot;
+-msgstr &quot;Search Results&quot;
+-
+-msgid &quot;Searching for&quot;
+-msgstr &quot;Searching for&quot;
+-
+-msgid &quot;Select Zone&quot;
+-msgstr &quot;Select Zone&quot;
+-
+-msgid &quot;Service&quot;
+-msgstr &quot;Service&quot;
+-
+-msgid &quot;Services&quot;
+-msgstr &quot;Services&quot;
+-
+-msgid &quot;Show timezone&quot;
+-msgstr &quot;Show timezone&quot;
+-
+-msgid &quot;Sign Up&quot;
+-msgstr &quot;Sign Up&quot;
+-
+-msgid &quot;SIGNUP COMPLETE FORM&quot;
+-msgstr &quot;Complete the form below to create a new user account.&quot;
+-
+-msgid &quot;SIGNUP EMAIL&quot;
+-msgstr &quot;Your Email Address&quot;
+-
+-msgid &quot;SIGNUP EMAIL CONFIRM&quot;
+-msgstr &quot;Confirm Email Address&quot;
+-
+-msgid &quot;SIGNUP EMAIL USAGE&quot;
+-msgstr &quot;Your email address will not be passed on to any third parties. It will be used to send an activation link for the new account. If you request thread update alerts this address will also be used for the notification emails.&quot;
+-
+-msgid &quot;SIGNUP ERRORS&quot;
+-msgstr &quot;The following errors were found in your submission&quot;
+-
+-msgid &quot;SIGNUP FORUMNAME&quot;
+-msgstr &quot;Forum Name&quot;
+-
+-msgid &quot;SIGNUP FORUMNAME DESCRIPTION&quot;
+-msgstr &quot;Your &lt;em&gt;Forum Name&lt;/em&gt; will be displayed with all postings you make on the forums.  Forum names are all unique, so when two &quot;John Smith&quot;s register, only one will appear as \&quot;John Smith\&quot; when posting. (Sorry other John Smith!)&quot;
+-
+-msgid &quot;SIGNUP PASSWORD&quot;
+-msgstr &quot;Desired Password&quot;
+-
+-msgid &quot;SIGNUP PASSWORD CONFIRM&quot;
+-msgstr &quot;Confirm password&quot;
+-
+-msgid &quot;SIGNUP USERNAME&quot;
+-msgstr &quot;Desired Username&quot;
+-
+-msgid &quot;SITE MODERATOR REQUIRED&quot;
+-msgstr &quot;You need to be a site moderator to access this section of the site.&quot;
+-
+-msgid &quot;Site&quot;
+-msgstr &quot;Site&quot;
+-
+-msgid &quot;Snippet&quot;
+-msgstr &quot;Snippet&quot;
+-
+-msgid &quot;Start&quot;
+-msgstr &quot;Start&quot;
+-
+-msgid &quot;Start A New Topic&quot;
+-msgstr &quot;Start A New Topic&quot;
+-
+-msgid &quot;Stick Thread&quot;
+-msgstr &quot;Stick Thread&quot;
+-
+-msgid &quot;Sticky&quot;
+-msgstr &quot;Sticky&quot;
+-
+-msgid &quot;Sticky Topic&quot;
+-msgstr &quot;Sticky Topic&quot;
+-
+-msgid &quot;Stop&quot;
+-msgstr &quot;Stop&quot;
+-
+-msgid &quot;Subject&quot;
+-msgstr &quot;Subject&quot;
+-
+-msgid &quot;Summary of Changes&quot;
+-msgstr &quot;Summary of Changes&quot;
+-
+-msgid &quot;TERMS ADD NEW&quot;
+-msgstr &quot;Add New Site Terms &amp; Conditions&quot;
+-
+-msgid &quot;TERMS AGREE&quot;
+-msgstr &quot;I AGREE to the terms above&quot;
+-
+-msgid &quot;TERMS REJECT&quot;
+-msgstr &quot;I DO NOT agree to the terms above&quot;
+-
+-msgid &quot;Terms and Conditions&quot;
+-msgstr &quot;Terms &amp; Conditions&quot;
+-
+-msgid &quot;Thanks for signing up&quot;
+-msgstr &quot;Thanks for signing up&quot;
+-
+-msgid &quot;The following error message was returned by the application&quot;
+-msgstr &quot;The following error message was returned by the application&quot;
+-
+-msgid &quot;There is no current forum to view&quot;
+-msgstr &quot;There is no current forum to view&quot;
+-
+-msgid &quot;There is no current thread to view&quot;
+-msgstr &quot;There is no current thread to view&quot;
+-
+-msgid &quot;THREAD NO INFORMATION&quot;
+-msgstr &quot;No information exists for the thread or post you are trying to reply to.&quot;
+-
+-msgid &quot;THREAD NO POSTS&quot;
+-msgstr &quot;You are trying to reply to a thread with no posts in it.&quot;
+-
+-msgid &quot;THREAD WATCH FAILED&quot;
+-msgstr &quot;Failed to add a watch for the requested thread.&quot;
+-
+-msgid &quot;Thread&quot;
+-msgstr &quot;Thread&quot;
+-
+-msgid &quot;threads&quot;
+-msgstr &quot;threads&quot;
+-
+-msgid &quot;Thread Locked&quot;
+-msgstr &quot;Thread Locked&quot;
+-
+-msgid &quot;Time&quot;
+-msgstr &quot;Time&quot;
+-
+-msgid &quot;Time formatting example&quot;
+-msgstr &quot;Time formatting example&quot;
+-
+-msgid &quot;Topic&quot;
+-msgstr &quot;Topic&quot;
+-
+-msgid &quot;Unknown field name&quot;
+-msgstr &quot;Unknown field name&quot;
+-
+-msgid &quot;Unlock Thread&quot;
+-msgstr &quot;Unlock Thread&quot;
+-
+-msgid &quot;Unread posts&quot;
+-msgstr &quot;Unread posts&quot;
+-
+-msgid &quot;Unstick Thread&quot;
+-msgstr &quot;Unstick Thread&quot;
+-
+-msgid &quot;Update&quot;
+-msgstr &quot;Update&quot;
+-
+-msgid &quot;Update Reply&quot;
+-msgstr &quot;Update Reply&quot;
+-
+-msgid &quot;Upload&quot;
+-msgstr &quot;Upload&quot;
+-
+-msgid &quot;Use UTC&quot;
+-msgstr &quot;Use UTC&quot;
+-
+-msgid &quot;USER ACTIVATE&quot;
+-msgstr &quot;To activate your account click on the link in the email&quot;
+-
+-msgid &quot;USER ALMOST THERE&quot;
+-msgstr &quot;Almost there...&quot;
+-
+-msgid &quot;USER AUTHENTICATED&quot;
+-msgstr &quot;Your registration has been authenticated&quot;
+-
+-msgid &quot;User Profile&quot;
+-msgstr &quot;User Profile&quot;
+-
+-msgid &quot;USERNAME IN USE&quot;
+-msgstr &quot;The username you have chosen is already in use. Please try a different one.&quot;
+-
+-msgid &quot;USERNAME INCORRECT&quot;
+-msgstr &quot;Incorrect Username Supplied.&quot;
+-
+-msgid &quot;Username&quot;
+-msgstr &quot;Username&quot;
+-
+-msgid &quot;View&quot;
+-msgstr &quot;View&quot;
+-
+-msgid &quot;view&quot;
+-msgstr &quot;view&quot;
+-
+-msgid &quot;View all&quot;
+-msgstr &quot;View all&quot;
+-
+-msgid &quot;views&quot;
+-msgstr &quot;views&quot;
+-
+-msgid &quot;View Threads&quot;
+-msgstr &quot;View Threads&quot;
+-
+-msgid &quot;Watch this thread&quot;
+-msgstr &quot;Watch this thread&quot;
+-
+-msgid &quot;watching this thread&quot;
+-msgstr &quot;watching this thread&quot;
+-
+-msgid &quot;wrote&quot;
+-msgstr &quot;wrote&quot;
+-
+-msgid &quot;Yes&quot;
+-msgstr &quot;Yes&quot;
+-
+-msgid &quot;You are not watching any threads&quot;
+-msgstr &quot;You are not watching any threads&quot;
+-
+-msgid &quot;You are watching this thread&quot;
+-msgstr &quot;You are watching this thread&quot;
+-
+-msgid &quot;Your Details&quot;
+-msgstr &quot;Your Details&quot;
+-
+-msgid &quot;Your Preferences&quot;
+-msgstr &quot;Your Preferences&quot;
+-
+-msgid &quot;Your %s Username&quot;
+-msgstr &quot;Your %s Username&quot;
+-
+-
+-# UNITS OF TIME
+-
+-msgid &quot;second&quot;
+-msgstr &quot;second&quot;
+-
+-msgid &quot;seconds&quot;
+-msgstr &quot;seconds&quot;
+-
+-msgid &quot;minute&quot;
+-msgstr &quot;minute&quot;
+-
+-msgid &quot;minutes&quot;
+-msgstr &quot;minutes&quot;
+-
+-msgid &quot;hour&quot;
+-msgstr &quot;hour&quot;
+-
+-msgid &quot;hours&quot;
+-msgstr &quot;hours&quot;
+-
+-msgid &quot;day&quot;
+-msgstr &quot;day&quot;
+-
+-msgid &quot;days&quot;
+-msgstr &quot;days&quot;
+-
+-msgid &quot;month&quot;
+-msgstr &quot;month&quot;
+-
+-msgid &quot;months&quot;
+-msgstr &quot;months&quot;
+-
+-msgid &quot;year&quot;
+-msgstr &quot;year&quot;
+-
+-msgid &quot;years&quot;
+-msgstr &quot;years&quot;
+
+Copied: trunk/lib/Parley/I18N/i_default.po (from rev 632, trunk/lib/Parley/I18N/en.po)
+
+Copied: trunk/root/base/help/i_default (from rev 619, trunk/root/base/help/en)
+
+Copied: trunk/root/email_templates/i_default (from rev 603, trunk/root/email_templates/en)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000523.html">[Parley-svn] r635 - / trunk/lib/Parley/Controller trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000525.html">[Parley-svn] r637 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#524">[ date ]</a>
+              <a href="thread.html#524">[ thread ]</a>
+              <a href="subject.html#524">[ subject ]</a>
+              <a href="author.html#524">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

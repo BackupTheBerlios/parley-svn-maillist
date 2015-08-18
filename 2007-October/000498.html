@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r610 - / trunk/root/base trunk/root/base/forum	trunk/root/base/my trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images	trunk/root/static/images/icons
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r610%20-%20/%20trunk/root/base%20trunk/root/base/forum%0A%09trunk/root/base/my%20trunk/root/base/shared%0A%09trunk/root/base/thread%20trunk/root/static/images%0A%09trunk/root/static/images/icons&In-Reply-To=%3C200710262210.l9QMAQel005167%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000497.html">
+   <LINK REL="Next"  HREF="000499.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r610 - / trunk/root/base trunk/root/base/forum	trunk/root/base/my trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images	trunk/root/static/images/icons</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r610%20-%20/%20trunk/root/base%20trunk/root/base/forum%0A%09trunk/root/base/my%20trunk/root/base/shared%0A%09trunk/root/base/thread%20trunk/root/static/images%0A%09trunk/root/static/images/icons&In-Reply-To=%3C200710262210.l9QMAQel005167%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r610 - / trunk/root/base trunk/root/base/forum	trunk/root/base/my trunk/root/base/shared	trunk/root/base/thread trunk/root/static/images	trunk/root/static/images/icons">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Oct 27 00:10:26 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000497.html">[Parley-svn] r609 - / trunk/root/static
+</A></li>
+        <LI>Next message: <A HREF="000499.html">[Parley-svn] r611 - / trunk/root/base/forum trunk/root/base/thread	trunk/root/static/images/icons
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#498">[ date ]</a>
+              <a href="thread.html#498">[ thread ]</a>
+              <a href="subject.html#498">[ subject ]</a>
+              <a href="author.html#498">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-27 00:10:25 +0200 (Sat, 27 Oct 2007)
+New Revision: 610
+
+Added:
+   trunk/root/static/images/icons/
+   trunk/root/static/images/icons/lock.png
+   trunk/root/static/images/loader.gif
+Modified:
+   /
+   trunk/root/base/forum/view
+   trunk/root/base/header
+   trunk/root/base/my/tab_you
+   trunk/root/base/shared/loading_please_wait
+   trunk/root/base/thread/recent
+   trunk/root/base/thread/view
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4079 at wiggin</A>:  chisel | 2007-10-26 21:57:39 +0100
+ / update icon for 'locked'
+ + add small &quot;loading/updating&quot; feedback icon
+ + added &quot;updating&quot; feedback to prefs (the You tab)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4078
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4079
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2007-10-26 22:10:17 UTC (rev 609)
++++ trunk/root/base/forum/view	2007-10-26 22:10:25 UTC (rev 610)
+@@ -26,7 +26,7 @@
+     &lt;img src=&quot;static/images/sticky.png&quot; alt=&quot;Sticky&quot; title=&quot;Sticky Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+     [%- END %]
+     [%- IF thread.locked %]
+-    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++    &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;Locked&quot; title=&quot;Locked Topic&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+     [%- END %]
+     &lt;/td&gt;
+ 
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-10-26 22:10:17 UTC (rev 609)
++++ trunk/root/base/header	2007-10-26 22:10:25 UTC (rev 610)
+@@ -80,3 +80,6 @@
+                     &lt;/div&gt;
+                     [% END %]
+ &lt;!-- Header : End --&gt;
++
++
++[% PROCESS shared/small_loading_please_wait %]
+
+Modified: trunk/root/base/my/tab_you
+===================================================================
+--- trunk/root/base/my/tab_you	2007-10-26 22:10:17 UTC (rev 609)
++++ trunk/root/base/my/tab_you	2007-10-26 22:10:25 UTC (rev 610)
+@@ -49,6 +49,7 @@
+ 
+     E.callback = function(){
+         var handleSuccess = function(o) {
++            YAHOO.parley.small_loading.wait.hide();
+             var data = eval('(' + o.responseText + ')');
+             // show the status message
+             o.argument.msg_node.innerHTML = data.message;
+@@ -58,9 +59,12 @@
+             }
+         };
+         var handleFailure =  function(o) {
++            YAHOO.parley.small_loading.wait.hide();
+             alert('ERROR: ' + o.responseText);
+         };
+ 
++        YAHOO.parley.small_loading.wait.show();
++
+         // where to post to
+         var sUrl = '[%base%]my/saveHandler';
+ 
+
+Modified: trunk/root/base/shared/loading_please_wait
+===================================================================
+--- trunk/root/base/shared/loading_please_wait	2007-10-26 22:10:17 UTC (rev 609)
++++ trunk/root/base/shared/loading_please_wait	2007-10-26 22:10:25 UTC (rev 610)
+@@ -24,7 +24,7 @@
+                 )
+             ;
+     
+-            YAHOO.parley.loading.wait.setHeader(&quot;%[l('Loading, please wait')%]...&quot;);
++            YAHOO.parley.loading.wait.setHeader(&quot;[%l('Loading, please wait')%]...&quot;);
+             YAHOO.parley.loading.wait.setBody(&quot;&lt;img src=\&quot;static/images/rel_interstitial_loading.gif\&quot;/&gt;&quot;);
+             YAHOO.parley.loading.wait.render(document.body);
+         }
+
+Modified: trunk/root/base/thread/recent
+===================================================================
+--- trunk/root/base/thread/recent	2007-10-26 22:10:17 UTC (rev 609)
++++ trunk/root/base/thread/recent	2007-10-26 22:10:25 UTC (rev 610)
+@@ -11,7 +11,7 @@
+         &lt;img src=&quot;static/images/sticky.png&quot; alt=&quot;[%l('Sticky')%]&quot; title=&quot;[%l('Sticky Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+         [%- END %]
+         [%- IF thread.locked %]
+-        &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++        &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+         [%- END %]
+         &lt;/td&gt;
+ 
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-10-26 22:10:17 UTC (rev 609)
++++ trunk/root/base/thread/view	2007-10-26 22:10:25 UTC (rev 610)
+@@ -38,7 +38,7 @@
+                                 &lt;small&gt;
+                                 [% IF current_thread.locked %]
+                                     [%l('Thread Locked')%] 
+-                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++                                    &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+                                 [% ELSE %]
+                                     &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                                         &lt;span class=&quot;first-child&quot;&gt;
+@@ -159,7 +159,7 @@
+                                 &lt;small&gt;
+                                 [% IF current_thread.locked %]
+                                     [%l('Thread Locked')%] 
+-                                    &lt;img src=&quot;static/images/locked.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++                                    &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+                                 [% ELSE %]
+                                     &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                                         &lt;span class=&quot;first-child&quot;&gt;
+
+Added: trunk/root/static/images/icons/lock.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/icons/lock.png
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/root/static/images/loader.gif
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/loader.gif
+___________________________________________________________________
+Name: svn:executable
+   + *
+Name: svn:mime-type
+   + application/octet-stream
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000497.html">[Parley-svn] r609 - / trunk/root/static
+</A></li>
+	<LI>Next message: <A HREF="000499.html">[Parley-svn] r611 - / trunk/root/base/forum trunk/root/base/thread	trunk/root/static/images/icons
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#498">[ date ]</a>
+              <a href="thread.html#498">[ thread ]</a>
+              <a href="subject.html#498">[ subject ]</a>
+              <a href="author.html#498">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

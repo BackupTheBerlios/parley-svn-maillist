@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r773 - / trunk/root/base/user
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r773%20-%20/%20trunk/root/base/user&In-Reply-To=%3C200802021116.m12BGHJQ005270%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000660.html">
+   <LINK REL="Next"  HREF="000662.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r773 - / trunk/root/base/user</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r773%20-%20/%20trunk/root/base/user&In-Reply-To=%3C200802021116.m12BGHJQ005270%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r773 - / trunk/root/base/user">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Feb  2 12:16:17 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000660.html">[Parley-svn] r772 - / trunk/root/base/my
+</A></li>
+        <LI>Next message: <A HREF="000662.html">[Parley-svn] r774 - / trunk trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#661">[ date ]</a>
+              <a href="thread.html#661">[ thread ]</a>
+              <a href="subject.html#661">[ subject ]</a>
+              <a href="author.html#661">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-02 12:16:17 +0100 (Sat, 02 Feb 2008)
+New Revision: 773
+
+Modified:
+   /
+   trunk/root/base/user/profile
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4593 at wiggin</A>:  chisel | 2008-02-01 08:48:00 +0000
+ / reworked user profile page; replaced table with yui-grids
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4592
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4593
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2008-02-02 11:16:09 UTC (rev 772)
++++ trunk/root/base/user/profile	2008-02-02 11:16:17 UTC (rev 773)
+@@ -1,58 +1,48 @@
+ &lt;!-- user/profile --&gt;
+ &lt;h1&gt;[%l('User Profile')%]&lt;/h1&gt;
+ [% IF profiled_user %]
++    &lt;div class=&quot;yui-gf top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            [% INCLUDE shared/user_avatar person=authed_user %]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
+ 
+-&lt;table class=&quot;user_profile&quot;&gt;
+-    &lt;tbody&gt;
+-        &lt;tr&gt;
+-            &lt;!-- user avatar --&gt;
+-            [% avatar_file = c.path_to('root') _ &quot;/static/user_file/${profiled_user.id}/avatar.jpg&quot; %]
+-            [% TRY %]
+-                [% USE avatar = Image(avatar_file) %]
+-                [% tmp = avatar.attr %]
+-                &lt;td rowspan=&quot;4&quot;&gt;
+-                    &lt;img class=&quot;picborder&quot; src=&quot;/static/user_file/[% profiled_user.id %]/avatar.jpg&quot; border=&quot;0&quot; [% avatar.attr %] alt=&quot;Avatar&quot; /&gt;
+-                    &lt;br /&gt;
+-                &lt;/td&gt;
+-            [% CATCH %]
+-                &lt;!-- No User Avatar --&gt;
+-            [% END %]
+-            &lt;!-- end : user avatar --&gt;
+-            &lt;td class=&quot;user_profile_key&quot;&gt;
+-                [%l('Nickname')%]:
+-            &lt;/td&gt;
+-            &lt;td class=&quot;user_profile_value&quot;&gt;
+-                [% profiled_user.forum_name %]
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
++            &lt;div class=&quot;yui-gf&quot;&gt;
++                &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                    [%l('Nickname')%]:
++                &lt;/div&gt;
++                &lt;div class=&quot;yui-u&quot;&gt;
++                    [% profiled_user.forum_name %]
++                &lt;/div&gt;
++            &lt;/div&gt;
+ 
+-        &lt;tr&gt;
+-            &lt;td class=&quot;user_profile_key&quot;&gt;
+-                [%l('Posts Made')%]:
+-            &lt;/td&gt;
+-            &lt;td class=&quot;user_profile_value&quot;&gt;
+-                [% profiled_user.post_count %]
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
++            &lt;div class=&quot;yui-gf top_padded&quot;&gt;
++                &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                    [%l('Posts Made')%]:
++                &lt;/div&gt;
++                &lt;div class=&quot;yui-u&quot;&gt;
++                    [% profiled_user.post_count %]
++                &lt;/div&gt;
++            &lt;/div&gt;
+ 
+-        &lt;tr&gt;
+-            &lt;td class=&quot;user_profile_key&quot;&gt;
+-                [%l('Last Post')%]:
+-            &lt;/td&gt;
+-            &lt;td class=&quot;user_profile_value&quot;&gt;
+-                [% IF profiled_user.last_post %]
+-                &lt;a href=&quot;thread/view?thread=[% profiled_user.last_post.thread.id %]&quot;&gt;[% ForumCode.escape(profiled_user.last_post.thread.subject) |truncate(55) %]&lt;/a&gt;
+-                &lt;br /&gt;
+-                [% nicedate(profiled_user.last_post.created) %]
+-                [% ELSE %]
+-                [%l('Never Posted')%] 
+-                [% END %]
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-    &lt;/tbody&gt;
+-&lt;/table&gt;
++            &lt;div class=&quot;yui-gf top_padded&quot;&gt;
++                &lt;div class=&quot;yui-u first align_right&quot;&gt;
++                    [%l('Last Post')%]:
++                &lt;/div&gt;
++                &lt;div class=&quot;yui-u&quot;&gt;
++                    [% IF profiled_user.last_post %]
++                    &lt;a href=&quot;thread/view?thread=[% profiled_user.last_post.thread.id %]&quot;&gt;[% ForumCode.escape(profiled_user.last_post.thread.subject) |truncate(55) %]&lt;/a&gt;
++                    &lt;br /&gt;
++                    [% nicedate(profiled_user.last_post.created) %]
++                    [% ELSE %]
++                    [%l('Never Posted')%] 
++                    [% END %]
++                &lt;/div&gt;
++            &lt;/div&gt;
+ 
++        &lt;/div&gt;
++    &lt;/div&gt;
+ [% ELSE %]
+-&lt;p&gt;[%l('PROFILE NOT FOUND')%]&lt;/p&gt;
++    &lt;p&gt;[%l('PROFILE NOT FOUND')%]&lt;/p&gt;
+ [% END %]
+ &lt;!-- end : user/profile --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000660.html">[Parley-svn] r772 - / trunk/root/base/my
+</A></li>
+	<LI>Next message: <A HREF="000662.html">[Parley-svn] r774 - / trunk trunk/lib
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#661">[ date ]</a>
+              <a href="thread.html#661">[ thread ]</a>
+              <a href="subject.html#661">[ subject ]</a>
+              <a href="author.html#661">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

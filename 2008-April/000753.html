@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r865 - / trunk trunk/lib/Parley trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r865%20-%20/%20trunk%20trunk/lib/Parley%20trunk/root/base/shared%0A%09trunk/root/base/site%20trunk/root/base/terms&In-Reply-To=%3C200804110952.m3B9q0Si029406%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000752.html">
+   <LINK REL="Next"  HREF="000754.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r865 - / trunk trunk/lib/Parley trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r865%20-%20/%20trunk%20trunk/lib/Parley%20trunk/root/base/shared%0A%09trunk/root/base/site%20trunk/root/base/terms&In-Reply-To=%3C200804110952.m3B9q0Si029406%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r865 - / trunk trunk/lib/Parley trunk/root/base/shared	trunk/root/base/site trunk/root/base/terms">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Apr 11 11:52:00 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000752.html">[Parley-svn] r864 - / tags
+</A></li>
+        <LI>Next message: <A HREF="000754.html">[Parley-svn] r866 - / tags
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#753">[ date ]</a>
+              <a href="thread.html#753">[ thread ]</a>
+              <a href="subject.html#753">[ subject ]</a>
+              <a href="author.html#753">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-04-11 11:51:59 +0200 (Fri, 11 Apr 2008)
+New Revision: 865
+
+Modified:
+   /
+   trunk/Changes
+   trunk/Makefile.PL
+   trunk/lib/Parley/Version.pm
+   trunk/root/base/shared/language_dialog
+   trunk/root/base/shared/login_dialog
+   trunk/root/base/shared/search_dialog
+   trunk/root/base/site/users
+   trunk/root/base/terms/add
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4920 at wiggin</A>:  chisel | 2008-04-11 08:18:53 +0100
+ Fixed minor issues revealed when deploying and testing on a remote machine:
+  + added missing dependency to Makefile.PL: Catalyst::Plugin::Authorization::Roles
+  + require minimum version of JSON, for to_json() method
+  - remove concole.log() calls from templates
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4893
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4920
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/Changes	2008-04-11 09:51:59 UTC (rev 865)
+@@ -1,5 +1,14 @@
+ This file documents the revision history for Parley.
+ 
++0.59.03 Fri Apr 11 00:13:36 BST 2008
++    - removed console.log() javascript calls
++
++0.59.02 Thu Apr 10 22:56:04 BST 2008
++    - require minimum version of JSON (2.04) for to_json() method
++
++0.59.01 Thu Apr 10 22:38:43 BST 2008
++    - added Catalyst::Plugin::Authorization::Roles to Makefile.PL
++
+ 0.59    Thu Apr 10 18:56:19 BST 2008
+     - added Dutch translation (Thanks Rob!)
+     - forum moderators can be assigned and removed through the UI
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/Makefile.PL	2008-04-11 09:51:59 UTC (rev 865)
+@@ -18,6 +18,7 @@
+     'Catalyst::Plugin::Authentication::Credential::Password'    =&gt; 0,
+     'Catalyst::Plugin::Authentication::Store::DBIC'             =&gt; 0,
+     'Catalyst::Plugin::Authorization::ACL'                      =&gt; 0,
++    'Catalyst::Plugin::Authorization::Roles'                    =&gt; 0,
+     'Catalyst::Plugin::ConfigLoader'                            =&gt; 0,
+     'Catalyst::Plugin::Dumper'                                  =&gt; 0,
+     'Catalyst::Plugin::Email'                                   =&gt; 0,
+@@ -40,7 +41,7 @@
+     'Graphics::Magick'                                          =&gt; 0,
+     'HTML::FillInForm'                                          =&gt; '1.07',
+     'Image::Size'                                               =&gt; 0,
+-    'JSON'                                                      =&gt; 0,
++    'JSON'                                                      =&gt; '2.04',
+     'List::MoreUtils'                                           =&gt; 0,
+     'MIME::Lite'                                                =&gt; 0,
+     'Net::IP::Match::Regexp'                                    =&gt; 0,
+
+Modified: trunk/lib/Parley/Version.pm
+===================================================================
+--- trunk/lib/Parley/Version.pm	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/lib/Parley/Version.pm	2008-04-11 09:51:59 UTC (rev 865)
+@@ -3,7 +3,7 @@
+ # &quot;perl Makefile.PL&quot; complained, &quot;WARNING: VERSION takes a string/number
+ # not a version reference.&quot;
+ # I just numified the VERSION - it's legible and seems to stop the warning
+-use version; our $VERSION = qv(0.59.00);
++use version; our $VERSION = qv(0.59.03);
+ 
+ =head1 NAME
+ 
+
+Modified: trunk/root/base/shared/language_dialog
+===================================================================
+--- trunk/root/base/shared/language_dialog	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/root/base/shared/language_dialog	2008-04-11 09:51:59 UTC (rev 865)
+@@ -11,7 +11,6 @@
+ 		this.cancel();
+ 	};
+ 	var handleSuccess = function(o) {
+-        console.log('Success');
+ 	};
+ 	var handleFailure = function(o) {
+ 		alert(&quot;Submission failed: &quot; + o.status);
+
+Modified: trunk/root/base/shared/login_dialog
+===================================================================
+--- trunk/root/base/shared/login_dialog	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/root/base/shared/login_dialog	2008-04-11 09:51:59 UTC (rev 865)
+@@ -11,7 +11,6 @@
+ 		this.cancel();
+ 	};
+ 	var handleSuccess = function(o) {
+-        console.log('Success');
+ 	};
+ 	var handleFailure = function(o) {
+ 		alert(&quot;Submission failed: &quot; + o.status);
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/root/base/shared/search_dialog	2008-04-11 09:51:59 UTC (rev 865)
+@@ -11,7 +11,6 @@
+ 		this.cancel();
+ 	};
+ 	var handleSuccess = function(o) {
+-        console.log('Success');
+ 	};
+ 	var handleFailure = function(o) {
+ 		alert(&quot;Submission failed: &quot; + o.status);
+
+Modified: trunk/root/base/site/users
+===================================================================
+--- trunk/root/base/site/users	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/root/base/site/users	2008-04-11 09:51:59 UTC (rev 865)
+@@ -50,15 +50,7 @@
+ 
+     this.oAutoComp.itemSelectEvent.subscribe(
+         function(oSelf, elItem, oData) {
+-            console.log(elItem[2][1]);
+-
+             YAHOO.util.Dom.get('ac_personid').value = elItem[2][1].id;
+-
+-            try {
+-                console.log( YAHOO.util.Dom.get('ac_personid') );
+-            }
+-            catch(e) { console.log(e); }
+-
+         },
+         this,
+         false
+
+Modified: trunk/root/base/terms/add
+===================================================================
+--- trunk/root/base/terms/add	2008-04-10 20:41:49 UTC (rev 864)
++++ trunk/root/base/terms/add	2008-04-11 09:51:59 UTC (rev 865)
+@@ -82,7 +82,6 @@
+                 }
+             };
+             this.handleFailure = function(o) {
+-                console.log('failure');
+             };
+ 
+             this.edit = function() {
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000752.html">[Parley-svn] r864 - / tags
+</A></li>
+	<LI>Next message: <A HREF="000754.html">[Parley-svn] r866 - / tags
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#753">[ date ]</a>
+              <a href="thread.html#753">[ thread ]</a>
+              <a href="subject.html#753">[ subject ]</a>
+              <a href="author.html#753">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

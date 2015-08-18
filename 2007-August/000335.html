@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r448 - / trunk/lib/Parley/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r448%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200708281931.l7SJVJ2G003769%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000334.html">
+   <LINK REL="Next"  HREF="000336.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r448 - / trunk/lib/Parley/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r448%20-%20/%20trunk/lib/Parley/Controller&In-Reply-To=%3C200708281931.l7SJVJ2G003769%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r448 - / trunk/lib/Parley/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Aug 28 21:31:19 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000334.html">[Parley-svn] r447 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+        <LI>Next message: <A HREF="000336.html">[Parley-svn] r449 - / trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#335">[ date ]</a>
+              <a href="thread.html#335">[ thread ]</a>
+              <a href="subject.html#335">[ subject ]</a>
+              <a href="author.html#335">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-08-28 21:31:18 +0200 (Tue, 28 Aug 2007)
+New Revision: 448
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3742 at wiggin</A>:  chisel | 2007-08-28 19:18:55 +0100
+ + added check for fields that are required to be unique
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3741
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3742
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-08-28 19:31:05 UTC (rev 447)
++++ trunk/lib/Parley/Controller/My.pm	2007-08-28 19:31:18 UTC (rev 448)
+@@ -253,7 +253,6 @@
+     # store changes
+     $c-&gt;_authed_user()-&gt;preference()-&gt;update;
+ 
+-    #$c-&gt;response-&gt;redirect( $c-&gt;uri_for('/my/preferences') );
+     return;
+ }
+ 
+@@ -313,17 +312,39 @@
+         'Forum Name' =&gt; {
+             'resultset'     =&gt; 'Person',
+             'db_column'     =&gt; 'forum_name',
++            'is_unique'     =&gt; 1,
+         },
+     );
+ 
+     if (exists $field_map{$fieldname}) {
+         my $resultset = $field_map{$fieldname}-&gt;{resultset};
+         my $db_column = $field_map{$fieldname}-&gt;{db_column};
++        my $is_unique = $field_map{$fieldname}-&gt;{is_unique} || 0;
+ 
+         # get the user we're authed as
+         my $person = $c-&gt;model('ParleyDB')-&gt;resultset($resultset)-&gt;find(
+             $c-&gt;_authed_user()-&gt;id()
+         );
++        # it would be nice to deduce this from the schema, but hey ..
++        # .. this'll do for now
++        if ($is_unique) {
++            # make sure the value isn't already in use
++            my $count = $c-&gt;model('ParleyDB')-&gt;resultset($resultset)-&gt;count(
++                {
++                    $db_column =&gt; $c-&gt;request-&gt;param('value'),
++                }
++            );
++            if ($count) {
++                $c-&gt;response-&gt;body(
++                      q{&lt;p&gt;'}
++                    . $c-&gt;request-&gt;param('value')
++                    . q{' has already been used by another user.&lt;/p&gt;}
++                );
++                return;
++            };
++        }
++
++        # perform the update
+         eval {
+             # update the relevant field
+             $person-&gt;update(
+@@ -332,6 +353,7 @@
+                 }
+             );
+         };
++        # check for errors
+         if ($@) {
+             parley_warn($c, $@);
+             $c-&gt;response-&gt;body(qq{&lt;p&gt;ERROR: $@&lt;/p&gt;});
+@@ -351,17 +373,6 @@
+     else {
+         $c-&gt;response-&gt;body(q{&lt;p&gt;Unknown field name&lt;/p&gt;});
+     }
+-
+-    #$c-&gt;forward( $c-&gt;view('Plain') );
+-
+-#    $c-&gt;response-&gt;body(
+-#        &quot;&lt;p&gt;This is &lt;em&gt;content&lt;/em&gt;: &quot;
+-#        . $c-&gt;req-&gt;param('ovalue')
+-#        . &quot; -&gt; &quot;
+-#        . $c-&gt;req-&gt;param('value')
+-#        . &quot; - &quot;
+-#        . $c-&gt;req-&gt;param('fieldname')
+-#        . &quot;&lt;/p&gt;&quot;);
+ }
+ 
+ =head1 NAME
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000334.html">[Parley-svn] r447 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+	<LI>Next message: <A HREF="000336.html">[Parley-svn] r449 - / trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#335">[ date ]</a>
+              <a href="thread.html#335">[ thread ]</a>
+              <a href="subject.html#335">[ subject ]</a>
+              <a href="author.html#335">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

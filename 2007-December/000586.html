@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r698 - / trunk/lib/Parley/ResultSet
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r698%20-%20/%20trunk/lib/Parley/ResultSet&In-Reply-To=%3C200712201015.lBKAFxDT007447%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000585.html">
+   <LINK REL="Next"  HREF="000587.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r698 - / trunk/lib/Parley/ResultSet</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r698%20-%20/%20trunk/lib/Parley/ResultSet&In-Reply-To=%3C200712201015.lBKAFxDT007447%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r698 - / trunk/lib/Parley/ResultSet">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Dec 20 11:15:59 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000585.html">[Parley-svn] r697 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+</A></li>
+        <LI>Next message: <A HREF="000587.html">[Parley-svn] r699 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#586">[ date ]</a>
+              <a href="thread.html#586">[ thread ]</a>
+              <a href="subject.html#586">[ subject ]</a>
+              <a href="author.html#586">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-20 11:15:59 +0100 (Thu, 20 Dec 2007)
+New Revision: 698
+
+Modified:
+   /
+   trunk/lib/Parley/ResultSet/Post.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4337 at wiggin</A>:  chisel | 2007-12-20 09:19:18 +0000
+ - removed :ResultSet attribute from functions
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4336
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4337
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/ResultSet/Post.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Post.pm	2007-12-20 10:15:48 UTC (rev 697)
++++ trunk/lib/Parley/ResultSet/Post.pm	2007-12-20 10:15:59 UTC (rev 698)
+@@ -7,7 +7,7 @@
+ 
+ # we used to use -&gt;slice() but it sopped working on page #2 (!!)
+ # this may be slower [not benchmarked] but it works
+-sub last_post_in_list :ResultSet {
++sub last_post_in_list {
+     my ($self, $post_list) = @_;
+     my ($current_post);
+ 
+@@ -23,7 +23,7 @@
+ }
+ 
+ 
+-sub next_post :ResultSet {
++sub next_post {
+     my ($self, $post) = @_;
+     my $next_post;
+ 
+@@ -48,7 +48,7 @@
+ }
+ 
+ 
+-sub page_containing_post : ResultSet {
++sub page_containing_post {
+     my ($self, $post, $posts_per_page) = @_;
+ 
+     my $position_in_thread = $self-&gt;thread_position($post);
+@@ -60,7 +60,7 @@
+ }
+ 
+ 
+-sub thread_position : ResultSet {
++sub thread_position {
+     my ($self, $post) = @_;
+ 
+     if (not defined $post) {
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000585.html">[Parley-svn] r697 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+</A></li>
+	<LI>Next message: <A HREF="000587.html">[Parley-svn] r699 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#586">[ date ]</a>
+              <a href="thread.html#586">[ thread ]</a>
+              <a href="subject.html#586">[ subject ]</a>
+              <a href="author.html#586">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

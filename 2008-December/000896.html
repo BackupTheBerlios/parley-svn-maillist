@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1014 - / branches/parley-1.1/root/base	branches/parley-1.1/root/base/dfv
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1014%20-%20/%20branches/parley-1.1/root/base%0A%09branches/parley-1.1/root/base/dfv&In-Reply-To=%3C200812270003.mBR03nwL021765%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000895.html">
+   <LINK REL="Next"  HREF="000897.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1014 - / branches/parley-1.1/root/base	branches/parley-1.1/root/base/dfv</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1014%20-%20/%20branches/parley-1.1/root/base%0A%09branches/parley-1.1/root/base/dfv&In-Reply-To=%3C200812270003.mBR03nwL021765%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1014 - / branches/parley-1.1/root/base	branches/parley-1.1/root/base/dfv">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Dec 27 01:03:50 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000895.html">[Parley-svn] r1013 - / branches/parley-1.1/root/static/css
+</A></li>
+        <LI>Next message: <A HREF="000897.html">[Parley-svn] r1015 - / branches/parley-1.1/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#896">[ date ]</a>
+              <a href="thread.html#896">[ thread ]</a>
+              <a href="subject.html#896">[ subject ]</a>
+              <a href="author.html#896">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-27 01:03:49 +0100 (Sat, 27 Dec 2008)
+New Revision: 1014
+
+Added:
+   branches/parley-1.1/root/base/dfv/
+   branches/parley-1.1/root/base/dfv/display_validation_messages
+   branches/parley-1.1/root/base/dfv/validation_messages_data
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8695 at wiggin</A>:  chisel | 2008-12-24 08:02:51 +0000
+ + added DFV validation templates
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8694
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8695
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: branches/parley-1.1/root/base/dfv/display_validation_messages
+===================================================================
+--- branches/parley-1.1/root/base/dfv/display_validation_messages	2008-12-27 00:03:38 UTC (rev 1013)
++++ branches/parley-1.1/root/base/dfv/display_validation_messages	2008-12-27 00:03:49 UTC (rev 1014)
+@@ -0,0 +1,22 @@
++[% # deal with validation errors %]
++[% IF validation.defined AND not validation.success %]
++    [% # import message data %] [% PROCESS dfv/validation_messages_data %]
++&lt;span id=&quot;validation_errors&quot;&gt;
++    [% IF validation.missing %]
++        [% FOR msg_key IN validation.missing %]
++        [% l(error_message.missing.$msg_key) || l('Missing form field: [_1]', msg_key) %]&lt;br /&gt;
++        [% END %]
++    [% END %]
++
++    [% IF validation.invalid %]
++        [% FOR field_name IN validation.invalid %]
++            [% nice_field_name = error_message.name.$field_name || field_name%]
++            [% FOR invalid_key IN validation.invalid(field_name) %]
++                [% l(nice_field_name) %]:
++                [% l(error_message.invalid.$invalid_key) || invalid_key %]
++                &lt;br /&gt;
++            [% END %]
++        [% END %]
++    [% END %]
++&lt;/span&gt;
++[% END %]
+
+Added: branches/parley-1.1/root/base/dfv/validation_messages_data
+===================================================================
+--- branches/parley-1.1/root/base/dfv/validation_messages_data	2008-12-27 00:03:38 UTC (rev 1013)
++++ branches/parley-1.1/root/base/dfv/validation_messages_data	2008-12-27 00:03:49 UTC (rev 1014)
+@@ -0,0 +1,20 @@
++[%
++    SET error_message = {
++        # messages for missing fields
++        missing =&gt; {
++            moon_stick                  =&gt; 'I demand the MOON! On a STICK!',
++        },
++
++        # messages for invalid fields (failed constraints)
++        invalid =&gt; {
++            # reCAPTCHA messages (from: <A HREF="http://recaptcha.net/apidocs/captcha/">http://recaptcha.net/apidocs/captcha/</A>)
++            'incorrect-captcha-sol'     =&gt; 'the CAPTCHA solution was incorrect',
++            'recaptcha-not-reachable'   =&gt; 'unable to contact the reCAPTCHA verify server',
++        },
++
++        # mappings from field names to something we'd like to show the user
++        name =&gt; {
++            email_address               =&gt; 'Email Address',
++        },
++    }
++%]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000895.html">[Parley-svn] r1013 - / branches/parley-1.1/root/static/css
+</A></li>
+	<LI>Next message: <A HREF="000897.html">[Parley-svn] r1015 - / branches/parley-1.1/root/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#896">[ date ]</a>
+              <a href="thread.html#896">[ thread ]</a>
+              <a href="subject.html#896">[ subject ]</a>
+              <a href="author.html#896">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

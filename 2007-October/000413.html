@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r525 - / trunk trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r525%20-%20/%20trunk%20trunk/root/base/thread&In-Reply-To=%3C200710011102.l91B2glw019997%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000412.html">
+   <LINK REL="Next"  HREF="000414.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r525 - / trunk trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r525%20-%20/%20trunk%20trunk/root/base/thread&In-Reply-To=%3C200710011102.l91B2glw019997%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r525 - / trunk trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct  1 13:02:42 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000412.html">[Parley-svn] r524 - / trunk/root/base/thread
+</A></li>
+        <LI>Next message: <A HREF="000414.html">[Parley-svn] r526 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#413">[ date ]</a>
+              <a href="thread.html#413">[ thread ]</a>
+              <a href="subject.html#413">[ subject ]</a>
+              <a href="author.html#413">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-01 13:02:42 +0200 (Mon, 01 Oct 2007)
+New Revision: 525
+
+Modified:
+   /
+   trunk/TODO
+   trunk/root/base/thread/add
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3887 at wiggin</A>:  chisel | 2007-10-01 08:58:14 +0100
+ + added Message Preview to Create New Thread page (thread/add)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3886
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3887
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-10-01 11:02:31 UTC (rev 524)
++++ trunk/TODO	2007-10-01 11:02:42 UTC (rev 525)
+@@ -1,6 +1,6 @@
+ TODO LIST
+ 
+-  - add Message Preview to Create New Thred page (thread/add)
++D - add Message Preview to Create New Thread page (thread/add)
+   - add missing link to &lt;img&gt; tag to help/formatting_posts
+   - add missing link to BBCode to help/formatting_posts
+   - update avatar update response to force a No-Cache?
+
+Modified: trunk/root/base/thread/add
+===================================================================
+--- trunk/root/base/thread/add	2007-10-01 11:02:31 UTC (rev 524)
++++ trunk/root/base/thread/add	2007-10-01 11:02:42 UTC (rev 525)
+@@ -24,20 +24,14 @@
+   &lt;tr&gt;
+     &lt;td&gt; Message &lt;/td&gt;
+     &lt;td&gt;
+-      &lt;textarea name=&quot;thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
++        &lt;textarea name=&quot;thread_message&quot; id=&quot;thread_message&quot; cols=&quot;60&quot; rows=&quot;20&quot; class=&quot;input_text&quot; /&gt;&lt;/textarea&gt;
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ 
+   &lt;tr&gt;
+     &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-      &lt;input type=&quot;submit&quot; value=&quot;Post New Topic&quot; name=&quot;post_topic&quot;         class=&quot;input_button&quot; /&gt;
+-      &lt;!--
+-      &lt;input type=&quot;submit&quot; value=&quot;Preview Topic&quot;  name=&quot;preview_topic&quot;      class=&quot;input_button&quot; /&gt;
+-      --&gt;
+-      &lt;!--
+-      &lt;input type=&quot;reset&quot;  value=&quot;Reset Form&quot;     name=&quot;reset_topic&quot;        class=&quot;input_button&quot; /&gt;
+-      &lt;input type=&quot;submit&quot; value=&quot;Cancel&quot;         name=&quot;cancel_new_topic&quot;   class=&quot;input_button&quot; /&gt;
+-      --&gt;
++      &lt;input type=&quot;button&quot; value=&quot;Preview&quot;        name=&quot;post_reply&quot; class=&quot;input_button&quot; id=&quot;message_preview&quot; /&gt;
++      &lt;input type=&quot;submit&quot; value=&quot;Post New Topic&quot; name=&quot;post_reply&quot; class=&quot;input_button&quot; /&gt;
+     &lt;/td&gt;
+   &lt;/tr&gt;
+ 
+@@ -50,3 +44,124 @@
+ &lt;/table&gt;
+ 
+ &lt;/form&gt;
++
++&lt;style type=&quot;text/css&quot;&gt;
++	.yui-overlay { position:absolute;background:transparent;border:none;padding:none;margin:none; }
++&lt;/style&gt;
++
++&lt;!-- message preview majick --&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++    (function () {
++        ParleyMessagePreview = function() {
++            var Dom         = YAHOO.util.Dom,
++                YU          = YAHOO.util;
++
++            this.config = {
++                trigger     : 'message_preview',
++                user_input  : 'thread_message',
++                container   : 'message_container',
++                trigger_evt : 'click'
++            };
++            this.message_source  = false;
++            this.message_preview = false;
++
++            this.handleSuccess = function(o) {
++                var data = eval('(' + o.responseText + ')');
++                var obj = o.argument.obj;
++
++                if (data.formatted) {
++                    obj.previewElId = YU.Dom.generateId();
++
++                    obj.user_input.style.visibility     = 'hidden';
++
++                    /* create a panel to show the preview in */
++                    var pWidth          = obj.user_input.clientWidth,
++                        pHeight         = obj.user_input.clientHeight,
++                        pLeft           = obj.user_input.offsetLeft,
++                        pTop            = obj.user_input.offsetTop;
++
++                    obj.preview_overlay = new YAHOO.widget.Overlay(
++                        &quot;preview_overlay&quot;,
++                        {
++                            context:        [obj.config.user_input, 'tl', 'tl'],
++                            visible:        true,
++                            width:          obj.user_input.clientWidth  + 'px',
++                            height:         obj.user_input.clientHeight + 'px'
++                        }
++                    );
++
++                    obj.preview_overlay.setBody(data.formatted);
++                    obj.preview_overlay.render(document.body);
++                    Dom.get('preview_overlay').style.overflow = 'auto';
++
++
++                    // update the button
++                    obj.trigger.value = 'Edit';
++
++                    YU.Event.removeListener( obj.trigger, 'click' );
++                    YU.Event.addListener(
++                        obj.trigger,
++                        obj.config.trigger_evt,
++                        obj.edit,
++                        obj,
++                        true
++                    );
++
++                }
++            };
++            this.handleFailure = function(o) {
++                console.log('failure');
++            };
++
++            this.edit = function() {
++                // update the button
++                this.trigger.value = 'Preview';
++
++                this.user_input.style.visibility     = 'visible';
++                this.preview_overlay.destroy();
++
++                YU.Event.removeListener( this.trigger, 'click' );
++                YU.Event.addListener(
++                    this.trigger,
++                    this.config.trigger_evt,
++                    this.preview,
++                    this,
++                    true
++                );
++            };
++
++            this.preview = function() {
++                var request = YU.Connect.asyncRequest(
++                    'POST',
++                    '[%base%]post/preview',
++                    {
++                        success: this.handleSuccess,
++                        failure: this.handleFailure,
++                        argument: {
++                            obj: this
++                        }
++                    },
++                    'msg_source=' + escape(this.user_input.value)
++                );
++            };
++
++            this.init = function() {
++                this.container  = Dom.get( this.config.container );
++                this.user_input = Dom.get( this.config.user_input );
++                this.trigger    = Dom.get( this.config.trigger );
++
++                YU.Event.addListener(
++                    this.trigger,
++                    this.config.trigger_evt,
++                    this.preview,
++                    this,
++                    true
++                );
++            };
++        };
++    })();
++
++    var MessagePreview = new ParleyMessagePreview();
++    MessagePreview.init();
++&lt;/script&gt;
++&lt;!-- (end) message preview majick --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000412.html">[Parley-svn] r524 - / trunk/root/base/thread
+</A></li>
+	<LI>Next message: <A HREF="000414.html">[Parley-svn] r526 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#413">[ date ]</a>
+              <a href="thread.html#413">[ thread ]</a>
+              <a href="subject.html#413">[ subject ]</a>
+              <a href="author.html#413">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

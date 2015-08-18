@@ -1,0 +1,287 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r492 - / trunk trunk/lib/Parley/Controller/User
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r492%20-%20/%20trunk%20trunk/lib/Parley/Controller/User&In-Reply-To=%3C200709242001.l8OK1Zd6028104%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000379.html">
+   <LINK REL="Next"  HREF="000381.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r492 - / trunk trunk/lib/Parley/Controller/User</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r492%20-%20/%20trunk%20trunk/lib/Parley/Controller/User&In-Reply-To=%3C200709242001.l8OK1Zd6028104%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r492 - / trunk trunk/lib/Parley/Controller/User">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Sep 24 22:01:35 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000379.html">[Parley-svn] r491 - / trunk/lib/Parley trunk/lib/Parley/App	trunk/lib/Parley/Controller trunk/lib/Parley/ResultSet	trunk/root/base trunk/root/base/terms trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000381.html">[Parley-svn] r493 - / trunk/lib/Parley/Controller trunk/root/base	trunk/root/base/thread trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#380">[ date ]</a>
+              <a href="thread.html#380">[ thread ]</a>
+              <a href="subject.html#380">[ subject ]</a>
+              <a href="author.html#380">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-24 22:01:35 +0200 (Mon, 24 Sep 2007)
+New Revision: 492
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3833 at wiggin</A>:  chisel | 2007-09-20 08:36:28 +0100
+ / fixed error handling for unknown user in pwd reset
+ + updated Change log
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3832
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3833
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-09-24 20:01:12 UTC (rev 491)
++++ trunk/Changes	2007-09-24 20:01:35 UTC (rev 492)
+@@ -1,5 +1,10 @@
+ This file documents the revision history for Parley.
+ 
++0.57
++    - added T&amp;Cs to application
++    - added &quot;Accept T&amp;C&quot; functionality (for logged in users)
++    - fixed error handling for unknown user in pwd reset
++
+ 0.56    Fri Sep 14 08:44:05 BST 2007
+     - replaced Dojo toolkit with YUI toolkit
+ 
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2007-09-24 20:01:12 UTC (rev 491)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2007-09-24 20:01:35 UTC (rev 492)
+@@ -173,7 +173,6 @@
+ sub _reset_password {
+     my ($self, $c, $pwd_reset) = @_;
+     my (@messages);
+-    $c-&gt;log-&gt;debug('_reset_password()');
+ 
+     # validate form data
+     $c-&gt;form(
+@@ -188,7 +187,6 @@
+ 
+     # less typing ..
+     my $reset_username = $pwd_reset-&gt;recipient()-&gt;authentication()-&gt;username;
+-    $c-&gt;log-&gt;debug( &quot;password reset for: $reset_username&quot; );
+ 
+     # make sure the username matches
+     if ($reset_username eq $c-&gt;form-&gt;valid-&gt;{reset_username}) {
+@@ -212,6 +210,7 @@
+         # incorrect username
+         push @messages, 'Incorrect username supplied';
+         parley_warn($c, q{Incorrect username supplied});
++        return;
+     }
+ 
+     return 1;
+@@ -293,95 +292,76 @@
+         return;
+     }
+ 
+-#    # deal with missing/invalid fields
+-#    if ($c-&gt;form-&gt;has_missing()) {
+-#        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
+-#        foreach my $f ( $c-&gt;form-&gt;missing ) {
+-#            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+-#        }
+-#    }
+-#    elsif ($c-&gt;form-&gt;has_invalid()) {
+-#        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
+-#        foreach my $f ( $c-&gt;form-&gt;invalid ) {
+-#            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+-#        }
+-#    }
+-
+     # otherwise the form data is ok...
+-#    else {
+-        my ($criteria, $matches, $person);
++    my ($criteria, $matches, $person);
+ 
+-        # make sure we can match user/email supplied
+-        if (defined $c-&gt;form-&gt;valid-&gt;{username}) {
+-            $criteria-&gt;{'authentication.username'}
+-                = $c-&gt;form-&gt;valid-&gt;{username};
++    # make sure we can match user/email supplied
++    if (defined $c-&gt;form-&gt;valid-&gt;{username}) {
++        $criteria-&gt;{'authentication.username'}
++            = $c-&gt;form-&gt;valid-&gt;{username};
+ 
+-            # make sure we don't send a username reminder
+-            $send_username_reminder = 0;
+-        }
+-        elsif (defined $c-&gt;form-&gt;valid-&gt;{email}) {
+-            $criteria-&gt;{'email'}
+-                = $c-&gt;form-&gt;valid-&gt;{email};
++        # make sure we don't send a username reminder
++        $send_username_reminder = 0;
++    }
++    elsif (defined $c-&gt;form-&gt;valid-&gt;{email}) {
++        $criteria-&gt;{'email'}
++            = $c-&gt;form-&gt;valid-&gt;{email};
+ 
+-            # assume the user used their email address because they couldn't
+-            # remember their username, and send them a username reminder email
+-            $send_username_reminder = 1;
++        # assume the user used their email address because they couldn't
++        # remember their username, and send them a username reminder email
++        $send_username_reminder = 1;
++    }
++    else {
++        #push @messages, q{Missing criteria in the database lookup};
++        parley_warn($c, q{Missing criteria in the database lookup});
++        $c-&gt;log-&gt;error(q{Lookup criteria missing in _user_reset()});
++        #return uniq(sort @messages);
++        return;
++    }
++    $matches = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;search(
++        $criteria,
++        {
++            join =&gt; 'authentication',
+         }
+-        else {
+-            #push @messages, q{Missing criteria in the database lookup};
+-            parley_warn($c, q{Missing criteria in the database lookup});
+-            $c-&gt;log-&gt;error(q{Lookup criteria missing in _user_reset()});
+-            #return uniq(sort @messages);
+-            return;
+-        }
+-        $matches = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;search(
+-            $criteria,
+-            {
+-                join =&gt; 'authentication',
+-            }
++    );
++
++    # make sure we don't have too many matches
++    if ($matches-&gt;count &gt; 1) {
++        #push @messages, q{Database lookup returned too many records};
++        parley_warn($c, q{Database lookup returned too many records});
++        $c-&gt;log-&gt;error(q{Looks like the SQL for password reset is a bit borked});
++        $c-&gt;log-&gt;error(
++                q{Lookup returned }
++            . $matches-&gt;count
++            . q{ record(s)}
+         );
++        $c-&gt;log-&gt;dumper($criteria);
++        #return uniq(sort @messages);
++        return;
++    }
+ 
+-        # make sure we don't have too many matches
+-        if ($matches-&gt;count &gt; 1) {
+-            #push @messages, q{Database lookup returned too many records};
+-            parley_warn($c, q{Database lookup returned too many records});
+-            $c-&gt;log-&gt;error(q{Looks like the SQL for password reset is a bit borked});
+-            $c-&gt;log-&gt;error(
+-                  q{Lookup returned }
+-                . $matches-&gt;count
+-                . q{ record(s)}
+-            );
+-            $c-&gt;log-&gt;dumper($criteria);
+-            #return uniq(sort @messages);
+-            return;
+-        }
++    # make sure we don't have too few matches
++    elsif ($matches-&gt;count &lt; 1) {
++        parley_warn($c, q{There are no users matching that information});
++    }
+ 
+-        # make sure we don't have too few matches
+-        elsif ($matches-&gt;count &lt; 1) {
+-            push @messages, q{There are no users matching that information};
+-            #$c-&gt;log-&gt;debug(' NO MATCHES ');
++    # otherwise, do the work
++    else {
++        # get the first (and should be only) match
++        $person = $matches-&gt;first();
++
++        # if required, send a username reminder
++        if ($send_username_reminder) {
++            $self-&gt;_send_username_reminder($c, $person);
+         }
+ 
+-        # otherwise, do the work
+-        else {
+-            # get the first (and should be only) match
+-            $person = $matches-&gt;first();
+-            #$c-&gt;log-&gt;dumper( $person-&gt;{_column_data}, 'COLUMN_DATA' );
+-
+-            # if required, send a username reminder
+-            if ($send_username_reminder) {
+-                $self-&gt;_send_username_reminder($c, $person);
+-            }
+-
+-            # do the actual password reset
+-            $email_send_status = $self-&gt;_user_password_reset($c, $person);
+-            if (not $email_send_status) {
+-                push @messages, q{Failed to send password reset email};
+-            }
++        # do the actual password reset
++        $email_send_status = $self-&gt;_user_password_reset($c, $person);
++        if (not $email_send_status) {
++            parley_warn($c, q{Failed to send password reset email});
+         }
+-#    }
++    }
+ 
+-        #return uniq(sort @messages);
+     return 1;
+ }
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000379.html">[Parley-svn] r491 - / trunk/lib/Parley trunk/lib/Parley/App	trunk/lib/Parley/Controller trunk/lib/Parley/ResultSet	trunk/root/base trunk/root/base/terms trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000381.html">[Parley-svn] r493 - / trunk/lib/Parley/Controller trunk/root/base	trunk/root/base/thread trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#380">[ date ]</a>
+              <a href="thread.html#380">[ thread ]</a>
+              <a href="subject.html#380">[ subject ]</a>
+              <a href="author.html#380">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r510 - / trunk
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r510%20-%20/%20trunk&In-Reply-To=%3C200709272014.l8RKEs86029943%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000397.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r510 - / trunk</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r510%20-%20/%20trunk&In-Reply-To=%3C200709272014.l8RKEs86029943%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r510 - / trunk">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Sep 27 22:14:54 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000397.html">[Parley-svn] r509 - / trunk/root/static
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#398">[ date ]</a>
+              <a href="thread.html#398">[ thread ]</a>
+              <a href="subject.html#398">[ subject ]</a>
+              <a href="author.html#398">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-27 22:14:54 +0200 (Thu, 27 Sep 2007)
+New Revision: 510
+
+Modified:
+   /
+   trunk/MANIFEST
+   trunk/MANIFEST.SKIP
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3862 at wiggin</A>:  chisel | 2007-09-27 20:23:16 +0100
+ + added new omissions to MANIFEST.SKIP
+ / regenerated MANIFEST
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3861
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3862
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/MANIFEST
+===================================================================
+--- trunk/MANIFEST	2007-09-27 20:14:34 UTC (rev 509)
++++ trunk/MANIFEST	2007-09-27 20:14:54 UTC (rev 510)
+@@ -7,6 +7,7 @@
+ db/patch_0.09_to_0.10.psql
+ db/patch_0.50_to_0.51.psql
+ db/patch_0.52_to_0.53.psql
++db/patch_0.53_to_0.57.psql
+ doc/parley-qs.html
+ inc/Module/AutoInstall.pm
+ inc/Module/Install.pm
+@@ -21,13 +22,13 @@
+ inc/Module/Install/Scripts.pm
+ inc/Module/Install/Win32.pm
+ inc/Module/Install/WriteAll.pm
+-interval.pl
+ lib/Parley.pm
+ lib/Parley/App/Communication/Email.pm
+ lib/Parley/App/DateTime.pm
+ lib/Parley/App/DFV.pm
+ lib/Parley/App/Error.pm
+ lib/Parley/App/Notification.pm
++lib/Parley/App/Terms.pm
+ lib/Parley/Controller/Admin.pm
+ lib/Parley/Controller/Forum.pm
+ lib/Parley/Controller/Help.pm
+@@ -35,11 +36,13 @@
+ lib/Parley/Controller/Post.pm
+ lib/Parley/Controller/Root.pm
+ lib/Parley/Controller/Search.pm
++lib/Parley/Controller/Terms.pm
+ lib/Parley/Controller/Thread.pm
+ lib/Parley/Controller/User.pm
+ lib/Parley/Controller/User/LostPassword.pm
+ lib/Parley/Controller/User/SignUp.pm
+ lib/Parley/Model/ParleyDB.pm
++lib/Parley/ResultSet/Terms.pm
+ lib/Parley/Schema.pm
+ lib/Parley/Schema/Authentication.pm
+ lib/Parley/Schema/EmailQueue.pm
+@@ -51,6 +54,8 @@
+ lib/Parley/Schema/Preference.pm
+ lib/Parley/Schema/PreferenceTimeString.pm
+ lib/Parley/Schema/RegistrationAuthentication.pm
++lib/Parley/Schema/Terms.pm
++lib/Parley/Schema/TermsAgreed.pm
+ lib/Parley/Schema/Thread.pm
+ lib/Parley/Schema/ThreadView.pm
+ lib/Parley/View/Plain.pm
+@@ -97,6 +102,8 @@
+ root/base/shared/useful_tt_stuff
+ root/base/shared/user_avatar
+ root/base/shared/user_status
++root/base/terms/accept
++root/base/terms/index
+ root/base/thread/add
+ root/base/thread/recent
+ root/base/thread/reply
+@@ -111,7 +118,6 @@
+ root/base/user/lostpassword/reset_success
+ root/base/user/profile
+ root/base/user/signup/signup
+-root/controls.js
+ root/css/common.css
+ root/css/default.css
+ root/css/images/bg.gif
+@@ -120,15 +126,12 @@
+ root/css/layout23.css
+ root/css/layout27.css
+ root/css/layout33.css
+-root/dragdrop.js
+-root/effects.js
+ root/email_templates/authentication_email.eml
+ root/email_templates/password_reset.eml
+ root/email_templates/thread_update_notify.eml
+ root/email_templates/thread_update_notify.html
+ root/email_templates/username_reminder.eml
+ root/favicon.ico
+-root/prototype.js
+ root/static/Editable.js
+ root/static/images/btn_120x50_built.png
+ root/static/images/btn_120x50_built_shadow.png
+@@ -190,10 +193,7 @@
+ root/static/yui/base/base-min.css
+ root/static/yui/base/base.css
+ root/static/yui/base/README
+-root/static/yui/button/assets/background.png
+ root/static/yui/button/assets/button-core.css
+-root/static/yui/button/assets/button.css
+-root/static/yui/button/assets/menuarrow.gif
+ root/static/yui/button/assets/skins/sam/button-skin.css
+ root/static/yui/button/assets/skins/sam/button.css
+ root/static/yui/button/assets/skins/sam/menu-button-arrow-disabled.png
+@@ -203,8 +203,6 @@
+ root/static/yui/button/assets/skins/sam/split-button-arrow-focus.png
+ root/static/yui/button/assets/skins/sam/split-button-arrow-hover.png
+ root/static/yui/button/assets/skins/sam/split-button-arrow.png
+-root/static/yui/button/assets/splitarrow.gif
+-root/static/yui/button/assets/splitarrow_active.gif
+ root/static/yui/button/button-beta-debug.js
+ root/static/yui/button/button-beta-min.js
+ root/static/yui/button/button-beta.js
+@@ -351,9 +349,11 @@
+ root/static/yui/treeview/assets/skins/sam/treeview-skin.css
+ root/static/yui/treeview/assets/skins/sam/treeview-sprite.gif
+ root/static/yui/treeview/assets/skins/sam/treeview.css
++root/static/yui/treeview/assets/sprite-menu.gif
+ root/static/yui/treeview/assets/sprite-orig.gif
+ root/static/yui/treeview/assets/treeview-core.css
+ root/static/yui/treeview/assets/treeview-loading.gif
++root/static/yui/treeview/assets/treeview-menu.css
+ root/static/yui/treeview/assets/treeview.css
+ root/static/yui/treeview/README
+ root/static/yui/treeview/treeview-debug.js
+@@ -398,10 +398,10 @@
+ t/controller_My.t
+ t/controller_Post.t
+ t/controller_Search.t
++t/controller_Terms.t
+ t/controller_Thread.t
+ t/controller_User.t
+ t/model_ParleyDB.t
+ t/view_Plain.t
+ t/view_TT.t
+ TODO
+-watch.sql
+
+Modified: trunk/MANIFEST.SKIP
+===================================================================
+--- trunk/MANIFEST.SKIP	2007-09-27 20:14:34 UTC (rev 509)
++++ trunk/MANIFEST.SKIP	2007-09-27 20:14:54 UTC (rev 510)
+@@ -9,3 +9,5 @@
+ ^html
+ Parley-0.*
+ .*user_file.*
++^dist
++^pm_to_blib
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000397.html">[Parley-svn] r509 - / trunk/root/static
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#398">[ date ]</a>
+              <a href="thread.html#398">[ thread ]</a>
+              <a href="subject.html#398">[ subject ]</a>
+              <a href="author.html#398">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

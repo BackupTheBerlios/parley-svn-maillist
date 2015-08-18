@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r889 - / trunk trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r889%20-%20/%20trunk%20trunk/script&In-Reply-To=%3C200804222011.m3MKB9Tb028918%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000776.html">
+   <LINK REL="Next"  HREF="000778.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r889 - / trunk trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r889%20-%20/%20trunk%20trunk/script&In-Reply-To=%3C200804222011.m3MKB9Tb028918%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r889 - / trunk trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Apr 22 22:11:09 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000776.html">[Parley-svn] r888 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000778.html">[Parley-svn] r890 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#777">[ date ]</a>
+              <a href="thread.html#777">[ thread ]</a>
+              <a href="subject.html#777">[ subject ]</a>
+              <a href="author.html#777">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-04-22 22:11:09 +0200 (Tue, 22 Apr 2008)
+New Revision: 889
+
+Added:
+   trunk/parley.conf
+   trunk/script/yml2conf
+Removed:
+   trunk/parley.yml
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r5015 at wiggin</A>:  chisel | 2008-04-22 20:45:05 +0100
+ / on the advice of #catalyst switched the application to a .conf based configuration
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5014
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:5015
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/parley.conf
+===================================================================
+--- trunk/parley.conf	2008-04-22 20:11:01 UTC (rev 888)
++++ trunk/parley.conf	2008-04-22 20:11:09 UTC (rev 889)
+@@ -0,0 +1,71 @@
++&lt;View::TT&gt;
++    EVAL_PERL   0
++    PRE_CHOMP   0
++    POST_CHOMP   1
++    PRE_PROCESS   header
++    COMPILE_DIR   /tmp/parley-ttcache
++    CONTEXT   
++    POST_PROCESS   footer
++&lt;/View::TT&gt;
++&lt;static&gt;
++    ignore_extensions   asp
++    ignore_extensions   php
++&lt;/static&gt;
++search_results_per_page   25
++&lt;authentication&gt;
++    &lt;realms&gt;
++        &lt;members&gt;
++            &lt;store&gt;
++                id_field   username
++                class   DBIx::Class
++                user_class   ParleyDB::Authentication
++            &lt;/store&gt;
++            &lt;credential&gt;
++                password_field   password
++                password_type   hashed
++                password_hash_type   MD5
++                class   Password
++            &lt;/credential&gt;
++        &lt;/members&gt;
++    &lt;/realms&gt;
++    default_realm   members
++&lt;/authentication&gt;
++posts_per_page   10
++&lt;authorization&gt;
++    &lt;dbic&gt;
++        role_class   ParleyDB::Role
++        role_rel   map_user_role
++        role_field   name
++        user_role_user_field   person_id
++    &lt;/dbic&gt;
++&lt;/authorization&gt;
++email   SMTP
++email   localhost
++threads_per_page   25
++&lt;Model::ParleyDB&gt;
++    schema_class   Parley::Schema
++    connect_info   dbi:Pg:dbname=parley;host=localhost
++    connect_info   parley
++    connect_info   
++    &lt;connect_info&gt;
++        AutoCommit   1
++    &lt;/connect_info&gt;
++&lt;/Model::ParleyDB&gt;
++&lt;session&gt;
++    storage   /tmp/parley.session
++    expires   3600
++&lt;/session&gt;
++default_view   TT
++&lt;alerts&gt;
++    from_address   <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">parley at localhost</A>
++    from_name   Parley
++&lt;/alerts&gt;
++name   Parley
++log_levels   info
++log_levels   debug
++log_levels   warn
++log_levels   error
++log_levels   fatal
++terms_accept_uri   /terms/accept
++replies_have_own_subject   0
++default_uri   /forum/list
+
+Deleted: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2008-04-22 20:11:01 UTC (rev 888)
++++ trunk/parley.yml	2008-04-22 20:11:09 UTC (rev 889)
+@@ -1,90 +0,0 @@
+---- #YAML:1.0
+-# DO NOT USE TABS FOR INDENTATION OR label/value SEPARATION!!!
+-name:                       Parley
+-default_uri:                /forum/list
+-posts_per_page:             10
+-threads_per_page:           25
+-search_results_per_page:    25
+-replies_have_own_subject:   0
+-
+-alerts:
+-    from_name:      'Parley'
+-    from_address:   '<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">parley at localhost</A>'
+-
+-terms_accept_uri:           /terms/accept
+-
+-# comment out any log levels you don't want to see in your logs
+-# 'info' and 'debug' are common choices for suppresing in a live environment
+-log_levels:
+-    - 'info'
+-    - 'debug'
+-    - 'warn'
+-    - 'error'
+-    - 'fatal'
+-
+-Model::ParleyDB:
+-    schema_class: 'Parley::Schema'
+-    connect_info:   
+-        - 'dbi:Pg:dbname=parley;host=localhost'
+-        - 'parley'
+-        - 
+-        - AutoCommit: 1
+-
+-# emails; perldoc Catalyst::Plugin::Email
+-# this passes options as an array :(
+-email:
+-    - SMTP
+-    - localhost
+-
+-#--
+-#-- LINES BELOW THIS SHOULD NOT NEED CHANGING
+-#--
+-
+-# the default view to use
+-default_view:         'TT'
+-
+-# authentiation settings; perldoc Catalyst::Authentication::Store::DBIx::Class
+-authentication:
+-    default_realm:                      'members'
+-    realms:
+-        members:
+-            credential:
+-                class:                  'Password'
+-                password_field:         'password'
+-                password_type:          'hashed'
+-                password_hash_type:     'MD5'
+-            store:
+-                class:                  'DBIx::Class'
+-                user_class:             'ParleyDB::Authentication'
+-                id_field:               'username'
+-
+-authorization:
+-    dbic:
+-        role_class:             'ParleyDB::Role'
+-        role_field:             'name'
+-        role_rel:               'map_user_role'
+-        user_role_user_field:   'person_id'
+-
+-
+-# session settings; perldoc Catalyst::Plugin::Session::FastMmap
+-session:
+-    expires:    3600
+-    storage:    '/tmp/parley.session'
+-
+-
+-# template toolkit options
+-View::TT:
+-    EVAL_PERL:      '0'
+-    PRE_PROCESS:    'header'
+-    POST_PROCESS:   'footer'
+-    POST_CHOMP:     '1'
+-    PRE_CHOMP:      '0'
+-    # comment out the following line to enable Template::Timer output in your
+-    # template source
+-    CONTEXT:        ''
+-    COMPILE_DIR:    '/tmp/parley-ttcache'
+-
+-static:
+-    ignore_extensions:
+-        - asp
+-        - php
+
+Added: trunk/script/yml2conf
+===================================================================
+--- trunk/script/yml2conf	2008-04-22 20:11:01 UTC (rev 888)
++++ trunk/script/yml2conf	2008-04-22 20:11:09 UTC (rev 889)
+@@ -0,0 +1,14 @@
++#!/usr/bin/env perl
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++# load required modules
++use YAML qw(LoadFile);
++use Config::General;
++# load the YAML file, parsed into a hash
++my $thingy = LoadFile('parley.yml');
++# create a new C::G object
++my $conf = new Config::General($thingy);
++# write it to disk
++$conf-&gt;save_file('parley.conf');
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000776.html">[Parley-svn] r888 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000778.html">[Parley-svn] r890 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#777">[ date ]</a>
+              <a href="thread.html#777">[ thread ]</a>
+              <a href="subject.html#777">[ subject ]</a>
+              <a href="author.html#777">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

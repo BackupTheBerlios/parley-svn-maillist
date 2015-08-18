@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r521 - / trunk trunk/root/base/forum	trunk/root/base/menu
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r521%20-%20/%20trunk%20trunk/root/base/forum%0A%09trunk/root/base/menu&In-Reply-To=%3C200710011101.l91B1hel018187%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000408.html">
+   <LINK REL="Next"  HREF="000410.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r521 - / trunk trunk/root/base/forum	trunk/root/base/menu</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r521%20-%20/%20trunk%20trunk/root/base/forum%0A%09trunk/root/base/menu&In-Reply-To=%3C200710011101.l91B1hel018187%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r521 - / trunk trunk/root/base/forum	trunk/root/base/menu">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct  1 13:01:43 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000408.html">[Parley-svn] r520 - / trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000410.html">[Parley-svn] r522 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#409">[ date ]</a>
+              <a href="thread.html#409">[ thread ]</a>
+              <a href="subject.html#409">[ subject ]</a>
+              <a href="author.html#409">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-01 13:01:42 +0200 (Mon, 01 Oct 2007)
+New Revision: 521
+
+Modified:
+   /
+   trunk/TODO
+   trunk/root/base/forum/view
+   trunk/root/base/menu/menubar
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3883 at wiggin</A>:  chisel | 2007-09-28 21:25:43 +0100
+ / more TODO updates
+ / tweaked application menu (to show forum/thread names as group titles)
+ + truncate long subject lines in forum/view and application menu
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3882
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3883
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-10-01 11:01:31 UTC (rev 520)
++++ trunk/TODO	2007-10-01 11:01:42 UTC (rev 521)
+@@ -1,10 +1,11 @@
+ TODO LIST
+ 
++  - add Message Preview to Create New Thred page (thread/add)
+   - add missing link to &lt;img&gt; tag to help/formatting_posts
+   - add missing link to BBCode to help/formatting_posts
+   - update avatar update response to force a No-Cache?
+-  - show more forum/thread information
+-  - see if it's possible to display the forum-name as the first
++D - show more forum/thread information
++D - see if it's possible to display the forum-name as the first
+     entry for the popup menu
+ D - show more info in the recently update threads page; number of views/posts
+   - Minimising clicks - After password reset
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2007-10-01 11:01:31 UTC (rev 520)
++++ trunk/root/base/forum/view	2007-10-01 11:01:42 UTC (rev 521)
+@@ -31,7 +31,7 @@
+     &lt;/td&gt;
+ 
+     &lt;td&gt;
+-    &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% ForumCode.escape(thread.subject) %]&lt;/a&gt;
++    &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% ForumCode.escape(thread.subject) |truncate(55) %]&lt;/a&gt;
+     &lt;br /&gt;
+     &lt;span class=&quot;forum_mini_pager&quot;&gt;
+         [%- IF authed_user || mini_pager %]
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-10-01 11:01:31 UTC (rev 520)
++++ trunk/root/base/menu/menubar	2007-10-01 11:01:42 UTC (rev 521)
+@@ -33,6 +33,9 @@
+             &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Forum&lt;/a&gt;
+                 &lt;div id=&quot;menu_forum&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
++                        [% IF current_forum %]
++                        &lt;h6 class=&quot;first-of-type&quot;&gt;[% ForumCode.escape(current_forum.name) %]&lt;/h6&gt;
++                        [% END %]
+                         &lt;ul&gt;
+                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%forum_disabled%]&quot; href=&quot;[%IF forum_disabled%]#[%ELSE%]forum/view?forum=[%current_forum.id%][%END%]&quot;&gt;View Threads&lt;/a&gt;&lt;/li&gt;
+                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%forum_disabled%]&quot; href=&quot;[%IF forum_disabled%]#[%ELSE%]thread/add?forum=[%current_forum.id%][%END%]&quot;&gt;Create New Thread&lt;/a&gt;&lt;/li&gt;
+@@ -43,6 +46,9 @@
+             &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Thread&lt;/a&gt;
+                 &lt;div id=&quot;menu_thread&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
++                        [% IF current_thread %]
++                        &lt;h6 class=&quot;first-of-type&quot;&gt;[%ForumCode.escape(current_thread.subject)|truncate(25)%]&lt;/h6&gt;
++                        [% END %]
+                         &lt;ul&gt;
+                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%thread_disabled%]&quot; href=&quot;[%IF thread_disabled%]#[%ELSE%]thread/reply?thread=[%current_thread.id%][%END%]&quot;&gt;Add Reply&lt;/a&gt;&lt;/li&gt;
+                             [%- IF watching_thread %]
+@@ -51,6 +57,9 @@
+                             &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%thread_disabled%]&quot; href=&quot;[%IF thread_disabled%]#[%ELSE%]thread/watch?thread=[%current_thread.id%]&amp;page=[%page.current_page%]&amp;watch=1[%END%]&quot;&gt;Add Watch&lt;/a&gt;&lt;/li&gt;
+                             [%- END %]
+                         &lt;/ul&gt;
++                        &lt;ul&gt;
++                            &lt;li class=&quot;yuimenuitem&quot;&gt;&lt;a class=&quot;yuimenuitemlabel[%forum_disabled%]&quot; href=&quot;[%IF forum_disabled%]#[%ELSE%]thread/add?forum=[%current_forum.id%][%END%]&quot;&gt;Create New Thread&lt;/a&gt;&lt;/li&gt;
++                        &lt;/ul&gt;
+                     &lt;/div&gt;
+                 &lt;/div&gt;                                        
+             &lt;/li&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000408.html">[Parley-svn] r520 - / trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000410.html">[Parley-svn] r522 - / trunk/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#409">[ date ]</a>
+              <a href="thread.html#409">[ thread ]</a>
+              <a href="subject.html#409">[ subject ]</a>
+              <a href="author.html#409">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

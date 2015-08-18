@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r738 - / trunk trunk/lib/Parley/I18N
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r738%20-%20/%20trunk%20trunk/lib/Parley/I18N&In-Reply-To=%3C200801142111.m0ELBZlT007788%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000625.html">
+   <LINK REL="Next"  HREF="000627.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r738 - / trunk trunk/lib/Parley/I18N</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r738%20-%20/%20trunk%20trunk/lib/Parley/I18N&In-Reply-To=%3C200801142111.m0ELBZlT007788%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r738 - / trunk trunk/lib/Parley/I18N">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Jan 14 22:11:35 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000625.html">[Parley-svn] r737 - / trunk/script
+</A></li>
+        <LI>Next message: <A HREF="000627.html">[Parley-svn] r739 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#626">[ date ]</a>
+              <a href="thread.html#626">[ thread ]</a>
+              <a href="subject.html#626">[ subject ]</a>
+              <a href="author.html#626">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-14 22:11:35 +0100 (Mon, 14 Jan 2008)
+New Revision: 738
+
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/TODO
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/lib/Parley/I18N/it.po
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4488 at wiggin</A>:  chisel | 2008-01-14 19:17:37 +0000
+ + added &quot;%quant(%1,Forum)&quot; to i18n
+ + updated Changes.i18n and TODO file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4487
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4488
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2008-01-14 21:11:27 UTC (rev 737)
++++ trunk/Changes.i18n	2008-01-14 21:11:35 UTC (rev 738)
+@@ -15,12 +15,14 @@
+             - 'Cancel'
+             - 'in'
+             - 'Please choose a language' (babelfish)
++            - &quot;%quant(%1,Forum)&quot;
+ 
+     i_default.po:
+         - added:
+             - &quot;%1 wrote:&quot;
+             - &quot;%quant(%1,reply)&quot;
+             - &quot;%quant(%1,view)&quot;
++            - &quot;%quant(%1,Forum)&quot;
+             - &quot;created by (%1)&quot;
+             - &quot;last post by (%1)&quot;
+             - &quot;Posted from %1&quot;
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-01-14 21:11:27 UTC (rev 737)
++++ trunk/TODO	2008-01-14 21:11:35 UTC (rev 738)
+@@ -1,7 +1,7 @@
+ TODO LIST
+ 
+   - investigate in-application language preference/choice
+-  - post/edit: preview (message) code
++  - styling: user/login
+   - styling: post/edit
+   - styling: thread/reply
+   - styling: user prefs
+@@ -13,6 +13,9 @@
+   - advanced search page
+   - proper moderator support/management
+   - IP/user reporting
++  - voting?
++D - styling: thread/add
++D - post/edit: preview (message) code
+ D - [bug] fix error when trying to post new thread with no subject line
+ ? - see if we can work out why 'make catalyst_par' is failing
+ D - i18n Login and Cancel buttons in login_dialog
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2008-01-14 21:11:27 UTC (rev 737)
++++ trunk/lib/Parley/I18N/i_default.po	2008-01-14 21:11:35 UTC (rev 738)
+@@ -4,6 +4,9 @@
+ msgid &quot;%quant(%1,post)&quot;
+ msgstr &quot;%quant(%1,post,posts)&quot;
+ 
++msgid &quot;%quant(%1,Forum)&quot;
++msgstr &quot;%quant(%1,Forum,Forums)&quot;
++
+ msgid &quot;%quant(%1,Reply)&quot;
+ msgstr &quot;%quant(%1,Reply,Replies)&quot;
+ 
+
+Modified: trunk/lib/Parley/I18N/it.po
+===================================================================
+--- trunk/lib/Parley/I18N/it.po	2008-01-14 21:11:27 UTC (rev 737)
++++ trunk/lib/Parley/I18N/it.po	2008-01-14 21:11:35 UTC (rev 738)
+@@ -4,6 +4,9 @@
+ msgid &quot;%quant(%1,post)&quot;
+ msgstr &quot;%quant(%1,messaggio,messaggi)&quot;
+ 
++msgid &quot;%quant(%1,Forum)&quot;
++msgstr &quot;%quant(%1,Forum,Forum)&quot;
++
+ msgid &quot;%quant(%1,Reply)&quot;
+ msgstr &quot;%quant(%1,Risposta,Risposte)&quot;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000625.html">[Parley-svn] r737 - / trunk/script
+</A></li>
+	<LI>Next message: <A HREF="000627.html">[Parley-svn] r739 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#626">[ date ]</a>
+              <a href="thread.html#626">[ thread ]</a>
+              <a href="subject.html#626">[ subject ]</a>
+              <a href="author.html#626">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

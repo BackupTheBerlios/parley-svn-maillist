@@ -1,0 +1,557 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r345 - / trunk/db trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/script
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r345%20-%20/%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/root/base%20trunk/root/base/my%20trunk/root/base/shared%0A%09trunk/root/css%20trunk/script&In-Reply-To=%3C200705212013.l4LKD8ZU029004%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000232.html">
+   <LINK REL="Next"  HREF="000234.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r345 - / trunk/db trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/script</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r345%20-%20/%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/root/base%20trunk/root/base/my%20trunk/root/base/shared%0A%09trunk/root/css%20trunk/script&In-Reply-To=%3C200705212013.l4LKD8ZU029004%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r345 - / trunk/db trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/script">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon May 21 22:13:08 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000232.html">[Parley-svn] r344 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/root/base	trunk/root/base/my trunk/root/base/search	trunk/root/base/thread trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000234.html">[Parley-svn] r346 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#233">[ date ]</a>
+              <a href="thread.html#233">[ thread ]</a>
+              <a href="subject.html#233">[ subject ]</a>
+              <a href="author.html#233">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-05-21 22:13:05 +0200 (Mon, 21 May 2007)
+New Revision: 345
+
+Added:
+   trunk/db/patch_0.52_to_0.53.psql
+   trunk/root/base/my/tab_time
+   trunk/root/base/my/tab_you
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/header
+   trunk/root/base/my/preferences
+   trunk/root/base/shared/useful_tt_stuff
+   trunk/root/css/common.css
+   trunk/script/time_string_sample.pl
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3301 at wiggin</A>:  chisel | 2007-05-21 18:43:51 +0100
+ + new time_formats for preference_time_string table
+ + display time_formats in my/preferences
+ + set time_format and show_tz in my/preferences
+ + (p)refill time_format and show_tz fields in my/preferences
+ + split my/preferences with a (dojo) tabbed container
+ + added [unfinished] tab for user details (name, etc)
+ - removed unnecessary &nbsp; entities
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3288
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3301
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/db/parley.psql	2007-05-21 20:13:05 UTC (rev 345)
+@@ -34,6 +34,9 @@
+ INSERT INTO preference_time_string (time_string, sample, comment) VALUES ('%c','Thu 13 Jul 2006 18:15:00 BST','locale\'s date and time'); 
+ INSERT INTO preference_time_string (time_string, sample) VALUES ('%A at %R', 'Thursday at 18:15');
+ INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d', '18:15, Jul 13');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d ''%y', '18:15, Jul 13 \'06');
+ 
+ 
+ CREATE TABLE preference (
+
+Added: trunk/db/patch_0.52_to_0.53.psql
+===================================================================
+--- trunk/db/patch_0.52_to_0.53.psql	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/db/patch_0.52_to_0.53.psql	2007-05-21 20:13:05 UTC (rev 345)
+@@ -0,0 +1,19 @@
++-- Patch:
++--   From: 0.52
++--   To:   0.53
++--
++-- Description:
++--  new time format preferences
++
++BEGIN;
++
++-- patch starts here --
++
++--  new time format preferences
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d', '18:15, Jul 13');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d ''%y', '18:15, Jul 13 \'06');
++
++-- patch ends here --
++
++COMMIT;
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/lib/Parley/Controller/My.pm	2007-05-21 20:13:05 UTC (rev 345)
+@@ -14,6 +14,9 @@
+         require_some =&gt; {
+             tz_data =&gt; [ 1, qw(use_utc selectZone) ],
+         },
++        optional =&gt; [
++            qw( show_tz time_format ),
++        ],
+ 
+         filters     =&gt; [qw( trim )],
+         msgs =&gt; {
+@@ -56,6 +59,16 @@
+     my $tz_categories = DateTime::TimeZone-&gt;all_names();
+     $c-&gt;stash-&gt;{tz_categories} = $tz_categories;
+ 
++    # fetch time formats
++    $c-&gt;stash-&gt;{time_formats} =
++        $c-&gt;model('ParleyDB')-&gt;resultset('PreferenceTimeString')-&gt;search(
++            {},     # fetch everything
++            {
++                order_by    =&gt; 'sample',    # order by the &quot;preview/sample&quot; string
++            }
++        );
++
++
+     return 1;
+ }
+ 
+@@ -83,8 +96,15 @@
+     else {
+         $c-&gt;stash-&gt;{formdata}{selectZone}
+             = $c-&gt;_authed_user()-&gt;preference()-&gt;timezone();
+-        $c-&gt;log-&gt;dumper( $c-&gt;stash-&gt;{formdata} );
+     }
++    # time format
++    if (defined $c-&gt;_authed_user()-&gt;preference()-&gt;time_format()) {
++        $c-&gt;stash-&gt;{formdata}{time_format} =
++            $c-&gt;_authed_user()-&gt;preference()-&gt;time_format()-&gt;id();
++    }
++    # show tz?
++    $c-&gt;stash-&gt;{formdata}{show_tz}
++        = $c-&gt;_authed_user()-&gt;preference()-&gt;show_tz();
+ 
+     return;
+ }
+@@ -94,6 +114,10 @@
+     # use the my/preferences template
+     $c-&gt;stash-&gt;{template} = 'my/preferences';
+ 
++    # return to the right tab
++    # XXX $c-&gt;stash-&gt;{show_tab} = 'tab_time';
++    # XXX we lose this info when we redirect
++
+     # are we updating TZ information?
+     # validate the form data
+     $c-&gt;form(
+@@ -119,7 +143,7 @@
+             ref($c-&gt;_authed_user()-&gt;preference())
+         );
+ 
+-        # store preference values
++        # tz preference value
+         if ($c-&gt;form-&gt;valid('use_utc')) {
+             $c-&gt;_authed_user()-&gt;preference()-&gt;timezone('UTC');
+         }
+@@ -128,6 +152,19 @@
+                 $c-&gt;form-&gt;valid('selectZone')
+             );
+         }
++        # time_format preference
++        if (defined $c-&gt;form-&gt;valid('time_format')) {
++            $c-&gt;_authed_user()-&gt;preference()-&gt;time_format(
++                $c-&gt;form-&gt;valid('time_format')
++            )
++        }
++        else {
++            $c-&gt;_authed_user()-&gt;preference()-&gt;time_format( undef );
++        }
++        # show_tz
++        $c-&gt;_authed_user()-&gt;preference()-&gt;show_tz(
++            ($c-&gt;form-&gt;valid('show_tz') || 0)
++        );
+         # store changes
+         $c-&gt;_authed_user()-&gt;preference()-&gt;update();
+ 
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/header	2007-05-21 20:13:05 UTC (rev 345)
+@@ -39,6 +39,15 @@
+             dojo.require(&quot;dojo.lfx.*&quot;);         // animations and eye candy
+             dojo.require(&quot;dojo.widget.Dialog&quot;);
+             dojo.require(&quot;dojo.widget.Button&quot;);
++
++            dojo.require(&quot;dojo.widget.TabContainer&quot;);
++            dojo.require(&quot;dojo.widget.LinkPane&quot;);
++            dojo.require(&quot;dojo.widget.ContentPane&quot;);
++            dojo.require(&quot;dojo.widget.LayoutContainer&quot;);
++
++            dojo.require(&quot;dojo.widget.InlineEditBox&quot;);
++            dojo.require(&quot;dojo.event.*&quot;);
++            dojo.hostenv.writeIncludes();
+         &lt;/script&gt;
+     &lt;/head&gt;
+ 
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/my/preferences	2007-05-21 20:13:05 UTC (rev 345)
+@@ -9,72 +9,20 @@
+     &lt;/ul&gt;
+ [% END %]
+ 
++&lt;p&gt;
++&lt;div id=&quot;mainTabContainer&quot; dojoType=&quot;TabContainer&quot; style=&quot;width: 100%; height: 300px&quot; selectedTab=&quot;[% show_pref_tab || 'tab_you' %]&quot; &gt;
++    &lt;div id=&quot;tab_you&quot; dojoType=&quot;ContentPane&quot; label=&quot;Your Details&quot;&gt;
++        [% PROCESS my/tab_you %]
++    &lt;/div&gt;
++    &lt;div id=&quot;tab_time&quot; dojoType=&quot;ContentPane&quot; label=&quot;Time&quot;&gt;
++        [% PROCESS my/tab_time %]
++    &lt;/div&gt;
++&lt;/div&gt;
+ 
+-&lt;h2&gt;Timezone&lt;/h2&gt;
+-
+-&lt;p&gt;Select your desired location. This will be used to display times using your local timezone.&lt;/p&gt;
+-
+-&lt;form action=&quot;my/preferences/update&quot; method=&quot;POST&quot; name=&quot;timezone&quot;&gt;
+-    &lt;table width=&quot;550&quot; border=&quot;1&quot;&gt;
+-        [% IF tz_message %]
+-        &lt;!-- Message to user --&gt;
+-        &lt;tr&gt;
+-        &lt;td colspan=&quot;2&quot;&gt;&lt;b&gt;&lt;i&gt;[% tz_message %]&lt;/i&gt;&lt;/b&gt;&lt;/td&gt;
+-        &lt;/tr&gt;
+-        [% END %]
+-
+-        &lt;!-- TZ category list --&gt;
+-        &lt;tr&gt;
+-            &lt;td&gt;
+-                &lt;select id=&quot;selectZone&quot; name=&quot;selectZone&quot;&gt;
+-                    &lt;option value=&quot;&quot;&gt;[ Select Zone ]&lt;/option&gt;
+-                    [% FOREACH item=tz_categories %]
+-                    &lt;option value=&quot;[% item %]&quot;&gt;[% item %]&lt;/option&gt;
+-                    [% END %]
+-                &lt;/select&gt;
+-            &lt;/td&gt;
+-
+-            &lt;td class=&quot;right_align&quot; /&gt;
+-                &lt;label for=&quot;use_utc&quot;&gt;Use UTC&lt;/label&gt;
+-                &lt;input type=&quot;checkbox&quot; id=&quot;use_utc&quot; name=&quot;use_utc&quot; value=&quot;1&quot; onChange=&quot;toggle_timezone_menus(this)&quot;/&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-
+-        &lt;!-- &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt; --&gt;
+-
+-        &lt;tr&gt;
+-            &lt;td&gt;Time formatting example:&lt;/td&gt;
+-            &lt;td&gt;&lt;i&gt;[% nicedate(current_time) %]&lt;/i&gt;&lt;/td&gt;
+-        &lt;/tr&gt;
+-
+-        &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt;
+-
+-        &lt;tr&gt;
+-            &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-            &lt;input type=&quot;submit&quot; value=&quot;Update&quot; name=&quot;update&quot; class=&quot;input_button&quot; /&gt;
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-    &lt;/table&gt;
+-&lt;/form&gt;
+-
+-&lt;script language=&quot;JavaScript&quot;&gt;
+-&lt;!-- Begin
+-
+-    function toggle_timezone_menus(checkbox) {
+-        var zone_menu   = document.getElementById('selectZone');
+-        //var place_menu  = document.getElementById('selectPlace');
+-
+-        zone_menu.disabled  = checkbox.checked;
+-        //place_menu.disabled = checkbox.checked;
+-    }
+-
+-    // we want to make sure the menus are disabled if they need to be
+-    var use_utc_cbox = document.getElementById('use_utc');
+-    toggle_timezone_menus(use_utc_cbox);
+-    
+-// End --&gt;
+-&lt;/script&gt;
+-
+ [% IF c.session.my_pref_came_from %]
++&lt;p&gt;
+ &lt;a href=&quot;[% c.session.my_pref_came_from %]&quot;&gt;Return to the forum&lt;/a&gt;
++&lt;/p&gt;
++[% ELSE %]
++&lt;p&gt;&nbsp;&lt;/p&gt;
+ [% END %]
+
+Added: trunk/root/base/my/tab_time
+===================================================================
+--- trunk/root/base/my/tab_time	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/my/tab_time	2007-05-21 20:13:05 UTC (rev 345)
+@@ -0,0 +1,81 @@
++&lt;!-- preferences : time tab --&gt;
++&lt;p&gt;Select your desired location. This will be used to display times using your local timezone.&lt;/p&gt;
++
++&lt;form action=&quot;my/preferences/update&quot; method=&quot;POST&quot; name=&quot;timezone&quot;&gt;
++    &lt;table width=&quot;550&quot; border=&quot;1&quot;&gt;
++        [% IF tz_message %]
++        &lt;!-- Message to user --&gt;
++        &lt;tr&gt;
++        &lt;td colspan=&quot;2&quot;&gt;&lt;b&gt;&lt;i&gt;[% tz_message %]&lt;/i&gt;&lt;/b&gt;&lt;/td&gt;
++        &lt;/tr&gt;
++        [% END %]
++
++        &lt;!-- TZ category list --&gt;
++        &lt;tr&gt;
++            &lt;td&gt;
++                &lt;select id=&quot;selectZone&quot; name=&quot;selectZone&quot;&gt;
++                    &lt;option value=&quot;&quot;&gt;[ Select Zone ]&lt;/option&gt;
++                    [% FOREACH item=tz_categories %]
++                    &lt;option value=&quot;[% item %]&quot;&gt;[% item %]&lt;/option&gt;
++                    [% END %]
++                &lt;/select&gt;
++            &lt;/td&gt;
++
++            &lt;td class=&quot;right_align&quot; /&gt;
++                &lt;label for=&quot;use_utc&quot;&gt;Use UTC&lt;/label&gt;
++                &lt;input type=&quot;checkbox&quot; id=&quot;use_utc&quot; name=&quot;use_utc&quot; value=&quot;1&quot; onChange=&quot;toggle_timezone_menus(this)&quot;/&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++
++        &lt;!-- Time Format List --&gt;
++        &lt;tr&gt;
++            &lt;td&gt;
++                &lt;select id=&quot;time_format&quot; name=&quot;time_format&quot; style=&quot;text-align: center;&quot;&gt;
++                    &lt;option value=&quot;&quot;&gt;(Default)&lt;/option&gt;
++                    [% WHILE (tf = time_formats.next) %]
++                    &lt;option value=&quot;[% tf.id %]&quot;&gt;[% tf.sample %]&lt;/option&gt;
++                    [% END %]
++                &lt;/select&gt;
++            &lt;/td&gt;
++            &lt;td class=&quot;right_align&quot;&gt;
++                &lt;label for=&quot;show_tz&quot;&gt;Show timezone&lt;/label&gt;
++                &lt;input type=&quot;checkbox&quot; id=&quot;show_tz&quot; name=&quot;show_tz&quot; value=&quot;1&quot; /&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++
++        &lt;!-- &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt; --&gt;
++
++        &lt;tr&gt;
++            &lt;td&gt;Time formatting example:&lt;/td&gt;
++            &lt;td&gt;&lt;i&gt;[% nicedate(current_time) %]&lt;/i&gt;&lt;/td&gt;
++        &lt;/tr&gt;
++
++        &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt;
++
++
++        &lt;tr&gt;
++            &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
++            &lt;input type=&quot;submit&quot; value=&quot;Update&quot; name=&quot;update&quot; class=&quot;input_button&quot; /&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++    &lt;/table&gt;
++&lt;/form&gt;
++
++&lt;script language=&quot;JavaScript&quot;&gt;
++&lt;!-- Begin
++
++    function toggle_timezone_menus(checkbox) {
++        var zone_menu   = document.getElementById('selectZone');
++        //var place_menu  = document.getElementById('selectPlace');
++
++        zone_menu.disabled  = checkbox.checked;
++        //place_menu.disabled = checkbox.checked;
++    }
++
++    // we want to make sure the menus are disabled if they need to be
++    var use_utc_cbox = document.getElementById('use_utc');
++    toggle_timezone_menus(use_utc_cbox);
++    
++// End --&gt;
++&lt;/script&gt;
++&lt;!-- (end) preferences : time tab --&gt;
+
+Added: trunk/root/base/my/tab_you
+===================================================================
+--- trunk/root/base/my/tab_you	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/my/tab_you	2007-05-21 20:13:05 UTC (rev 345)
+@@ -0,0 +1,55 @@
++&lt;!-- preferences : tab_you --&gt;
++
++&lt;table class=&quot;user_profile&quot;&gt;
++    &lt;tbody&gt;
++        &lt;tr&gt;
++            &lt;td width=&quot;25%&quot;&gt;
++                First Name:
++            &lt;/td&gt;
++
++            &lt;td&gt;
++                &lt;div class=&quot;inlineEdit&quot; dojoType=&quot;inlineEditBox&quot; &gt;
++                [% authed_user.first_name %]
++                &lt;/div&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++
++        &lt;tr&gt;
++            &lt;td width=&quot;25%&quot;&gt;
++                Last Name:
++            &lt;/td&gt;
++
++            &lt;td&gt;
++                &lt;div class=&quot;inlineEdit&quot; dojoType=&quot;inlineEditBox&quot; &gt;
++                [% authed_user.last_name %]
++                &lt;/div&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++
++        &lt;tr&gt;
++            &lt;td width=&quot;25%&quot;&gt;
++                Forum Name:
++            &lt;/td&gt;
++
++            &lt;td&gt;
++                &lt;div class=&quot;inlineEdit&quot; dojoType=&quot;inlineEditBox&quot; &gt;
++                [% authed_user.forum_name %]
++                &lt;/div&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++
++        &lt;tr&gt;
++            &lt;td width=&quot;25%&quot;&gt;
++                Email Address
++            &lt;/td&gt;
++
++            &lt;td&gt;
++                &lt;div class=&quot;inlineEdit&quot; dojoType=&quot;inlineEditBox&quot; &gt;
++                [% authed_user.email %]
++                &lt;/div&gt;
++            &lt;/td&gt;
++        &lt;/tr&gt;
++    &lt;/tbody&gt;
++&lt;/table&gt;
++
++&lt;!-- (end) preferences : tab_you --&gt;
+
+Modified: trunk/root/base/shared/useful_tt_stuff
+===================================================================
+--- trunk/root/base/shared/useful_tt_stuff	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/shared/useful_tt_stuff	2007-05-21 20:13:05 UTC (rev 345)
+@@ -14,11 +14,11 @@
+     [% IF authed_user.preference.time_format %]
+         [% d.strftime(authed_user.preference.time_format.time_string) %]
+         [% IF authed_user.preference.show_tz %]
+-            &nbsp;[% d.time_zone_short_name() %]
++            [% d.time_zone_short_name() %]
+         [% END %]
+     [% ELSE %]
+         [% d.strftime('%c') %]
+-        &nbsp;[% d.time_zone_short_name() %]
++        [% d.time_zone_short_name() %]
+     [% END %]
+ [% END %]
+ 
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/css/common.css	2007-05-21 20:13:05 UTC (rev 345)
+@@ -53,6 +53,10 @@
+     padding:            3px;
+ }
+ 
++.dojoTabPaneWrapper {
++  padding : 10px 10px 10px 10px;
++}
++
+ /* dojo dialog styling - initially taken from dojo demo */
+ .dojoDialog {
+     background : #eee;
+
+Modified: trunk/script/time_string_sample.pl
+===================================================================
+--- trunk/script/time_string_sample.pl	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/script/time_string_sample.pl	2007-05-21 20:13:05 UTC (rev 345)
+@@ -1,6 +1,7 @@
+ #!/usr/bin/perl
+ use strict;
+ use warnings;
++use DateTime;
+ 
+ use POSIX 'strftime';
+ 
+@@ -10,8 +11,17 @@
+     q{%c},
+     q{%A at %R},
+     q{%a, %d %b; %R},
++
++    q{%R, %b %d},
++    q{%R, %b %d '%y},
++    q{%R, %b %d %Y},
+ );
+ 
+ foreach my $tf (@time_formats) {
++    my $dt = DateTime-&gt;now();
++    print $dt-&gt;strftime( $tf ), qq{\n};
++
+     printf(qq{INSERT INTO preference_time_string (time_string, sample) VALUES ('%s', '%s');\n}, $tf, strftime($tf, 0, 15, 18, 13, 6, 106));
++
++    print qq{\n};
+ }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000232.html">[Parley-svn] r344 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Controller/User trunk/root/base	trunk/root/base/my trunk/root/base/search	trunk/root/base/thread trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000234.html">[Parley-svn] r346 - / trunk/lib/Parley/Controller trunk/root/base/my
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#233">[ date ]</a>
+              <a href="thread.html#233">[ thread ]</a>
+              <a href="subject.html#233">[ subject ]</a>
+              <a href="author.html#233">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

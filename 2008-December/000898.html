@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1016 - / branches/parley-1.1/lib	branches/parley-1.1/lib/Catalyst	branches/parley-1.1/lib/Catalyst/Controller
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1016%20-%20/%20branches/parley-1.1/lib%0A%09branches/parley-1.1/lib/Catalyst%0A%09branches/parley-1.1/lib/Catalyst/Controller&In-Reply-To=%3C200812270004.mBR04Cp8022253%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000897.html">
+   <LINK REL="Next"  HREF="000899.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1016 - / branches/parley-1.1/lib	branches/parley-1.1/lib/Catalyst	branches/parley-1.1/lib/Catalyst/Controller</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1016%20-%20/%20branches/parley-1.1/lib%0A%09branches/parley-1.1/lib/Catalyst%0A%09branches/parley-1.1/lib/Catalyst/Controller&In-Reply-To=%3C200812270004.mBR04Cp8022253%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1016 - / branches/parley-1.1/lib	branches/parley-1.1/lib/Catalyst	branches/parley-1.1/lib/Catalyst/Controller">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sat Dec 27 01:04:12 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000897.html">[Parley-svn] r1015 - / branches/parley-1.1/root/base
+</A></li>
+        <LI>Next message: <A HREF="000899.html">[Parley-svn] r1017 - / tags/parley-1.0.4
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#898">[ date ]</a>
+              <a href="thread.html#898">[ thread ]</a>
+              <a href="subject.html#898">[ subject ]</a>
+              <a href="author.html#898">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-27 01:04:12 +0100 (Sat, 27 Dec 2008)
+New Revision: 1016
+
+Added:
+   branches/parley-1.1/lib/Catalyst/
+   branches/parley-1.1/lib/Catalyst/Controller/
+   branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8697 at wiggin</A>:  chisel | 2008-12-24 08:04:13 +0000
+ + add DFV controller class
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8696
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8697
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm
+===================================================================
+--- branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm	2008-12-27 00:03:58 UTC (rev 1015)
++++ branches/parley-1.1/lib/Catalyst/Controller/FormValidator.pm	2008-12-27 00:04:12 UTC (rev 1016)
+@@ -0,0 +1,108 @@
++package Catalyst::Controller::FormValidator;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use version; our $VERSION = qv(0.0.1)-&gt;numify;
++
++use base 'Catalyst::Controller';
++
++use Carp;
++use Data::Dump qw(pp);
++use Data::FormValidator '4.50';
++use Data::FormValidator::Constraints qw(:closures);
++
++sub form_check :Private {
++    my ($self, $c, $dfv_profile) = @_;
++
++    my $results = Data::FormValidator-&gt;check(
++        $c-&gt;request-&gt;body_parameters,
++        $dfv_profile
++    );
++
++    # if we have any failures ...
++    #if ($results-&gt;has_invalid or $results-&gt;has_missing) {
++        $c-&gt;stash-&gt;{validation} = $results;
++        #}
++
++    return;
++}
++
++sub add_form_invalid :Private {
++    my ($self, $c, $invalid_key, $invalid_value) = @_;
++
++    # if we haven't checked hte form yet, we can't add to the results
++    if (not defined $c-&gt;stash-&gt;{validation}) {
++        carp('form must be validated first');
++        return;
++    }
++
++    # the invalids are a keyed list of constraint names
++    push
++        @{ $c-&gt;stash-&gt;{validation}{invalid}{$invalid_key} },
++        $invalid_value
++    ;
++
++    return;
++}
++
++sub validation_errors_to_html :Private {
++    my ($self, $c) = @_;
++}
++
++1;
++
++__END__
++
++=pod
++
++=head1 NAME
++
++Catalyst::Controller::FormValidator - check form data
++
++=head1 SUMMARY
++
++Form-validation using a Catalyst controller and Data::FormValidator
++
++=head1 SYNOPSIS
++
++    use base 'Catalyst::Controller::FormValidator';
++    use Data::FormValidator::Constraints qw(:closures);
++
++    # define a DFV profile
++    my $dfv_profile = {
++        required =&gt; [qw&lt;
++            email_address
++            phone_home
++            phone_mobile
++        &gt;],
++
++        constraint_methods =&gt; {
++            email_address   =&gt; email(),
++            phone_home      =&gt; american_phone(),
++            phone_mobile    =&gt; american_phone(),
++        },
++    };
++
++    # check the form for errors
++    $c-&gt;forward('form_check', [$dfv_profile]);
++
++    # perform custom/complex checking and
++    # add to form validation failures
++    if (not is_complex_test_ok()) {
++        $c-&gt;forward(
++            'add_form_invalid',
++            [ $error_key, $error_constraint_name ]
++        );
++    }
++
++=head1 AUTHOR
++
++Chisel Wright
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000897.html">[Parley-svn] r1015 - / branches/parley-1.1/root/base
+</A></li>
+	<LI>Next message: <A HREF="000899.html">[Parley-svn] r1017 - / tags/parley-1.0.4
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#898">[ date ]</a>
+              <a href="thread.html#898">[ thread ]</a>
+              <a href="subject.html#898">[ subject ]</a>
+              <a href="author.html#898">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

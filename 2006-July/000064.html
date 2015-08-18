@@ -1,0 +1,1069 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r175 - / trunk/issues trunk/issues/model_method	trunk/issues/model_method/ClassMethod	trunk/issues/model_method/ClassMethod/db	trunk/issues/model_method/ClassMethod/lib	trunk/issues/model_method/ClassMethod/lib/ClassMethod	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB	trunk/issues/model_method/ClassMethod/root	trunk/issues/model_method/ClassMethod/root/static	trunk/issues/model_method/ClassMethod/root/static/images	trunk/issues/model_method/ClassMethod/script	trunk/issues/model_method/ClassMethod/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r175%20-%20/%20trunk/issues%20trunk/issues/model_method%0A%09trunk/issues/model_method/ClassMethod%0A%09trunk/issues/model_method/ClassMethod/db%0A%09trunk/issues/model_method/ClassMethod/lib%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB%0A%09trunk/issues/model_method/ClassMethod/root%0A%09trunk/issues/model_method/ClassMethod/root/static%0A%09trunk/issues/model_method/ClassMethod/root/static/images%0A%09trunk/issues/model_method/ClassMethod/script%0A%09trunk/issues/model_method/ClassMethod/t&In-Reply-To=%3C200607191619.k6JGJ1YD017809%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000075.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r175 - / trunk/issues trunk/issues/model_method	trunk/issues/model_method/ClassMethod	trunk/issues/model_method/ClassMethod/db	trunk/issues/model_method/ClassMethod/lib	trunk/issues/model_method/ClassMethod/lib/ClassMethod	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB	trunk/issues/model_method/ClassMethod/root	trunk/issues/model_method/ClassMethod/root/static	trunk/issues/model_method/ClassMethod/root/static/images	trunk/issues/model_method/ClassMethod/script	trunk/issues/model_method/ClassMethod/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r175%20-%20/%20trunk/issues%20trunk/issues/model_method%0A%09trunk/issues/model_method/ClassMethod%0A%09trunk/issues/model_method/ClassMethod/db%0A%09trunk/issues/model_method/ClassMethod/lib%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model%0A%09trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB%0A%09trunk/issues/model_method/ClassMethod/root%0A%09trunk/issues/model_method/ClassMethod/root/static%0A%09trunk/issues/model_method/ClassMethod/root/static/images%0A%09trunk/issues/model_method/ClassMethod/script%0A%09trunk/issues/model_method/ClassMethod/t&In-Reply-To=%3C200607191619.k6JGJ1YD017809%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r175 - / trunk/issues trunk/issues/model_method	trunk/issues/model_method/ClassMethod	trunk/issues/model_method/ClassMethod/db	trunk/issues/model_method/ClassMethod/lib	trunk/issues/model_method/ClassMethod/lib/ClassMethod	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model	trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB	trunk/issues/model_method/ClassMethod/root	trunk/issues/model_method/ClassMethod/root/static	trunk/issues/model_method/ClassMethod/root/static/images	trunk/issues/model_method/ClassMethod/script	trunk/issues/model_method/ClassMethod/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 19 18:19:01 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000075.html">[Parley-svn] r176 - / trunk/root/static trunk/root/static/magic trunk/root/static/magic/src trunk/root/static/magic/src/animation trunk/root/static/magic/src/collections trunk/root/static/magic/src/compat trunk/root/static/magic/src/crypto trunk/root/static/magic/src/data trunk/root/static/magic/src/data/format trunk/root/static/magic/src/data/provider trunk/root/static/magic/src/debug trunk/root/static/magic/src/dnd trunk/root/static/magic/src/event trunk/root/static/magic/src/flash trunk/root/static/magic/src/flash/flash6 trunk/root/static/magic/src/flash/flash8 trunk/root/static/magic/src/fx trunk/root/static/magic/src/graphics trunk/root/static/magic/src/graphics/color trunk/root/static/magic/src/html trunk/root/static/magic/src/html/images trunk/root/static/magic/src/i18n trunk/root/static/magic/src/io trunk/root/static/magic/src/lang trunk/root/static/magic/src/lfx trunk/root/static/magic/src/logging trunk/root/static/magic/src/math trunk/root/static/magic/src/reflect trun! k/root/static/magic/src/rpc trunk/root/static/magic/src/selection trunk/root/static/magic/src/storage trunk/root/static/magic/src/string trunk/root/static/magic/src/text trunk/root/static/magic/src/undo trunk/root/static/magic/src/uri trunk/root/static/magic/src/uuid trunk/root/static/magic/src/validate trunk/root/static/magic/src/widget trunk/root/static/magic/src/widget/demoEngine trunk/root/static/magic/src/widget/demoEngine/templates trunk/root/static/magic/src/widget/demoEngine/templates/images trunk/root/static/magic/src/widget/html trunk/root/static/magic/src/widget/svg trunk/root/static/magic/src/widget/templates trunk/root/static/magic/src/widget/templates/buttons trunk/root/static/magic/src/widget/templates/images trunk/root/static/magic/src/widget/templates/images/Tree trunk/root/static/magic/src/widget/vml trunk/root/static/magic/src/xml
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#64">[ date ]</a>
+              <a href="thread.html#64">[ thread ]</a>
+              <a href="subject.html#64">[ subject ]</a>
+              <a href="author.html#64">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-07-19 18:19:00 +0200 (Wed, 19 Jul 2006)
+New Revision: 175
+
+Added:
+   trunk/issues/model_method/
+   trunk/issues/model_method/ClassMethod/
+   trunk/issues/model_method/ClassMethod/Changes
+   trunk/issues/model_method/ClassMethod/Makefile.PL
+   trunk/issues/model_method/ClassMethod/README
+   trunk/issues/model_method/ClassMethod/classmethod.yml
+   trunk/issues/model_method/ClassMethod/db/
+   trunk/issues/model_method/ClassMethod/db/classmethod.sql
+   trunk/issues/model_method/ClassMethod/lib/
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod.pm
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller/
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller/Root.pm
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB.pm
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB/
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB/ClassMethod.pm
+   trunk/issues/model_method/ClassMethod/lib/ClassMethod/View/
+   trunk/issues/model_method/ClassMethod/my.results
+   trunk/issues/model_method/ClassMethod/root/
+   trunk/issues/model_method/ClassMethod/root/favicon.ico
+   trunk/issues/model_method/ClassMethod/root/static/
+   trunk/issues/model_method/ClassMethod/root/static/images/
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_built.png
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_built_shadow.png
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_powered.png
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_powered_shadow.png
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_built.png
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_built_shadow.png
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_powered.png
+   trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_powered_shadow.png
+   trunk/issues/model_method/ClassMethod/root/static/images/catalyst_logo.png
+   trunk/issues/model_method/ClassMethod/script/
+   trunk/issues/model_method/ClassMethod/script/classmethod_cgi.pl
+   trunk/issues/model_method/ClassMethod/script/classmethod_create.pl
+   trunk/issues/model_method/ClassMethod/script/classmethod_fastcgi.pl
+   trunk/issues/model_method/ClassMethod/script/classmethod_server.pl
+   trunk/issues/model_method/ClassMethod/script/classmethod_test.pl
+   trunk/issues/model_method/ClassMethod/t/
+   trunk/issues/model_method/ClassMethod/t/01app.t
+   trunk/issues/model_method/ClassMethod/t/02pod.t
+   trunk/issues/model_method/ClassMethod/t/03podcoverage.t
+   trunk/issues/model_method/ClassMethod/t/model_CMDB-ClassMethod.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4882 at ferrari</A>:  chisel | 2006-07-19 09:38:31 +0100
+ + a small test case for problems with class methods after upgrading to Catalyst 5.7
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4882
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Added: trunk/issues/model_method/ClassMethod/Changes
+===================================================================
+--- trunk/issues/model_method/ClassMethod/Changes	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/Changes	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,4 @@
++This file documents the revision history for Perl extension ClassMethod.
++
++0.01  2006-07-11 09:02:58
++        - initial revision, generated by Catalyst
+
+Added: trunk/issues/model_method/ClassMethod/Makefile.PL
+===================================================================
+--- trunk/issues/model_method/ClassMethod/Makefile.PL	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/Makefile.PL	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,16 @@
++use inc::Module::Install;
++
++name 'ClassMethod';
++all_from 'lib/ClassMethod.pm';
++
++requires 'Catalyst' =&gt; '5.7000';
++requires 'Catalyst::Plugin::ConfigLoader';
++requires 'Catalyst::Plugin::Static::Simple';
++requires 'Catalyst::Action::RenderView';
++requires 'YAML'; # This should reflect the config file format you've chosen
++                 # See Catalyst::Plugin::ConfigLoader for supported formats
++catalyst;
++
++install_script glob('script/*.pl');
++auto_install;
++WriteAll;
+
+Added: trunk/issues/model_method/ClassMethod/README
+===================================================================
+--- trunk/issues/model_method/ClassMethod/README	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/README	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,52 @@
++1. Create database
++
++ createdb -E UTF8 classmethod
++ psql -d classmethod -f db/classmethod.sql
++
++2. Create DB Model
++
++ ./script/classmethod_create.pl model CMDB DBIC dbi:Pg:dbname=classmethod
++
++3. Add a method to the ClassMethod class
++
++  vi ./lib/ClassMethod/Model/CMDB/ClassMethod.pm
++
++# add:
++    sub some_method {
++        my $self = shift;
++        return 1;
++    }
++
++4. Add a call to the default controller
++
++  vi ./lib/ClassMethod/Controller/Root.pm
++
++  # add to sub default():
++    $c-&gt;model('CMDB')-&gt;table('class_method')-&gt;some_method();
++
++5. Add a test
++
++  vi ./t/model_CMDB-ClassMethod.t
++
++  # increase number of tests to 3
++  # add following test:
++    can_ok('ClassMethod::Model::CMDB::ClassMethod', qw/ some_method /);
++
++6. Run the test
++
++  prove --lib --verbose t/model_CMDB-ClassMethod.t
++
++All tests should pass, we're specifically interested in:
++
++  ok 3 - ClassMethod::Model::CMDB::ClassMethod-&gt;can('some_method')
++
++7. Run the application
++
++  ./script/classmethod_test.pl / 2&gt;&amp;1 |grep 'class=&quot;error&quot;'
++
++If there are any application errors, you'll see them, otherwise you'll see nothing.
++
++
++8. Drop database
++
++  dropdb classmethod
+
+Added: trunk/issues/model_method/ClassMethod/classmethod.yml
+===================================================================
+--- trunk/issues/model_method/ClassMethod/classmethod.yml	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/classmethod.yml	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,2 @@
++---
++name: ClassMethod
+
+Added: trunk/issues/model_method/ClassMethod/db/classmethod.sql
+===================================================================
+--- trunk/issues/model_method/ClassMethod/db/classmethod.sql	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/db/classmethod.sql	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,11 @@
++-- createdb -E UTF 8 classmethod
++
++BEGIN;
++
++CREATE TABLE class_method (
++    id          SERIAL      primary key,
++    int1        integer     default 1,
++    text1       text        default 'one'
++);
++
++COMMIT;
+
+Added: trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller/Root.pm
+===================================================================
+--- trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller/Root.pm	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/lib/ClassMethod/Controller/Root.pm	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,57 @@
++package ClassMethod::Controller::Root;
++
++use strict;
++use warnings;
++use base 'Catalyst::Controller';
++
++#
++# Sets the actions in this controller to be registered with no prefix
++# so they function identically to actions created in MyApp.pm
++#
++__PACKAGE__-&gt;config-&gt;{namespace} = '';
++
++=head1 NAME
++
++ClassMethod::Controller::Root - Root Controller for ClassMethod
++
++=head1 DESCRIPTION
++
++[enter your description here]
++
++=head1 METHODS
++
++=cut
++
++=head2 default
++
++=cut
++
++sub default : Private {
++    my ( $self, $c ) = @_;
++
++    $c-&gt;model('CMDB')-&gt;table('class_method')-&gt;some_method();
++
++    # Hello World
++    $c-&gt;response-&gt;body( $c-&gt;welcome_message );
++}
++
++=head2 end
++
++Attempt to render a view, if needed.
++
++=cut 
++
++sub end : ActionClass('RenderView') {}
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB/ClassMethod.pm
+===================================================================
+--- trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB/ClassMethod.pm	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB/ClassMethod.pm	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,35 @@
++package ClassMethod::Model::CMDB::ClassMethod;
++
++use strict;
++use warnings;
++use base 'DBIx::Class::Core';
++
++sub some_method {
++    my $self = shift;
++    return 1;
++}
++
++=head1 NAME
++
++ClassMethod::Model::CMDB::ClassMethod - Catalyst DBIC Table Model
++
++=head1 SYNOPSIS
++
++See L&lt;ClassMethod&gt;
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Table Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB.pm
+===================================================================
+--- trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB.pm	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/lib/ClassMethod/Model/CMDB.pm	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,37 @@
++package ClassMethod::Model::CMDB;
++
++use strict;
++use base 'Catalyst::Model::DBIC';
++
++__PACKAGE__-&gt;config(
++    dsn           =&gt; 'dbi:Pg:dbname=classmethod',
++    user          =&gt; '',
++    password      =&gt; '',
++    options       =&gt; {},
++    relationships =&gt; 1
++);
++
++=head1 NAME
++
++ClassMethod::Model::CMDB - Catalyst DBIC Model
++
++=head1 SYNOPSIS
++
++See L&lt;ClassMethod&gt;
++
++=head1 DESCRIPTION
++
++Catalyst DBIC Model.
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/model_method/ClassMethod/lib/ClassMethod.pm
+===================================================================
+--- trunk/issues/model_method/ClassMethod/lib/ClassMethod.pm	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/lib/ClassMethod.pm	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,62 @@
++package ClassMethod;
++
++use strict;
++use warnings;
++
++use Catalyst::Runtime '5.70';
++
++# Set flags and add plugins for the application
++#
++#         -Debug: activates the debug mode for very useful log messages
++#   ConfigLoader: will load the configuration from a YAML file in the
++#                 application's home directory
++# Static::Simple: will serve static files from the application's root 
++#                 directory
++
++use Catalyst qw/-Debug ConfigLoader Static::Simple/;
++
++our $VERSION = '0.01';
++
++# Configure the application. 
++#
++# Note that settings in ClassMethod.yml (or other external
++# configuration file that you set up manually) take precedence
++# over this when using ConfigLoader. Thus configuration
++# details given here can function as a default configuration,
++# with a external configuration file acting as an override for
++# local deployment.
++
++__PACKAGE__-&gt;config( name =&gt; 'ClassMethod' );
++
++# Start the application
++__PACKAGE__-&gt;setup;
++
++
++=head1 NAME
++
++ClassMethod - Catalyst based application
++
++=head1 SYNOPSIS
++
++    script/classmethod_server.pl
++
++=head1 DESCRIPTION
++
++[enter your description here]
++
++=head1 SEE ALSO
++
++L&lt;ClassMethod::Controller::Root&gt;, L&lt;Catalyst&gt;
++
++=head1 AUTHOR
++
++Chisel Wright,,,
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
++
++1;
+
+Added: trunk/issues/model_method/ClassMethod/my.results
+===================================================================
+--- trunk/issues/model_method/ClassMethod/my.results	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/my.results	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,46 @@
+<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">+chisel at ferrari</A> ClassMethod $ prove --lib --verbose t/model_CMDB-ClassMethod.t
++t/model_CMDB-ClassMethod....1..3
++[debug] Debug messages enabled
++[debug] Loaded plugins:
++.----------------------------------------------------------------------------.
++| Catalyst::Plugin::ConfigLoader  0.06                                       |
++| Catalyst::Plugin::Static::Simple  0.14                                     |
++'----------------------------------------------------------------------------'
++
++[debug] Loaded dispatcher &quot;Catalyst::Dispatcher&quot;
++[debug] Loaded engine &quot;Catalyst::Engine::CGI&quot;
++[debug] Found home &quot;/home/chisel/development/svk/parley/issues/model_method/ClassMethod&quot;
++[debug] Loaded tables &quot;class_method&quot;
++[debug] Loaded components:
++.-----------------------------------------------------------------+----------.
++| Class                                                           | Type     |
+++-----------------------------------------------------------------+----------+
++| ClassMethod::Controller::Root                                   | instance |
++| ClassMethod::Model::CMDB                                        | instance |
++| ClassMethod::Model::CMDB::ClassMethod                           | class    |
++| ClassMethod::Model::CMDB::_db                                   | class    |
++'-----------------------------------------------------------------+----------'
++
++[debug] Loaded Private actions:
++.----------------------+--------------------------------------+--------------.
++| Private              | Class                                | Method       |
+++----------------------+--------------------------------------+--------------+
++| /default             | ClassMethod::Controller::Root        | default      |
++| /end                 | ClassMethod::Controller::Root        | end          |
++'----------------------+--------------------------------------+--------------'
++
++[info] ClassMethod powered by Catalyst 5.7000
++ok 1 - use Catalyst::Test;
++ok 2 - use ClassMethod::Model::CMDB::ClassMethod;
++ok 3 - ClassMethod::Model::CMDB::ClassMethod-&gt;can('some_method')
++ok
++All tests successful.
++Files=1, Tests=3,  1 wallclock secs ( 1.12 cusr +  0.14 csys =  1.26 CPU)
++
++
++
++
+<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">+chisel at ferrari</A> ClassMethod $ ./script/classmethod_test.pl / 2&gt;&amp;1 |grep 'class=&quot;error&quot;'
++        &lt;div class=&quot;error&quot;&gt;&lt;pre wrap=&quot;&quot;&gt;&lt;p&gt;&lt;code class=&quot;error&quot;&gt;Caught exception in ClassMethod::Controller::Root-&gt;default &quot;Can&#39;t locate object method &quot;some_method&quot; via package &quot;ClassMethod::Model::CMDB::ClassMethod&quot; at /home/chisel/development/svk/parley/issues/model_method/ClassMethod/script/../lib/ClassMethod/Controller/Root.pm line 32.&quot;&lt;/code&gt;&lt;/p&gt;&lt;/pre&gt;&lt;/div&gt;
+<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">+chisel at ferrari</A> ClassMethod $
++
+
+Added: trunk/issues/model_method/ClassMethod/root/favicon.ico
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/favicon.ico
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_120x50_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_built.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_built.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_built_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_built_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_powered.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_powered.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_powered_shadow.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/btn_88x31_powered_shadow.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/root/static/images/catalyst_logo.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/root/static/images/catalyst_logo.png
+___________________________________________________________________
+Name: svn:mime-type
+   + image/x-png
+
+Added: trunk/issues/model_method/ClassMethod/script/classmethod_cgi.pl
+===================================================================
+--- trunk/issues/model_method/ClassMethod/script/classmethod_cgi.pl	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/script/classmethod_cgi.pl	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,37 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'CGI' }
++
++use strict;
++use warnings;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++use ClassMethod;
++
++ClassMethod-&gt;run;
++
++1;
++
++=head1 NAME
++
++classmethod_cgi.pl - Catalyst CGI
++
++=head1 SYNOPSIS
++
++See L&lt;Catalyst::Manual&gt;
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as a cgi script.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++
++=head1 COPYRIGHT
++
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/script/classmethod_cgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/model_method/ClassMethod/script/classmethod_create.pl
+===================================================================
+--- trunk/issues/model_method/ClassMethod/script/classmethod_create.pl	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/script/classmethod_create.pl	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,74 @@
++#!/usr/bin/perl -w
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use Catalyst::Helper;
++
++my $force = 0;
++my $mech  = 0;
++my $help  = 0;
++
++GetOptions(
++    'nonew|force'    =&gt; \$force,
++    'mech|mechanize' =&gt; \$mech,
++    'help|?'         =&gt; \$help
++ );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++my $helper = Catalyst::Helper-&gt;new( { '.newfiles' =&gt; !$force, mech =&gt; $mech } );
++
++pod2usage(1) unless $helper-&gt;mk_component( 'ClassMethod', @ARGV );
++
++1;
++
++=head1 NAME
++
++classmethod_create.pl - Create a new Catalyst Component
++
++=head1 SYNOPSIS
++
++classmethod_create.pl [options] model|view|controller name [helper] [options]
++
++ Options:
++   -force        don't create a .new file where a file to be created exists
++   -mechanize    use Test::WWW::Mechanize::Catalyst for tests if available
++   -help         display this help and exits
++
++ Examples:
++   classmethod_create.pl controller My::Controller
++   classmethod_create.pl -mechanize controller My::Controller
++   classmethod_create.pl view My::View
++   classmethod_create.pl view MyView TT
++   classmethod_create.pl view TT TT
++   classmethod_create.pl model My::Model
++   classmethod_create.pl model SomeDB DBIC::Schema MyApp::Schema create=dynamic\
++   dbi:SQLite:/tmp/my.db
++   classmethod_create.pl model AnotherDB DBIC::Schema MyApp::Schema create=static\
++   dbi:Pg:dbname=foo root 4321
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Create a new Catalyst Component.
++
++Existing component files are not overwritten.  If any of the component files
++to be created already exist the file will be written with a '.new' suffix.
++This behavior can be suppressed with the C&lt;-force&gt; option.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/script/classmethod_create.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/model_method/ClassMethod/script/classmethod_fastcgi.pl
+===================================================================
+--- trunk/issues/model_method/ClassMethod/script/classmethod_fastcgi.pl	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/script/classmethod_fastcgi.pl	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,76 @@
++#!/usr/bin/perl -w
++
++BEGIN { $ENV{CATALYST_ENGINE} ||= 'FastCGI' }
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++use ClassMethod;
++
++my $help = 0;
++my ( $listen, $nproc, $pidfile, $manager, $detach );
++ 
++GetOptions(
++    'help|?'      =&gt; \$help,
++    'listen|l=s'  =&gt; \$listen,
++    'nproc|n=i'   =&gt; \$nproc,
++    'pidfile|p=s' =&gt; \$pidfile,
++    'manager|M=s' =&gt; \$manager,
++    'daemon|d'    =&gt; \$detach,
++);
++
++pod2usage(1) if $help;
++
++ClassMethod-&gt;run( 
++    $listen, 
++    {   nproc   =&gt; $nproc,
++        pidfile =&gt; $pidfile, 
++        manager =&gt; $manager,
++        detach  =&gt; $detach,
++    }
++);
++
++1;
++
++=head1 NAME
++
++classmethod_fastcgi.pl - Catalyst FastCGI
++
++=head1 SYNOPSIS
++
++classmethod_fastcgi.pl [options]
++ 
++ Options:
++   -? -help      display this help and exits
++   -l -listen    Socket path to listen on
++                 (defaults to standard input)
++                 can be HOST:PORT, :PORT or a
++                 filesystem path
++   -n -nproc     specify number of processes to keep
++                 to serve requests (defaults to 1,
++                 requires -listen)
++   -p -pidfile   specify filename for pid file
++                 (requires -listen)
++   -d -daemon    daemonize (requires -listen)
++   -M -manager   specify alternate process manager
++                 (FCGI::ProcManager sub-class)
++                 or empty string to disable
++
++=head1 DESCRIPTION
++
++Run a Catalyst application as fastcgi.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/script/classmethod_fastcgi.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/model_method/ClassMethod/script/classmethod_server.pl
+===================================================================
+--- trunk/issues/model_method/ClassMethod/script/classmethod_server.pl	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/script/classmethod_server.pl	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,110 @@
++#!/usr/bin/perl -w
++
++BEGIN { 
++    $ENV{CATALYST_ENGINE} ||= 'HTTP';
++    $ENV{CATALYST_SCRIPT_GEN} = 28;
++}  
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++
++my $debug             = 0;
++my $fork              = 0;
++my $help              = 0;
++my $host              = undef;
++my $port              = 3000;
++my $keepalive         = 0;
++my $restart           = 0;
++my $restart_delay     = 1;
++my $restart_regex     = '\.yml$|\.yaml$|\.pm$';
++my $restart_directory = undef;
++
++my @argv = @ARGV;
++
++GetOptions(
++    'debug|d'             =&gt; \$debug,
++    'fork'                =&gt; \$fork,
++    'help|?'              =&gt; \$help,
++    'host=s'              =&gt; \$host,
++    'port=s'              =&gt; \$port,
++    'keepalive|k'         =&gt; \$keepalive,
++    'restart|r'           =&gt; \$restart,
++    'restartdelay|rd=s'   =&gt; \$restart_delay,
++    'restartregex|rr=s'   =&gt; \$restart_regex,
++    'restartdirectory=s'  =&gt; \$restart_directory,
++);
++
++pod2usage(1) if $help;
++
++if ( $restart ) {
++    $ENV{CATALYST_ENGINE} = 'HTTP::Restarter';
++}
++if ( $debug ) {
++    $ENV{CATALYST_DEBUG} = 1;
++}
++
++# This is require instead of use so that the above environment
++# variables can be set at runtime.
++require ClassMethod;
++
++ClassMethod-&gt;run( $port, $host, {
++    argv              =&gt; \@argv,
++    'fork'            =&gt; $fork,
++    keepalive         =&gt; $keepalive,
++    restart           =&gt; $restart,
++    restart_delay     =&gt; $restart_delay,
++    restart_regex     =&gt; qr/$restart_regex/,
++    restart_directory =&gt; $restart_directory,
++} );
++
++1;
++
++=head1 NAME
++
++classmethod_server.pl - Catalyst Testserver
++
++=head1 SYNOPSIS
++
++classmethod_server.pl [options]
++
++ Options:
++   -d -debug          force debug mode
++   -f -fork           handle each request in a new process
++                      (defaults to false)
++   -? -help           display this help and exits
++      -host           host (defaults to all)
++   -p -port           port (defaults to 3000)
++   -k -keepalive      enable keep-alive connections
++   -r -restart        restart when files get modified
++                      (defaults to false)
++   -rd -restartdelay  delay between file checks
++   -rr -restartregex  regex match files that trigger
++                      a restart when modified
++                      (defaults to '\.yml$|\.yaml$|\.pm$')
++   -restartdirectory  the directory to search for
++                      modified files
++                      (defaults to '../')
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst Testserver for this application.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/script/classmethod_server.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/model_method/ClassMethod/script/classmethod_test.pl
+===================================================================
+--- trunk/issues/model_method/ClassMethod/script/classmethod_test.pl	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/script/classmethod_test.pl	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,54 @@
++#!/usr/bin/perl -w
++
++use strict;
++use warnings;
++use Getopt::Long;
++use Pod::Usage;
++use FindBin;
++use lib &quot;$FindBin::Bin/../lib&quot;;
++use Catalyst::Test 'ClassMethod';
++
++my $help = 0;
++
++GetOptions( 'help|?' =&gt; \$help );
++
++pod2usage(1) if ( $help || !$ARGV[0] );
++
++print request($ARGV[0])-&gt;content . &quot;\n&quot;;
++
++1;
++
++=head1 NAME
++
++classmethod_test.pl - Catalyst Test
++
++=head1 SYNOPSIS
++
++classmethod_test.pl [options] uri
++
++ Options:
++   -help    display this help and exits
++
++ Examples:
++   classmethod_test.pl <A HREF="http://localhost/some_action">http://localhost/some_action</A>
++   classmethod_test.pl /some_action
++
++ See also:
++   perldoc Catalyst::Manual
++   perldoc Catalyst::Manual::Intro
++
++=head1 DESCRIPTION
++
++Run a Catalyst action from the command line.
++
++=head1 AUTHOR
++
++Sebastian Riedel, C&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">sri at oook.de</A>&gt;
++Maintained by the Catalyst Core Team.
++
++=head1 COPYRIGHT
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+
+Property changes on: trunk/issues/model_method/ClassMethod/script/classmethod_test.pl
+___________________________________________________________________
+Name: svn:executable
+   + *
+
+Added: trunk/issues/model_method/ClassMethod/t/01app.t
+===================================================================
+--- trunk/issues/model_method/ClassMethod/t/01app.t	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/t/01app.t	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,7 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 2;
++
++BEGIN { use_ok 'Catalyst::Test', 'ClassMethod' }
++
++ok( request('/')-&gt;is_success, 'Request should succeed' );
+
+Added: trunk/issues/model_method/ClassMethod/t/02pod.t
+===================================================================
+--- trunk/issues/model_method/ClassMethod/t/02pod.t	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/t/02pod.t	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval &quot;use Test::Pod 1.14&quot;;
++plan skip_all =&gt; 'Test::Pod 1.14 required' if $@;
++plan skip_all =&gt; 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_files_ok();
+
+Added: trunk/issues/model_method/ClassMethod/t/03podcoverage.t
+===================================================================
+--- trunk/issues/model_method/ClassMethod/t/03podcoverage.t	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/t/03podcoverage.t	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,9 @@
++use strict;
++use warnings;
++use Test::More;
++
++eval &quot;use Test::Pod::Coverage 1.04&quot;;
++plan skip_all =&gt; 'Test::Pod::Coverage 1.04 required' if $@;
++plan skip_all =&gt; 'set TEST_POD to enable this test' unless $ENV{TEST_POD};
++
++all_pod_coverage_ok();
+
+Added: trunk/issues/model_method/ClassMethod/t/model_CMDB-ClassMethod.t
+===================================================================
+--- trunk/issues/model_method/ClassMethod/t/model_CMDB-ClassMethod.t	2006-06-29 10:55:31 UTC (rev 174)
++++ trunk/issues/model_method/ClassMethod/t/model_CMDB-ClassMethod.t	2006-07-19 16:19:00 UTC (rev 175)
+@@ -0,0 +1,5 @@
++use Test::More tests =&gt; 3;
++use_ok( Catalyst::Test, 'ClassMethod' );
++use_ok('ClassMethod::Model::CMDB::ClassMethod');
++
++can_ok('ClassMethod::Model::CMDB::ClassMethod', qw/ some_method /);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000075.html">[Parley-svn] r176 - / trunk/root/static trunk/root/static/magic trunk/root/static/magic/src trunk/root/static/magic/src/animation trunk/root/static/magic/src/collections trunk/root/static/magic/src/compat trunk/root/static/magic/src/crypto trunk/root/static/magic/src/data trunk/root/static/magic/src/data/format trunk/root/static/magic/src/data/provider trunk/root/static/magic/src/debug trunk/root/static/magic/src/dnd trunk/root/static/magic/src/event trunk/root/static/magic/src/flash trunk/root/static/magic/src/flash/flash6 trunk/root/static/magic/src/flash/flash8 trunk/root/static/magic/src/fx trunk/root/static/magic/src/graphics trunk/root/static/magic/src/graphics/color trunk/root/static/magic/src/html trunk/root/static/magic/src/html/images trunk/root/static/magic/src/i18n trunk/root/static/magic/src/io trunk/root/static/magic/src/lang trunk/root/static/magic/src/lfx trunk/root/static/magic/src/logging trunk/root/static/magic/src/math trunk/root/static/magic/src/reflect trun! k/root/static/magic/src/rpc trunk/root/static/magic/src/selection trunk/root/static/magic/src/storage trunk/root/static/magic/src/string trunk/root/static/magic/src/text trunk/root/static/magic/src/undo trunk/root/static/magic/src/uri trunk/root/static/magic/src/uuid trunk/root/static/magic/src/validate trunk/root/static/magic/src/widget trunk/root/static/magic/src/widget/demoEngine trunk/root/static/magic/src/widget/demoEngine/templates trunk/root/static/magic/src/widget/demoEngine/templates/images trunk/root/static/magic/src/widget/html trunk/root/static/magic/src/widget/svg trunk/root/static/magic/src/widget/templates trunk/root/static/magic/src/widget/templates/buttons trunk/root/static/magic/src/widget/templates/images trunk/root/static/magic/src/widget/templates/images/Tree trunk/root/static/magic/src/widget/vml trunk/root/static/magic/src/xml
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#64">[ date ]</a>
+              <a href="thread.html#64">[ thread ]</a>
+              <a href="subject.html#64">[ subject ]</a>
+              <a href="author.html#64">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

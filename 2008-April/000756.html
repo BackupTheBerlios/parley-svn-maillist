@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r868 - / trunk trunk/doc
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r868%20-%20/%20trunk%20trunk/doc&In-Reply-To=%3C200804110958.m3B9wHPj030959%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000755.html">
+   <LINK REL="Next"  HREF="000757.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r868 - / trunk trunk/doc</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r868%20-%20/%20trunk%20trunk/doc&In-Reply-To=%3C200804110958.m3B9wHPj030959%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r868 - / trunk trunk/doc">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Apr 11 11:58:17 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000755.html">[Parley-svn] r867 - / trunk/t.output
+</A></li>
+        <LI>Next message: <A HREF="000757.html">[Parley-svn] r869 - / trunk/config
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#756">[ date ]</a>
+              <a href="thread.html#756">[ thread ]</a>
+              <a href="subject.html#756">[ subject ]</a>
+              <a href="author.html#756">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-04-11 11:58:17 +0200 (Fri, 11 Apr 2008)
+New Revision: 868
+
+Added:
+   trunk/doc/README.admin
+   trunk/doc/README.gravatar
+Removed:
+   trunk/README.admin
+   trunk/README.gravatar
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4923 at wiggin</A>:  chisel | 2008-04-11 08:24:20 +0100
+ / moved README files into doc/
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4922
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4923
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Deleted: trunk/README.admin
+===================================================================
+--- trunk/README.admin	2008-04-11 09:58:10 UTC (rev 867)
++++ trunk/README.admin	2008-04-11 09:58:17 UTC (rev 868)
+@@ -1,110 +0,0 @@
+-0. INTRODUCTION
+-
+-  Administering public forums is notoriously nightmarish.
+-
+-1. BAN TYPES
+-
+-  The ideas for slowing down Evil People are as follows:
+-
+-1.1 Account Suspension
+-
+-    When the account tries to log-in all they see is an &quot;Account Suspended&quot;
+-    page.
+-
+-    The site can be viewed while logged out (i.e. guest user)
+-
+-1.2 Ban-by-IP
+-
+-    This can take varying levels of restriction:
+-
+-1.2.1 Restrict Posting by IP
+-
+-    Prevent user(s) from matching IPs creating new threads, replying to
+-    existing threads or editing existing posts.
+-
+-1.2.2 Restrict Login by IP
+-
+-    Prevent user(s) from matching IPs using the login functionality
+-
+-1.2.3 Restrict Sign-Up by IP
+-
+-    Prevent new accounts being created from matching IPs
+-
+-1.2.4 Restrict All Access by IP
+-
+-    Matching IPs are shown the &quot;Evil People Got You Banned&quot; page.
+-    This is pretty harsh, and should be saved as a ast resort .. if
+-    implemented/used at all.
+-
+-2. KNOWN ISSUES
+-
+-  There are the usual issues of people running through proxies, catching
+-  people we didn't intend to, or being used by banned users to circumvent IP
+-  based bans.
+-
+-3. CONCERNS
+-
+-3.1 Performance
+-
+-    Will IP checking for every request have a noticable, negative, effect on
+-    application performance?
+-    We could store information in-session for IPs we discover to be affected,
+-    but we then have the following issues:
+-        - we're still doing a lookup every hit for the majority of hits (the
+-          Good people)
+-        - if we escalate or modify a user's IP restriction it won't take
+-          effect, since we already have them session-flagged for something
+-          lesser.
+-
+-4. POSSIBLE IMPLEMENTATIONS
+-
+-4.1 Net::IP::Match::Regexp
+-
+-    This looks like a useful module for providing (CIDR - a.b.c.d/x) IP ranges
+-    and matching IPs that live in those ranges.
+-
+-4.2 IP matching
+-
+-    In (3.1) concerns were raised regarding a per hit performance lookup.
+-
+-    This may be reduced by reducing the number of lookups and queries; instead
+-    of a growing set of records in a table - one for each new match - we could
+-    make use of the create_iprange_regexp() feature in Net::IP::Match::Regexp
+-    and have one row for each ban-type.
+-
+-    This should reduce database overheads, and hopefully simplify the IP
+-    matching.
+-
+-    The interface may become difficult to use (in the initial) implementation
+-    if we offer a textarea to manage the ranges. This could be overcome in the
+-    future by having the interface split/format IP blocks on viewing, and
+-    compress to one string on saving.
+-    A small hit at admin time, instead of a per-hit overhead.
+-
+-    We'd lose the ability to timestamp individual modifications, or provide a
+-    per-block rejection message.
+-
+-4.3 Admin Action Tracking
+-
+-    It would be useful for the application to keep a log of changes, with a
+-    comment written by the moderator, so that time and reasons for bans could
+-    be viewed by other admins.
+-
+-    e.g.
+-
+-      2008-02-13 08:25  Added r.s.t.u/x - they just kept on being abusive
+-
+-    There might be an opportunity to establish the &quot;diff&quot; between the before
+-    and after IP list(s) and store those with the message. (list based maths?)
+-
+-4.4 Admin permissions and roles
+-
+-    We don't necessarily wish to allow all moderators the ability to perform
+-    anoy or all of the restriction actions.
+-
+-    This will most likely introduce some kind of role based system;
+-    Catalyst::Plugin::Authorization::Roles?
+-
+-    Methods can be added to ::Schema::Person to do various role checks;
+-    e.g.  can_suspend_account()
+-    [although, how can we use the Catalyst plugin be used from the Schema?]
+
+Deleted: trunk/README.gravatar
+===================================================================
+--- trunk/README.gravatar	2008-04-11 09:58:10 UTC (rev 867)
++++ trunk/README.gravatar	2008-04-11 09:58:17 UTC (rev 868)
+@@ -1,29 +0,0 @@
+-From: <A HREF="http://site.gravatar.com/site/implement">http://site.gravatar.com/site/implement</A>
+-
+-PERL
+-
+-Gravatar implementations with PERL are pretty straightforward, however you do
+-need to include several external libraries. These are probably already
+-installed on your machine, but if they're not, you'll have to download and
+-install them.
+-
+-Let's start by including those library functions that we'll utilize:
+-
+-use URI::Escape qw(uri_escape);
+-use Digest::MD5 qw(md5_hex);
+-
+-Next, assume the following variables are available to you:
+-
+-my $email = &quot;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">someone at somewhere.com</A>&quot;;
+-my $default = &quot;<A HREF="http://www.somewhere.com/homsar.jpg">http://www.somewhere.com/homsar.jpg</A>&quot;;
+-my $size = 40;
+-
+-You can construct your gravatar url with the following PERL code:
+-
+-my $grav_url = &quot;<A HREF="http://www.gravatar.com/avatar.php?">http://www.gravatar.com/avatar.php?</A>
+-gravatar_id=&quot;.md5_hex($email).
+-&quot;&amp;default=&quot;.uri_escape($default).
+-&quot;&amp;size=&quot;.$size;
+-
+-This only constructs the URL, so don't forget to place it in an img tag before
+-printing it.
+
+Copied: trunk/doc/README.admin (from rev 849, trunk/README.admin)
+
+Copied: trunk/doc/README.gravatar (from rev 849, trunk/README.gravatar)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000755.html">[Parley-svn] r867 - / trunk/t.output
+</A></li>
+	<LI>Next message: <A HREF="000757.html">[Parley-svn] r869 - / trunk/config
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#756">[ date ]</a>
+              <a href="thread.html#756">[ thread ]</a>
+              <a href="subject.html#756">[ subject ]</a>
+              <a href="author.html#756">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

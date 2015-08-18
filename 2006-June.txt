@@ -1,0 +1,1420 @@
+From chiselwright at berlios.de  Tue Jun 27 20:39:04 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:39:04 +0200
+Subject: [Parley-svn] r158 - in trunk: . root/base/user root/css
+Message-ID: <200606271839.k5RId4Kr026899@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:38:43 +0200 (Tue, 27 Jun 2006)
+New Revision: 158
+
+Modified:
+   trunk/
+   trunk/root/base/user/login
+   trunk/root/css/default.css
+Log:
+ r14404 at ferrari:  chisel | 2006-04-13 18:24:35 +0100
+ / move away from a table based layout for the login page/form
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14394
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14404
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/root/base/user/login
+===================================================================
+
+Modified: trunk/root/css/default.css
+===================================================================
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:39:40 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:39:40 +0200
+Subject: [Parley-svn] r159 - in trunk: . root/base/menu root/css
+Message-ID: <200606271839.k5RIdeXX027275@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:39:34 +0200 (Tue, 27 Jun 2006)
+New Revision: 159
+
+Modified:
+   trunk/
+   trunk/Changes
+   trunk/root/base/menu/statusbar
+   trunk/root/css/default.css
+Log:
+ r14405 at ferrari:  chisel | 2006-04-19 09:22:07 +0100
+ / change popup_login_form to use a fieldset for layout, moving away from a table-layout
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14404
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14405
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/Changes
+===================================================================
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+
+Modified: trunk/root/css/default.css
+===================================================================
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:40:34 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:40:34 +0200
+Subject: [Parley-svn] r160 - trunk
+Message-ID: <200606271840.k5RIeYsI027593@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:40:01 +0200 (Tue, 27 Jun 2006)
+New Revision: 160
+
+Modified:
+   trunk/
+Log:
+ r14408 at ferrari:  chisel | 2006-05-11 08:52:53 +0100
+ fixed type of username field
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14405
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14408
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:47:24 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:47:24 +0200
+Subject: [Parley-svn] r161 - / trunk/issues trunk/issues/search_deflate trunk/issues/search_deflate/db trunk/issues/search_deflate/lib trunk/issues/search_deflate/lib/TimeDB trunk/issues/search_deflate/t
+Message-ID: <200606271847.k5RIlOg6030238@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:47:22 +0200 (Tue, 27 Jun 2006)
+New Revision: 161
+
+Added:
+   trunk/issues/search_deflate/
+   trunk/issues/search_deflate/README
+   trunk/issues/search_deflate/db/
+   trunk/issues/search_deflate/db/search_deflate.pgsql
+   trunk/issues/search_deflate/lib/
+   trunk/issues/search_deflate/lib/TimeDB.pm
+   trunk/issues/search_deflate/lib/TimeDB/
+   trunk/issues/search_deflate/lib/TimeDB/Thingy.pm
+   trunk/issues/search_deflate/lib/TimeTests.pm
+   trunk/issues/search_deflate/t/
+   trunk/issues/search_deflate/t/inflate.t
+   trunk/issues/search_deflate/test_results
+   trunk/issues/search_deflate/version.txt
+Modified:
+   /
+Log:
+ r15494 at ferrari:  chisel | 2006-06-27 18:07:52 +0100
+ + test case to illustrate problem with hires time lookups
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:14423
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15494
+
+Added: trunk/issues/search_deflate/README
+===================================================================
+--- trunk/issues/search_deflate/README	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/README	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,23 @@
++1. Create the database and schema
++
++  createdb -E UTF8 search_deflate
++  psql -d search_deflate -f db/search_deflate.pgsql
++
++
++2. Run the tests
++
++  prove --lib --verbose t/inflate.t
++
++To run all the tests:
++
++  prove --lib --verbose t/
++
++
++3. Work out what's broken
++
++  [exercise left for the reader]
++
++
++4. Cleanup
++
++  dropdb search_deflate
+
+Added: trunk/issues/search_deflate/db/search_deflate.pgsql
+===================================================================
+--- trunk/issues/search_deflate/db/search_deflate.pgsql	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/db/search_deflate.pgsql	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,14 @@
++-- To create the database, do the following:
++--  $ createdb -E UTF8 time_precision
++--  $ psql -d time_precision -f db/time_precision.pgsql
++
++-- we don't want half a schema
++BEGIN;
++
++CREATE TABLE thingy (
++    thingy_id   SERIAL primary key,
++    created     timestamp with time zone default CURRENT_TIMESTAMP,
++    stuff       text default 'foo'
++);
++
++COMMIT;
+
+Added: trunk/issues/search_deflate/lib/TimeDB/Thingy.pm
+===================================================================
+--- trunk/issues/search_deflate/lib/TimeDB/Thingy.pm	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/lib/TimeDB/Thingy.pm	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,23 @@
++package TimeDB::Thingy;
++use strict;
++use warnings;
++use base qw/DBIx::Class/;
++use DateTime::Format::Pg;
++
++__PACKAGE__->load_components(qw/PK::Auto Core/);
++__PACKAGE__->table('thingy');
++__PACKAGE__->add_columns(qw/
++    thingy_id
++    created
++    stuff
++/);
++__PACKAGE__->set_primary_key('thingy_id');
++
++foreach my $datecol (qw/created/) {
++    __PACKAGE__->inflate_column($datecol, {
++        inflate => sub { DateTime::Format::Pg->parse_datetime(shift); },
++        deflate => sub { DateTime::Format::Pg->format_datetime(shift); },
++    });
++}
++
++1;
+
+Added: trunk/issues/search_deflate/lib/TimeDB.pm
+===================================================================
+--- trunk/issues/search_deflate/lib/TimeDB.pm	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/lib/TimeDB.pm	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,10 @@
++package TimeDB;
++use strict;
++use warnings;
++
++use base qw/DBIx::Class::Schema/;
++__PACKAGE__->load_classes(qw/ Thingy /);
++
++
++1;
++
+
+Added: trunk/issues/search_deflate/lib/TimeTests.pm
+===================================================================
+--- trunk/issues/search_deflate/lib/TimeTests.pm	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/lib/TimeTests.pm	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,11 @@
++package TimeTests;
++use strict;
++use warnings;
++use Test::More;
++
++sub connect_db {
++    my $schema = TimeDB->connect('dbi:Pg:dbname=time_precision');
++    ok(defined $schema, 'schema object is defined');
++}
++
++1;
+
+Added: trunk/issues/search_deflate/t/inflate.t
+===================================================================
+--- trunk/issues/search_deflate/t/inflate.t	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/t/inflate.t	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,84 @@
++use Test::More tests => 7;
++use strict;
++use warnings;
++
++# global variables
++our ($schema, $new_thingy, $thingy_list, $pg_time, $nanoseconds);
++
++BEGIN {
++    # use modules
++    use_ok('TimeDB');
++
++    # this is the time we'll use to create a new thingy
++    # it uses both tz-offset and nanoseconds
++    $nanoseconds = 987654321;
++    $pg_time = qq{1974-10-02 14:17:52.${nanoseconds}+03};
++
++    # get DBIC schema
++    $schema = TimeDB->connect('dbi:Pg:dbname=search_deflate');
++    ok(defined $schema, 'schema object is defined');
++
++    # do everything inside a transaction - then we can discard our test data
++    $schema->txn_begin;
++}
++
++END {
++    # rollback our changes
++    $schema->txn_rollback;
++}
++
++################################################################################
++diag q{first of all get an item into the database};
++################################################################################
++$new_thingy = $schema->resultset('Thingy')->create(
++    {
++        created => $pg_time,
++    }
++);
++# make sure we made a thingy and that it has an ID
++ok(defined $new_thingy, 'resultset for new Thingy is defined');
++ok(defined $new_thingy->id(), 'PK-id for new Thingy is defined');
++################################################################################
++
++
++################################################################################
++diag q{look up the thingy by pg_time - this should be fine};
++################################################################################
++# get all thingies matching $pg_time
++$thingy_list = $schema->resultset('Thingy')->search(
++    {
++        created => { '=', $pg_time },
++    }
++);
++# check we get the right number of Thingies
++is($thingy_list->count(), 1, q{correct number of thingies [=, $pg_time]});
++################################################################################
++
++
++################################################################################
++diag q{look up the thingy by ->created() - this should be fine, but it isn't};
++diag q{search() doesn't appear to deflate as we might expect it to};
++################################################################################
++# get all thingies matching $pg_time
++$thingy_list = $schema->resultset('Thingy')->search(
++    {
++        created => { '=', $new_thingy->created() },
++    }
++);
++# check we get the right number of Thingies
++is($thingy_list->count(), 1, q{correct number of thingies [=, $new_thingy->created()]});
++################################################################################
++
++
++################################################################################
++diag q{look up the thingy by ->created(), using an explicit 'deflate'};
++################################################################################
++# get all thingies matching $pg_time
++$thingy_list = $schema->resultset('Thingy')->search(
++    {
++        created => { '=', DateTime::Format::Pg->format_datetime($new_thingy->created()) },
++    }
++);
++# check we get the right number of Thingies
++is($thingy_list->count(), 1, q{correct number of thingies [=, DateTime::Format::Pg->format_datetime($new_thingy->created())]});
++################################################################################
+
+Added: trunk/issues/search_deflate/test_results
+===================================================================
+--- trunk/issues/search_deflate/test_results	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/test_results	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1,92 @@
++t/datetime..............1..10
++ok 1 - use TimeDB;
++ok 2 - use DateTime;
++ok 3 - schema object is defined
++ok 4 - resultset for new Thingy is defined
++ok 5 - PK-id for new Thingy is defined
++ok 6 - New thingy has correct nanoseconds
++ok 7 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++not ok 8 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++
++#   Failed test 'correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]'
++#   in t/datetime.t at line 61.
++#          got: '0'
++#     expected: '1'
++ok 9 - correct number of thingies [all thingies]
++ok 10 - Thingy has non-zero nanoseconds
++# Looks like you failed 1 test of 10.
++dubious
++	Test returned status 1 (wstat 256, 0x100)
++DIED. FAILED test 8
++	Failed 1/10 tests, 90.00% okay
++t/nano-default_time.....1..10
++ok 1 - use TimeDB;
++ok 2 - use TimeTests;
++ok 3 - schema object is defined
++ok 4 - schema object is defined
++ok 5 - schema object is defined
++ok 6 - resultset for new Thingy is defined
++ok 7 - PK-id for new Thingy is defined
++# 2006-06-27T11:37:20
++# 2006-06-27 11:37:20.024312000+0100
++not ok 8 - correct number of thingies [=, 2006-06-27T11:37:20]
++
++#   Failed test 'correct number of thingies [=, 2006-06-27T11:37:20]'
++#   in t/nano-default_time.t at line 63.
++#          got: '0'
++#     expected: '1'
++not ok 9 - correct number of thingies [<=, 2006-06-27T11:37:20]
++
++#   Failed test 'correct number of thingies [<=, 2006-06-27T11:37:20]'
++#   in t/nano-default_time.t at line 73.
++#          got: '0'
++#     expected: '1'
++not ok 10 - correct number of thingies [>, 2006-06-27T11:37:20]
++
++#   Failed test 'correct number of thingies [>, 2006-06-27T11:37:20]'
++#   in t/nano-default_time.t at line 83.
++#          got: '1'
++#     expected: '0'
++# Looks like you failed 3 tests of 10.
++dubious
++	Test returned status 3 (wstat 768, 0x300)
++DIED. FAILED tests 8-10
++	Failed 3/10 tests, 70.00% okay
++t/nano..................1..10
++ok 1 - use TimeDB;
++ok 2 - schema object is defined
++ok 3 - resultset for new Thingy is defined
++ok 4 - PK-id for new Thingy is defined
++ok 5 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++ok 6 - correct number of thingies [<=, 1974-10-02 14:17:52.987654321+03]
++ok 7 - correct number of thingies [>, 1974-10-02 14:17:52.987654321+03]
++not ok 8 - correct number of thingies [=, 1974-10-02T14:17:52]
++
++#   Failed test 'correct number of thingies [=, 1974-10-02T14:17:52]'
++#   in t/nano.t at line 50.
++#          got: '0'
++#     expected: '1'
++ok 9 - correct number of thingies [<=, 1974-10-02T14:17:52]
++ok 10 - correct number of thingies [>, 1974-10-02T14:17:52]
++# Looks like you failed 1 test of 10.
++dubious
++	Test returned status 1 (wstat 256, 0x100)
++DIED. FAILED test 8
++	Failed 1/10 tests, 90.00% okay
++t/sql_abstract_limit....1..7
++ok 1 - use SQL::Abstract::Limit;
++ok 2 - use TimeDB;
++ok 3 - schema object is defined
++# SELECT * FROM thingy WHERE ( created = ? )
++# 1974-10-02 14:17:52.987654321+03
++ok 4 - resultset for new Thingy is defined
++ok 5 - PK-id for new Thingy is defined
++ok 6 - New thingy has correct nanoseconds
++ok 7 - correct number of thingies [=, 1974-10-02 14:17:52.987654321+03]
++ok
++Failed Test           Stat Wstat Total Fail  Failed  List of Failed
++-------------------------------------------------------------------------------
++t/datetime.t             1   256    10    1  10.00%  8
++t/nano-default_time.t    3   768    10    3  30.00%  8-10
++t/nano.t                 1   256    10    1  10.00%  8
++Failed 3/4 test scripts, 25.00% okay. 5/37 subtests failed, 86.49% okay.
+
+Added: trunk/issues/search_deflate/version.txt
+===================================================================
+--- trunk/issues/search_deflate/version.txt	2006-06-27 18:40:01 UTC (rev 160)
++++ trunk/issues/search_deflate/version.txt	2006-06-27 18:47:22 UTC (rev 161)
+@@ -0,0 +1 @@
++DBIx::Class: 0.06003
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:47:32 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:47:32 +0200
+Subject: [Parley-svn] r162 - / trunk/lib/Parley/Model/ParleyDB
+Message-ID: <200606271847.k5RIlWsT030454@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:47:30 +0200 (Tue, 27 Jun 2006)
+New Revision: 162
+
+Modified:
+   /
+   trunk/lib/Parley/Model/ParleyDB/Post.pm
+Log:
+ r15495 at ferrari:  chisel | 2006-06-27 18:16:35 +0100
+ / modified inflate/deflate declaration
+ + added thread_post_count()
+ + added thread_position()
+ + added page_containing_post()
+ + added POD-umentation
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15494
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15495
+
+Modified: trunk/lib/Parley/Model/ParleyDB/Post.pm
+===================================================================
+--- trunk/lib/Parley/Model/ParleyDB/Post.pm	2006-06-27 18:47:22 UTC (rev 161)
++++ trunk/lib/Parley/Model/ParleyDB/Post.pm	2006-06-27 18:47:30 UTC (rev 162)
+@@ -8,25 +8,65 @@
+ my @date_cols = qw[ created edited ];
+ 
+ foreach my $datecol (@date_cols) {
+-    __PACKAGE__->inflate_column(
+-        $datecol,
++    __PACKAGE__->inflate_column($datecol, {
++        inflate => sub { DateTime::Format::Pg->parse_datetime(shift); },
++        deflate => sub { DateTime::Format::Pg->format_datetime(shift); },
++    });
++}
++
++sub thread_post_count {
++    my ($self, $thread) = @_;
++
++    return $self->count(
+         {
+-            inflate     => sub {
+-                my $dtf = DateTime::Format::Pg->parse_timestamptz( shift );
+-                $dtf->set_time_zone('UTC');
+-                $dtf->set('locale', 'en_GB');
+-                return $dtf;
++            thread  => $thread->id(),
++        },
++        {
++        }
++    );
++}
++
++sub thread_position {
++    my ($self, $post) = @_;
++
++    warn "thread_position()";
++
++    if (not defined $post) {
++        warn('$post id undefined in call to Parley::Model::ParleyDB::Post->thread_position()');
++        return;
++    }
++
++    # explicitly 'deflate' the creation time, as DBIx::Class (<=v0.06003) doesn't deflate on search()
++    my $position = $self->count(
++        {
++            thread  => $post->thread()->id(),
++            created => {
++                '<='   => DateTime::Format::Pg->format_datetime($post->created())
+             },
+-            deflate     => sub {
+-                my $dtf = shift;
+-                DateTime::Format::Pg->format_timestamptz( $dtf );
+-            },
+         }
+     );
++
++    return $position;
+ }
+ 
++sub page_containing_post {
++    my ($self, $post, $posts_per_page) = @_;
+ 
++    warn "page_containing_post()";
+ 
++    my $position_in_thread = $self->thread_position($post);
++
++    # work out what page the Nth post is on
++    my $page_number = int(($position_in_thread - 1) / $posts_per_page) + 1;
++
++    return $page_number;
++}
++
++1;
++__END__
++
++=pod
++
+ =head1 NAME
+ 
+ Parley::Model::ParleyDB::Post - Catalyst DBIC Table Model
+@@ -39,9 +79,46 @@
+ 
+ Catalyst DBIC Table Model.
+ 
++=head1 EXTRA METHODS
++
++The following extra methods are available:
++
++=head2 thread_position($post)
++
++Given a Parley::Model::ParleyDB::Post object, $post, return the position of the
++post in the thread. For example, the initial post in a thread will always be
++position #1.
++
++  # get the position of the current_post
++  my $post_position = $c->model('ParleyDB')->table('post')->thread_position(
++    $c->stash->{current_post},
++  );
++  # show the information into the catalyst log
++  $c->log->info(
++      'post '
++    . $c->stash->{current_post}->id()
++    . ' is at position '
++    . $post_position
++  );
++
++=head2 page_containing_post($post, $posts_per_page)
++
++Given a Parley::Model::ParleyDB::Post object, $post, and the number of posts to
++show per page in a thread, $posts_per_page, return the number of the page that
++the post would appear on.
++
++  # get the page that the current post belongs on, using parley.yml for the
++  # value of the number of posts per page
++  my $page_number =  $c->model('ParleyDB')->table('post')->page_containing_post(
++    $c->stash->{current_post},
++    $c->config->{posts_per_page},
++  );
++  # show the information into the catalyst log
++  $c->log->info( $c->stash->{current_post}->id() . ' is on page #' . $page_number);
++
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C<< <pause at herlpacker.co.uk> >>
+ 
+ =head1 LICENSE
+ 
+@@ -50,4 +127,4 @@
+ 
+ =cut
+ 
+-1;
++vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:47:39 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:47:39 +0200
+Subject: [Parley-svn] r163 - / trunk/db
+Message-ID: <200606271847.k5RIldNQ030600@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:47:38 +0200 (Tue, 27 Jun 2006)
+New Revision: 163
+
+Added:
+   trunk/db/patch_0.09_to_0.10.psql
+Modified:
+   /
+Log:
+ r15496 at ferrari:  chisel | 2006-06-27 18:18:31 +0100
+ + schema change patch for 0.10
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15495
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15496
+
+Added: trunk/db/patch_0.09_to_0.10.psql
+===================================================================
+--- trunk/db/patch_0.09_to_0.10.psql	2006-06-27 18:47:30 UTC (rev 162)
++++ trunk/db/patch_0.09_to_0.10.psql	2006-06-27 18:47:38 UTC (rev 163)
+@@ -0,0 +1,24 @@
++-- Patch:
++--   From: 0.09
++--   To:   0.10
++--
++-- Description:
++--  new table for tracking when a viewer has last viewed a thread
++
++BEGIN;
++
++-- patch starts here --
++
++CREATE TABLE thread_view (
++    thread_view_id      SERIAL      not null        primary key,
++    person              integer     not null        references person,
++    thread              integer     not null        references thread,
++    timestamp           timestamp with time zone    not null
++                        default CURRENT_TIMESTAMP,
++
++    unique(person, thread)
++);
++
++-- patch ends here --
++
++COMMIT;
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:47:46 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:47:46 +0200
+Subject: [Parley-svn] r164 - / trunk/db
+Message-ID: <200606271847.k5RIlki4030705@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:47:45 +0200 (Tue, 27 Jun 2006)
+New Revision: 164
+
+Modified:
+   /
+   trunk/db/parley.psql
+Log:
+ r15497 at ferrari:  chisel | 2006-06-27 18:19:31 +0100
+ Keeping main schema in-sync with patch(es)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15496
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15497
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2006-06-27 18:47:38 UTC (rev 163)
++++ trunk/db/parley.psql	2006-06-27 18:47:45 UTC (rev 164)
+@@ -42,7 +42,8 @@
+     authentication  integer
+                     references authentication,
+ 
+-    UNIQUE(forum_name)
++    UNIQUE(forum_name),
++    UNIQUE(email)
+ );
+ 
+ CREATE TABLE registration_authentication (
+@@ -133,6 +134,19 @@
+ ;
+ 
+ 
++-- when a user last viewed a thread
++CREATE TABLE thread_view (
++    thread_view_id      SERIAL      not null        primary key,
++    person              integer     not null        references person,
++    thread              integer     not null        references thread,
++    timestamp           timestamp with time zone    not null
++                        default CURRENT_TIMESTAMP,
++
++    unique(person, thread)
++);
++
++
++
+ --
+ -- some default stuff
+ --
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:47:57 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:47:57 +0200
+Subject: [Parley-svn] r165 - / trunk/root/base/thread
+Message-ID: <200606271847.k5RIlve1030787@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:47:56 +0200 (Tue, 27 Jun 2006)
+New Revision: 165
+
+Modified:
+   /
+   trunk/root/base/thread/view
+Log:
+ r15498 at ferrari:  chisel | 2006-06-27 18:23:43 +0100
+ + add <a name="XXX"> to each post, so we can use [url]#post_id
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15497
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15498
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2006-06-27 18:47:45 UTC (rev 164)
++++ trunk/root/base/thread/view	2006-06-27 18:47:56 UTC (rev 165)
+@@ -23,6 +23,7 @@
+     [% WHILE (post = post_list.next) %]
+         <tr>
+             <td rowspan="[% rowspan %]">
++            <a name="[% post.id %]" />
+             <span class="post_creator">
+             [% post.creator.forum_name %]
+             </span>
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:48:05 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:48:05 +0200
+Subject: [Parley-svn] r166 - / trunk/root/base/my
+Message-ID: <200606271848.k5RIm5qd030872@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:48:03 +0200 (Tue, 27 Jun 2006)
+New Revision: 166
+
+Modified:
+   /
+   trunk/root/base/my/preferences
+Log:
+ r15499 at ferrari:  chisel | 2006-06-27 18:27:17 +0100
+ / moved checkbox label
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15498
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15499
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2006-06-27 18:47:56 UTC (rev 165)
++++ trunk/root/base/my/preferences	2006-06-27 18:48:03 UTC (rev 166)
+@@ -51,8 +51,8 @@
+     </td>
+     <tr>
+     <td colspan="2" style="text-align: right;">
++    <label for="use_utc">Use UTC</label>
+     <input type="checkbox" id="use_utc" name="use_utc" value="1" onChange="toggle_timezone_menus(this)"/>
+-    <label for="use_utc">Use UTC</label>
+     </td>
+     </tr>
+ 
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:48:16 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:48:16 +0200
+Subject: [Parley-svn] r167 - / trunk/root/css
+Message-ID: <200606271848.k5RImG5e030943@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:48:15 +0200 (Tue, 27 Jun 2006)
+New Revision: 167
+
+Modified:
+   /
+   trunk/root/css/default.css
+Log:
+ r15500 at ferrari:  chisel | 2006-06-27 18:28:06 +0100
+ / CSS tweaks
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15499
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15500
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-06-27 18:48:03 UTC (rev 166)
++++ trunk/root/css/default.css	2006-06-27 18:48:15 UTC (rev 167)
+@@ -101,16 +101,6 @@
+     text-align: right;
+ }
+ 
+-#loginbox {
+-    border: 1px solid #ccc;
+-    width: 250px;
+-    float: right;
+-    background-color: #f8f8f8;
+-    padding: 5px;
+-    margin-top: 1.5em;
+-    margin-right: 3em;
+-    font-size:      0.8em;
+-}
+ 
+ /* use dl/dt/dd to make left nav */
+ dd {
+@@ -441,7 +431,58 @@
+ }
+ 
+ 
++#loginbox {
++    border: 1px solid #ccc;
++    width: 250px;
++    float: right;
++    background-color: #f8f8f8;
++    padding: 5px;
++    margin-top: 1.5em;
++    margin-right: 3em;
++    font-size:      0.8em;
++}
+ 
++#searchbox {
++    border: 1px solid #ccc;
++    /*width: 400px;*/
++    float: right;
++    background-color: #f8f8f8;
++    padding: 5px;
++    /*
++    margin-top: 1.5em;
++    margin-right: 13em;
++    */
++    font-size:      0.8em;
++    position: relative;
++    top: -10px;
++}
++
++
++
++form.searchbox {
++    min-width: 0px;
++    max-width: 35em;
++}
++
++form.searchbox fieldset label {
++    margin-left: 0;
++    padding-top: 8px;
++    padding-right: 5px;
++    margin: 0;
++    width: auto;
++    text-align: left;
++}
++form.searchbox fieldset input {
++    margin: 0;
++    width: 20em;
++}
++form.searchbox fieldset button {
++    margin-left: auto;
++    margin-right: auto;
++    display: inline;
++}
++
++
+ form.loginbox {
+     min-width: 0px;
+     max-width: 250px;
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 20:48:23 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 20:48:23 +0200
+Subject: [Parley-svn] r168 - / trunk/lib/Parley/Controller
+Message-ID: <200606271848.k5RImNXW031004@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 20:48:22 +0200 (Tue, 27 Jun 2006)
+New Revision: 168
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ r15501 at ferrari:  chisel | 2006-06-27 18:31:08 +0100
+ + added post/view method; goes to the right page in a thread to show the desired post
+ / changed to config driven post-per-page
+ / if we have a current_post for thread/view, use post/view to show the post/page
+ + some "page_containing_post()" etc debugging tests
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15500
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15501
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2006-06-27 18:48:15 UTC (rev 167)
++++ trunk/lib/Parley/Controller/Post.pm	2006-06-27 18:48:22 UTC (rev 168)
+@@ -53,6 +53,32 @@
+     )
+ }
+ 
++sub view : Local {
++    my ($self, $c) = @_;
++
++    # if we don't have a post param, then return with an error
++    unless (defined $c->stash->{current_post}) {
++        $c->stash->{error}{message} = q{Incomplete URL};
++        return;
++    }
++
++    # work out what page in which thread the post lives
++    my $thread = $c->stash->{current_post}->thread->id();
++    my $page_number =  $c->model('ParleyDB')->table('post')->page_containing_post(
++        $c->stash->{current_post},
++        $c->config->{posts_per_page},
++    );
++
++    # build the URL to redirect to
++    my $redirect_url = $c->uri_for(
++        '/thread',
++          "view?thread=$thread"
++        . "&page=$page_number"
++        . "#" . $c->stash->{current_post}->id()
++    );
++    $c->response->redirect( $redirect_url );
++}
++
+ sub edit : Local {
+     my ($self, $c) = @_;
+     my (@messages);
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2006-06-27 18:48:15 UTC (rev 167)
++++ trunk/lib/Parley/Controller/Thread.pm	2006-06-27 18:48:22 UTC (rev 168)
+@@ -46,27 +46,14 @@
+     my ($self, $c) = @_;
+ 
+     # TODO - configure this somewhere, maybe a user preference
+-    my $rows_per_page = 10;
++    my $rows_per_page = $c->config->{posts_per_page};
+ 
+     # page to show - either a param, or show the first
+     my $page = $c->request->param('page') || 1;
+ 
+-    # TODO - see if we can go to that page the post is on, not just the last page
+-    # if we've a current post, we'd like to show the page with that post
+-    # for now assume we just want to show the last page in the thread
++    # if we have a current_post, view the page with the post on it
+     if ($c->stash->{current_post}) {
+-        my $tmp_post_list = $c->model('ParleyDB')->table('post')->search(
+-            {
+-                thread => $c->stash->{current_thread}->id(),
+-            },
+-            {
+-                order_by    => 'created ASC',
+-                rows        => $rows_per_page,
+-                page        => $page,
+-            }
+-        );
+-
+-        $page = $tmp_post_list->pager()->last_page();
++        $c->detach('/post/view');
+     }
+ 
+     # get all the posts in the thread
+@@ -127,7 +114,22 @@
+ 
+     # grab the post we're replying to
+     $self->_get_thread_reply_post($c);
++     
++    # XXX
++    if (defined $c->stash->{current_post}) {
++        my $post_position = $c->model('ParleyDB')->table('post')->thread_position(
++            $c->stash->{current_post},
++        );
++        $c->log->info( $c->stash->{current_post}->id() . ' is at position ' . $post_position);
++        my $page_number =  $c->model('ParleyDB')->table('post')->page_containing_post(
++            $c->stash->{current_post},
++            $c->config->{posts_per_page},
++        );
++        $c->log->info( $c->stash->{current_post}->id() . ' is on page #' . $page_number);
++    }
++    # XXX
+ 
++
+     # quoting a post?
+     if ($c->request->param('quote_post')) {
+         $c->log->info('QUOTE THE POST!');
+
+
+
+From chiselwright at berlios.de  Tue Jun 27 22:50:45 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Tue, 27 Jun 2006 22:50:45 +0200
+Subject: [Parley-svn] r169 - / trunk/issues/search_deflate
+Message-ID: <200606272050.k5RKojWk025316@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-27 22:50:45 +0200 (Tue, 27 Jun 2006)
+New Revision: 169
+
+Added:
+   trunk/issues/search_deflate/RESULTS-0.06999_03
+Modified:
+   /
+Log:
+ r15756 at ferrari:  chisel | 2006-06-27 21:50:27 +0100
+ Test results for deflate issue I'm having
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15501
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15756
+
+Added: trunk/issues/search_deflate/RESULTS-0.06999_03
+===================================================================
+--- trunk/issues/search_deflate/RESULTS-0.06999_03	2006-06-27 18:48:22 UTC (rev 168)
++++ trunk/issues/search_deflate/RESULTS-0.06999_03	2006-06-27 20:50:45 UTC (rev 169)
+@@ -0,0 +1,27 @@
++t/inflate....1..7
++ok 1 - use TimeDB;
++ok 2 - schema object is defined
++# first of all get an item into the database
++ok 3 - resultset for new Thingy is defined
++ok 4 - PK-id for new Thingy is defined
++# look up the thingy by pg_time - this should be fine
++ok 5 - correct number of thingies [=, $pg_time]
++# look up the thingy by ->created() - this should be fine, but it isn't
++# search() doesn't appear to deflate as we might expect it to
++not ok 6 - correct number of thingies [=, $new_thingy->created()]
++
++#   Failed test 'correct number of thingies [=, $new_thingy->created()]'
++#   in t/inflate.t at line 69.
++#          got: '0'
++#     expected: '1'
++# look up the thingy by ->created(), using an explicit 'deflate'
++ok 7 - correct number of thingies [=, DateTime::Format::Pg->format_datetime($new_thingy->created())]
++# Looks like you failed 1 test of 7.
++dubious
++	Test returned status 1 (wstat 256, 0x100)
++DIED. FAILED test 6
++	Failed 1/7 tests, 85.71% okay
++Failed Test Stat Wstat Total Fail  Failed  List of Failed
++-------------------------------------------------------------------------------
++t/inflate.t    1   256     7    1  14.29%  6
++Failed 1/1 test scripts, 0.00% okay. 1/7 subtests failed, 85.71% okay.
+
+
+
+From chiselwright at berlios.de  Thu Jun 29 12:54:40 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 29 Jun 2006 12:54:40 +0200
+Subject: [Parley-svn] r170 - / trunk/t
+Message-ID: <200606291054.k5TAse9T010087@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-29 12:54:38 +0200 (Thu, 29 Jun 2006)
+New Revision: 170
+
+Modified:
+   /
+   trunk/t/model_Parley-Post.t
+Log:
+ r15758 at ferrari:  chisel | 2006-06-28 08:44:16 +0100
+ + added a heap of tests for the post table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15756
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15758
+
+Modified: trunk/t/model_Parley-Post.t
+===================================================================
+--- trunk/t/model_Parley-Post.t	2006-06-27 20:50:45 UTC (rev 169)
++++ trunk/t/model_Parley-Post.t	2006-06-29 10:54:38 UTC (rev 170)
+@@ -1,3 +1,64 @@
+-use Test::More tests => 2;
+-use_ok( Catalyst::Test, 'Parley' );
+-use_ok('Parley::Model::ParleyDB::Post');
++use Test::More tests => 4;
++
++BEGIN {
++    # use modules
++    use Data::Dumper;
++    use_ok( Catalyst::Test, 'Parley' );
++    use_ok('Parley::Model::ParleyDB::Post');
++
++    our $post_table      = Parley->model('ParleyDB')->table('post');
++    our $thread_table    = Parley->model('ParleyDB')->table('thread');
++    diag(Dumper ($post_table));
++    diag(Dumper ($thread_table));
++
++    # BEGIN TRANSACTION
++    Parley->model('ParleyDB')->table('post')->storage->txn_begin;
++}
++
++END {
++    # ROLLBACK TRANSACTION
++    Parley->model('ParleyDB')->table('post')->storage->txn_rollback;
++}
++
++my $pg_time = q{1974-10-02 09:17:52.855649000+01};
++
++# create a new thread to add post(s) to
++my $new_thread = $thread_table->create(
++    {
++        forum   => 0,
++        subject => 'Test Thread',
++        creator => 0,
++    }
++);
++
++# create a new post (with a specific creation time)
++my $new_post = $post_table->create(
++    {
++        created     => $pg_time,
++
++        thread      => $new_thread->id(),
++        subject     => 'Post Time Test',
++        message     => $pg_time,
++        creator     => 0,
++    }
++);
++
++diag $new_post->created;
++
++# get the number of posts created at *exactly* the same time of our new post
++my $post_count;
++$post_count = $post_table->count(
++    {
++        created => $pg_time,
++    }
++);
++is($post_count, 1);
++
++# get the number of posts created on or before the time of our new post
++my $post_count;
++$post_count = $post_table->count(
++    {
++        created => { '<=', $pg_time },
++    }
++);
++is($post_count, 1);
+
+
+
+From chiselwright at berlios.de  Thu Jun 29 12:54:51 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 29 Jun 2006 12:54:51 +0200
+Subject: [Parley-svn] r171 - / trunk/issues/search_deflate
+Message-ID: <200606291054.k5TAspah010211@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-29 12:54:48 +0200 (Thu, 29 Jun 2006)
+New Revision: 171
+
+Modified:
+   /
+   trunk/issues/search_deflate/version.txt
+Log:
+ r15759 at ferrari:  chisel | 2006-06-28 08:46:14 +0100
+ + tested with newer DBIC
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15758
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15759
+
+Modified: trunk/issues/search_deflate/version.txt
+===================================================================
+--- trunk/issues/search_deflate/version.txt	2006-06-29 10:54:38 UTC (rev 170)
++++ trunk/issues/search_deflate/version.txt	2006-06-29 10:54:48 UTC (rev 171)
+@@ -1 +1,2 @@
+ DBIx::Class: 0.06003
++DBIx::Class: 0.06999_03
+
+
+
+From chiselwright at berlios.de  Thu Jun 29 12:55:25 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 29 Jun 2006 12:55:25 +0200
+Subject: [Parley-svn] r173 - / trunk/db
+Message-ID: <200606291055.k5TAtP9K010520@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-29 12:55:05 +0200 (Thu, 29 Jun 2006)
+New Revision: 173
+
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/db/patch_0.09_to_0.10.psql
+Log:
+ r15761 at ferrari:  chisel | 2006-06-29 09:27:23 +0100
+ + add watched and last_notified columns to thread_view table
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15760
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15761
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2006-06-29 10:54:57 UTC (rev 172)
++++ trunk/db/parley.psql	2006-06-29 10:55:05 UTC (rev 173)
+@@ -142,6 +142,10 @@
+     timestamp           timestamp with time zone    not null
+                         default CURRENT_TIMESTAMP,
+ 
++    watched             boolean     not null        default False,
++    last_notified       timestamp with time zone
++                        default NULL,
++
+     unique(person, thread)
+ );
+ 
+
+Modified: trunk/db/patch_0.09_to_0.10.psql
+===================================================================
+--- trunk/db/patch_0.09_to_0.10.psql	2006-06-29 10:54:57 UTC (rev 172)
++++ trunk/db/patch_0.09_to_0.10.psql	2006-06-29 10:55:05 UTC (rev 173)
+@@ -16,6 +16,10 @@
+     timestamp           timestamp with time zone    not null
+                         default CURRENT_TIMESTAMP,
+ 
++    watched             boolean     not null        default False,
++    last_notified       timestamp with time zone
++                        default NULL,
++
+     unique(person, thread)
+ );
+ 
+
+
+
+From chiselwright at berlios.de  Thu Jun 29 12:55:57 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 29 Jun 2006 12:55:57 +0200
+Subject: [Parley-svn] r174 - / trunk/lib/Template/Plugin
+Message-ID: <200606291055.k5TAtvCn010796@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-29 12:55:31 +0200 (Thu, 29 Jun 2006)
+New Revision: 174
+
+Modified:
+   /
+   trunk/lib/Template/Plugin/ForumCode.pm
+Log:
+ r15762 at ferrari:  chisel | 2006-06-29 09:43:34 +0100
+ + preserve newlines (by replacing them with <br /> tags
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15761
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- trunk/lib/Template/Plugin/ForumCode.pm	2006-06-29 10:55:05 UTC (rev 173)
++++ trunk/lib/Template/Plugin/ForumCode.pm	2006-06-29 10:55:31 UTC (rev 174)
+@@ -5,7 +5,7 @@
+ use base qw{ Template::Plugin };
+ use base qw{ Template::Plugin::HTML };
+ 
+-our $VERSION = '0.01';
++our $VERSION = '0.01_01';
+ 
+ sub new {
+     my ($class, $context, @args) = @_;
+@@ -34,6 +34,9 @@
+     # first of all ESCAPE EVERYTHING!
+     $text = Template::Plugin::HTML->escape($text);
+ 
++    # turn newlines into <br /> tags
++    $self->_preserve_newlines(\$text );
++
+     $self->_simple_tags     ( \$text );
+     $self->_replacements    ( \$text );
+     $self->_colouring       ( \$text );
+@@ -44,6 +47,12 @@
+     return $text;
+ }
+ 
++sub _preserve_newlines {
++    my ($self, $textref) = @_;
++
++    $$textref =~ s{\n}{<br />}xmsg;
++}
++
+ sub _simple_tags {
+     my ($self, $textref) = @_;
+ 
+
+
+
+From chiselwright at berlios.de  Thu Jun 29 12:55:00 2006
+From: chiselwright at berlios.de (chiselwright at BerliOS)
+Date: Thu, 29 Jun 2006 12:55:00 +0200
+Subject: [Parley-svn] r172 - / trunk
+Message-ID: <200606291055.k5TAt0rc010328@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2006-06-29 12:54:57 +0200 (Thu, 29 Jun 2006)
+New Revision: 172
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r15760 at ferrari:  chisel | 2006-06-28 08:47:00 +0100
+ Updated Changes file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15759
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15760
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2006-06-29 10:54:48 UTC (rev 171)
++++ trunk/Changes	2006-06-29 10:54:57 UTC (rev 172)
+@@ -1,5 +1,12 @@
+ This file documents the revision history for Parley.
+ 
++    - added thread_post_count(), thread_position() and page_containing_post()
++      to Post model class
++    - added /post/view action, used to redirect to a thread page containing the
++      specified post
++    - /thread/view now detach()es to /post/view if we have a current_post in
++      the stash
++
+ 0.09  Thu May 11 17:50:07 BST 2006
+     - make email column unique
+       ** this may cause problems if you already have a large amount of user data **
+
+
+

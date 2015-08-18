@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r764 - / trunk/lib/Parley/ResultSet trunk/t	trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-January/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r764%20-%20/%20trunk/lib/Parley/ResultSet%20trunk/t%0A%09trunk/t/schema&In-Reply-To=%3C200801310955.m0V9tqHv020605%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000651.html">
+   <LINK REL="Next"  HREF="000653.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r764 - / trunk/lib/Parley/ResultSet trunk/t	trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r764%20-%20/%20trunk/lib/Parley/ResultSet%20trunk/t%0A%09trunk/t/schema&In-Reply-To=%3C200801310955.m0V9tqHv020605%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r764 - / trunk/lib/Parley/ResultSet trunk/t	trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jan 31 10:55:52 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000651.html">[Parley-svn] r763 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Template/Plugin trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000653.html">[Parley-svn] r765 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#652">[ date ]</a>
+              <a href="thread.html#652">[ thread ]</a>
+              <a href="subject.html#652">[ subject ]</a>
+              <a href="author.html#652">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-01-31 10:55:52 +0100 (Thu, 31 Jan 2008)
+New Revision: 764
+
+Added:
+   trunk/t/model_Post.t
+Modified:
+   /
+   trunk/lib/Parley/ResultSet/Post.pm
+   trunk/t/schema/post.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4578 at wiggin</A>:  chisel | 2008-01-31 08:23:09 +0000
+ + added people_posting_from_ip() method
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4574
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4578
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/ResultSet/Post.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Post.pm	2008-01-30 12:12:36 UTC (rev 763)
++++ trunk/lib/Parley/ResultSet/Post.pm	2008-01-31 09:55:52 UTC (rev 764)
+@@ -5,6 +5,29 @@
+ 
+ use base 'DBIx::Class::ResultSet';
+ 
++sub people_posting_from_ip {
++    my ($resultsource, $ip_addr) = @_;
++    my ($rs);
++
++    $rs = $resultsource-&gt;search(
++        {
++            ip_addr     =&gt; $ip_addr,
++        },
++        {
++            select =&gt; [
++                { distinct =&gt; 'creator_id' },
++            ],
++            as =&gt; [ 'foobar' ],
++
++            prefetch =&gt; [
++                'creator',
++            ],
++        }
++    );
++
++    return $rs;
++}
++
+ # we used to use -&gt;slice() but it sopped working on page #2 (!!)
+ # this may be slower [not benchmarked] but it works
+ sub last_post_in_list {
+
+Added: trunk/t/model_Post.t
+===================================================================
+--- trunk/t/model_Post.t	2008-01-30 12:12:36 UTC (rev 763)
++++ trunk/t/model_Post.t	2008-01-31 09:55:52 UTC (rev 764)
+@@ -0,0 +1,28 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 4;
++
++BEGIN { use_ok 'Parley::Schema' }
++
++my ($schema, $resultset, $rs);
++
++# get a schema to query
++$schema = Parley::Schema-&gt;connect(
++    'dbi:Pg:dbname=parley'
++);
++isa_ok($schema, 'Parley::Schema');
++
++# grab the Post resultset
++$resultset = $schema-&gt;resultset('Post');
++isa_ok($resultset, 'Parley::ResultSet::Post');
++
++# test the &quot;who posted from XXX ip&quot; resultset method
++$rs = $resultset-&gt;people_posting_from_ip('127.0.0.1');
++isa_ok($rs, 'Parley::ResultSet::Post');
++
++my %creator_id;
++while (my $record = $rs-&gt;next) {
++    diag $record-&gt;creator-&gt;forum_name;
++}
++
++diag $rs-&gt;count;
+
+Modified: trunk/t/schema/post.t
+===================================================================
+--- trunk/t/schema/post.t	2008-01-30 12:12:36 UTC (rev 763)
++++ trunk/t/schema/post.t	2008-01-31 09:55:52 UTC (rev 764)
+@@ -56,6 +56,7 @@
+ 
+         resultsets =&gt; [
+             qw[
++                people_posting_from_ip
+                 last_post_in_list
+                 next_post
+                 page_containing_post
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000651.html">[Parley-svn] r763 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Template/Plugin trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000653.html">[Parley-svn] r765 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#652">[ date ]</a>
+              <a href="thread.html#652">[ thread ]</a>
+              <a href="subject.html#652">[ subject ]</a>
+              <a href="author.html#652">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

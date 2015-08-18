@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r699 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r699%20-%20/%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200712201016.lBKAGEPO007526%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000586.html">
+   <LINK REL="Next"  HREF="000588.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r699 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r699%20-%20/%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema&In-Reply-To=%3C200712201016.lBKAGEPO007526%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r699 - / trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Dec 20 11:16:14 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000586.html">[Parley-svn] r698 - / trunk/lib/Parley/ResultSet
+</A></li>
+        <LI>Next message: <A HREF="000588.html">[Parley-svn] r700 - / trunk/root/static/yui trunk/root/static/yui/animation trunk/root/static/yui/assets/skins trunk/root/static/yui/assets/skins/sam trunk/root/static/yui/autocomplete trunk/root/static/yui/autocomplete/assets trunk/root/static/yui/autocomplete/assets/skins/sam trunk/root/static/yui/base trunk/root/static/yui/button trunk/root/static/yui/button/assets trunk/root/static/yui/button/assets/skins/sam trunk/root/static/yui/calendar trunk/root/static/yui/calendar/assets trunk/root/static/yui/calendar/assets/skins/sam trunk/root/static/yui/charts trunk/root/static/yui/charts/assets trunk/root/static/yui/colorpicker trunk/root/static/yui/colorpicker/assets trunk/root/static/yui/colorpicker/assets/skins/sam trunk/root/static/yui/connection trunk/root/static/yui/container trunk/root/static/yui/container/assets trunk/root/static/yui/container/assets/skins/sam trunk/root/static/yui/datasource trunk/root/static/yui/datatable trunk/root/static/yui/datatable/assets trunk/root/! static/yui/datatable/assets/skins/sam trunk/root/static/yui/dom trunk/root/static/yui/dragdrop trunk/root/static/yui/editor trunk/root/static/yui/editor/assets trunk/root/static/yui/editor/assets/skins/sam trunk/root/static/yui/element trunk/root/static/yui/event trunk/root/static/yui/fonts trunk/root/static/yui/get trunk/root/static/yui/grids trunk/root/static/yui/history trunk/root/static/yui/imageloader trunk/root/static/yui/json trunk/root/static/yui/logger trunk/root/static/yui/logger/assets trunk/root/static/yui/logger/assets/skins/sam trunk/root/static/yui/menu trunk/root/static/yui/menu/assets trunk/root/static/yui/menu/assets/skins/sam trunk/root/static/yui/profiler trunk/root/static/yui/reset trunk/root/static/yui/reset-fonts trunk/root/static/yui/reset-fonts-grids trunk/root/static/yui/selector trunk/root/static/yui/slider trunk/root/static/yui/tabview trunk/root/static/yui/tabview/assets trunk/root/static/yui/tabview/assets/skins/sam trunk/root/static/yui/treevi! ew trunk/root/static/yui/treeview/assets trunk/root/static/yui! /treevie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#587">[ date ]</a>
+              <a href="thread.html#587">[ thread ]</a>
+              <a href="subject.html#587">[ subject ]</a>
+              <a href="author.html#587">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-20 11:16:14 +0100 (Thu, 20 Dec 2007)
+New Revision: 699
+
+Added:
+   trunk/lib/Parley/ResultSet/ThreadView.pm
+Modified:
+   /
+   trunk/lib/Parley/Schema/ThreadView.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4338 at wiggin</A>:  chisel | 2007-12-20 09:19:59 +0000
+ / moved :ResultSet methods into a separate resultset class
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4337
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4338
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/ResultSet/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/ThreadView.pm	2007-12-20 10:15:59 UTC (rev 698)
++++ trunk/lib/Parley/ResultSet/ThreadView.pm	2007-12-20 10:16:14 UTC (rev 699)
+@@ -0,0 +1,80 @@
++package Parley::ResultSet::ThreadView;
++# vim: ts=8 sts=4 et sw=4 sr sta
++use strict;
++use warnings;
++
++use base 'DBIx::Class::ResultSet';
++
++sub watching_thread {
++    my ($self, $thread, $person) = @_;
++
++    if (not defined $thread) {
++        warn 'undefined value passed as $thread in watching_thread()';
++        return;
++    }
++    if (not defined $person) {
++        warn 'undefined value passed as $person in watching_thread()';
++        return;
++    }
++
++    my $thread_view = $self-&gt;find(
++        {
++            person_id =&gt; $person-&gt;id(),
++            thread_id =&gt; $thread-&gt;id(),
++        }
++    );
++
++    return $thread_view-&gt;watched();
++}
++
++sub notification_list {
++    my ($self, $post) = @_;
++    my ($schema);
++
++    if (not defined $post) {
++        warn 'undefined value passed as $post in notification_list()';
++        return;
++    }
++
++    # make sure we have full object details
++    # [we don't seem to get all the default column data for a new create()]
++    $schema = $self-&gt;result_source()-&gt;schema();
++    $post = $schema-&gt;resultset('Post')-&gt;find(
++        id =&gt; $post-&gt;id()
++    );
++    if (not defined $post) {
++        warn 'failed to re-fetch post in notification_list()';
++        return;
++    }
++
++    # find the list of people to notify about this update
++    my $notification_list = $self-&gt;search(
++        {
++            # the thread the post belongs to
++            thread_id       =&gt; $post-&gt;thread()-&gt;id(),
++            # only interested in records where a person is watching
++            watched         =&gt; 1,
++            # and they last viewed the thread before the last post
++            timestamp       =&gt; {
++                '&lt;',
++                DateTime::Format::Pg-&gt;format_datetime(
++                    $post-&gt;created()
++                )
++            },
++            # and they've not been notified
++            last_notified   =&gt; [
++                {   '=',    undef   },
++                   \'&lt; timestamp'    ,
++            ],
++            # and they aren't the person that created the post itself
++            person_id =&gt; {
++                '!=',
++                $post-&gt;creator()-&gt;id(),
++            },
++        }
++    );
++
++    return $notification_list;
++}
++
++1;
+
+Modified: trunk/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ThreadView.pm	2007-12-20 10:15:59 UTC (rev 698)
++++ trunk/lib/Parley/Schema/ThreadView.pm	2007-12-20 10:16:14 UTC (rev 699)
+@@ -10,7 +10,7 @@
+ 
+ use Parley::App::DateTime qw( :interval );
+ 
+-__PACKAGE__-&gt;load_components('ResultSetManager', &quot;PK::Auto&quot;, &quot;Core&quot;);
++__PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;thread_view&quot;);
+ __PACKAGE__-&gt;add_columns(
+   &quot;id&quot; =&gt; {
+@@ -54,6 +54,7 @@
+   },
+ );
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::ThreadView');
+ __PACKAGE__-&gt;add_unique_constraint(
+     'thread_view_person_key',
+     ['person_id', 'thread_id']
+@@ -78,78 +79,7 @@
+ }
+ 
+ 
+-sub watching_thread : ResultSet {
+-    my ($self, $thread, $person) = @_;
+ 
+-    if (not defined $thread) {
+-        warn 'undefined value passed as $thread in watching_thread()';
+-        return;
+-    }
+-    if (not defined $person) {
+-        warn 'undefined value passed as $person in watching_thread()';
+-        return;
+-    }
+-
+-    my $thread_view = $self-&gt;find(
+-        {
+-            person_id =&gt; $person-&gt;id(),
+-            thread_id =&gt; $thread-&gt;id(),
+-        }
+-    );
+-
+-    return $thread_view-&gt;watched();
+-}
+-
+-sub notification_list : ResultSet {
+-    my ($self, $post) = @_;
+-    my ($schema);
+-
+-    if (not defined $post) {
+-        warn 'undefined value passed as $post in notification_list()';
+-        return;
+-    }
+-
+-    # make sure we have full object details
+-    # [we don't seem to get all the default column data for a new create()]
+-    $schema = $self-&gt;result_source()-&gt;schema();
+-    $post = $schema-&gt;resultset('Post')-&gt;find(
+-        id =&gt; $post-&gt;id()
+-    );
+-    if (not defined $post) {
+-        warn 'failed to re-fetch post in notification_list()';
+-        return;
+-    }
+-
+-    # find the list of people to notify about this update
+-    my $notification_list = $self-&gt;search(
+-        {
+-            # the thread the post belongs to
+-            thread_id       =&gt; $post-&gt;thread()-&gt;id(),
+-            # only interested in records where a person is watching
+-            watched         =&gt; 1,
+-            # and they last viewed the thread before the last post
+-            timestamp       =&gt; {
+-                '&lt;',
+-                DateTime::Format::Pg-&gt;format_datetime(
+-                    $post-&gt;created()
+-                )
+-            },
+-            # and they've not been notified
+-            last_notified   =&gt; [
+-                {   '=',    undef   },
+-                   \'&lt; timestamp'    ,
+-            ],
+-            # and they aren't the person that created the post itself
+-            person_id =&gt; {
+-                '!=',
+-                $post-&gt;creator()-&gt;id(),
+-            },
+-        }
+-    );
+-
+-    return $notification_list;
+-}
+-
+ sub interval_ago {
+     my $self = shift;
+     my ($now, $duration, $longest_duration);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000586.html">[Parley-svn] r698 - / trunk/lib/Parley/ResultSet
+</A></li>
+	<LI>Next message: <A HREF="000588.html">[Parley-svn] r700 - / trunk/root/static/yui trunk/root/static/yui/animation trunk/root/static/yui/assets/skins trunk/root/static/yui/assets/skins/sam trunk/root/static/yui/autocomplete trunk/root/static/yui/autocomplete/assets trunk/root/static/yui/autocomplete/assets/skins/sam trunk/root/static/yui/base trunk/root/static/yui/button trunk/root/static/yui/button/assets trunk/root/static/yui/button/assets/skins/sam trunk/root/static/yui/calendar trunk/root/static/yui/calendar/assets trunk/root/static/yui/calendar/assets/skins/sam trunk/root/static/yui/charts trunk/root/static/yui/charts/assets trunk/root/static/yui/colorpicker trunk/root/static/yui/colorpicker/assets trunk/root/static/yui/colorpicker/assets/skins/sam trunk/root/static/yui/connection trunk/root/static/yui/container trunk/root/static/yui/container/assets trunk/root/static/yui/container/assets/skins/sam trunk/root/static/yui/datasource trunk/root/static/yui/datatable trunk/root/static/yui/datatable/assets trunk/root/! static/yui/datatable/assets/skins/sam trunk/root/static/yui/dom trunk/root/static/yui/dragdrop trunk/root/static/yui/editor trunk/root/static/yui/editor/assets trunk/root/static/yui/editor/assets/skins/sam trunk/root/static/yui/element trunk/root/static/yui/event trunk/root/static/yui/fonts trunk/root/static/yui/get trunk/root/static/yui/grids trunk/root/static/yui/history trunk/root/static/yui/imageloader trunk/root/static/yui/json trunk/root/static/yui/logger trunk/root/static/yui/logger/assets trunk/root/static/yui/logger/assets/skins/sam trunk/root/static/yui/menu trunk/root/static/yui/menu/assets trunk/root/static/yui/menu/assets/skins/sam trunk/root/static/yui/profiler trunk/root/static/yui/reset trunk/root/static/yui/reset-fonts trunk/root/static/yui/reset-fonts-grids trunk/root/static/yui/selector trunk/root/static/yui/slider trunk/root/static/yui/tabview trunk/root/static/yui/tabview/assets trunk/root/static/yui/tabview/assets/skins/sam trunk/root/static/yui/treevi! ew trunk/root/static/yui/treeview/assets trunk/root/static/yui! /treevie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#587">[ date ]</a>
+              <a href="thread.html#587">[ thread ]</a>
+              <a href="subject.html#587">[ subject ]</a>
+              <a href="author.html#587">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

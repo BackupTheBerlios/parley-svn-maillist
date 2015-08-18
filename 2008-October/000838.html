@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r955 - / trunk/lib/Parley/Controller/User
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r955%20-%20/%20trunk/lib/Parley/Controller/User&In-Reply-To=%3C200810091400.m99E0UkM031182%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000837.html">
+   <LINK REL="Next"  HREF="000839.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r955 - / trunk/lib/Parley/Controller/User</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r955%20-%20/%20trunk/lib/Parley/Controller/User&In-Reply-To=%3C200810091400.m99E0UkM031182%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r955 - / trunk/lib/Parley/Controller/User">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Oct  9 16:00:30 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000837.html">[Parley-svn] r954 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000839.html">[Parley-svn] r956 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#838">[ date ]</a>
+              <a href="thread.html#838">[ thread ]</a>
+              <a href="subject.html#838">[ subject ]</a>
+              <a href="author.html#838">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-10-09 16:00:29 +0200 (Thu, 09 Oct 2008)
+New Revision: 955
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8273 at wiggin</A>:  chisel | 2008-10-08 19:23:23 +0100
+ - removed -&gt;dumper() calls [no longer use the plugin, and barfs]
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8272
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8273
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2008-10-09 14:00:13 UTC (rev 954)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2008-10-09 14:00:29 UTC (rev 955)
+@@ -351,7 +351,6 @@
+             . $matches-&gt;count
+             . q{ record(s)}
+         );
+-        $c-&gt;log-&gt;dumper($criteria);
+         #return uniq(sort @messages);
+         return;
+     }
+@@ -390,10 +389,6 @@
+     my ($self, $c, $person) = @_;
+     my ($random, $pwd_reset);
+ 
+-    $c-&gt;log-&gt;dumper( ref $self,     'REF_SELF' );
+-    $c-&gt;log-&gt;dumper( ref $c,        'REF_C' );
+-    $c-&gt;log-&gt;dumper( ref $person,   'REF_PERSON' );
+-
+     # if it's good enough for Cozens, it's good enough for me :-)
+     $random = md5_hex(time.(0+{}).$$.rand);
+ 
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2008-10-09 14:00:13 UTC (rev 954)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2008-10-09 14:00:29 UTC (rev 955)
+@@ -122,7 +122,6 @@
+     );
+ 
+     # get the first (and should be only) match
+-    $c-&gt;log-&gt;dumper($c-&gt;stash-&gt;{signup_user}-&gt;{_column_data});
+ 
+     # mark the person as authenticated
+     $c-&gt;stash-&gt;{signup_user}-&gt;authentication-&gt;authenticated(1);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000837.html">[Parley-svn] r954 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000839.html">[Parley-svn] r956 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#838">[ date ]</a>
+              <a href="thread.html#838">[ thread ]</a>
+              <a href="subject.html#838">[ subject ]</a>
+              <a href="author.html#838">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,362 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r313 - / trunk trunk/lib/Parley/Controller	trunk/root/base/search trunk/root/base/shared
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r313%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/search%20trunk/root/base/shared&In-Reply-To=%3C200704250831.l3P8VTAv022218%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000200.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r313 - / trunk trunk/lib/Parley/Controller	trunk/root/base/search trunk/root/base/shared</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r313%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base/search%20trunk/root/base/shared&In-Reply-To=%3C200704250831.l3P8VTAv022218%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r313 - / trunk trunk/lib/Parley/Controller	trunk/root/base/search trunk/root/base/shared">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Apr 25 10:31:29 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000200.html">[Parley-svn] r312 - / trunk/t
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#201">[ date ]</a>
+              <a href="thread.html#201">[ thread ]</a>
+              <a href="subject.html#201">[ subject ]</a>
+              <a href="author.html#201">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-25 10:31:28 +0200 (Wed, 25 Apr 2007)
+New Revision: 313
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/parley.yml
+   trunk/root/base/search/forum
+   trunk/root/base/shared/search_dialog
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3187 at wiggin</A>:  chisel | 2007-04-25 08:46:40 +0100
+ Search functionality extended:
+ + added 'available_forums' to stash
+ + automatically create pager data in end() [if we have search results]
+ / extend and improve /search/forum
+   + don't try to search if we have no terms
+   + limit to forum specified by search_forum
+   + improved join clause(s)
+   + results paging
+ + new config variable: search_results_per_page
+ / slight improvement to search results template
+ + add forum list to search dialog
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3179
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3187
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-04-19 16:51:17 UTC (rev 312)
++++ trunk/lib/Parley/Controller/Root.pm	2007-04-25 08:31:28 UTC (rev 313)
+@@ -18,6 +18,16 @@
+ sub auto : Private {
+     my ($self, $c) = @_;
+ 
++    # get a list of (all/available) forums
++    $c-&gt;stash-&gt;{available_forums} = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
++        {
++            active  =&gt; 1,
++        },
++        {
++            order_by    =&gt; 'name ASC',
++        }
++    );
++
+     ############################################################
+     # if we have a user ... fetch some info (if we don't already have it)
+     ############################################################
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2007-04-19 16:51:17 UTC (rev 312)
++++ trunk/lib/Parley/Controller/Search.pm	2007-04-25 08:31:28 UTC (rev 313)
+@@ -5,6 +5,8 @@
+ use base 'Catalyst::Controller';
+ 
+ use Text::Search::SQL;
++use URI;
++use URI::QueryParam;
+ 
+ sub index : Private {
+     my ( $self, $c ) = @_;
+@@ -12,13 +14,34 @@
+     $c-&gt;response-&gt;body('Matched Parley::Controller::Search in Search.');
+ }
+ 
++sub end :Private {
++    my ($self, $c) = @_;
++
++    # we're likely to want pages results for numerous seaches
++    $self-&gt;_results_view_pager($c);
++
++    # finish processing the page and display
++    $c-&gt;forward('/end');
++}
++
+ sub forum :Local {
+     my ($self, $c) = @_;
+-    my ($search_terms, $resultset, $tss, $search_where, $where);
++    my ($search_terms, $resultset, $tss, $search_where, $where, @join);
+ 
++    # page to show - either a param, or show the first
++    $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
++
+     # the search terms
+     $search_terms = $c-&gt;request-&gt;param('search_terms');
+ 
++    # if we don't have anything to search for ..
++    if (not defined $search_terms or $search_terms =~ m{\A\s*\z}xms) {
++        return;
++    }
++
++    # start with no join(s)
++    @join = ();
++
+     # save the search terms for the template to display
+     $c-&gt;stash-&gt;{search_terms}{raw} = $search_terms;
+ 
+@@ -27,25 +50,48 @@
+         {
+             search_term     =&gt; $search_terms,
+             search_type     =&gt; q{ilike},
+-            search_fields   =&gt; [ qw(subject message) ],
++            search_fields   =&gt; [ qw(me.subject me.message) ],
+         }
+     );
+     $tss-&gt;parse();
+     $search_where = $tss-&gt;get_sql_where();
+-    $c-&gt;log-&gt;dumper( $search_where );
+ 
+     # build the where clause to pass to our search
+     $where = {
+-        thread  =&gt; { '&gt;', 0 },
+         # we want to OR the items in $sql_where
+         -or =&gt; $search_where,
+     };
+-    $c-&gt;log-&gt;dumper( $where );
+ 
++    # if we have a search_forum, limit to that
++    if (defined $c-&gt;request-&gt;param('search_forum')) {
++        my ($forum);
++        eval {
++            $forum = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;find(
++                {
++                    forum_id    =&gt; $c-&gt;request-&gt;param('search_forum'),
++                }
++            );
++        };
++
++        if (defined $forum) {
++            $where-&gt;{'thread.forum'} = $forum-&gt;id(),
++            push @join, 'thread';
++            # put in the stash
++            $c-&gt;stash-&gt;{search_forum} = $forum;
++        }
++    }
++
+     # search for any posts in the forum with the search_terms (phrase) in the
+     # subject or body
+     $resultset = $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;search(
+         $where,
++        {
++            join        =&gt; \@join,
++            order_by    =&gt; q{created DESC},
++            # results paging
++            rows        =&gt; $c-&gt;config-&gt;{search_results_per_page},
++            page        =&gt; $c-&gt;stash-&gt;{current_page},
++        }
+     );
+ 
+     if ($resultset-&gt;count() &gt; 0) {
+@@ -53,6 +99,35 @@
+     }
+ }
+ 
++sub _results_view_pager {
++    my ($self, $c) = @_;
++
++    if (not $c-&gt;stash-&gt;{search_results}) {
++        $c-&gt;log-&gt;debug('no results - no pager');
++        return;
++    }
++
++    $c-&gt;stash-&gt;{page} = $c-&gt;stash-&gt;{search_results}-&gt;pager();
++
++    # TODO - find a better way to do this if possible
++    # set up Data::SpreadPagination
++    my $pagination = Data::SpreadPagination-&gt;new(
++        {
++            totalEntries        =&gt; $c-&gt;stash-&gt;{page}-&gt;total_entries(),
++            entriesPerPage      =&gt; $c-&gt;config-&gt;{search_results_per_page},
++            currentPage         =&gt; $c-&gt;stash-&gt;{current_page},
++            maxPages            =&gt; 4,
++        }
++    );
++    $c-&gt;stash-&gt;{page_range_spread} = $pagination-&gt;pages_in_spread();
++
++    # extra params to use in pager links (to preserve search data)
++    my $u = URI-&gt;new(&quot;&quot;, &quot;http&quot;);
++    $u-&gt;query_param(search_terms =&gt; $c-&gt;stash-&gt;{search_terms}{raw});
++    $u-&gt;query_param(search_forum =&gt; $c-&gt;request-&gt;param('search_forum'));
++    $c-&gt;stash-&gt;{url_extra_args} = '&amp;' . $u-&gt;query();
++}
++
+ =head1 NAME
+ 
+ Parley::Controller::Search - Catalyst Controller
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-04-19 16:51:17 UTC (rev 312)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-04-25 08:31:28 UTC (rev 313)
+@@ -186,7 +186,6 @@
+ sub view : Local {
+     my ($self, $c) = @_;
+ 
+-
+     # page to show - either a param, or show the first
+     $c-&gt;stash-&gt;{current_page}= $c-&gt;request-&gt;param('page') || 1;
+ 
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2007-04-19 16:51:17 UTC (rev 312)
++++ trunk/parley.yml	2007-04-25 08:31:28 UTC (rev 313)
+@@ -3,6 +3,7 @@
+ name:         Parley
+ default_uri:  /forum/list
+ posts_per_page: 10
++search_results_per_page: 25
+ replies_have_own_subject: 0
+ 
+ alerts:
+
+Modified: trunk/root/base/search/forum
+===================================================================
+--- trunk/root/base/search/forum	2007-04-19 16:51:17 UTC (rev 312)
++++ trunk/root/base/search/forum	2007-04-25 08:31:28 UTC (rev 313)
+@@ -1,12 +1,25 @@
+ &lt;h1&gt;Search Results&lt;/h1&gt;
+ 
+-&lt;h2&gt;Searching for &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% current_forum.name %]&lt;/em&gt;&lt;/h2&gt;
++&lt;h2&gt;Searching for &lt;em&gt;[% search_terms.raw || '[nothing]' %]&lt;/em&gt; in &lt;em&gt;[% search_forum.name || 'all forums' %]&lt;/em&gt;&lt;/h2&gt;
+ 
+ [% IF search_results %]
+-[% search_results.count %]&lt;br /&gt;
++    &lt;table&gt;
+     [% WHILE (result = search_results.next) %]
+-    [% ForumCode.escape(result.subject) || ForumCode.escape(result.thread.subject) %]&lt;br /&gt;
++    &lt;tr&gt;
++        &lt;td&gt;[% ForumCode.escape(result.subject) || ForumCode.escape(result.thread.subject) %]&lt;/td&gt;
++    &lt;/tr&gt;
+     [% END %]
++
++    &lt;tr&gt;
++        &lt;td class=&quot;right_align&quot; valign=&quot;top&quot;&gt;
++        &lt;small&gt;
++        [% INCLUDE shared/pager_advanced %]
++        &lt;/small&gt;
++        &lt;/td&gt;
++    &lt;/tr&gt;
++
++
++    &lt;/table&gt;
+ [% ELSE %]
+ No results found matching specified terms.
+ [% END %]
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2007-04-19 16:51:17 UTC (rev 312)
++++ trunk/root/base/shared/search_dialog	2007-04-25 08:31:28 UTC (rev 313)
+@@ -14,17 +14,31 @@
+ 
+ &lt;div dojoType=&quot;dialog&quot; id=&quot;search_dialog&quot; bgColor=&quot;#606060&quot; bgOpacity=&quot;0.4&quot; toggle=&quot;fade&quot; toggleDuration=&quot;250&quot;&gt;
+     &lt;form action=&quot;search/forum&quot; method=&quot;post&quot; name=&quot;search_form&quot; class=&quot;search_dialog_form&quot;&gt;
+-        &lt;input type=&quot;hidden&quot; name=&quot;forum&quot; value=&quot;[% current_forum %]&quot; /&gt;
+-
+         &lt;fieldset&gt;
+             &lt;label for=&quot;search_terms&quot;&gt;&lt;b&gt;Search For:&lt;/b&gt;&lt;/label&gt;
+             &lt;input type=&quot;text&quot; id=&quot;search_terms&quot; name=&quot;search_terms&quot; style=&quot;width: 25em;&quot; class=&quot;input_text&quot; /&gt;
+             &lt;br /&gt;
++        &lt;/fieldset&gt;
+ 
+-            &lt;p align=&quot;right&quot;&gt;
+-                &lt;a id=&quot;search_dialog_hider&quot; href=&quot;javascript:;&quot;&gt;Close&lt;/a&gt;&lt;br /&gt;
+-            &lt;/p&gt;
++        &lt;fieldset&gt;
++            &lt;label for=&quot;search_forum&quot;&gt;&lt;em&gt;in:&lt;/em&gt;&lt;/label&gt;
++            &lt;select id=&quot;search_forum&quot; name=&quot;search_forum&quot;&gt;
++                [% IF current_forum %]&lt;option value=&quot;[% current_forum.id %]&quot;&gt;Current Forum&lt;/option&gt;[% END %]
++                &lt;option value=&quot;&quot;&gt;All Forums&lt;/option&gt;
++                [% IF available_forums %]
++                [% WHILE (forum = available_forums.next) %]
++                &lt;option value=&quot;[% forum.id %]&quot;&gt;[% forum.name %]&lt;/option&gt;
++                [% END %]
++                [% END %]
++            &lt;/select&gt;
++            &lt;br /&gt;
+         &lt;/fieldset&gt;
++
++        &lt;input type=&quot;submit&quot; /&gt;
++
++        &lt;p align=&quot;right&quot;&gt;
++            &lt;a id=&quot;search_dialog_hider&quot; href=&quot;javascript:;&quot;&gt;Close&lt;/a&gt;&lt;br /&gt;
++        &lt;/p&gt;
+     &lt;/form&gt;
+ &lt;/div&gt;
+ &lt;!-- SEARCH DIALOG --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000200.html">[Parley-svn] r312 - / trunk/t
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#201">[ date ]</a>
+              <a href="thread.html#201">[ thread ]</a>
+              <a href="subject.html#201">[ subject ]</a>
+              <a href="author.html#201">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

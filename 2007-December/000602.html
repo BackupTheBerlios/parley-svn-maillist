@@ -1,0 +1,435 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r714 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base trunk/root/base/shared	trunk/root/static/images/icons trunk/root/static/images/icons/flags
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r714%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/root/base%20trunk/root/base/shared%0A%09trunk/root/static/images/icons%20trunk/root/static/images/icons/flags&In-Reply-To=%3C200712272257.lBRMvEV0008369%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000601.html">
+   <LINK REL="Next"  HREF="000603.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r714 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base trunk/root/base/shared	trunk/root/static/images/icons trunk/root/static/images/icons/flags</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r714%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/I18N%20trunk/root/base%20trunk/root/base/shared%0A%09trunk/root/static/images/icons%20trunk/root/static/images/icons/flags&In-Reply-To=%3C200712272257.lBRMvEV0008369%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r714 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/I18N trunk/root/base trunk/root/base/shared	trunk/root/static/images/icons trunk/root/static/images/icons/flags">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Dec 27 23:57:14 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000601.html">[Parley-svn] r713 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000603.html">[Parley-svn] r715 - / trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#602">[ date ]</a>
+              <a href="thread.html#602">[ thread ]</a>
+              <a href="subject.html#602">[ subject ]</a>
+              <a href="author.html#602">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-27 23:57:13 +0100 (Thu, 27 Dec 2007)
+New Revision: 714
+
+Added:
+   trunk/root/base/shared/language_dialog
+   trunk/root/static/images/icons/flags/
+   trunk/root/static/images/icons/flags/de.png
+   trunk/root/static/images/icons/flags/gb.png
+   trunk/root/static/images/icons/flags/i_default.png
+   trunk/root/static/images/icons/flags/it.png
+Modified:
+   /
+   trunk/Changes.i18n
+   trunk/TODO
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/footer
+   trunk/root/base/header
+   trunk/root/base/shared/login_dialog
+   trunk/root/base/shared/useful_tt_stuff
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4374 at wiggin</A>:  chisel | 2007-12-27 22:54:15 +0000
+ + added i18n phrase 'Please choose a language' to i-default
+ / updated TODO
+ + added code to ::Root to handle language setting and preservation (cookie based)
+ + added custom function i18nise() to supercede localize() - so we can add extra magic to the process
+ + added language selection dialog
+ + added flag icons to static/images/flags
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4370
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4374
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes.i18n
+===================================================================
+--- trunk/Changes.i18n	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/Changes.i18n	2007-12-27 22:57:13 UTC (rev 714)
+@@ -30,6 +30,7 @@
+             - 'Page %1 of %2'
+             - 'Cancel'
+             - 'in'
++            - 'Please choose a language'
+ 
+         - removed:
+             - &quot;Posted From&quot;
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/TODO	2007-12-27 22:57:13 UTC (rev 714)
+@@ -14,6 +14,7 @@
+   - proper moderator support/management
+   - IP/user reporting
+ ? - see if we can work out why 'make catalyst_par' is failing
++D - i18n Login and Cancel buttons in login_dialog
+ D - fix CSS for &lt;fieldset&gt;s
+ D - [bug] fix user's last post information (profile page)
+ D - limit thread subject length on user profile page
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/lib/Parley/Controller/Root.pm	2007-12-27 22:57:13 UTC (rev 714)
+@@ -1,9 +1,12 @@
+ package Parley::Controller::Root;
+-
++# vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++use DateTime;
++use List::MoreUtils qw(uniq);
++
+ use Parley::App::Terms qw( :terms );
+ use Parley::App::Error qw( :methods );
+ 
+@@ -21,6 +24,52 @@
+ sub auto : Private {
+     my ($self, $c) = @_;
+ 
++    # the cookie name for language choice(s)
++    my $cookie_name = $c-&gt;config-&gt;{name} . q{_languages};
++
++    ##################################################
++    # do we have a request for a chosen language?
++    ##################################################
++    if (defined $c-&gt;request-&gt;param('lang')) {
++        $c-&gt;log-&gt;debug('SET LANG: ' . $c-&gt;request-&gt;param('lang'));
++        $c-&gt;log-&gt;debug($c-&gt;request-&gt;referer());
++        $c-&gt;response-&gt;cookies-&gt;{ $cookie_name } = {
++            value       =&gt; $c-&gt;request-&gt;param('lang'),
++            expires     =&gt; '+14d',
++        };
++        # redirect back to the page they were on
++        $c-&gt;response-&gt;redirect(
++            $c-&gt;request-&gt;referer()
++        );
++        return;
++    }
++
++    # preserve cookies
++    if ($c-&gt;request-&gt;cookie($cookie_name)) {
++        $c-&gt;response-&gt;cookies-&gt;{ $cookie_name } = {
++            value       =&gt; $c-&gt;request-&gt;cookie($cookie_name)-&gt;value,
++            expires     =&gt; '+14d',
++        };
++
++        # push cookie saved languages onto list of i18n languages the user accepts
++        my (@languages);
++        # fetch cookie language prefs (if any)
++        push @languages,
++            split(
++                /\s+/,
++                $c-&gt;request-&gt;cookie($cookie_name)-&gt;value
++            )
++        ;
++        # get current list of accepted languages
++        push @languages, @{$c-&gt;languages};
++        # make the list have unique entries
++        @languages = uniq @languages;
++        # set new list of accepted languages
++        $c-&gt;languages(
++            \@languages
++        );
++    }
++
+     # get a list of (all/available) forums
+     $c-&gt;stash-&gt;{available_forums} = $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;search(
+         {
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/lib/Parley/I18N/i_default.po	2007-12-27 22:57:13 UTC (rev 714)
+@@ -440,6 +440,9 @@
+ msgid &quot;person&quot;
+ msgstr &quot;person&quot;
+ 
++msgid &quot;Please choose a language&quot;
++msgstr &quot;Please choose a language&quot;
++
+ msgid &quot;Please enter your information&quot;
+ msgstr &quot;Please enter your information&quot;
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/lib/Parley.pm	2007-12-27 22:57:13 UTC (rev 714)
+@@ -114,6 +114,15 @@
+     }
+ }
+ 
++sub i18nise {
++    my ($c, $msgid, $msgargs) = @_;
++
++    return $c-&gt;localize(
++        $msgid,
++        $msgargs
++    );
++}
++
+ 1;
+ 
+ __END__
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/root/base/footer	2007-12-27 22:57:13 UTC (rev 714)
+@@ -21,6 +21,7 @@
+             [% PROCESS shared/search_dialog %]
+             [% PROCESS shared/small_loading_please_wait %]
+             [% PROCESS shared/login_dialog %]
++            [% PROCESS shared/language_dialog %]
+         &lt;/div&gt;&lt;!-- id=&quot;doc3&quot; --&gt;
+     &lt;/body&gt;
+ &lt;/html&gt;
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/root/base/header	2007-12-27 22:57:13 UTC (rev 714)
+@@ -77,6 +77,15 @@
+                     [% ELSE %]
+                     &lt;em&gt;[%l('Guest User')%]&lt;/em&gt;
+                     [% END %]
++
++                    &nbsp;
++                    &lt;a href=&quot;javascript:YAHOO.parley.language.language_dialog.show();&quot;&gt;
++                        [% IF (country_code = c.language) %]
++                        &lt;img src=&quot;/static/images/icons/flags/[%country_code%].png&quot; width=&quot;16&quot; height=&quot;11&quot; alt=&quot;[%country_code%]&quot; /&gt;
++                        [% ELSE %]
++                        &lt;img src=&quot;/static/images/icons/flags/gb.png&quot; width=&quot;16&quot; height=&quot;11&quot; alt=&quot;GB&quot; /&gt;
++                        [% END %]
++                    &lt;/a&gt;
+                 &lt;/div&gt;
+             &lt;/div&gt;&lt;!-- id=&quot;hd&quot; --&gt;
+ 
+
+Added: trunk/root/base/shared/language_dialog
+===================================================================
+--- trunk/root/base/shared/language_dialog	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/root/base/shared/language_dialog	2007-12-27 22:57:13 UTC (rev 714)
+@@ -0,0 +1,87 @@
++&lt;!-- LOGIN DIALOG --&gt;
++&lt;script type=&quot;text/javascript&quot;&gt;
++YAHOO.namespace(&quot;parley.language&quot;);
++
++function language_dialog_init() {
++	// Define various event handlers for Dialog
++	var handleSubmit = function() {
++		this.submit();
++	};
++	var handleCancel = function() {
++		this.cancel();
++	};
++	var handleSuccess = function(o) {
++        console.log('Success');
++	};
++	var handleFailure = function(o) {
++		alert(&quot;Submission failed: &quot; + o.status);
++	};
++
++	// Instantiate the Dialog
++	YAHOO.parley.language.language_dialog = new YAHOO.widget.Dialog(
++        'language_dialog', 
++        {
++            postmethod:             'form',
++            fixedcenter:            true,
++            visible:                false, 
++            modal:                  false,
++            constraintoviewport:    true,
++            width:                  '250px',
++            buttons : [
++                { text:'[%l('Cancel')%]', handler:handleCancel }
++            ]
++        }
++    );
++	
++	// Validate the entries in the form to require that both first and last name are entered
++	YAHOO.parley.language.language_dialog.validate = function() {
++		var data = this.getData();
++		if (data.username == &quot;&quot; || data.password == &quot;&quot;) {
++			alert(&quot;[%l('Please enter your username and password')%].&quot;);
++			return false;
++		}
++        else {
++			return true;
++		}
++	};
++
++	// Wire up the success and failure handlers
++	YAHOO.parley.language.language_dialog.callback = {
++        success: handleSubmit,
++        failure: handleFailure
++    };
++	
++	// Render the Dialog
++	YAHOO.parley.language.language_dialog.render();
++	//YAHOO.parley.language.language_dialog.show();
++}
++
++YAHOO.util.Event.onDOMReady(language_dialog_init);
++&lt;/script&gt;
++
++[% lang_data = [
++    {
++        code    =&gt; 'gb',
++        name    =&gt; 'English',
++    },
++    {
++        code    =&gt; 'it',
++        name    =&gt; 'Italiano',
++    },
++   ]
++%]
++
++&lt;div id=&quot;language_dialog&quot;&gt;
++    &lt;div class=&quot;hd&quot;&gt;
++        [%l('Please choose a language')%]
++    &lt;/div&gt;
++    &lt;div class=&quot;bd&quot;&gt;
++        [% FOR lang IN lang_data %]
++        &lt;a href=&quot;/?lang=[%lang.code%]&quot; style=&quot;margin-left:15px;&quot;&gt;
++            &lt;img src=&quot;/static/images/icons/flags/[%lang.code%].png&quot; width=&quot;16&quot; height=&quot;11&quot; alt=&quot;[%lang.name%]&quot; /&gt;
++            [%lang.name%]
++        &lt;/a&gt;
++        [% END %]
++    &lt;/div&gt;
++&lt;/div&gt;
++&lt;!-- LOGIN DIALOG --&gt;
+
+Modified: trunk/root/base/shared/login_dialog
+===================================================================
+--- trunk/root/base/shared/login_dialog	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/root/base/shared/login_dialog	2007-12-27 22:57:13 UTC (rev 714)
+@@ -27,8 +27,8 @@
+             modal:                  false,
+             constraintoviewport:    true,
+             buttons : [
+-                { text:'Login',  handler:handleSubmit, isDefault:true },
+-                { text:'Cancel', handler:handleCancel }
++                { text:'[%l('Login')%]',  handler:handleSubmit, isDefault:true },
++                { text:'[%l('Cancel')%]', handler:handleCancel }
+             ]
+         }
+     );
+
+Modified: trunk/root/base/shared/useful_tt_stuff
+===================================================================
+--- trunk/root/base/shared/useful_tt_stuff	2007-12-20 23:15:53 UTC (rev 713)
++++ trunk/root/base/shared/useful_tt_stuff	2007-12-27 22:57:13 UTC (rev 714)
+@@ -27,5 +27,5 @@
+ [% END %]
+ 
+ [% MACRO l(text, args) BLOCK;
+-    c.localize(text, args);
++    c.i18nise (text, args);
+ END; %]
+
+Added: trunk/root/static/images/icons/flags/de.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/icons/flags/de.png
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/root/static/images/icons/flags/gb.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/icons/flags/gb.png
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/root/static/images/icons/flags/i_default.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/icons/flags/i_default.png
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/root/static/images/icons/flags/it.png
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/icons/flags/it.png
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000601.html">[Parley-svn] r713 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000603.html">[Parley-svn] r715 - / trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#602">[ date ]</a>
+              <a href="thread.html#602">[ thread ]</a>
+              <a href="subject.html#602">[ subject ]</a>
+              <a href="author.html#602">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

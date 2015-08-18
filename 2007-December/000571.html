@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r683 - / trunk/root/base/shared trunk/root/base/thread	trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r683%20-%20/%20trunk/root/base/shared%20trunk/root/base/thread%0A%09trunk/root/css&In-Reply-To=%3C200712142145.lBELjLJa029326%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000570.html">
+   <LINK REL="Next"  HREF="000572.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r683 - / trunk/root/base/shared trunk/root/base/thread	trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r683%20-%20/%20trunk/root/base/shared%20trunk/root/base/thread%0A%09trunk/root/css&In-Reply-To=%3C200712142145.lBELjLJa029326%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r683 - / trunk/root/base/shared trunk/root/base/thread	trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Dec 14 22:45:21 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000570.html">[Parley-svn] r682 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000572.html">[Parley-svn] r684 - / trunk/root/base/search trunk/root/base/shared	trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#571">[ date ]</a>
+              <a href="thread.html#571">[ thread ]</a>
+              <a href="subject.html#571">[ subject ]</a>
+              <a href="author.html#571">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-14 22:45:20 +0100 (Fri, 14 Dec 2007)
+New Revision: 683
+
+Modified:
+   /
+   trunk/root/base/shared/postinfo_table_row
+   trunk/root/base/thread/recent
+   trunk/root/css/experiment.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4300 at wiggin</A>:  chisel | 2007-12-14 19:16:10 +0000
+ / show &quot;forum name&quot; in postinfo_table_row when &quot;show_forum_name&quot; is passed via PROCESS
+ / make thread/recent show the forum name when using postinfo_table_row
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4299
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4300
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/shared/postinfo_table_row
+===================================================================
+--- trunk/root/base/shared/postinfo_table_row	2007-12-14 21:45:05 UTC (rev 682)
++++ trunk/root/base/shared/postinfo_table_row	2007-12-14 21:45:20 UTC (rev 683)
+@@ -15,8 +15,12 @@
+         &lt;div class=&quot;thread_subject&quot;&gt;
+             &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot; class=&quot;topic_link&quot;&gt;[% ForumCode.escape(thread.subject) |truncate(55) %]&lt;/a&gt;
+         &lt;/div&gt;
+-        &lt;br /&gt;
+-        &lt;span class=&quot;forum_mini_pager&quot;&gt;
++        [%- IF show_forum_name %]
++        &lt;div class=&quot;thread_recent_forum&quot;&gt;
++            &lt;a href=&quot;forum/view?forum=[%thread.forum.id%]&quot;&gt;[% thread.forum.name %]&lt;/a&gt;
++        &lt;/div&gt;
++        [% END %]
++        &lt;div class=&quot;forum_mini_pager&quot;&gt;
+             [%- IF authed_user || mini_pager %]
+             [
+                 [%- IF authed_user %]
+@@ -24,7 +28,7 @@
+                 [%- END %]
+             ]
+             [%- END %]
+-        &lt;/span&gt;
++        &lt;/div&gt;
+     &lt;/td&gt;
+ 
+     &lt;td&gt;
+
+Modified: trunk/root/base/thread/recent
+===================================================================
+--- trunk/root/base/thread/recent	2007-12-14 21:45:05 UTC (rev 682)
++++ trunk/root/base/thread/recent	2007-12-14 21:45:20 UTC (rev 683)
+@@ -4,7 +4,7 @@
+ [% PROCESS shared/pager_advanced %]
+ &lt;table class=&quot;recently_updated&quot;&gt;
+     [% WHILE (thread = thread_list.next) %]
+-    [% PROCESS shared/postinfo_table_row %]
++    [% PROCESS shared/postinfo_table_row show_forum_name=1 %]
+     [% END %]
+ &lt;/table&gt;
+ [% ELSE %]
+
+Modified: trunk/root/css/experiment.css
+===================================================================
+--- trunk/root/css/experiment.css	2007-12-14 21:45:05 UTC (rev 682)
++++ trunk/root/css/experiment.css	2007-12-14 21:45:20 UTC (rev 683)
+@@ -138,6 +138,12 @@
+     padding-left:       10px;
+     padding-right:      10px;
+ }
++.forum_mini_pager {
++    font-size:          85%;
++}
++.forum_mini_pager a {
++    color:              #666;
++}
+ .forum_name {
+     font-size:          100%;
+     text-align:         left;
+@@ -321,6 +327,14 @@
+     font-size:          93%;
+ }
+ 
++.thread_recent_forum {
++    float:              right;
++    font-size:          85%;
++}
++.thread_recent_forum a {
++    color:              #333;
++}
++
+ .thread_reply {
+     /*width:              100%;*/
+     font-size:          93%;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000570.html">[Parley-svn] r682 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000572.html">[Parley-svn] r684 - / trunk/root/base/search trunk/root/base/shared	trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#571">[ date ]</a>
+              <a href="thread.html#571">[ thread ]</a>
+              <a href="subject.html#571">[ subject ]</a>
+              <a href="author.html#571">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

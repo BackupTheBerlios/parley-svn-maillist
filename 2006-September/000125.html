@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r237 - / branches/schema_based
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r237%20-%20/%20branches/schema_based&In-Reply-To=%3C200609121459.k8CExeUA028563%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000124.html">
+   <LINK REL="Next"  HREF="000126.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r237 - / branches/schema_based</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r237%20-%20/%20branches/schema_based&In-Reply-To=%3C200609121459.k8CExeUA028563%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r237 - / branches/schema_based">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Sep 12 16:59:40 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000124.html">[Parley-svn] r236 - / branches/schema_based/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000126.html">[Parley-svn] r238 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#125">[ date ]</a>
+              <a href="thread.html#125">[ thread ]</a>
+              <a href="subject.html#125">[ subject ]</a>
+              <a href="author.html#125">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-12 16:59:39 +0200 (Tue, 12 Sep 2006)
+New Revision: 237
+
+Modified:
+   /
+   branches/schema_based/parley.yml
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r871 at ferrari</A>:  chisel | 2006-09-06 10:04:14 +0100
+ / modified 'posts_per_page' from 20 to 10
+ + added new conf-var 'replies_have_own_subject'
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:870
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:871
+
+Modified: branches/schema_based/parley.yml
+===================================================================
+--- branches/schema_based/parley.yml	2006-09-12 14:59:36 UTC (rev 236)
++++ branches/schema_based/parley.yml	2006-09-12 14:59:39 UTC (rev 237)
+@@ -2,7 +2,8 @@
+ # DO NOT USE TABS FOR INDENTATION OR label/value SEPARATION!!!
+ name:         Parley
+ default_uri:  /forum/list
+-posts_per_page: 20
++posts_per_page: 10
++replies_have_own_subject: 0
+ 
+ alerts:
+     from_name:      'Parley'
+@@ -17,6 +18,11 @@
+     - 'error'
+     - 'fatal'
+ 
++
++
++
++
++
+ #--
+ #-- LINES BELOW THIS SHOULDN'T NEED CHANGING
+ #--
+@@ -47,4 +53,3 @@
+     # comment out the following line to enable Template::Timer output in your
+     # template source
+     CONTEXT:        ''
+-
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000124.html">[Parley-svn] r236 - / branches/schema_based/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000126.html">[Parley-svn] r238 - / branches/schema_based/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#125">[ date ]</a>
+              <a href="thread.html#125">[ thread ]</a>
+              <a href="subject.html#125">[ subject ]</a>
+              <a href="author.html#125">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

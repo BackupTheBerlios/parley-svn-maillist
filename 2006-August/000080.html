@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r191 - / trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r191%20-%20/%20trunk/t&In-Reply-To=%3C200608161340.k7GDee8T014929%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000079.html">
+   <LINK REL="Next"  HREF="000081.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r191 - / trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r191%20-%20/%20trunk/t&In-Reply-To=%3C200608161340.k7GDee8T014929%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r191 - / trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:40:40 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000079.html">[Parley-svn] r190 - / trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000081.html">[Parley-svn] r192 - / trunk/root/base/menu
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#80">[ date ]</a>
+              <a href="thread.html#80">[ thread ]</a>
+              <a href="subject.html#80">[ subject ]</a>
+              <a href="author.html#80">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:40:38 +0200 (Wed, 16 Aug 2006)
+New Revision: 191
+
+Modified:
+   /
+   trunk/t/model_Parley-Post.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4925 at ferrari</A>:  chisel | 2006-07-19 18:57:11 +0100
+ + added can_ok() tests
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4924
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4925
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/t/model_Parley-Post.t
+===================================================================
+--- trunk/t/model_Parley-Post.t	2006-08-16 13:40:34 UTC (rev 190)
++++ trunk/t/model_Parley-Post.t	2006-08-16 13:40:38 UTC (rev 191)
+@@ -1,4 +1,4 @@
+-use Test::More tests =&gt; 4;
++use Test::More tests =&gt; 5;
+ 
+ BEGIN {
+     # use modules
+@@ -20,6 +20,17 @@
+     Parley-&gt;model('ParleyDB')-&gt;table('post')-&gt;storage-&gt;txn_rollback;
+ }
+ 
++can_ok($post_table, qw
++    [
++        thread_post_count
++        thread_position
++        page_containing_post
++        last_post_in_list
++        next_post
++    ]
++);
++
++
+ my $pg_time = q{1974-10-02 09:17:52.855649000+01};
+ 
+ # create a new thread to add post(s) to
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000079.html">[Parley-svn] r190 - / trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000081.html">[Parley-svn] r192 - / trunk/root/base/menu
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#80">[ date ]</a>
+              <a href="thread.html#80">[ thread ]</a>
+              <a href="subject.html#80">[ subject ]</a>
+              <a href="author.html#80">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,888 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r813 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User	trunk/lib/Parley/Model trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema trunk/lib/Parley/View trunk/lib/Text/Search
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r813%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/App%20trunk/lib/Parley/App/Communication%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Controller/User%0A%09trunk/lib/Parley/Model%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema%20trunk/lib/Parley/View%20trunk/lib/Text/Search&In-Reply-To=%3C200802270945.m1R9jgxk011028%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000700.html">
+   <LINK REL="Next"  HREF="000702.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r813 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User	trunk/lib/Parley/Model trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema trunk/lib/Parley/View trunk/lib/Text/Search</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r813%20-%20/%20trunk%20trunk/lib%20trunk/lib/Parley%0A%09trunk/lib/Parley/App%20trunk/lib/Parley/App/Communication%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Controller/User%0A%09trunk/lib/Parley/Model%20trunk/lib/Parley/ResultSet%0A%09trunk/lib/Parley/Schema%20trunk/lib/Parley/View%20trunk/lib/Text/Search&In-Reply-To=%3C200802270945.m1R9jgxk011028%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r813 - / trunk trunk/lib trunk/lib/Parley	trunk/lib/Parley/App trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Controller/User	trunk/lib/Parley/Model trunk/lib/Parley/ResultSet	trunk/lib/Parley/Schema trunk/lib/Parley/View trunk/lib/Text/Search">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Feb 27 10:45:42 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000700.html">[Parley-svn] r812 - / trunk/lib/Parley/ResultSet	trunk/root/base/site
+</A></li>
+        <LI>Next message: <A HREF="000702.html">[Parley-svn] r814 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#701">[ date ]</a>
+              <a href="thread.html#701">[ thread ]</a>
+              <a href="subject.html#701">[ subject ]</a>
+              <a href="author.html#701">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-27 10:45:40 +0100 (Wed, 27 Feb 2008)
+New Revision: 813
+
+Added:
+   trunk/lib/Parley/Version.pm
+Modified:
+   /
+   trunk/TODO
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/App/Communication/Email.pm
+   trunk/lib/Parley/App/DFV.pm
+   trunk/lib/Parley/App/DateTime.pm
+   trunk/lib/Parley/App/Error.pm
+   trunk/lib/Parley/App/I18N.pm
+   trunk/lib/Parley/App/Notification.pm
+   trunk/lib/Parley/App/Terms.pm
+   trunk/lib/Parley/Contributors.pm
+   trunk/lib/Parley/Controller/Admin.pm
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/Help.pm
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/Controller/Site.pm
+   trunk/lib/Parley/Controller/Terms.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/Controller/User/LostPassword.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+   trunk/lib/Parley/Model/ParleyDB.pm
+   trunk/lib/Parley/ResultSet/Forum.pm
+   trunk/lib/Parley/ResultSet/Person.pm
+   trunk/lib/Parley/ResultSet/Post.pm
+   trunk/lib/Parley/ResultSet/Role.pm
+   trunk/lib/Parley/ResultSet/Terms.pm
+   trunk/lib/Parley/ResultSet/Thread.pm
+   trunk/lib/Parley/ResultSet/ThreadView.pm
+   trunk/lib/Parley/Schema.pm
+   trunk/lib/Parley/Schema/Authentication.pm
+   trunk/lib/Parley/Schema/EmailQueue.pm
+   trunk/lib/Parley/Schema/Forum.pm
+   trunk/lib/Parley/Schema/ForumModerator.pm
+   trunk/lib/Parley/Schema/PasswordReset.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/lib/Parley/Schema/Preference.pm
+   trunk/lib/Parley/Schema/PreferenceTimeString.pm
+   trunk/lib/Parley/Schema/RegistrationAuthentication.pm
+   trunk/lib/Parley/Schema/Role.pm
+   trunk/lib/Parley/Schema/Terms.pm
+   trunk/lib/Parley/Schema/TermsAgreed.pm
+   trunk/lib/Parley/Schema/Thread.pm
+   trunk/lib/Parley/Schema/ThreadView.pm
+   trunk/lib/Parley/Schema/UserRole.pm
+   trunk/lib/Parley/View/Plain.pm
+   trunk/lib/Parley/View/TT.pm
+   trunk/lib/Text/Search/SQL.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4704 at wiggin</A>:  chisel | 2008-02-27 08:57:57 +0000
+ + implmented SVK-esque Parley::Version
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4703
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4704
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/TODO	2008-02-27 09:45:40 UTC (rev 813)
+@@ -1,6 +1,5 @@
+ TODO LIST
+ 
+-  - Parley::Version (a la SVK)
+   - &quot;Cancel&quot; from post/edit
+   - &quot;Cancel&quot; from thread/reply
+   - fix &lt;ul&gt;/&lt;ol&gt; CSS
+@@ -27,6 +26,7 @@
+   - investigate: package Your::Schema; sub connect { do the check; next::method }
+   - investigate: DBIx::Class::Schema::Versioned
+   - investigate: t/model_Post.t / distinct count
++D - Parley::Version (a la SVK)
+ D - login form flickers on IE7 page load
+ D - [bug] user/profile doesn't show avatar
+ D - add i18n for 'or'
+
+Modified: trunk/lib/Parley/App/Communication/Email.pm
+===================================================================
+--- trunk/lib/Parley/App/Communication/Email.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/App/Communication/Email.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use Perl6::Export::Attrs;
+ 
+ use Parley::App::I18N qw( :locale );
+
+Modified: trunk/lib/Parley/App/DFV.pm
+===================================================================
+--- trunk/lib/Parley/App/DFV.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/App/DFV.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use Email::Valid;
+ use Perl6::Export::Attrs;
+ 
+
+Modified: trunk/lib/Parley/App/DateTime.pm
+===================================================================
+--- trunk/lib/Parley/App/DateTime.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/App/DateTime.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use DateTime;
+ use Perl6::Export::Attrs;
+ 
+
+Modified: trunk/lib/Parley/App/Error.pm
+===================================================================
+--- trunk/lib/Parley/App/Error.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/App/Error.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use Perl6::Export::Attrs;
+ 
+ sub has_errors :Export(:methods) {
+
+Modified: trunk/lib/Parley/App/I18N.pm
+===================================================================
+--- trunk/lib/Parley/App/I18N.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/App/I18N.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use Perl6::Export::Attrs;
+ 
+ sub first_valid_locale :Export( :locale ) {
+
+Modified: trunk/lib/Parley/App/Notification.pm
+===================================================================
+--- trunk/lib/Parley/App/Notification.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/App/Notification.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use Perl6::Export::Attrs;
+ 
+ sub notify_watchers :Export( :watch ) {
+
+Modified: trunk/lib/Parley/App/Terms.pm
+===================================================================
+--- trunk/lib/Parley/App/Terms.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/App/Terms.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use Perl6::Export::Attrs;
+ 
+ sub terms_check :Export( :terms ) {
+
+Modified: trunk/lib/Parley/Contributors.pm
+===================================================================
+--- trunk/lib/Parley/Contributors.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Contributors.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -1,4 +1,5 @@
+ package Parley::Contributors;
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ 
+ # this is a dummy package to provide POD
+ 
+
+Modified: trunk/lib/Parley/Controller/Admin.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Admin.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Admin.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ # vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ sub index : Private {
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Forum.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ 
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use Parley::App::Error qw( :methods );
+
+Modified: trunk/lib/Parley/Controller/Help.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Help.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Help.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ # vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use Parley::App::I18N qw( :locale );
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/My.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -1,6 +1,8 @@
+ package Parley::Controller::My;
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use Graphics::Magick;
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Post.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ 
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ use DateTime;
+ use JSON;
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Root.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ # vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use DateTime;
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Search.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ 
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use Text::Search::SQL;
+
+Modified: trunk/lib/Parley/Controller/Site.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Site.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Site.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ # vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use JSON;
+
+Modified: trunk/lib/Parley/Controller/Terms.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Terms.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Terms.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ # vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use Parley::App::Terms qw( :terms );
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/Thread.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ 
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ use Data::SpreadPagination;
+ 
+
+Modified: trunk/lib/Parley/Controller/User/LostPassword.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/LostPassword.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/User/LostPassword.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ 
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use List::MoreUtils qw{ uniq };
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ 
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ use List::MoreUtils qw{ uniq };
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Controller/User.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ 
+ use strict;
+ use warnings;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Controller';
+ 
+ # deal with user login requests on user/login
+
+Modified: trunk/lib/Parley/Model/ParleyDB.pm
+===================================================================
+--- trunk/lib/Parley/Model/ParleyDB.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Model/ParleyDB.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -1,6 +1,8 @@
+ package Parley::Model::ParleyDB;
+ 
+ use strict;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::Model::DBIC::Schema';
+ 
+ __PACKAGE__-&gt;config(
+
+Modified: trunk/lib/Parley/ResultSet/Forum.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Forum.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/ResultSet/Forum.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class::ResultSet';
+ 
+ sub available_list {
+
+Modified: trunk/lib/Parley/ResultSet/Person.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Person.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/ResultSet/Person.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class::ResultSet';
+ 
+ sub users_with_roles {
+
+Modified: trunk/lib/Parley/ResultSet/Post.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Post.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/ResultSet/Post.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class::ResultSet';
+ 
+ sub record_from_id {
+
+Modified: trunk/lib/Parley/ResultSet/Role.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Role.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/ResultSet/Role.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class::ResultSet';
+ 
+ sub role_list {
+
+Modified: trunk/lib/Parley/ResultSet/Terms.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Terms.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/ResultSet/Terms.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class::ResultSet';
+ 
+ sub latest_terms {
+
+Modified: trunk/lib/Parley/ResultSet/Thread.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/Thread.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/ResultSet/Thread.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class::ResultSet';
+ 
+ # This is slightly complicated; the way we find the last post a user has seen
+
+Modified: trunk/lib/Parley/ResultSet/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/ResultSet/ThreadView.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/ResultSet/ThreadView.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class::ResultSet';
+ 
+ sub watching_thread {
+
+Modified: trunk/lib/Parley/Schema/Authentication.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Authentication.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Authentication.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/EmailQueue.pm
+===================================================================
+--- trunk/lib/Parley/Schema/EmailQueue.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/EmailQueue.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Forum.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Forum.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/ForumModerator.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ForumModerator.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/ForumModerator.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -4,6 +4,8 @@
+ use warnings;
+ use base 'DBIx::Class';
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ __PACKAGE__-&gt;load_components('PK::Auto', 'Core');
+ __PACKAGE__-&gt;table('forum_moderator');
+ __PACKAGE__-&gt;add_columns(
+
+Modified: trunk/lib/Parley/Schema/PasswordReset.pm
+===================================================================
+--- trunk/lib/Parley/Schema/PasswordReset.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/PasswordReset.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Person.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Post.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -6,6 +6,8 @@
+ use warnings;
+ use Data::Dump qw(pp);
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use DateTime;
+ use DateTime::Format::Pg;
+ use Text::Context::EitherSide;
+
+Modified: trunk/lib/Parley/Schema/Preference.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Preference.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Preference.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/PreferenceTimeString.pm
+===================================================================
+--- trunk/lib/Parley/Schema/PreferenceTimeString.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/PreferenceTimeString.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use warnings;
+ use base 'DBIx::Class';
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;preference_time_string&quot;);
+ __PACKAGE__-&gt;add_columns(
+
+Modified: trunk/lib/Parley/Schema/RegistrationAuthentication.pm
+===================================================================
+--- trunk/lib/Parley/Schema/RegistrationAuthentication.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/RegistrationAuthentication.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/Role.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Role.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Role.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ use DateTime::Format::Pg;
+ 
+
+Modified: trunk/lib/Parley/Schema/Terms.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Terms.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Terms.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -6,6 +6,8 @@
+ use base 'DBIx::Class';
+ use DateTime::Format::Pg;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ __PACKAGE__-&gt;load_components('PK::Auto', 'Core');
+ __PACKAGE__-&gt;table('terms');
+ 
+
+Modified: trunk/lib/Parley/Schema/TermsAgreed.pm
+===================================================================
+--- trunk/lib/Parley/Schema/TermsAgreed.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/TermsAgreed.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components('PK::Auto', 'Core');
+
+Modified: trunk/lib/Parley/Schema/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Thread.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/Thread.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ 
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+
+Modified: trunk/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ThreadView.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/ThreadView.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base 'DBIx::Class';
+ use DateTime::Format::Pg;
+ 
+
+Modified: trunk/lib/Parley/Schema/UserRole.pm
+===================================================================
+--- trunk/lib/Parley/Schema/UserRole.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema/UserRole.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,6 +3,8 @@
+ use strict;
+ use warnings;
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ use base qw/DBIx::Class/;
+ 
+ # Load required DBIC stuff
+
+Modified: trunk/lib/Parley/Schema.pm
+===================================================================
+--- trunk/lib/Parley/Schema.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Schema.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -2,6 +2,7 @@
+ # vim: ts=8 sts=4 et sw=4 sr sta
+ use strict;
+ use warnings;
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ 
+ use base 'DBIx::Class::Schema';
+ 
+
+Added: trunk/lib/Parley/Version.pm
+===================================================================
+--- trunk/lib/Parley/Version.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/Version.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -0,0 +1,28 @@
++package Parley;
++
++use version; our $VERSION = qv(0.59.001);
++
++=head1 NAME
++
++Parley::Version - The Parley project-wide version number
++
++=head1 SYNOPSIS
++
++    package Parley::Whatever;
++
++    # Must be on one line so MakeMaker can parse it.
++use Parley::Version;  our  = ;
++
++=head1 DESCRIPTION
++
++Because of the problems coordinationg revision numbers in a distributed
++version control system and across a directory full of Perl modules, this
++module provides a central location for the project's release number.
++
++=head1 IDEA FROM
++
++This idea was taken from L&lt;SVK&gt;
++
++=cut
++
++1;
+
+Modified: trunk/lib/Parley/View/Plain.pm
+===================================================================
+--- trunk/lib/Parley/View/Plain.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/View/Plain.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -1,6 +1,8 @@
+ package Parley::View::Plain;
+ 
+ use strict;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::View::TT';
+ 
+ =head1 NAME
+
+Modified: trunk/lib/Parley/View/TT.pm
+===================================================================
+--- trunk/lib/Parley/View/TT.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley/View/TT.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -1,6 +1,8 @@
+ package Parley::View::TT;
+ 
+ use strict;
++
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ use base 'Catalyst::View::TT';
+ 
+ =head1 NAME
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Parley.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.59_01';
++use Parley::Version;  our $VERSION = $Parley::VERSION;
+ 
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+
+Modified: trunk/lib/Text/Search/SQL.pm
+===================================================================
+--- trunk/lib/Text/Search/SQL.pm	2008-02-27 09:45:26 UTC (rev 812)
++++ trunk/lib/Text/Search/SQL.pm	2008-02-27 09:45:40 UTC (rev 813)
+@@ -5,6 +5,8 @@
+ use Carp;
+ use Data::Dump qw(pp);
+ 
++use Parley::Version;  our $VERSION = $Parley::VERSION;
++
+ sub new {
+     my ($proto, $options) = @_;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000700.html">[Parley-svn] r812 - / trunk/lib/Parley/ResultSet	trunk/root/base/site
+</A></li>
+	<LI>Next message: <A HREF="000702.html">[Parley-svn] r814 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#701">[ date ]</a>
+              <a href="thread.html#701">[ thread ]</a>
+              <a href="subject.html#701">[ subject ]</a>
+              <a href="author.html#701">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

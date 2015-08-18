@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r124 - in trunk: . root/base/menu root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r124%20-%20in%20trunk%3A%20.%20root/base/menu%20root/css&In-Reply-To=%3C200604131051.k3DApN8g017019%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000013.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r124 - in trunk: . root/base/menu root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r124%20-%20in%20trunk%3A%20.%20root/base/menu%20root/css&In-Reply-To=%3C200604131051.k3DApN8g017019%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r124 - in trunk: . root/base/menu root/css">chiselwright at berlios.de
+       </A><BR>
+    <I>Thu Apr 13 12:51:23 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000013.html">[Parley-svn] r123 - in trunk: . root/base/menu
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#14">[ date ]</a>
+              <a href="thread.html#14">[ thread ]</a>
+              <a href="subject.html#14">[ subject ]</a>
+              <a href="author.html#14">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-04-13 12:51:17 +0200 (Thu, 13 Apr 2006)
+New Revision: 124
+
+Modified:
+   trunk/
+   trunk/root/base/menu/statusbar
+   trunk/root/css/default.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r14394 at ferrari</A>:  chisel | 2006-04-13 09:23:05 +0100
+ / alter &quot;Click to Login&quot; to &quot;Login&quot;
+ + add &quot;Signup&quot; link in statusbar (when not logged in)
+ / slightly reduced text size for #left and #statusbar
+ + added &quot;Forgotten Password&quot; link to login-box
+
+
+
+Property changes on: trunk
+___________________________________________________________________
+Name: svk:merge
+   - c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14393
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+   + c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley/trunk:14394
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/personal/parley/trunk:12417
+
+Modified: trunk/root/base/menu/statusbar
+===================================================================
+--- trunk/root/base/menu/statusbar	2006-04-13 10:51:00 UTC (rev 123)
++++ trunk/root/base/menu/statusbar	2006-04-13 10:51:17 UTC (rev 124)
+@@ -23,7 +23,11 @@
+                                 &lt;a href=&quot;user/logout&quot;&gt;Logout&lt;/a&gt;
+                         ]&lt;/i&gt;
+                         [% ELSE %]
+-            &lt;i&gt;[ &lt;a onclick=&quot;new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;&quot; href=&quot;user/login&quot;&gt;Click Here To Login&lt;/a&gt; ]&lt;/i&gt;
++            &lt;i&gt;[
++            &lt;a onclick=&quot;new Effect.Appear('loginbox', { duration:0.2 }); $('username').focus(); return false;&quot; href=&quot;user/login&quot;&gt;Login&lt;/a&gt;
++            |
++            &lt;a href=&quot;user/signup&quot;&gt;Signup&lt;/a&gt;
++            ]&lt;/i&gt;
+                         [% END %] [%# authed_user end %]
+                 &lt;/td&gt;
+ 
+@@ -59,6 +63,12 @@
+                     &lt;input type=&quot;submit&quot; value=&quot;log in&quot; class=&quot;input_button&quot; style=&quot;margin-left: 170px;&quot;/&gt;
+                 &lt;/td&gt;
+             &lt;/tr&gt;
++
++            &lt;tr&gt;
++                &lt;td colspan=&quot;2&quot;&gt;
++                    &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
+         &lt;/table&gt;
+     &lt;/form&gt;
+ &lt;/div&gt;
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-04-13 10:51:00 UTC (rev 123)
++++ trunk/root/css/default.css	2006-04-13 10:51:17 UTC (rev 124)
+@@ -29,6 +29,7 @@
+     position:   absolute;
+     top:        100px;
+     width:      150px; 
++    font-size: 0.9em;
+ }
+ #middle {
+     background: transparent;
+@@ -75,6 +76,8 @@
+     padding-top: 1px;
+     padding-bottom: 1px;
+     padding-right: 1em;
++
++    font-size: 0.9em;
+ }
+ 
+ #statusbar table {
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000013.html">[Parley-svn] r123 - in trunk: . root/base/menu
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#14">[ date ]</a>
+              <a href="thread.html#14">[ thread ]</a>
+              <a href="subject.html#14">[ subject ]</a>
+              <a href="author.html#14">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r242 - / branches/schema_based/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r242%20-%20/%20branches/schema_based/root/base/thread&In-Reply-To=%3C200609121459.k8CExwMs028836%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000129.html">
+   <LINK REL="Next"  HREF="000131.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r242 - / branches/schema_based/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r242%20-%20/%20branches/schema_based/root/base/thread&In-Reply-To=%3C200609121459.k8CExwMs028836%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r242 - / branches/schema_based/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Sep 12 16:59:58 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000129.html">[Parley-svn] r241 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+        <LI>Next message: <A HREF="000131.html">[Parley-svn] r243 - / branches/schema_based/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#130">[ date ]</a>
+              <a href="thread.html#130">[ thread ]</a>
+              <a href="subject.html#130">[ subject ]</a>
+              <a href="author.html#130">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-09-12 16:59:58 +0200 (Tue, 12 Sep 2006)
+New Revision: 242
+
+Modified:
+   /
+   branches/schema_based/root/base/thread/add
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r876 at ferrari</A>:  chisel | 2006-09-06 10:15:11 +0100
+ + updated [%IF%] block for erorr messages
+ / altered the form action
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:875
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:876
+
+Modified: branches/schema_based/root/base/thread/add
+===================================================================
+--- branches/schema_based/root/base/thread/add	2006-09-12 14:59:54 UTC (rev 241)
++++ branches/schema_based/root/base/thread/add	2006-09-12 14:59:58 UTC (rev 242)
+@@ -1,15 +1,16 @@
+ &lt;h1&gt;Start A New Topic&lt;/h1&gt;
+ 
+-[% IF messages %]
++[% IF view.error.message %]
++    [% view.error.message %]
+     &lt;ul&gt;
+-        [% FOREACH message IN messages %]
++        [% FOREACH message IN view.error.messages %]
+             &lt;li&gt;[% message %]&lt;/li&gt;
+         [% END %]
+     &lt;/ul&gt;
+ [% END %]
+ 
+ 
+-&lt;form action=&quot;thread/post?forum=[% current_forum.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
++&lt;form action=&quot;thread/add?forum=[% current_forum.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
+ 
+ &lt;table&gt;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000129.html">[Parley-svn] r241 - / branches/schema_based/lib/Parley/Schema
+</A></li>
+	<LI>Next message: <A HREF="000131.html">[Parley-svn] r243 - / branches/schema_based/root/base/thread
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#130">[ date ]</a>
+              <a href="thread.html#130">[ thread ]</a>
+              <a href="subject.html#130">[ subject ]</a>
+              <a href="author.html#130">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

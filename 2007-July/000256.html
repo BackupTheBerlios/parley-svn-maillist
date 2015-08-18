@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r368 - / trunk/lib/Template/Plugin trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r368%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200707042214.l64MEJiK013141%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000257.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r368 - / trunk/lib/Template/Plugin trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r368%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200707042214.l64MEJiK013141%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r368 - / trunk/lib/Template/Plugin trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul  5 00:14:19 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000257.html">[Parley-svn] r369 - / trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#256">[ date ]</a>
+              <a href="thread.html#256">[ thread ]</a>
+              <a href="subject.html#256">[ subject ]</a>
+              <a href="author.html#256">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-05 00:14:19 +0200 (Thu, 05 Jul 2007)
+New Revision: 368
+
+Added:
+   trunk/t/04_forumcode.t
+Modified:
+   /
+   trunk/lib/Template/Plugin/ForumCode.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3435 at wiggin</A>:  chisel | 2007-06-28 18:49:32 +0100
+ - removed &quot;//foo//&quot; -&gt; &quot;&lt;i&gt;foo&lt;/i&gt;&quot; which was causing problems by trampling all over //'s in URLs
+ + added test file from pre-schema days (somehow it didn't make it over)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3414
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3435
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- trunk/lib/Template/Plugin/ForumCode.pm	2007-06-25 22:11:03 UTC (rev 367)
++++ trunk/lib/Template/Plugin/ForumCode.pm	2007-07-04 22:14:19 UTC (rev 368)
+@@ -22,7 +22,7 @@
+     $new_obj-&gt;{replacements} = [
+         {   from =&gt; '__',       to =&gt; 'u'   },
+         {   from =&gt; '\*\*',     to =&gt; 'b'   },
+-        {   from =&gt; '\/\/',     to =&gt; 'i'   },
++        #{   from =&gt; '\/\/',     to =&gt; 'i'   },
+     ];
+ 
+     return $new_obj;
+
+Added: trunk/t/04_forumcode.t
+===================================================================
+--- trunk/t/04_forumcode.t	2007-06-25 22:11:03 UTC (rev 367)
++++ trunk/t/04_forumcode.t	2007-07-04 22:14:19 UTC (rev 368)
+@@ -0,0 +1,197 @@
++#!/usr/bin/perl
++use strict;
++use warnings;
++
++my @forum_tests;
++
++BEGIN {
++    # a list of tests for forumcode()
++    @forum_tests = (
++        # escaped HTML stuff
++        {
++            in  =&gt; '&lt;b&gt;foo&lt;/b&gt; &amp;',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt; &amp;',
++        },
++        {
++            in  =&gt; '#FF0000',
++            out =&gt; '#FF0000',
++        },
++
++        ## BOLD
++        # [b] tag
++        {
++            in  =&gt; '[b]foo[/b]',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt;',
++        },
++        # **foo** bold magic
++        {
++            in  =&gt; '**foo**',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt;',
++        },
++        # replace all bold tags
++        {
++            in  =&gt; '[b]foo[/b][b]bar[/b]**baz****quux**',
++            out =&gt; '&lt;b&gt;foo&lt;/b&gt;&lt;b&gt;bar&lt;/b&gt;&lt;b&gt;baz&lt;/b&gt;&lt;b&gt;quux&lt;/b&gt;',
++        },
++
++        ## UNDERLINE
++        # [u] tag
++        {
++            in  =&gt; '[u]foo[/u]',
++            out =&gt; '&lt;u&gt;foo&lt;/u&gt;',
++        },
++        # __foo__ underline magic
++        {
++            in  =&gt; '__foo__',
++            out =&gt; '&lt;u&gt;foo&lt;/u&gt;',
++        },
++        # replace all underline tags
++        {
++            in  =&gt; '[u]foo[/u][u]bar[/u]__baz____quux__',
++            out =&gt; '&lt;u&gt;foo&lt;/u&gt;&lt;u&gt;bar&lt;/u&gt;&lt;u&gt;baz&lt;/u&gt;&lt;u&gt;quux&lt;/u&gt;',
++        },
++
++        ## ITALIC
++        # [i] tag
++        {
++            in  =&gt; '[i]foo[/i]',
++            out =&gt; '&lt;i&gt;foo&lt;/i&gt;',
++        },
++#        # //foo// italic magic
++#        {
++#            in  =&gt; '//foo//',
++#            out =&gt; '&lt;i&gt;foo&lt;/i&gt;',
++#        },
++        # replace all italic tags
++        {
++            in  =&gt; '[i]foo[/i][i]bar[/i]//baz////quux//',
++            out =&gt; '&lt;i&gt;foo&lt;/i&gt;&lt;i&gt;bar&lt;/i&gt;//baz////quux//',
++            #out =&gt; '&lt;i&gt;foo&lt;/i&gt;&lt;i&gt;bar&lt;/i&gt;&lt;i&gt;baz&lt;/i&gt;&lt;i&gt;quux&lt;/i&gt;',
++        },
++
++        # link testing
++        {
++            in  =&gt; '[url]<A HREF="http://www.google.com/[/url">http://www.google.com/[/url</A>]',
++            out =&gt; '&lt;a href=&quot;<A HREF="http://www.google.com/">http://www.google.com/</A>&quot;&gt;<A HREF="http://www.google.com/&lt;/a">http://www.google.com/&lt;/a</A>&gt;',
++        },
++        {
++            in  =&gt; '[url name=&quot;Google&quot;]<A HREF="http://www.google.com/[/url">http://www.google.com/[/url</A>]',
++            out =&gt; '&lt;a href=&quot;<A HREF="http://www.google.com/">http://www.google.com/</A>&quot;&gt;Google&lt;/a&gt;',
++        },
++        {
++            in  =&gt; '[url name=&quot;Google&quot; ]<A HREF="http://www.google.com/[/url">http://www.google.com/[/url</A>]',
++            out =&gt; '&lt;a href=&quot;<A HREF="http://www.google.com/">http://www.google.com/</A>&quot;&gt;Google&lt;/a&gt;',
++        },
++
++        # let people put odd stuff in the name if they really want
++        {
++            in  =&gt; '[url name=&quot;&quot;&quot;&quot;]X[/url]',
++            out =&gt; '&lt;a href=&quot;X&quot;&gt;&quot;&quot;&lt;/a&gt;',
++        },
++
++        # not proper URL tags
++        {
++            in  =&gt; '[url name=&quot;]X[/url]',
++            out =&gt; '[url name=&quot;]X[/url]',
++        },
++        {
++            in  =&gt; '[url name=]X[/url]',
++            out =&gt; '[url name=]X[/url]',
++        },
++        # nothing between opening and closing tags
++        {
++            in  =&gt; '[url][/url]',
++            out =&gt; '[url][/url]',
++        },
++
++        # bold in the URL name ..
++        {
++            in  =&gt; '[url name=&quot;[b]Bold[/b]&quot;]X[/url]',
++            out =&gt; '&lt;a href=&quot;X&quot;&gt;&lt;b&gt;Bold&lt;/b&gt;&lt;/a&gt;',
++        },
++
++        # url with query params ...
++        # surprisingly the escaped query-string seems to be dealt with
++        # correctly (in forefox at least)
++        {
++            in      =&gt; '[url name=&quot;X&quot;]<A HREF="http://google.com?q=Foo&amp;something=Bar[/url">http://google.com?q=Foo&amp;something=Bar[/url</A>]',
++            out     =&gt; '&lt;a href=&quot;<A HREF="http://google.com?q=Foo&amp;amp;something=Bar">http://google.com?q=Foo&amp;something=Bar</A>&quot;&gt;X&lt;/a&gt;',
++            diag    =&gt; 'Test this URL in browsers!',
++        },
++
++        # image tag
++        {
++            in  =&gt; '[img]<A HREF="http://somewhere.com/myImage.jpg[/img">http://somewhere.com/myImage.jpg[/img</A>]',
++            out =&gt; '&lt;img src=&quot;<A HREF="http://somewhere.com/myImage.jpg">http://somewhere.com/myImage.jpg</A>&quot; /&gt;',
++        },
++        {
++            in      =&gt; q{[img alt='Foo']<A HREF="http://somewhere.com/myImage.jpg[/img">http://somewhere.com/myImage.jpg[/img</A>]},
++            out     =&gt; q{&lt;img src=&quot;<A HREF="http://somewhere.com/myImage.jpg">http://somewhere.com/myImage.jpg</A>&quot; alt='Foo' /&gt;},
++            diag    =&gt; 'Test this URL in browsers!',
++        },
++        {
++            in      =&gt; q{[img alt=&quot;Foo&quot;]<A HREF="http://somewhere.com/myImage.jpg[/img">http://somewhere.com/myImage.jpg[/img</A>]},
++            out     =&gt; q{&lt;img src=&quot;<A HREF="http://somewhere.com/myImage.jpg">http://somewhere.com/myImage.jpg</A>&quot; alt=&quot;Foo&quot; /&gt;},
++            diag    =&gt; 'Test this URL in browsers!',
++        },
++
++        {
++            in      =&gt;q{One:
++[img]<A HREF="http://localhost:3000/static/images/btn_88x31_powered.png[/img">http://localhost:3000/static/images/btn_88x31_powered.png[/img</A>]
++And another:
++[img]<A HREF="http://localhost:3000/static/images/btn_88x31_powered.png[/img">http://localhost:3000/static/images/btn_88x31_powered.png[/img</A>]},
++            out     =&gt; q{One:&lt;br /&gt;&lt;img src=&quot;<A HREF="http://localhost:3000/static/images/btn_88x31_powered.png">http://localhost:3000/static/images/btn_88x31_powered.png</A>&quot; /&gt;&lt;br /&gt;And another:&lt;br /&gt;&lt;img src=&quot;<A HREF="http://localhost:3000/static/images/btn_88x31_powered.png">http://localhost:3000/static/images/btn_88x31_powered.png</A>&quot; /&gt;},
++        },
++
++
++        # colouring
++        {
++            in      =&gt; q{[color=red]Red Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: red&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[color=#FF0000]Red Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: #FF0000&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[color=#F00]Red Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: #F00&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[color=OrAnge]OrAnge Text[/color]},
++            out     =&gt; q{&lt;span style=&quot;color: OrAnge&quot;&gt;OrAnge Text&lt;/span&gt;},
++        },
++
++
++#        # lists
++#        # unordered
++#        {
++#            in      =&gt; q{[list]
++#            [*]Red
++#            [*]Blue
++#            [*]Yellow
++#            [/list]},
++#            out     =&gt; q{&lt;ul&gt;&lt;li&gt;Red&lt;/li&gt;&lt;li&gt;Blue&lt;/li&gt;&lt;li&gt;Yellow&lt;/li&gt;&lt;/ul&gt;},
++#        },
++    );
++
++    # test count is a fixed number of tests + the length of the @tests array
++    use Test::More;
++    plan tests =&gt; ( 3 + scalar(@forum_tests) );
++
++    use_ok( 'Template::Plugin::ForumCode' );
++};
++
++# create a new thingy
++my $tt_forum = Template::Plugin::ForumCode-&gt;new();
++isnt(undef, $tt_forum, 'Plugin object is defined');
++isa_ok($tt_forum, 'Template::Plugin::ForumCode');
++
++# now some formatting tests for forumcode()
++foreach my $test (@forum_tests) {
++    my $text = $tt_forum-&gt;forumcode($test-&gt;{in});
++    if (defined $test-&gt;{diag}) {
++        diag(&quot;$test-&gt;{out} - $test-&gt;{diag}&quot;);
++    }
++    is($text, $test-&gt;{out}, qq{forumcode('$test-&gt;{in}')});
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000257.html">[Parley-svn] r369 - / trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#256">[ date ]</a>
+              <a href="thread.html#256">[ thread ]</a>
+              <a href="subject.html#256">[ subject ]</a>
+              <a href="author.html#256">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

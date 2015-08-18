@@ -1,0 +1,567 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r490 - / trunk trunk/db trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/Schema trunk/lib/Parley/View	trunk/lib/Text/Search trunk/root/base/menu trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-September/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r490%20-%20/%20trunk%20trunk/db%20trunk/lib%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/App/Communication%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Model%0A%09trunk/lib/Parley/Schema%20trunk/lib/Parley/View%0A%09trunk/lib/Text/Search%20trunk/root/base/menu%20trunk/root/css&In-Reply-To=%3C200709242000.l8OK0mrt027804%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000377.html">
+   <LINK REL="Next"  HREF="000379.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r490 - / trunk trunk/db trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/Schema trunk/lib/Parley/View	trunk/lib/Text/Search trunk/root/base/menu trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r490%20-%20/%20trunk%20trunk/db%20trunk/lib%20trunk/lib/Parley/App%0A%09trunk/lib/Parley/App/Communication%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Model%0A%09trunk/lib/Parley/Schema%20trunk/lib/Parley/View%0A%09trunk/lib/Text/Search%20trunk/root/base/menu%20trunk/root/css&In-Reply-To=%3C200709242000.l8OK0mrt027804%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r490 - / trunk trunk/db trunk/lib trunk/lib/Parley/App	trunk/lib/Parley/App/Communication	trunk/lib/Parley/Controller trunk/lib/Parley/Model	trunk/lib/Parley/Schema trunk/lib/Parley/View	trunk/lib/Text/Search trunk/root/base/menu trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Sep 24 22:00:48 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000377.html">[Parley-svn] r489 - / trunk/root/base/menu
+</A></li>
+        <LI>Next message: <A HREF="000379.html">[Parley-svn] r491 - / trunk/lib/Parley trunk/lib/Parley/App	trunk/lib/Parley/Controller trunk/lib/Parley/ResultSet	trunk/root/base trunk/root/base/terms trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#378">[ date ]</a>
+              <a href="thread.html#378">[ thread ]</a>
+              <a href="subject.html#378">[ subject ]</a>
+              <a href="author.html#378">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-09-24 22:00:47 +0200 (Mon, 24 Sep 2007)
+New Revision: 490
+
+Modified:
+   /
+   trunk/TODO
+   trunk/db/patch_0.53_to_0.57.psql
+   trunk/lib/Parley.pm
+   trunk/lib/Parley/App/Communication/Email.pm
+   trunk/lib/Parley/App/Notification.pm
+   trunk/lib/Parley/Controller/Admin.pm
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/Search.pm
+   trunk/lib/Parley/Controller/Thread.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/Model/ParleyDB.pm
+   trunk/lib/Parley/Schema/Terms.pm
+   trunk/lib/Parley/View/Plain.pm
+   trunk/lib/Parley/View/TT.pm
+   trunk/lib/Text/Search/SQL.pm
+   trunk/parley.yml
+   trunk/root/base/menu/menubar
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3831 at wiggin</A>:  chisel | 2007-09-19 19:31:08 +0100
+ / updated TODO list
+ - bump version to 0.57_01
+ + added &quot;terms&quot; table to schema and created patch file
+ / update AUTHOR email addresses to they're all the same
+ / modify Root auto() to make sure signed in users have agreed to latest site terms
+ + added methods to Schema::Terms
+ + add .site_terms CSS class
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3821
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3831
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/TODO	2007-09-24 20:00:47 UTC (rev 490)
+@@ -6,7 +6,7 @@
+   - proper moderator support/management
+   - IP/user reporting
+   - message preview before posting
+-  - proper/better validation error hadling for AJAX field updates
++D - proper/better validation error hadling for AJAX field updates
+ D - user profile image uploads
+   - fix CSS for &lt;fieldset&gt;s
+ D - factor out error setting, handling and displaying
+
+Modified: trunk/db/patch_0.53_to_0.57.psql
+===================================================================
+--- trunk/db/patch_0.53_to_0.57.psql	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/db/patch_0.53_to_0.57.psql	2007-09-24 20:00:47 UTC (rev 490)
+@@ -35,6 +35,16 @@
+     UNIQUE(person_id, terms_id)
+ );
+ 
++
++-- insert a default set of terms
++INSERT INTO terms (content) VALUES ('[b]Parley Terms and Conditions[/b]
++[list]
++[1]Be nice
++[1]Don''t be an idiot
++[1][b]Be nice[/b]
++[/list]'
++);
++
+ -- patch ends here --
+ 
+ COMMIT;
+
+Modified: trunk/lib/Parley/App/Communication/Email.pm
+===================================================================
+--- trunk/lib/Parley/App/Communication/Email.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/App/Communication/Email.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -192,7 +192,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/App/Notification.pm
+===================================================================
+--- trunk/lib/Parley/App/Notification.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/App/Notification.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -84,7 +84,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/Admin.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Admin.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/Admin.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -94,7 +94,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at berlios.de</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/Forum.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -88,7 +88,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/My.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -572,7 +572,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/Post.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -144,7 +144,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/Root.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -4,6 +4,8 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++use Parley::App::Terms qw( :terms );
++
+ #
+ # Sets the actions in this controller to be registered with no prefix
+ # so they function identically to actions created in MyApp.pm
+@@ -28,30 +30,6 @@
+         }
+     );
+ 
+-    ############################################################
+-    # if we have a user ... fetch some info (if we don't already have it)
+-    ############################################################
+-    if ( $c-&gt;user and not defined $c-&gt;_authed_user ) {
+-        $c-&gt;log-&gt;info('Fetching user information for ' . $c-&gt;user-&gt;id);
+-
+-        # get the person info for the username
+-        my $row = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;find(
+-            {
+-                'authentication.username'   =&gt; $c-&gt;user-&gt;username(),
+-            },
+-            {
+-                join =&gt; 'authentication',
+-            },
+-        );
+-        $c-&gt;_authed_user( $row );
+-
+-        #####################################################################
+-        # cater for database upgrades, and make sure the user has preferences
+-        #####################################################################
+-        #Parley::App::Helper-&gt;user_preference_check($c);
+-    }
+-
+-
+     ##################################################
+     # do we have a post id in the URL?
+     ##################################################
+@@ -131,7 +109,34 @@
+         );
+     }
+ 
++    ############################################################
++    # if we have a user ... fetch some info (if we don't already have it)
++    ############################################################
++    if ( $c-&gt;user and not defined $c-&gt;_authed_user ) {
++        #$c-&gt;log-&gt;info('Fetching user information for ' . $c-&gt;user-&gt;id);
+ 
++        # get the person info for the username
++        my $row = $c-&gt;model('ParleyDB')-&gt;resultset('Person')-&gt;find(
++            {
++                'authentication.username'   =&gt; $c-&gt;user-&gt;username(),
++            },
++            {
++                join =&gt; 'authentication',
++            },
++        );
++        $c-&gt;_authed_user( $row );
++
++        # make sure they've agreed to any (new) T&amp;Cs
++        my $status = terms_check($c, $c-&gt;_authed_user);
++        if (not $status) {
++            $c-&gt;res-&gt;body('need to accept');
++            $c-&gt;log-&gt;debug('User needs to accept T&amp;Cs');
++            return 0;
++        }
++    }
++
++
++
+     ##################################################
+     # if we are logged in and if we have a current_forum, can the (current)
+     # user moderate it?
+@@ -139,7 +144,7 @@
+     if (defined $c-&gt;_authed_user() and defined $c-&gt;_current_forum()) {
+         # 'topdog' user can moderate anything
+         if (0 == $c-&gt;_authed_user()-&gt;id()) {
+-            $c-&gt;log-&gt;debug( q{topdog user moderates anything he wants} );
++            #$c-&gt;log-&gt;debug( q{topdog user moderates anything he wants} );
+             $c-&gt;stash-&gt;{moderator} = 1;
+         }
+         else {
+@@ -156,7 +161,7 @@
+             );
+             # if we found something, they must moderate the current forum
+             if ($results) {
+-                $c-&gt;log-&gt;debug( q{user moderates this forum} );
++                #$c-&gt;log-&gt;debug( q{user moderates this forum} );
+                 $c-&gt;stash-&gt;{moderator} = 1;
+             }
+         }
+@@ -245,7 +250,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/Search.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Search.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/Search.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -142,7 +142,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -980,7 +980,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at berlios.de</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Controller/User.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -126,7 +126,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Model/ParleyDB.pm
+===================================================================
+--- trunk/lib/Parley/Model/ParleyDB.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Model/ParleyDB.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -25,7 +25,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/Schema/Terms.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Terms.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/Schema/Terms.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -4,6 +4,7 @@
+ use warnings;
+ 
+ use base 'DBIx::Class';
++use DateTime::Format::Pg;
+ 
+ __PACKAGE__-&gt;load_components('PK::Auto', 'Core');
+ __PACKAGE__-&gt;table('terms');
+@@ -25,4 +26,28 @@
+ 
+ __PACKAGE__-&gt;set_primary_key('id');
+ 
++__PACKAGE__-&gt;resultset_class('Parley::ResultSet::Terms');
++
++
++sub user_accepted_latest_terms {
++    my ($record, $user) = @_;
++    my $schema = $record-&gt;result_source()-&gt;schema();
++
++    my $matches = $schema-&gt;resultset('TermsAgreed')-&gt;count(
++        {
++            terms_id    =&gt; $record-&gt;id(),
++            person_id   =&gt; $user-&gt;id(),
++        }
++    );
++
++    return $matches;
++};
++
++foreach my $datecol (qw/created/) {
++    __PACKAGE__-&gt;inflate_column($datecol, {
++        inflate =&gt; sub { DateTime::Format::Pg-&gt;parse_datetime(shift); },
++        deflate =&gt; sub { DateTime::Format::Pg-&gt;format_datetime(shift); },
++    });
++}
++
+ 1;
+
+Modified: trunk/lib/Parley/View/Plain.pm
+===================================================================
+--- trunk/lib/Parley/View/Plain.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/View/Plain.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -17,7 +17,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright,,,
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley/View/TT.pm
+===================================================================
+--- trunk/lib/Parley/View/TT.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley/View/TT.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -17,7 +17,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Parley.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -3,8 +3,6 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.56';
+-
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+     -Debug
+@@ -30,6 +28,8 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
++our $VERSION = '0.57_01';
++
+ __PACKAGE__-&gt;config( version =&gt; $VERSION );
+ __PACKAGE__-&gt;setup;
+ 
+@@ -244,7 +244,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/lib/Text/Search/SQL.pm
+===================================================================
+--- trunk/lib/Text/Search/SQL.pm	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/lib/Text/Search/SQL.pm	2007-09-24 20:00:47 UTC (rev 490)
+@@ -159,6 +159,6 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt; &lt;&lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chisel.wright at users.berlios.de</A>&gt;&gt; &gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =cut
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/parley.yml	2007-09-24 20:00:47 UTC (rev 490)
+@@ -11,6 +11,8 @@
+     from_name:      'Parley'
+     from_address:   '<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">parley at localhost</A>'
+ 
++terms_accept_uri:           /terms/accept
++
+ # comment out any log levels you don't want to see in your logs
+ # 'info' and 'debug' are common choices for suppresing in a live environment
+ log_levels:
+
+Modified: trunk/root/base/menu/menubar
+===================================================================
+--- trunk/root/base/menu/menubar	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/root/base/menu/menubar	2007-09-24 20:00:47 UTC (rev 490)
+@@ -4,8 +4,8 @@
+ &lt;!-- Page-specific script --&gt;
+ &lt;script type=&quot;text/javascript&quot;&gt;
+     // Initialize and render the menu bar when it is available in the DOM
+-    YAHOO.util.Event.onContentReady(&quot;parley_navbar&quot;, function () { var oMenuBar = new YAHOO.widget.MenuBar(&quot;parley_navbar&quot;, { autosubmenudisplay: true, hidedelay: 750, lazyload: true });
+-        oMenuBar.render();
++    YAHOO.util.Event.onContentReady(&quot;parley_navbar&quot;, function () { var
++    oMenuBar = new YAHOO.widget.MenuBar(&quot;parley_navbar&quot;, { autosubmenudisplay: false, hidedelay: 250, lazyload: true }); oMenuBar.render();
+     });
+ &lt;/script&gt;
+ 
+@@ -99,7 +99,7 @@
+                 &lt;/div&gt;                                        
+             &lt;/li&gt;
+             [% END %]
+-            &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;help&quot;&gt;Help&lt;/a&gt;
++            &lt;li class=&quot;yuimenubaritem&quot;&gt;&lt;a class=&quot;yuimenubaritemlabel&quot; href=&quot;#&quot;&gt;Help&lt;/a&gt;
+                 &lt;div id=&quot;menu_help&quot; class=&quot;yuimenu&quot;&gt;
+                     &lt;div class=&quot;bd&quot;&gt;                                        
+                         &lt;ul&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-09-16 09:10:23 UTC (rev 489)
++++ trunk/root/css/common.css	2007-09-24 20:00:47 UTC (rev 490)
+@@ -460,3 +460,12 @@
+     font-weight:        bold;
+     padding:            5px;
+ }
++
++.site_terms {
++    width:              80%;
++    margin-left:        auto;
++    margin-right:       auto;
++    margin-bottom:      10px;
++    padding:            5px;
++    border:             1px solid #666;
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000377.html">[Parley-svn] r489 - / trunk/root/base/menu
+</A></li>
+	<LI>Next message: <A HREF="000379.html">[Parley-svn] r491 - / trunk/lib/Parley trunk/lib/Parley/App	trunk/lib/Parley/Controller trunk/lib/Parley/ResultSet	trunk/root/base trunk/root/base/terms trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#378">[ date ]</a>
+              <a href="thread.html#378">[ thread ]</a>
+              <a href="subject.html#378">[ subject ]</a>
+              <a href="author.html#378">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

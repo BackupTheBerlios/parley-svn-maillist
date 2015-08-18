@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r690 - / trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r690%20-%20/%20trunk/root/css&In-Reply-To=%3C200712192256.lBJMu4oS028905%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000577.html">
+   <LINK REL="Next"  HREF="000579.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r690 - / trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r690%20-%20/%20trunk/root/css&In-Reply-To=%3C200712192256.lBJMu4oS028905%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r690 - / trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Dec 19 23:56:04 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000577.html">[Parley-svn] r689 - / trunk/root/css
+</A></li>
+        <LI>Next message: <A HREF="000579.html">[Parley-svn] r691 - / trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#578">[ date ]</a>
+              <a href="thread.html#578">[ thread ]</a>
+              <a href="subject.html#578">[ subject ]</a>
+              <a href="author.html#578">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-12-19 23:56:04 +0100 (Wed, 19 Dec 2007)
+New Revision: 690
+
+Modified:
+   /
+   trunk/root/css/experiment.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4320 at wiggin</A>:  chisel | 2007-12-19 08:58:38 +0000
+ / added (previous) styling for #login_dialog
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4319
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4320
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/css/experiment.css
+===================================================================
+--- trunk/root/css/experiment.css	2007-12-19 22:55:41 UTC (rev 689)
++++ trunk/root/css/experiment.css	2007-12-19 22:56:04 UTC (rev 690)
+@@ -84,9 +84,37 @@
+     font-weight:        bold;
+ }
+ 
+-/* login dialog */
+-#login_dialog {
++/* login dialog styling */
++#login_dialog form {
++    margin:             0;
++    padding:            0;
++    min-width:          400px;
++    max-width:          600px;
+ }
++#login_dialog form fieldset {
++    / * clear: both; note that this clear causes inputs to break to left in ie5.x mac, commented out */
++    padding:            10px;
++    margin:             0;
++    border:             none;
++}
++#login_dialog form label { 
++    display:            block;  /* block float the labels to left column, set a width */
++    float:              left; 
++    width:              150px; 
++    padding:            0; 
++    margin:             5px 0 0; /* set top margin same as form input - textarea etc. elements */
++    text-align:         right; 
++    font-weight:        bold;
++    margin-bottom:      0;
++}
++#login_dialog form input, form textarea {
++    width:              auto;         /* set width of form elements to auto-size, otherwise watch for wrap on resize */
++    margin:             5px 0 0 10px; /* set margin on left of form elements rather than right of
++                                         label aligns textarea better in IE */
++}
++#login_dialog form p {
++    font-size:          85%;
++}
+ 
+ /* generic row styling */
+ .row {
+@@ -474,3 +502,16 @@
+     font-weight:        bold;
+     margin-bottom:      3px;
+ }
++
++
++
++
++
++
++
++
++
++
++
++
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000577.html">[Parley-svn] r689 - / trunk/root/css
+</A></li>
+	<LI>Next message: <A HREF="000579.html">[Parley-svn] r691 - / trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#578">[ date ]</a>
+              <a href="thread.html#578">[ thread ]</a>
+              <a href="subject.html#578">[ subject ]</a>
+              <a href="author.html#578">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

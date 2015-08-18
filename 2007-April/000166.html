@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r278 - / trunk/lib/Parley/App/Communication
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-April/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r278%20-%20/%20trunk/lib/Parley/App/Communication&In-Reply-To=%3C200704042122.l34LMMPe029904%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000165.html">
+   <LINK REL="Next"  HREF="000167.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r278 - / trunk/lib/Parley/App/Communication</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r278%20-%20/%20trunk/lib/Parley/App/Communication&In-Reply-To=%3C200704042122.l34LMMPe029904%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r278 - / trunk/lib/Parley/App/Communication">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Apr  4 23:22:22 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000165.html">[Parley-svn] r277 - / trunk/script
+</A></li>
+        <LI>Next message: <A HREF="000167.html">[Parley-svn] r279 - / trunk/lib/Parley/App
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#166">[ date ]</a>
+              <a href="thread.html#166">[ thread ]</a>
+              <a href="subject.html#166">[ subject ]</a>
+              <a href="author.html#166">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-04-04 23:22:22 +0200 (Wed, 04 Apr 2007)
+New Revision: 278
+
+Modified:
+   /
+   trunk/lib/Parley/App/Communication/Email.pm
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3044 at wiggin</A>:  chisel | 2007-04-04 22:14:42 +0100
+ + updates to deal with html content in email messages
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3042
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3044
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/App/Communication/Email.pm
+===================================================================
+--- trunk/lib/Parley/App/Communication/Email.pm	2007-04-04 21:08:26 UTC (rev 277)
++++ trunk/lib/Parley/App/Communication/Email.pm	2007-04-04 21:22:22 UTC (rev 278)
+@@ -14,6 +14,7 @@
+             recipient       =&gt; $options-&gt;{recipient}-&gt;id()      || 0,
+             subject         =&gt; $options-&gt;{headers}{subject}     || q{Subject Line Missing},
+             text_content    =&gt; $options-&gt;{text_content}         || q{Email Body Text Missing},
++            html_content    =&gt; $options-&gt;{html_content}         || undef,
+         }
+     );
+     return 1; # success
+@@ -59,6 +60,23 @@
+         }
+     );
+ 
++    # if we have html_content, prepare that for queueing
++    if (defined $options-&gt;{template}{html}) {
++        $html_content = $c-&gt;view('Plain')-&gt;render(
++            $c,
++            $options-&gt;{template}{html},
++            {
++                additional_template_paths =&gt; [ $c-&gt;config-&gt;{root} . q{/email_templates}],
++
++                # automatically make the person data available
++                person =&gt; $options-&gt;{person},
++
++                # pass through extra TT data
++                %{ $options-&gt;{template_data} || {} },
++            }
++        );
++    }
++
+     # queue the message
+     $email_status = $c-&gt;queue_email(
+         {
+@@ -71,6 +89,7 @@
+ 
+             recipient       =&gt; $options-&gt;{person},
+             text_content    =&gt; $text_content,
++            html_content    =&gt; $html_content,
+         },
+     );
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000165.html">[Parley-svn] r277 - / trunk/script
+</A></li>
+	<LI>Next message: <A HREF="000167.html">[Parley-svn] r279 - / trunk/lib/Parley/App
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#166">[ date ]</a>
+              <a href="thread.html#166">[ thread ]</a>
+              <a href="subject.html#166">[ subject ]</a>
+              <a href="author.html#166">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

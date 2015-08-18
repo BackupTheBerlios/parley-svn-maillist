@@ -1,0 +1,5188 @@
+From chiselwright at mail.berlios.de  Fri May  4 11:18:12 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:18:12 +0200
+Subject: [Parley-svn] r314 - / trunk/lib/Parley/Controller
+Message-ID: <200705040918.l449ICf4023611@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:18:12 +0200 (Fri, 04 May 2007)
+New Revision: 314
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/Thread.pm
+Log:
+ r3193 at wiggin:  chisel | 2007-05-04 08:20:21 +0100
+ / increase post_count for forum
+ + moderators can post & lock thread
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3187
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3193
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Thread.pm	2007-04-25 08:31:28 UTC (rev 313)
++++ trunk/lib/Parley/Controller/Thread.pm	2007-05-04 09:18:12 UTC (rev 314)
+@@ -25,7 +25,7 @@
+     # DFV validation profile for adding a reply to an existing topic
+     new_reply => {
+         required    => [qw( thread_message )],
+-        optional    => [qw( thread_subject )],
++        optional    => [qw( thread_subject lock_thread )],
+         filters     => [qw( trim )],
+     },
+ );
+@@ -479,6 +479,12 @@
+             $post_count + 1
+         );
+         $thread->update();
++
++        # increase the number of posts for the forum
++        $thread->forum->post_count(
++            ($thread->forum->post_count() || 0) + 1
++        );
++        $thread->forum->update;
+     };
+     # deal with any transaction errors
+     if ($@) {                                   # Transaction failed
+@@ -713,6 +719,13 @@
+     # update information about the poster (count, etc)
+     $self->_update_person_post_info($c, $new_post);
+ 
++    # would we like to lock the thread?
++    if ($c->form->valid->{lock_thread} and $c->stash->{moderator}) {
++        $c->log->debug( q{locking thread after replying} );
++        $new_post->thread->locked(1);
++        $new_post->thread->update;
++    }
++
+     # update the records
+     $new_post->update;
+ 
+@@ -750,7 +763,11 @@
+ 
+     # we've got one post in our new thread
+     $new_thread->post_count( 1 );
++    $new_thread->forum->post_count(
++        ($new_thread->forum->post_count() || 0) + 1
++    );
+ 
++
+     # update information about the most recent forum/thread post
+     $self->_update_last_post($c, $new_post);
+ 
+@@ -759,6 +776,7 @@
+ 
+     # update the records
+     $new_thread->update;
++    $new_thread->forum->update;
+     $new_post->update;
+ 
+     # return the new topic/thread
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:18:31 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:18:31 +0200
+Subject: [Parley-svn] r315 - / trunk/lib/Parley/Schema
+Message-ID: <200705040918.l449IVQN023696@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:18:31 +0200 (Fri, 04 May 2007)
+New Revision: 315
+
+Modified:
+   /
+   trunk/lib/Parley/Schema/Post.pm
+Log:
+ r3194 at wiggin:  chisel | 2007-05-04 08:21:30 +0100
+ + added match_context() class method
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3193
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3194
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-05-04 09:18:12 UTC (rev 314)
++++ trunk/lib/Parley/Schema/Post.pm	2007-05-04 09:18:31 UTC (rev 315)
+@@ -4,8 +4,11 @@
+ 
+ use strict;
+ use warnings;
++use Data::Dump qw(pp);
+ 
+ use DateTime::Format::Pg;
++use Text::Context::EitherSide;
++use Text::Search::SQL;
+ 
+ use base 'DBIx::Class';
+ 
+@@ -170,7 +173,30 @@
+     return $position;
+ }
+ 
++# accessor to use in search results to return context matches
++sub match_context {
++    my $self = shift;
++    my $search_terms = shift;
++    my ($tss, $terms);
+ 
++    if (not defined $search_terms) {
++        return;
++    }
++
++    $tss = Text::Search::SQL->new(
++        {
++            search_term     => $search_terms,
++        }
++    );
++    $tss->parse();
++    $terms = $tss->get_chunks();
++    warn pp($terms);
++    warn pp($self->message());
++
++    my $context = Text::Context::EitherSide->new( $self->message(), context => 3 );
++    return $context->as_string( @{ $terms } );
++}
++
+ 1;
+ __END__
+ vim: ts=8 sts=4 et sw=4 sr sta
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:18:42 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:18:42 +0200
+Subject: [Parley-svn] r316 - / trunk/root/base/forum
+	trunk/root/base/menu/left trunk/root/base/search
+	trunk/root/base/shared trunk/root/base/thread
+Message-ID: <200705040918.l449Ig6E023776@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:18:41 +0200 (Fri, 04 May 2007)
+New Revision: 316
+
+Modified:
+   /
+   trunk/root/base/forum/view
+   trunk/root/base/menu/left/main
+   trunk/root/base/search/forum
+   trunk/root/base/shared/search_dialog
+   trunk/root/base/thread/reply
+   trunk/root/base/thread/view
+Log:
+ r3195 at wiggin:  chisel | 2007-05-04 08:24:48 +0100
+ + added sticky/locking markup for moderators
+ + made search dialog available globally
+ + improved search results page
+ + improved search dialog
+ + added Lock Thread checkbox for moderators in thread reply
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3194
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3195
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2007-05-04 09:18:31 UTC (rev 315)
++++ trunk/root/base/forum/view	2007-05-04 09:18:41 UTC (rev 316)
+@@ -61,30 +61,29 @@
+     </td>
+ 
+     [% IF moderator %]
+-    <td>
+-    <!-- add/remove sticky -->
+-    [% IF thread.sticky %]
+-    <a href="admin/sticky?thread=[% thread.id %]&sticky=0">{S-}</a>
+-    [% ELSE %]
+-    <a href="admin/sticky?thread=[% thread.id %]">{S+}</a>
+-    [% END %]
++        <td>
++            <!-- add/remove sticky -->
++            [% IF thread.sticky %]
++            <a href="admin/sticky?thread=[% thread.id %]&sticky=0">{S-}</a>
++            [% ELSE %]
++            <a href="admin/sticky?thread=[% thread.id %]">{S+}</a>
++            [% END %]
+ 
+-    <!-- add/remove locked -->
+-    [% IF thread.locked %]
+-    <a href="admin/lock?thread=[% thread.id %]&lock=0">{L-}</a>
+-    [% ELSE %]
+-    <a href="admin/lock?thread=[% thread.id %]">{L+}</a>
+-    [% END %]
++            <!-- add/remove locked -->
++            [% IF thread.locked %]
++            <a href="admin/lock?thread=[% thread.id %]&lock=0">{L-}</a>
++            [% ELSE %]
++            <a href="admin/lock?thread=[% thread.id %]">{L+}</a>
++            [% END %]
+ 
+-    <!-- add/removed active -->
+-    [% IF thread.active %]{A-}[% ELSE %]{A+}[% END %]
+-    </td>
++            <!-- add/removed active -->
++            [% IF thread.active %]{A-}[% ELSE %]{A+}[% END %]
++        </td>
+     [% END %]
+-  </tr>
++    </tr>
+   [% END %]
+ </table>
+ [% ELSE %]
+   No active threads in this forum
+ [% END %]
+ 
+-[% INCLUDE shared/search_dialog %]
+
+Modified: trunk/root/base/menu/left/main
+===================================================================
+--- trunk/root/base/menu/left/main	2007-05-04 09:18:31 UTC (rev 315)
++++ trunk/root/base/menu/left/main	2007-05-04 09:18:41 UTC (rev 316)
+@@ -14,3 +14,9 @@
+     <!-- Admin -->
+     <a href="admin">Admin</a>
+ </p>
++
++<p>
++    <!-- Searching -->
++    <a href="javascript:;" onclick="search_dialog.show(); return false;">Search</a>
++    [% INCLUDE shared/search_dialog %]
++</p>
+
+Modified: trunk/root/base/search/forum
+===================================================================
+--- trunk/root/base/search/forum	2007-05-04 09:18:31 UTC (rev 315)
++++ trunk/root/base/search/forum	2007-05-04 09:18:41 UTC (rev 316)
+@@ -4,9 +4,28 @@
+ 
+ [% IF search_results %]
+     <table>
++    <tr>
++        <td>Subject</td>
++        <td>Snippet</td>
++    </tr>
++
+     [% WHILE (result = search_results.next) %]
+     <tr>
+-        <td>[% ForumCode.escape(result.subject) || ForumCode.escape(result.thread.subject) %]</td>
++        <td>
++            <a href="/post/view?post=[% result.id %]">[% ForumCode.escape(result.subject) || ForumCode.escape(result.thread.subject) %]</a>
++        </td>
++        <td>
++            <em>
++            [% context = result.match_context(search_terms.raw) %]
++            [% IF context %]
++            [% context %]
++            [% ELSE %]
++            [% FILTER truncate(60) %]
++            [% result.message %]
++            [% END %]
++            [% END %]
++            </em>
++        </td>
+     </tr>
+     [% END %]
+ 
+@@ -17,8 +36,6 @@
+         </small>
+         </td>
+     </tr>
+-
+-
+     </table>
+ [% ELSE %]
+ No results found matching specified terms.
+
+Modified: trunk/root/base/shared/search_dialog
+===================================================================
+--- trunk/root/base/shared/search_dialog	2007-05-04 09:18:31 UTC (rev 315)
++++ trunk/root/base/shared/search_dialog	2007-05-04 09:18:41 UTC (rev 316)
+@@ -23,12 +23,16 @@
+         <fieldset>
+             <label for="search_forum"><em>in:</em></label>
+             <select id="search_forum" name="search_forum">
+-                [% IF current_forum %]<option value="[% current_forum.id %]">Current Forum</option>[% END %]
+-                <option value="">All Forums</option>
++                <optgroup label="General">
++                    [% IF current_forum %]<option value="[% current_forum.id %]">Current Forum</option>[% END %]
++                    <option value="">All Forums</option>
++                </optgroup>
+                 [% IF available_forums %]
++                <optgroup label="Forums">
+                 [% WHILE (forum = available_forums.next) %]
+                 <option value="[% forum.id %]">[% forum.name %]</option>
+                 [% END %]
++                </optgroup>
+                 [% END %]
+             </select>
+             <br />
+
+Modified: trunk/root/base/thread/reply
+===================================================================
+--- trunk/root/base/thread/reply	2007-05-04 09:18:31 UTC (rev 315)
++++ trunk/root/base/thread/reply	2007-05-04 09:18:41 UTC (rev 316)
+@@ -75,7 +75,15 @@
+     </td>
+   </tr>
+ 
++  [% IF moderator %]
+   <tr>
++    <td colspan="2" align="right">
++        <input type="checkbox" name="lock_thread" value="1" /> Lock thread after posting
++    </td>
++  </tr>
++  [% END %]
++
++  <tr>
+     <td colspan="2" style="text-align: center;">
+       <input type="submit" value="Add Reply"      name="post_reply"    class="input_button" />
+     </td>
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-04 09:18:31 UTC (rev 315)
++++ trunk/root/base/thread/view	2007-05-04 09:18:41 UTC (rev 316)
+@@ -678,6 +678,26 @@
+     </tr>
+ 
+     <tr>
++        [% IF moderator %]
++            <td>
++                <!-- add/remove sticky -->
++                [% IF current_thread.sticky %]
++                <a href="admin/sticky?thread=[% current_thread.id %]&sticky=0">{S-}</a>
++                [% ELSE %]
++                <a href="admin/sticky?thread=[% current_thread.id %]">{S+}</a>
++                [% END %]
++
++                <!-- add/remove locked -->
++                [% IF current_thread.locked %]
++                <a href="admin/lock?thread=[% current_thread.id %]&lock=0">{L-}</a>
++                [% ELSE %]
++                <a href="admin/lock?thread=[% current_thread.id %]">{L+}</a>
++                [% END %]
++
++                <!-- add/removed active -->
++                [% IF current_thread.active %]{A-}[% ELSE %]{A+}[% END %]
++            </td>
++        [% END %]
+         <td class="right_align" valign="top">
+         <small>
+         [% INCLUDE shared/pager_advanced %]
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:19:06 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:19:06 +0200
+Subject: [Parley-svn] r317 - / trunk
+Message-ID: <200705040919.l449J6To023856@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:19:06 +0200 (Fri, 04 May 2007)
+New Revision: 317
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r3196 at wiggin:  chisel | 2007-05-04 08:25:26 +0100
+ + Updated change listing
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3195
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3196
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-05-04 09:18:41 UTC (rev 316)
++++ trunk/Changes	2007-05-04 09:19:06 UTC (rev 317)
+@@ -2,6 +2,7 @@
+ 
+     - added initial moderator code
+     - added moderator actions on forum/thread views (lock/stick)
++    - moderators can lock threads at posting time (lock + reason)
+     - raise error when trying to reply to a locked thread (prevent "Evil Hackers" replying)
+     - hide Reply and Quote buttons for locked thread
+     - added pager and reply button to bottom of thread/view
+@@ -9,6 +10,8 @@
+     - added thread/recent for list of all recently updated threads
+     - added thread/recent?forum=X for list of all recently updated threads in a
+       given forum
++    - post_count for forums now incremented with new posts
++    - basic search functionality added
+ 
+ 0.50    Thu Apr  5 08:31:04 BST 2007
+ 
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:19:14 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:19:14 +0200
+Subject: [Parley-svn] r318 - / trunk/lib
+Message-ID: <200705040919.l449JELx023930@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:19:14 +0200 (Fri, 04 May 2007)
+New Revision: 318
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ r3197 at wiggin:  chisel | 2007-05-04 08:27:00 +0100
+ Fixing version at 0.51 for tagging/release
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3196
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3197
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-05-04 09:19:06 UTC (rev 317)
++++ trunk/lib/Parley.pm	2007-05-04 09:19:14 UTC (rev 318)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.51-pre';
++our $VERSION = '0.51';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:19:36 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:19:36 +0200
+Subject: [Parley-svn] r319 - / trunk
+Message-ID: <200705040919.l449JaJQ024007@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:19:35 +0200 (Fri, 04 May 2007)
+New Revision: 319
+
+Modified:
+   /
+   trunk/Changes
+Log:
+ r3198 at wiggin:  chisel | 2007-05-04 08:28:55 +0100
+ + tagged 0.51 in file
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3197
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3198
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-05-04 09:19:14 UTC (rev 318)
++++ trunk/Changes	2007-05-04 09:19:35 UTC (rev 319)
+@@ -1,5 +1,7 @@
+ This file documents the revision history for Parley.
+ 
++0.51    Fri May  4 08:27:57 BST 2007
++
+     - added initial moderator code
+     - added moderator actions on forum/thread views (lock/stick)
+     - moderators can lock threads at posting time (lock + reason)
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:20:04 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:20:04 +0200
+Subject: [Parley-svn] r320 - / tags
+Message-ID: <200705040920.l449K4GR024129@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:20:04 +0200 (Fri, 04 May 2007)
+New Revision: 320
+
+Added:
+   tags/parley-0.51/
+Modified:
+   /
+Log:
+ r3199 at wiggin:  chisel | 2007-05-04 08:30:07 +0100
+ 0.51    Fri May  4 08:27:57 BST 2007
+ 
+     - added initial moderator code
+     - added moderator actions on forum/thread views (lock/stick)
+     - moderators can lock threads at posting time (lock + reason)
+     - raise error when trying to reply to a locked thread (prevent "Evil Hackers" replying)
+     - hide Reply and Quote buttons for locked thread
+     - added pager and reply button to bottom of thread/view
+     - added "Thread Locked" to thread/view if thread is locked
+     - added thread/recent for list of all recently updated threads
+     - added thread/recent?forum=X for list of all recently updated threads in a
+       given forum
+     - post_count for forums now incremented with new posts
+     - basic search functionality added
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3198
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3199
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Copied: tags/parley-0.51 (from rev 319, trunk)
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:20:28 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:20:28 +0200
+Subject: [Parley-svn] r321 - / trunk/lib
+Message-ID: <200705040920.l449KSsa024258@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:20:28 +0200 (Fri, 04 May 2007)
+New Revision: 321
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+Log:
+ r3200 at wiggin:  chisel | 2007-05-04 08:32:09 +0100
+ version is now 0.52-pre in trunk/
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3199
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3200
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-05-04 09:20:04 UTC (rev 320)
++++ trunk/lib/Parley.pm	2007-05-04 09:20:28 UTC (rev 321)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.51';
++our $VERSION = '0.52-pre';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:20:49 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:20:49 +0200
+Subject: [Parley-svn] r322 - / trunk/root/base/thread trunk/root/css
+Message-ID: <200705040920.l449Knvb024344@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:20:48 +0200 (Fri, 04 May 2007)
+New Revision: 322
+
+Modified:
+   /
+   trunk/root/base/thread/view
+   trunk/root/css/default.css
+Log:
+ r3201 at wiggin:  chisel | 2007-05-04 08:38:38 +0100
+ / moved thread/view css style markup into default.css
+ / removed thread/view background colour for body (reverting to white)
+ 
+ CSS file is a mess now, and really needs some attention
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3200
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3201
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-04 09:20:28 UTC (rev 321)
++++ trunk/root/base/thread/view	2007-05-04 09:20:48 UTC (rev 322)
+@@ -1,538 +1,6 @@
+ <style type="text/css">
+ 
+ 
+-body {
+-font-family:Trebuchet, Verdana, Lucida Grande, Sapir Sans, Tahoma, Sans-Serif;
+-font-size:80%;
+-background-color:#E7E7E7;
+-color:#000;
+-letter-spacing:2%;
+-line-height:1.3em;
+-margin:0;
+-padding:0;
+-}
+-
+-#pic_wrapper {
+-margin-bottom:6px;
+-}
+-
+-.forum_title {
+-font-size:110%;
+-font-weight:700;
+-}
+-
+-
+-.ribbon {
+-background-color:#F9FBFF;
+-padding: 3px;
+-border:1px solid #EBEEF2;
+-
+-}
+-
+-.g1 {
+-border-bottom:1px solid red;
+-}
+-
+-.g2 {
+-border-bottom:1px solid blue;
+-}
+-
+-.light {
+-color:#666;
+-}
+-
+-.small {
+-font-size:85%;
+-line-height:1.1em;
+-}
+-
+-#navbox,#navbox a {
+-height:20px;
+-background-color:#000;
+-text-align:center;
+-font-weight:700;
+-color:#FFF;
+-font-size:105%;
+-margin:0;
+-}
+-
+-.searchhead {
+-width:120px;
+-text-align:right;
+-font-weight:700;
+-font-size:90%;
+-background-color:#E1E4EA;
+-}
+-
+-.linkbar {
+-background-color:#F5F5F5;
+-border:1px solid #E5E4E4;
+-padding: 4px;
+-margin-bottom: 8px;
+-}
+-
+-.linkbar2 {
+-width: 90%;
+-background-color:#F5F5F5;
+-border:1px solid #9CA0AD;
+-padding: 4px;
+-margin-bottom: 8px;
+-}
+-
+-#searchtable {
+-background-color:#F5F5F5;
+-}
+-
+-#searchtable td {
+-padding:3px;
+-}
+-
+-.menubox {
+-background-color:#F9FBFF;
+-border:1px solid #9CA0AD;
+-clear:both;
+-width:150px;
+-white-space:nowrap;
+-vertical-align:middle;
+-margin:2px 0;
+-padding:2px;
+-}
+-
+-.mycoms {
+-border-bottom:1px solid #333333;
+-}
+-
+-.menubox2 {
+-background-color:#F9FBFF;
+-border:1px solid red;
+-clear:both;
+-width:150px;
+-white-space:nowrap;
+-vertical-align:middle;
+-margin:2px 0;
+-padding:2px;
+-}
+-
+-.headerbar {
+-background-color:#666;
+-color:#FFF;
+-padding:4px;
+-}
+-
+-.thepagenums {
+-font-size:92%;
+-}
+-
+-.thepagenums b {
+-font-style:normal;
+-font-weight:700;
+-font-size:120%;
+-padding:2px;
+-}
+-
+-.thepagenums a {
+-font-weight:400;
+-margin:0;
+-padding:3px 2px;
+-}
+-
+-.googlead {
+-background-color:#333;
+-width:728px;
+-margin:4px auto;
+-}
+-
+-.forumtop {
+-background-color:#999;
+-border: none;
+-padding: 0;
+-margin: 0;
+-border-bottom:1px solid #9CA0AD;
+-}
+-
+-.forumtop2 {
+-background-color:#333;
+-color:#FFF;
+-font-size:85%;
+-padding:2px;
+-}
+-
+-.postwrap {
+-margin: 0;
+-padding: 0;
+-border-bottom:1px dashed #9CA0AD;
+-background-color: transparent;
+-}
+-
+-.postbit {
+-margin: 0;
+-padding: 0;
+-padding:6px 0 8px 9px;
+-}
+-
+-.post {
+-border: none;
+-margin: 0;
+-padding: 0;
+-padding:10px 6px 8px 8px;
+-}
+-
+-.labelpicpage {
+-width: 150px;
+-font-size: 90%;
+-font-weight: bold;
+-background-color:#EBEEF2;
+-text-align: right;
+-}
+-
+-.post_b {
+-background-color:#f9f9fb;
+-border-bottom:1px solid #999;
+-padding:2px;
+-}
+-
+-.quote {
+-width:90%;
+-border:1px solid #333;
+-font-size:95%;
+-background-color:#F9FBFF;
+-margin:0 0 2px 14px;
+-padding:6px;
+-}
+-
+-.last_post {
+-font-family:Tahoma, Sans-Serif;
+-font-size:95%;
+-color:#7C879D;
+-text-align:justify;
+-}
+-
+-.caption {
+-margin-bottom:14px;
+-margin-left:auto;
+-margin-right:auto;
+-width:400px;
+-font-weight:700;
+-text-align:center;
+-padding:0 9px 6px 24px;
+-}
+-
+-textarea,.bginput {
+-font:10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+-}
+-
+-img.leftie {
+-border:none;
+-margin-right:9px;
+-margin-bottom:6px;
+-}
+-
+-.logobar {
+-background:#FFF;
+-width:800px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:0;
+-}
+-
+-table.navbarwrap {
+-width:800px;
+-font-weight:700;
+-background:#000;
+-margin-left:auto;
+-border-top:1px solid #000;
+-border-bottom:1px solid #000;
+-margin-right:auto;
+-}
+-
+-table.navbar {
+-margin:0;
+-}
+-
+-.lineit {
+-color:#000;
+-border-right:1px solid #666;
+-}
+-
+-.lineit a {
+-color:#333;
+-display:block;
+-position:relative;
+-text-decoration:none;
+-padding:2px 10px;
+-}
+-
+-.lineit a:hover {
+-background-color:#292B2C;
+-}
+-
+-table.maintable {
+-width:100%;
+-background-color:#FFF;
+-margin-left:auto;
+-margin-right:auto;
+-padding:15px 24px 16px;
+-border: none;
+-}
+-
+-td, th, tr {
+-    border: none;
+-    margin: none;
+-    padding: none;
+-}
+-
+-.footerbox {
+-width:100%;
+-color:#333;
+-background-color:#F4F4F5;
+-font-size:90%;
+-text-align:right;
+-border-top:1px solid #ccc;
+-margin-botom:16px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:5px;
+-}
+-
+-.footerbox a:990000 {
+-color:#FFF;
+-}
+-
+-hr {
+-border-top:1px solid #ddd;
+-color:#fff;
+-background-color:#fff;
+-height:1px;
+-width:90%;
+-margin-top:22px;
+-margin-bottom:12px;
+-}
+-
+-#bg_wrap {
+-width:800px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:0;
+-}
+-
+-.head {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-color:#333;
+-font-weight:700;
+-text-align:left;
+-white-space:nowrap;
+-margin:16px 2px 4px 0;
+-padding:2px 5px;
+-}
+-
+-.head_thin {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-color:#333;
+-font-weight:700;
+-text-align:left;
+-white-space:nowrap;
+-margin:4px 2px 4px 0;
+-padding:2px 5px 2px 0;
+-}
+-
+-.dotline {
+-border:1px dashed #CCC;
+-clear:both;
+-text-align:left;
+-white-space:nowrap;
+-margin:4px 2px 4px 0;
+-padding:2px 5px 2px 0;
+-}
+-
+-.head_top {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-color:#333;
+-font-weight:700;
+-text-align:left;
+-white-space:nowrap;
+-margin:0 2px 4px 0;
+-padding:2px 5px;
+-}
+-
+-.head_forums {
+-background:url(/images/head.gif) #F4F4F5 repeat-x;
+-border:1px solid #CCC;
+-clear:both;
+-font-size:90%;
+-color:#666;
+-font-weight:700;
+-text-align:center;
+-white-space:nowrap;
+-margin:0 0 4px;
+-padding:1px 5px 1px 2px;
+-}
+-
+-.big_image {
+-border:1px solid #CCC;
+-background-color:#fff;
+-padding:5px;
+-}
+-
+-form {
+-margin:0;
+-padding:0;
+-}
+-
+-ul {
+-margin:2px 0 0 15px;
+-padding:0;
+-}
+-
+-.number {
+-border-right:1px solid #666;
+-padding:0 4px;
+-}
+-
+-.numbers {
+-line-height:1.1em;
+-margin-top:5px;
+-margin-bottom:3px;
+-}
+-
+-.number_no {
+-font-weight:700;
+-color:#000;
+-background-color:#F0F1F4;
+-border-right:1px solid #666;
+-padding:0 4px;
+-}
+-
+-.number_wrap {
+-background-color:#fff;
+-border-top:1px solid #666;
+-border-bottom:1px solid #666;
+-border-left:1px solid #666;
+-}
+-
+-.alert {
+-width:90%;
+-color:red;
+-text-align:center;
+-font-size:100%;
+-border:3px solid red;
+-margin-botom:16px;
+-margin-left:auto;
+-margin-right:auto;
+-padding:5px;
+-}
+-
+-.mm_input {
+-width:100px;
+-border:1px solid #999;
+-background:#333;
+-color:#fff;
+-font-size:9px;
+-}
+-
+-.mm_button {
+-font-size:9px;
+-}
+-
+-.dots {
+-color:#000;
+-background:#F5F5F5;
+-border:2px dotted orange;
+-margin-left:auto;
+-margin-right:auto;
+-margin-bottom:5px;
+-padding:5px;
+-}
+-
+-.dots2 {
+-color:#000;
+-background:#E1E4EA;
+-border-bottom:2px dashed #ccc;
+-margin:0 auto 5px;
+-padding:10px;
+-}
+-
+-.foo {
+-color:#599CB3;
+-}
+-
+-#tab {
+-margin-top:0.5em;
+-width:100%;
+-margin-bottom:0;
+-}
+-
+-#tab a {
+-text-align:center;
+-border:0;
+-text-decoration:none;
+-padding:0.5em 0.5em 0;
+-}
+-
+-#tab .button {
+-background:#F5F5F5;
+-color:#000;
+-}
+-
+-#tab .active {
+-background:#E1E4EA;
+-color:#000;
+-font-weight:700;
+-border-bottom:2px solid #E1E4EA;
+-}
+-
+-a:link,a:visited,a:active {
+-color:#22229C;
+-}
+-
+-a:hover,.red {
+-color:#C00;
+-}
+-
+-h1,.big {
+-font-size:110%;
+-font-weight:700;
+-color:#900;
+-margin:0;
+-padding:0;
+-}
+-
+-h2 {
+-font-size: 120%;
+-font-weight: bold;
+-color:#666666;
+-margin-bottom:4px;
+-}
+-
+-.g3,.g4 {
+-color:green;
+-}
+-
+-.light a:link,.light a:visited,.light a:active,.light a:hover {
+-color:#ccc;
+-}
+-
+-.headerbar a:link,.headerbar a:visited,.headerbar a:active,.headerbar a:hover {
+-color:#FFF;
+-text-decoration:none;
+-}
+-
+-.navbar a:link,.navbar a:visited,.navbar a:active {
+-color:#fff;
+-}
+-
+-.navbar a:hover,.numbers a:link,.numbers a:visited,.numbers a:active,.numbers a:hover {
+-text-decoration:none;
+-}
+-
+-.footerbox a:visited,.footerbox a:link {
+-color:#900;
+-}
+ </style>
+ 
+ 
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2007-05-04 09:20:28 UTC (rev 321)
++++ trunk/root/css/default.css	2007-05-04 09:20:48 UTC (rev 322)
+@@ -468,3 +468,540 @@
+     margin-bottom : 0;
+ }
+ 
++
++
++/* Borrowed from ModelMayhem */
++body {
++font-family:Trebuchet, Verdana, Lucida Grande, Sapir Sans, Tahoma, Sans-Serif;
++font-size:80%;
++/*background-color:#E7E7E7;*/
++color:#000;
++letter-spacing:2%;
++line-height:1.3em;
++margin:0;
++padding:0;
++}
++
++#pic_wrapper {
++margin-bottom:6px;
++}
++
++.forum_title {
++font-size:110%;
++font-weight:700;
++}
++
++
++.ribbon {
++background-color:#F9FBFF;
++padding: 3px;
++border:1px solid #EBEEF2;
++
++}
++
++.g1 {
++border-bottom:1px solid red;
++}
++
++.g2 {
++border-bottom:1px solid blue;
++}
++
++.light {
++color:#666;
++}
++
++.small {
++font-size:85%;
++line-height:1.1em;
++}
++
++#navbox,#navbox a {
++height:20px;
++background-color:#000;
++text-align:center;
++font-weight:700;
++color:#FFF;
++font-size:105%;
++margin:0;
++}
++
++.searchhead {
++width:120px;
++text-align:right;
++font-weight:700;
++font-size:90%;
++background-color:#E1E4EA;
++}
++
++.linkbar {
++background-color:#F5F5F5;
++border:1px solid #E5E4E4;
++padding: 4px;
++margin-bottom: 8px;
++}
++
++.linkbar2 {
++width: 90%;
++background-color:#F5F5F5;
++border:1px solid #9CA0AD;
++padding: 4px;
++margin-bottom: 8px;
++}
++
++#searchtable {
++background-color:#F5F5F5;
++}
++
++#searchtable td {
++padding:3px;
++}
++
++.menubox {
++background-color:#F9FBFF;
++border:1px solid #9CA0AD;
++clear:both;
++width:150px;
++white-space:nowrap;
++vertical-align:middle;
++margin:2px 0;
++padding:2px;
++}
++
++.mycoms {
++border-bottom:1px solid #333333;
++}
++
++.menubox2 {
++background-color:#F9FBFF;
++border:1px solid red;
++clear:both;
++width:150px;
++white-space:nowrap;
++vertical-align:middle;
++margin:2px 0;
++padding:2px;
++}
++
++.headerbar {
++background-color:#666;
++color:#FFF;
++padding:4px;
++}
++
++.thepagenums {
++font-size:92%;
++}
++
++.thepagenums b {
++font-style:normal;
++font-weight:700;
++font-size:120%;
++padding:2px;
++}
++
++.thepagenums a {
++font-weight:400;
++margin:0;
++padding:3px 2px;
++}
++
++.googlead {
++background-color:#333;
++width:728px;
++margin:4px auto;
++}
++
++.forumtop {
++background-color:#999;
++border: none;
++padding: 0;
++margin: 0;
++border-bottom:1px solid #9CA0AD;
++}
++
++.forumtop2 {
++background-color:#333;
++color:#FFF;
++font-size:85%;
++padding:2px;
++}
++
++.postwrap {
++margin: 0;
++padding: 0;
++border-bottom:1px dashed #9CA0AD;
++background-color: transparent;
++}
++
++.postbit {
++margin: 0;
++padding: 0;
++padding:6px 0 8px 9px;
++}
++
++.post {
++border: none;
++margin: 0;
++padding: 0;
++padding:10px 6px 8px 8px;
++}
++
++.labelpicpage {
++width: 150px;
++font-size: 90%;
++font-weight: bold;
++background-color:#EBEEF2;
++text-align: right;
++}
++
++.post_b {
++background-color:#f9f9fb;
++border-bottom:1px solid #999;
++padding:2px;
++}
++
++.quote {
++width:90%;
++border:1px solid #333;
++font-size:95%;
++background-color:#F9FBFF;
++margin:0 0 2px 14px;
++padding:6px;
++}
++
++.last_post {
++font-family:Tahoma, Sans-Serif;
++font-size:95%;
++color:#7C879D;
++text-align:justify;
++}
++
++.caption {
++margin-bottom:14px;
++margin-left:auto;
++margin-right:auto;
++width:400px;
++font-weight:700;
++text-align:center;
++padding:0 9px 6px 24px;
++}
++
++textarea,.bginput {
++font:10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
++}
++
++img.leftie {
++border:none;
++margin-right:9px;
++margin-bottom:6px;
++}
++
++.logobar {
++background:#FFF;
++width:800px;
++margin-left:auto;
++margin-right:auto;
++padding:0;
++}
++
++table.navbarwrap {
++width:800px;
++font-weight:700;
++background:#000;
++margin-left:auto;
++border-top:1px solid #000;
++border-bottom:1px solid #000;
++margin-right:auto;
++}
++
++table.navbar {
++margin:0;
++}
++
++.lineit {
++color:#000;
++border-right:1px solid #666;
++}
++
++.lineit a {
++color:#333;
++display:block;
++position:relative;
++text-decoration:none;
++padding:2px 10px;
++}
++
++.lineit a:hover {
++background-color:#292B2C;
++}
++
++table.maintable {
++width:100%;
++background-color:#FFF;
++margin-left:auto;
++margin-right:auto;
++padding:15px 24px 16px;
++border: none;
++}
++
++td, th, tr {
++    border: none;
++    margin: none;
++    padding: none;
++}
++
++.footerbox {
++width:100%;
++color:#333;
++background-color:#F4F4F5;
++font-size:90%;
++text-align:right;
++border-top:1px solid #ccc;
++margin-botom:16px;
++margin-left:auto;
++margin-right:auto;
++padding:5px;
++}
++
++.footerbox a:990000 {
++color:#FFF;
++}
++
++hr {
++border-top:1px solid #ddd;
++color:#fff;
++background-color:#fff;
++height:1px;
++width:90%;
++margin-top:22px;
++margin-bottom:12px;
++}
++
++#bg_wrap {
++width:800px;
++margin-left:auto;
++margin-right:auto;
++padding:0;
++}
++
++.head {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++color:#333;
++font-weight:700;
++text-align:left;
++white-space:nowrap;
++margin:16px 2px 4px 0;
++padding:2px 5px;
++}
++
++.head_thin {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++color:#333;
++font-weight:700;
++text-align:left;
++white-space:nowrap;
++margin:4px 2px 4px 0;
++padding:2px 5px 2px 0;
++}
++
++.dotline {
++border:1px dashed #CCC;
++clear:both;
++text-align:left;
++white-space:nowrap;
++margin:4px 2px 4px 0;
++padding:2px 5px 2px 0;
++}
++
++.head_top {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++color:#333;
++font-weight:700;
++text-align:left;
++white-space:nowrap;
++margin:0 2px 4px 0;
++padding:2px 5px;
++}
++
++.head_forums {
++background:url(/images/head.gif) #F4F4F5 repeat-x;
++border:1px solid #CCC;
++clear:both;
++font-size:90%;
++color:#666;
++font-weight:700;
++text-align:center;
++white-space:nowrap;
++margin:0 0 4px;
++padding:1px 5px 1px 2px;
++}
++
++.big_image {
++border:1px solid #CCC;
++background-color:#fff;
++padding:5px;
++}
++
++form {
++margin:0;
++padding:0;
++}
++
++ul {
++margin:2px 0 0 15px;
++padding:0;
++}
++
++.number {
++border-right:1px solid #666;
++padding:0 4px;
++}
++
++.numbers {
++line-height:1.1em;
++margin-top:5px;
++margin-bottom:3px;
++}
++
++.number_no {
++font-weight:700;
++color:#000;
++background-color:#F0F1F4;
++border-right:1px solid #666;
++padding:0 4px;
++}
++
++.number_wrap {
++background-color:#fff;
++border-top:1px solid #666;
++border-bottom:1px solid #666;
++border-left:1px solid #666;
++}
++
++.alert {
++width:90%;
++color:red;
++text-align:center;
++font-size:100%;
++border:3px solid red;
++margin-botom:16px;
++margin-left:auto;
++margin-right:auto;
++padding:5px;
++}
++
++.mm_input {
++width:100px;
++border:1px solid #999;
++background:#333;
++color:#fff;
++font-size:9px;
++}
++
++.mm_button {
++font-size:9px;
++}
++
++.dots {
++color:#000;
++background:#F5F5F5;
++border:2px dotted orange;
++margin-left:auto;
++margin-right:auto;
++margin-bottom:5px;
++padding:5px;
++}
++
++.dots2 {
++color:#000;
++background:#E1E4EA;
++border-bottom:2px dashed #ccc;
++margin:0 auto 5px;
++padding:10px;
++}
++
++.foo {
++color:#599CB3;
++}
++
++#tab {
++margin-top:0.5em;
++width:100%;
++margin-bottom:0;
++}
++
++#tab a {
++text-align:center;
++border:0;
++text-decoration:none;
++padding:0.5em 0.5em 0;
++}
++
++#tab .button {
++background:#F5F5F5;
++color:#000;
++}
++
++#tab .active {
++background:#E1E4EA;
++color:#000;
++font-weight:700;
++border-bottom:2px solid #E1E4EA;
++}
++
++a:link,a:visited,a:active {
++color:#22229C;
++}
++
++a:hover,.red {
++color:#C00;
++}
++
++h1,.big {
++font-size:110%;
++font-weight:700;
++color:#900;
++margin:0;
++padding:0;
++}
++
++h2 {
++font-size: 120%;
++font-weight: bold;
++color:#666666;
++margin-bottom:4px;
++}
++
++.g3,.g4 {
++color:green;
++}
++
++.light a:link,.light a:visited,.light a:active,.light a:hover {
++color:#ccc;
++}
++
++.headerbar a:link,.headerbar a:visited,.headerbar a:active,.headerbar a:hover {
++color:#FFF;
++text-decoration:none;
++}
++
++.navbar a:link,.navbar a:visited,.navbar a:active {
++color:#fff;
++}
++
++.navbar a:hover,.numbers a:link,.numbers a:visited,.numbers a:active,.numbers a:hover {
++text-decoration:none;
++}
++
++.footerbox a:visited,.footerbox a:link {
++color:#900;
++}
++/* Borrowed from ModelMayhem (end) */
++
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 11:20:57 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 11:20:57 +0200
+Subject: [Parley-svn] r323 - / trunk/root/base/thread
+Message-ID: <200705040920.l449KvUa024418@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 11:20:56 +0200 (Fri, 04 May 2007)
+New Revision: 323
+
+Modified:
+   /
+   trunk/root/base/thread/view
+Log:
+ r3202 at wiggin:  chisel | 2007-05-04 08:39:30 +0100
+ - removed <style> tags - now that they're empty
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3201
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3202
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-04 09:20:48 UTC (rev 322)
++++ trunk/root/base/thread/view	2007-05-04 09:20:56 UTC (rev 323)
+@@ -1,9 +1,3 @@
+-<style type="text/css">
+-
+-
+-</style>
+-
+-
+ <table class="maintable" align="center" border="0" cellpadding="0" cellspacing="0">
+   <tbody>
+     <tr>
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 17:48:27 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 17:48:27 +0200
+Subject: [Parley-svn] r324 - / trunk
+Message-ID: <200705041548.l44FmRf8002997@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 17:48:26 +0200 (Fri, 04 May 2007)
+New Revision: 324
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r3213 at wiggin:  chisel | 2007-05-04 16:48:16 +0100
+ / installing from scratch revealed missing dependencies (did I install Catalyst::Runtime before?)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3202
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3213
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-05-04 09:20:56 UTC (rev 323)
++++ trunk/Makefile.PL	2007-05-04 15:48:26 UTC (rev 324)
+@@ -4,11 +4,22 @@
+ all_from 'lib/Parley.pm';
+ 
+ requires 'Catalyst' => '5.7001';
++requires 'Catalyst::Action::RenderView';
++requires 'Catalyst::Model::DBIC::Schema';
++requires 'Catalyst::Plugin::Authentication';
++requires 'Catalyst::Plugin::Authentication::Credential::Password';
++requires 'Catalyst::Plugin::Authentication::Store::DBIC';
+ requires 'Catalyst::Plugin::ConfigLoader';
++requires 'Catalyst::Plugin::Dumper';
++requires 'Catalyst::Plugin::Email';
++requires 'Catalyst::Plugin::FillInForm';
+ requires 'Catalyst::Plugin::FormValidator';
++requires 'Catalyst::Plugin::Session';
++requires 'Catalyst::Plugin::Session::State::Cookie';
++requires 'Catalyst::Plugin::Session::Store::FastMmap';
++requires 'Catalyst::Plugin::StackTrace';
+ requires 'Catalyst::Plugin::Static::Simple';
+-requires 'Catalyst::Action::RenderView';
+-requires 'Catalyst::Model::DBIC::Schema';
++requires 'Catalyst::Plugin::Static::Simple';
+ requires 'Data::FormValidator' => '4.50';
+ requires 'Email::Valid';
+ requires 'Perl6::Export::Attrs';
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 17:57:06 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 17:57:06 +0200
+Subject: [Parley-svn] r325 - / trunk
+Message-ID: <200705041557.l44Fv6fn003539@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 17:57:06 +0200 (Fri, 04 May 2007)
+New Revision: 325
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r3215 at wiggin:  chisel | 2007-05-04 16:56:52 +0100
+ + another missing dependency *blush*
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3213
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3215
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-05-04 15:48:26 UTC (rev 324)
++++ trunk/Makefile.PL	2007-05-04 15:57:06 UTC (rev 325)
+@@ -20,6 +20,7 @@
+ requires 'Catalyst::Plugin::StackTrace';
+ requires 'Catalyst::Plugin::Static::Simple';
+ requires 'Catalyst::Plugin::Static::Simple';
++requires 'Catalyst::View::TT';
+ requires 'Data::FormValidator' => '4.50';
+ requires 'Email::Valid';
+ requires 'Perl6::Export::Attrs';
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 18:02:50 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 18:02:50 +0200
+Subject: [Parley-svn] r326 - / trunk
+Message-ID: <200705041602.l44G2omo005228@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 18:02:50 +0200 (Fri, 04 May 2007)
+New Revision: 326
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r3217 at wiggin:  chisel | 2007-05-04 17:02:38 +0100
+ + even more missing deps - I suck
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3215
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3217
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-05-04 15:57:06 UTC (rev 325)
++++ trunk/Makefile.PL	2007-05-04 16:02:50 UTC (rev 326)
+@@ -22,6 +22,9 @@
+ requires 'Catalyst::Plugin::Static::Simple';
+ requires 'Catalyst::View::TT';
+ requires 'Data::FormValidator' => '4.50';
++requires 'DateTime';
++requires 'DateTime::Format::Pg';
++requires 'DateTime::TimeZone';
+ requires 'Email::Valid';
+ requires 'Perl6::Export::Attrs';
+ requires 'YAML'; # This should reflect the config file format you've chosen
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 23:08:56 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 23:08:56 +0200
+Subject: [Parley-svn] r327 - / trunk
+Message-ID: <200705042108.l44L8uVw014633@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 23:08:55 +0200 (Fri, 04 May 2007)
+New Revision: 327
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r3219 at wiggin:  chisel | 2007-05-04 17:39:28 +0100
+ + yet more missing deps - hopefully the last!
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3217
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3219
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-05-04 16:02:50 UTC (rev 326)
++++ trunk/Makefile.PL	2007-05-04 21:08:55 UTC (rev 327)
+@@ -19,14 +19,17 @@
+ requires 'Catalyst::Plugin::Session::Store::FastMmap';
+ requires 'Catalyst::Plugin::StackTrace';
+ requires 'Catalyst::Plugin::Static::Simple';
+-requires 'Catalyst::Plugin::Static::Simple';
+ requires 'Catalyst::View::TT';
+ requires 'Data::FormValidator' => '4.50';
++requires 'Data::SpreadPagination';
+ requires 'DateTime';
+ requires 'DateTime::Format::Pg';
+ requires 'DateTime::TimeZone';
+ requires 'Email::Valid';
++requires 'List::MoreUtils';
+ requires 'Perl6::Export::Attrs';
++requires 'Readonly';
++requires 'Text::Context::EitherSide';
+ requires 'YAML'; # This should reflect the config file format you've chosen
+                  # See Catalyst::Plugin::ConfigLoader for supported formats
+ catalyst;
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 23:09:13 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 23:09:13 +0200
+Subject: [Parley-svn] r328 - / trunk trunk/doc
+Message-ID: <200705042109.l44L9DUk014729@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 23:09:12 +0200 (Fri, 04 May 2007)
+New Revision: 328
+
+Added:
+   trunk/doc/
+   trunk/doc/parley-qs.html
+Modified:
+   /
+Log:
+ r3220 at wiggin:  chisel | 2007-05-04 18:59:13 +0100
+ + new folder for (useful) documentation to live in
+ + quick start guide - from nothing to forum in a few easy steps
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3219
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3220
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/doc/parley-qs.html
+===================================================================
+--- trunk/doc/parley-qs.html	2007-05-04 21:08:55 UTC (rev 327)
++++ trunk/doc/parley-qs.html	2007-05-04 21:09:12 UTC (rev 328)
+@@ -0,0 +1,69 @@
++<html>
++    <head>
++        <title>Parley - Quick Start Guide</title>
++    </head>
++
++    <body>
++        <h1>Parley - Quick Start Guide</h1>
++
++        <p>This is a quick guide to getting Parley running on a machine using
++        the Catalyst testing/development server.</p>
++
++        <p><b>NOTE</b> v0.51 has missing dependencies in Makefile.PL. Save
++        yourself some pain and fetch v0.52 or later.</p>
++
++        <h2>Initial Installation</h2>
++        <blockquote><code>
++        mkdir -p ~/development<br />
++        cd ~/development<br />
++<br />
++        wget http://download.berlios.de/parley/Parley-0.52.tar.gz<br />
++        tar -zxvf Parley-0.52.tar.gz<br />
++        cd Parley-0.52/<br />
++<br />
++        perl Makefile.PL<br />
++        <em># install missing dependencies</em><br />
++        <em># 'sudo make' may work here</em><br />
++<br />
++        <em># you may need to tweak pg_hba.conf</em><br />
++        <em>## local   all  parley                trust</em><br />
++        <em>## host&nbsp;   all  parley  127.0.0.1/32  trust</em><br />
++        sudo -u postgres createuser -A -d parley<br />
++        createdb -U parley -E UTF8 parley<br />
++        psql -U parley -d parley -f db/parley.psql<br />
++        </code></blockquote>
++
++        <h2>Configuring</h2>
++
++        <p>If you're running Parley out of the box it should Just Work.</p>
++
++        <p>One problem can sometimes be with the database connection.
++        If you find you can't connect, make sure you've correctly configured
++        <code>pg_hba.conf</code> and that the <code>Model::ParleyDB</code>
++        section in <code>parley.yml</code> appears sane for your setup.</p>
++
++        <h2>Running the Server</h2>
++
++        <blockquote><code>
++        ./script/parley_server.pl
++        </code></blockquote>
++
++        <h2>Ubuntu Users</h2>
++
++        <p>There are others, but these are the key packages I'd recommend installing
++        with "sudo aptitude install ..."
++
++        <ul>
++            <li>libdbi-perl</li>
++            <li>libdbd-pg-perl</li>
++            <li>libfile-copy-recursive-perl</li>
++            <li>libtemplate-perl</li>
++            <li>libtemplate-timer-perl</li>
++            <li>libdatetime-perl</li>
++            <li>libdatetime-format-pg-perl</li>
++            <li>libdatetime-timezone-perl</li>
++            <li>liblist-moreutils-perl</li>
++        </ul>
++        </p>
++    </body>
++</html>
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 23:09:32 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 23:09:32 +0200
+Subject: [Parley-svn] r329 - / trunk
+Message-ID: <200705042109.l44L9WxQ014821@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 23:09:32 +0200 (Fri, 04 May 2007)
+New Revision: 329
+
+Modified:
+   /
+   trunk/parley.yml
+Log:
+ r3221 at wiggin:  chisel | 2007-05-04 19:00:12 +0100
+ + added Model::ParleyDB configuration section, to configure DB connection from here, not lib/Parley/Model/ParleyDB.pm
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3220
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3221
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2007-05-04 21:09:12 UTC (rev 328)
++++ trunk/parley.yml	2007-05-04 21:09:32 UTC (rev 329)
+@@ -19,8 +19,14 @@
+     - 'error'
+     - 'fatal'
+ 
++Model::ParleyDB:
++    schema_class: 'Parley::Schema'
++    connect_info:   
++        - 'dbi:Pg:dbname=parley;host=localhost'
++        - 'parley'
++        - ''
++        - AutoCommit: 1
+ 
+-
+ # emails; perldoc Catalyst::Plugin::Email
+ # this passes options as an array :(
+ email:
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 23:10:00 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 23:10:00 +0200
+Subject: [Parley-svn] r330 - / trunk trunk/lib
+Message-ID: <200705042110.l44LA0OQ014902@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 23:10:00 +0200 (Fri, 04 May 2007)
+New Revision: 330
+
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley.pm
+Log:
+ r3222 at wiggin:  chisel | 2007-05-04 19:02:12 +0100
+ + final preparation for 0.52
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3221
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3222
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-05-04 21:09:32 UTC (rev 329)
++++ trunk/Changes	2007-05-04 21:10:00 UTC (rev 330)
+@@ -1,5 +1,11 @@
+ This file documents the revision history for Parley.
+ 
++0.52    Fri May  4 19:00:32 BST 2007
++
++    - added DB configuration to parley.yml
++    - added missing dependencies to Makefile.PL
++    - added Quick Start guide
++
+ 0.51    Fri May  4 08:27:57 BST 2007
+ 
+     - added initial moderator code
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-05-04 21:09:32 UTC (rev 329)
++++ trunk/lib/Parley.pm	2007-05-04 21:10:00 UTC (rev 330)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.52-pre';
++our $VERSION = '0.52';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+
+
+
+From chiselwright at mail.berlios.de  Fri May  4 23:10:38 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 4 May 2007 23:10:38 +0200
+Subject: [Parley-svn] r331 - / tags
+Message-ID: <200705042110.l44LAcPf015015@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-04 23:10:38 +0200 (Fri, 04 May 2007)
+New Revision: 331
+
+Added:
+   tags/parley-0.52/
+Modified:
+   /
+Log:
+ r3223 at wiggin:  chisel | 2007-05-04 19:04:09 +0100
+ 0.52    Fri May  4 19:00:32 BST 2007
+ 
+     - added DB configuration to parley.yml
+     - added missing dependencies to Makefile.PL
+     - added Quick Start guide
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3222
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3223
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Copied: tags/parley-0.52 (from rev 330, trunk)
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:37:32 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:37:32 +0200
+Subject: [Parley-svn] r332 - / trunk
+Message-ID: <200705140837.l4E8bWEG016621@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:37:31 +0200 (Mon, 14 May 2007)
+New Revision: 332
+
+Modified:
+   /
+   trunk/Makefile.PL
+Log:
+ r3262 at wiggin:  chisel | 2007-05-11 18:56:56 +0100
+ + added missing dep for MIME::Lite
+ + added Cache::FastMmap - it's required by Catalyst::Plugin::Session::Store::FastMmap but doesn't appear to get installed as one of its dependencies
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3223
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3262
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Makefile.PL
+===================================================================
+--- trunk/Makefile.PL	2007-05-04 21:10:38 UTC (rev 331)
++++ trunk/Makefile.PL	2007-05-14 08:37:31 UTC (rev 332)
+@@ -16,6 +16,7 @@
+ requires 'Catalyst::Plugin::FormValidator';
+ requires 'Catalyst::Plugin::Session';
+ requires 'Catalyst::Plugin::Session::State::Cookie';
++requires 'Cache::FastMmap';
+ requires 'Catalyst::Plugin::Session::Store::FastMmap';
+ requires 'Catalyst::Plugin::StackTrace';
+ requires 'Catalyst::Plugin::Static::Simple';
+@@ -27,6 +28,7 @@
+ requires 'DateTime::TimeZone';
+ requires 'Email::Valid';
+ requires 'List::MoreUtils';
++requires 'MIME::Lite';
+ requires 'Perl6::Export::Attrs';
+ requires 'Readonly';
+ requires 'Text::Context::EitherSide';
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:37:41 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:37:41 +0200
+Subject: [Parley-svn] r333 - / trunk
+Message-ID: <200705140837.l4E8bfg8016683@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:37:41 +0200 (Mon, 14 May 2007)
+New Revision: 333
+
+Modified:
+   /
+   trunk/parley.yml
+Log:
+ r3263 at wiggin:  chisel | 2007-05-11 18:57:27 +0100
+ + added CHOMP settings for TT
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3262
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3263
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/parley.yml
+===================================================================
+--- trunk/parley.yml	2007-05-14 08:37:31 UTC (rev 332)
++++ trunk/parley.yml	2007-05-14 08:37:41 UTC (rev 333)
+@@ -60,6 +60,8 @@
+     EVAL_PERL:      '0'
+     PRE_PROCESS:    'header'
+     POST_PROCESS:   'footer'
++    POST_CHOMP:     '1'
++    PRE_CHOMP:      '0'
+     # comment out the following line to enable Template::Timer output in your
+     # template source
+     CONTEXT:        ''
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:37:50 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:37:50 +0200
+Subject: [Parley-svn] r334 - / trunk/root/css
+Message-ID: <200705140837.l4E8boV7016736@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:37:50 +0200 (Mon, 14 May 2007)
+New Revision: 334
+
+Added:
+   trunk/root/css/common.css
+   trunk/root/css/layout23.css
+   trunk/root/css/layout33.css
+Modified:
+   /
+Log:
+ r3264 at wiggin:  chisel | 2007-05-11 18:58:29 +0100
+ + totally new layout for parley - hopefully leading to a much cleaner markup and layout overall
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3263
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3264
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-14 08:37:41 UTC (rev 333)
++++ trunk/root/css/common.css	2007-05-14 08:37:50 UTC (rev 334)
+@@ -0,0 +1,250 @@
++/* link styling */
++a.nav, a.nav:visited, a.nav:link, a.nav:active {
++    background:         #ccc;
++    border:             solid black 1px;
++    border-style:       outset;
++    display:            block;
++    font-size:          0.8em;
++    font-weight:        bold;
++    list-style-image:   none;
++    list-style-type:    none;
++    margin-left:        20px;
++    margin-top:         0px;
++    padding-bottom:     0.2em;
++    padding-left:       0.5em;
++    padding-top:        0.2em;
++    text-decoration:    none;
++    width:              120px;
++}
++
++h1 {
++    font-size: 1.1em;
++    font-weight: bold;
++}
++h2 {
++    font-size: 1em;
++    font-weight: bold;
++}
++
++a.nav:hover {
++    background:         #000;
++    color:              #fff;
++}
++
++a, a:link, a:visited, a:active {
++    background:         transparent;
++    color:              blue;
++    text-decoration:    none;
++}
++
++table {
++    margin-left:        50px;
++    margin-bottom:      20px;
++    border:             1px solid black;
++}
++
++th {
++    text-align:         left;
++    font-weight:        bold;
++}
++
++td {
++    border:             1px solid #888;
++    padding:            3px;
++}
++
++/* dojo dialog styling - initially taken from dojo demo */
++.dojoDialog {
++    background : #eee;
++    border : 1px solid #999;
++    -moz-border-radius : 5px;
++    padding : 4px;
++}
++
++/* login dialog styling */
++#login_dialog form {  /* set width in form, not fieldset (still takes up more room w/ fieldset width */
++    margin: 0;
++    padding: 0;
++    min-width: 400px;
++    max-width: 600px;
++}
++#login_dialog form fieldset {
++    / * clear: both; note that this clear causes inputs to break to left in ie5.x mac, commented out */
++    border-color: #000;
++    border-width: 1px;
++    border-style: solid;
++    padding: 10px;        /* padding in fieldset support spotty in IE */
++    margin: 0;
++}
++#login_dialog form label { 
++    display: block;  /* block float the labels to left column, set a width */
++    float: left; 
++    width: 150px; 
++    padding: 0; 
++    margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
++    text-align: right; 
++    font-weight: bold;
++    margin-bottom : 0;
++}
++#login_dialog form input, form textarea {
++    /* display: inline; inline display must not be set or will hide submit buttons in IE 5x mac */
++    width:auto;      /* set width of form elements to auto-size, otherwise watch for wrap on resize */
++    margin:5px 0 0 10px; /* set margin on left of form elements rather than right of
++                              label aligns textarea better in IE */
++}
++#login_dialog form p {
++    font-size: 0.8em;
++}
++
++/* style classes */
++
++.right_align {
++    text-align: right;
++    /*background: #f00;*/
++}
++
++
++.forum_link {
++    font-weight:    bold;
++}
++.forum_description {
++    font-size:      0.8em;
++}
++
++.topic_link {
++    font-weight:    bold;
++}
++.topic_creator {
++    display:        block;
++    font-size:      0.8em;
++    /*text-align:     right;*/
++    float: right;
++}
++.forum_mini_pager {
++    display:        block;
++    font-size:      0.8em;
++    /*text-align:     right;*/
++    float: left;
++}
++.topic_last_post {
++    font-size:      0.8em;
++}
++
++.post_subject {
++    font-weight:    bold;
++}
++
++.post_creator {
++    font-weight:    bold;
++    font-style:     italic;
++    font-size:      0.9em;
++}
++
++.post_created {
++    text-align:     right;
++    font-size:      0.8em;
++}
++
++.reply_post_message {
++    width: 100%;
++    background-color: rgb(251,215,194);
++    border: 2px inset #fff;
++}
++
++.post_message {
++    width: 100%;
++    background-color: rgb(251,215,194);
++    border: 2px inset #fff;
++    display: block;
++}
++
++.in_response_to {
++    margin-left:    20px;
++    font-weight:    bold;
++    font-style:     italic;
++    font-size:      0.8em;
++}
++
++.quoted_message {
++        border:         solid black 1pt;
++        background:     #ccc;
++        /*font-family:    "courier new", courier, fixed;*/
++        color:          #000;
++        margin-left:    20px;
++        margin-right:   0px;
++        margin-top:     0px;
++        margin-bottom:  0px;
++        padding:        2px;
++        font-size:      0.9em;
++
++        display: block;
++        overflow: auto;
++}
++
++
++.no_table_border table {
++    border: none;
++}
++.no_table_border td {
++    border: none;
++}
++
++.thread_watch {
++    font-size:          x-small;
++}
++.pager_advanced {
++    font-size:          x-small;
++}
++
++.thread_header {
++    font-weight:        bold;
++    background:         #666;
++    padding:            4px;
++}
++
++.thread_posts {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
++.post {
++    padding-top:        5px;
++    vertical-align:     top;
++}
++
++.user_post_info {
++    background:         #ccc;
++    font-size:          85%;
++    margin-left:        auto;
++    margin-right:       auto;
++    text-align:         center;
++}
++
++.quote {
++    background-color:   #F9FBFF;
++    border:             1px solid #333;
++    font-size:          95%;
++    margin:             0 0 2px 4px;
++    padding:            6px;
++    width:              85%;
++}
++
++.post_info {
++    font-size:          80%;
++    line-height:        1.1em;
++    margin-top:         10px;
++    margin-bottom:      2px;
++    text-align:         right;
++}
++
++a.button:visited, a.button:link, a.button:active, .button, a.button {
++    border:             2px solid;
++    border-color:       #FC9 #630 #330 #F96;
++    padding:            2px 7px 2px 7px;
++    font:               bold 0.9em verdana,sans-serif;
++    color:              #000;
++    background:         #ccc;
++    text-decoration:    none;
++    margin:             2px;
++}
+
+Added: trunk/root/css/layout23.css
+===================================================================
+--- trunk/root/css/layout23.css	2007-05-14 08:37:41 UTC (rev 333)
++++ trunk/root/css/layout23.css	2007-05-14 08:37:50 UTC (rev 334)
+@@ -0,0 +1,67 @@
++html,body{
++    margin:             0;
++    padding:            0;
++}
++body{
++    font:               76% tahoma,verdana,arial,sans-serif;
++}
++p{
++    margin:             0 10px 10px
++}
++/* NOT USED
++a{
++    display:            block;
++    color:              #981793;
++    padding:            10px;
++}
++    */
++div#header h1{
++    height:             80px;
++    line-height:        80px;
++    margin:             0;
++    padding-left:       10px;
++    background:         #EEE;
++    color:              #79B30B;
++}
++div#content p{
++    line-height:        1.4;
++}
++div#navigation{
++    background:         #B9CAFF;
++    background:         #FFF;
++}
++div#extra{
++    background:         #FF8539;
++    background:         #FFF;
++}
++div#footer{
++    background:         #AAA;
++    color:              #FFF;
++}
++div#footer p{
++    margin:             0;
++    padding:            5px 10px;
++    text-align:         right;
++}
++
++div#wrapper{
++    float:              left;
++    width:              100%;
++    margin-left:        -200px;
++}
++div#content{
++    margin-left:        200px;
++}
++div#navigation{
++    float:              right;
++    width:              200px;
++}
++div#extra{
++    float:              right;
++    clear:              right;
++    width:              200px;
++}
++div#footer{
++    clear:              both;
++    width:              100%
++}
+
+Added: trunk/root/css/layout33.css
+===================================================================
+--- trunk/root/css/layout33.css	2007-05-14 08:37:41 UTC (rev 333)
++++ trunk/root/css/layout33.css	2007-05-14 08:37:50 UTC (rev 334)
+@@ -0,0 +1,18 @@
++html,body{margin:0;padding:0}
++body{font: 76% arial,sans-serif;text-align:center}
++p{margin:0 10px 10px}
++a{display:block;color: #981793;padding:10px}
++div#header h1{height:80px;line-height:80px;margin:0;
++  padding-left:10px;background: #EEE;color: #79B30B}
++div#container{text-align:left}
++div#content p{line-height:1.4}
++div#navigation{background:#B9CAFF}
++div#extra{background:#FF8539}
++div#footer{background: #333;color: #FFF}
++div#footer p{margin:0;padding:5px 10px}
++
++div#container{width:700px;margin:0 auto}
++div#content{float:left;width:500px}
++div#navigation{float:right;width:200px}
++div#extra{float:right;clear:right;width:200px}
++div#footer{clear:both;width:100%}
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:00 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:00 +0200
+Subject: [Parley-svn] r335 - / trunk/root/base/shared
+Message-ID: <200705140838.l4E8c0ji016791@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:00 +0200 (Mon, 14 May 2007)
+New Revision: 335
+
+Added:
+   trunk/root/base/shared/navigation
+   trunk/root/base/shared/thread_watch
+   trunk/root/base/shared/threadcrumbs
+   trunk/root/base/shared/user_status
+Modified:
+   /
+Log:
+ r3265 at wiggin:  chisel | 2007-05-11 18:59:22 +0100
+ + new shared blocks of markup as part of new styling
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3264
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3265
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/root/base/shared/navigation
+===================================================================
+--- trunk/root/base/shared/navigation	2007-05-14 08:37:50 UTC (rev 334)
++++ trunk/root/base/shared/navigation	2007-05-14 08:38:00 UTC (rev 335)
+@@ -0,0 +1,5 @@
++<!-- shared/navigation -->
++<p>
++    [% PROCESS shared/threadcrumbs %]
++<p>
++<!-- end : shared/navigation -->
+
+Added: trunk/root/base/shared/thread_watch
+===================================================================
+--- trunk/root/base/shared/thread_watch	2007-05-14 08:37:50 UTC (rev 334)
++++ trunk/root/base/shared/thread_watch	2007-05-14 08:38:00 UTC (rev 335)
+@@ -0,0 +1,17 @@
++<!-- shared/thread_watch -->
++[%- IF authed_user %]
++<div class="thread_watch">
++    <strong>[% watcher_count %] [% IF watcher_count == 1 %]person[% ELSE %]people[% END %] watching this thread.</strong>
++    <br />
++
++    [%- IF watching_thread %]
++        You are watching this thread.
++        (
++        <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]&watch=0">Remove Watch</a>
++        )
++    [%- ELSE %]
++        <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]">Watch this thread</a>
++    [%- END%]
++</div>
++[%- END %] [%# authed_user block %]
++<!-- end : shared/thread_watch -->
+
+Added: trunk/root/base/shared/threadcrumbs
+===================================================================
+--- trunk/root/base/shared/threadcrumbs	2007-05-14 08:37:50 UTC (rev 334)
++++ trunk/root/base/shared/threadcrumbs	2007-05-14 08:38:00 UTC (rev 335)
+@@ -0,0 +1,9 @@
++    <a href="forum/list">Home</a>
++    [% IF current_forum %]
++        &raquo;
++        <a href="forum/view?forum=[% current_forum.id %]">[% current_forum.name %]</a>
++        [% IF current_thread %]
++            &raquo;
++            <a href="thread/view?thread=[% current_thread.id %]">[% ForumCode.escape(current_thread.subject) %]</a>
++        [% END %]
++    [% END %]
+
+Added: trunk/root/base/shared/user_status
+===================================================================
+--- trunk/root/base/shared/user_status	2007-05-14 08:37:50 UTC (rev 334)
++++ trunk/root/base/shared/user_status	2007-05-14 08:38:00 UTC (rev 335)
+@@ -0,0 +1,19 @@
++<!-- shared/user_status -->
++<p>
++    [% IF (authed_user) %]
++        Logged in as <b>[% authed_user.first_name %] [% authed_user.last_name %]</b>
++        [% UNLESS authed_user.authentication.authenticated %]
++            (<b><i>Not Authenticated</i></b>)
++        [% END %]
++        <i><br />[
++        <a href="user/logout">Logout</a>
++        ]</i>
++    [% ELSE %]
++        <i>[
++        <a href="javascript:;" onclick="login_dialog.show(); return false;">Login</a>
++        |
++        <a href="user/signup">Signup</a>
++        ]</i>
++    [% END %] [%# authed_user end %]
++</p>
++<!-- end : shared/user_status -->
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:10 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:10 +0200
+Subject: [Parley-svn] r337 - / trunk/root/base
+Message-ID: <200705140838.l4E8cAIW016902@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:10 +0200 (Mon, 14 May 2007)
+New Revision: 337
+
+Modified:
+   /
+   trunk/root/base/footer
+   trunk/root/base/header
+Log:
+ r3267 at wiggin:  chisel | 2007-05-11 19:01:49 +0100
+ + new header and footer markup for new styling
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3266
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3267
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-05-14 08:38:05 UTC (rev 336)
++++ trunk/root/base/footer	2007-05-14 08:38:10 UTC (rev 337)
+@@ -1,18 +1,37 @@
+ <!-- Footer : Start -->
+-	</div>
+-	<!-- end the main content -->
++                    </p>
++                </div><!-- content div -->
++            </div><!-- wrapper div -->
+ 
+-<span style="display: block; float: right; margin-right: 20px;">
+-  <a href="http://catalystframework.org"><img
+-    src="static/images/btn_88x31_powered.png"
+-    width="88"
+-    height="31"
+-    alt="Powered By Catalyst"
+-    style="border: none;"
+-    /></a>
+-</span>
++            <div id="navigation">
++                <p>Navigation</p>
++                [% PROCESS shared/navigation %]
++            </div><!-- navigation div -->
+ 
+-</body>
++            <div id="extra">
++                [% PROCESS shared/user_status %]
++            </div><!-- extra div -->
++
++            <div id="footer">
++                <p>&copy; Chisel Wright 2006-2007. All Rights Reserved.</p>
++            </div><!-- footer div -->
++
++
++            <span style="display: block; float: right; margin-right: 20px;">
++            <a href="http://catalystframework.org"><img
++                src="static/images/btn_88x31_powered.png"
++                width="88"
++                height="31"
++                alt="Powered By Catalyst"
++                style="border: none;"
++                /></a>
++            </span>
++
++            [% INCLUDE shared/login_dialog %]
++            [% INCLUDE shared/search_dialog %]
++        </div><!-- container div -->
++
++    </body>
+ </html>
+ <!-- Footer : End -->
+ 
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-05-14 08:38:05 UTC (rev 336)
++++ trunk/root/base/header	2007-05-14 08:38:10 UTC (rev 337)
+@@ -5,7 +5,7 @@
+ 
+ <!-- Header : Start -->
+ <html>
+-	<head>
++    <head>
+         <base href="[% c.req.base %]" />
+         <title>
+             [% c.config.name %]
+@@ -26,15 +26,12 @@
+              : [% current_forum.name %]
+             [% END %]
+         </title>
+-		<meta name="author" content="Chisel Wright" />
+-                <link rel="stylesheet" title="Default" href="css/default.css" />
+-		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
++        <meta name="author" content="Chisel Wright" />
++        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
++        <link rel="stylesheet" title="Default" href="css/common.css" />
++        <link rel="stylesheet" title="Default" href="css/layout23.css" />
+ 
+-        <!-- MARKER -->
+-        <script type="text/javascript" src="prototype.js"></script>
+-        <script type="text/javascript" src="controls.js"></script>
+-        <script type="text/javascript" src="effects.js"></script>
+-        <script type="text/javascript" src="dragdrop.js"></script>
++        <link rel="alternate stylesheet" title="Layout 33" href="css/layout33.css" />
+ 
+         <!-- Dojo Magic -->
+         <script type="text/javascript" src="/static/magic/dojo.js"></script>
+@@ -43,21 +40,15 @@
+             dojo.require("dojo.widget.Dialog");
+             dojo.require("dojo.widget.Button");
+         </script>
+-	</head>
++    </head>
+ 
+-	<div id="top">
+-	</div>
++    <body>
++        <div id="container">
++            <div id="header">
++                <h1>Header</h1>
++            </div><!-- header div -->
+ 
+-	<div id="statusbar">
+-		[% INCLUDE menu/statusbar %]
+-	</div>
+-
+-	<div id="left">
+-		[% INCLUDE menu/left/main %]
+-	</div>
+-
+-	<!-- start the main content area -->
+-	<div id="middle">
+-<body>
+-
++            <div id="wrapper">
++                <div id="content">
++                    <p>
+ <!-- Header : End -->
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:05 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:05 +0200
+Subject: [Parley-svn] r336 - / trunk/root/base/shared
+Message-ID: <200705140838.l4E8c52A016847@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:05 +0200 (Mon, 14 May 2007)
+New Revision: 336
+
+Modified:
+   /
+   trunk/root/base/shared/pager_advanced
+   trunk/root/base/shared/useful_tt_stuff
+Log:
+ r3266 at wiggin:  chisel | 2007-05-11 19:01:16 +0100
+ / put pager_advanced block inside pager_advanced CSS class div
+ + added &nbsp; to useful stuff [may no longer be needed, whitespace vanished when we went OTT with CHOMP options for TT]
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3265
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3266
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/shared/pager_advanced
+===================================================================
+--- trunk/root/base/shared/pager_advanced	2007-05-14 08:38:00 UTC (rev 335)
++++ trunk/root/base/shared/pager_advanced	2007-05-14 08:38:05 UTC (rev 336)
+@@ -1,46 +1,44 @@
+ [% IF page %]
+-
+-[% IF current_thread %]
+-[% url_extra_args = '&thread=' _ current_thread.id %]
+-[% END %]
+-
+-Page [% page.current_page %] of [% page.last_page %]
+-[% IF page.last_page > 1 %]
+-[
+-
+-    [% UNLESS page.current_page == page.first_page %]
+-    <a href="[% c.req.path %]?page=[% page.first_page %][% url_extra_args %]">First</a> |
++<div class="pager_advanced">
++    [% IF current_thread %]
++    [% url_extra_args = '&thread=' _ current_thread.id %]
+     [% END %]
+ 
+-    [% IF page.previous_page %]
+-    <a href="[% c.req.path %]?page=[% page.previous_page %][% url_extra_args %]">Previous</a>
+-    |
+-    [% END %]
++    Page [% page.current_page %] of [% page.last_page %]
++    [% IF page.last_page > 1 %]
++    [
++        [% UNLESS page.current_page == page.first_page %]
++        <a href="[% c.req.path %]?page=[% page.first_page %][% url_extra_args %]">First</a> |
++        [% END %]
+ 
+-    [%# pagination majick! %]
+-    [% FOREACH jiffy = page_range_spread %]
+-        [% IF jiffy %]
+-            [% IF page.current_page == jiffy %]
+-            <b>[% jiffy %]</b>
++        [% IF page.previous_page %]
++        <a href="[% c.req.path %]?page=[% page.previous_page %][% url_extra_args %]">Previous</a>
++        |
++        [% END %]
++
++        [%# pagination majick! %]
++        [% FOREACH jiffy = page_range_spread %]
++            [% IF jiffy %]
++                [% IF page.current_page == jiffy %]
++                <b>[% jiffy %]</b>
++                [% ELSE %]
++                <a href="[% c.req.path %]?page=[% jiffy %][% url_extra_args %]">[% jiffy %]</a>
++                [% END %]
+             [% ELSE %]
+-            <a href="[% c.req.path %]?page=[% jiffy %][% url_extra_args %]">[% jiffy %]</a>
++                ...
+             [% END %]
+-        [% ELSE %]
+-            ...
+         [% END %]
+-    [% END %]
+ 
+-    [% IF page.next_page %]
+-    |
+-    <a href="[% c.req.path %]?page=[% page.next_page %][% url_extra_args %]">Next</a>
+-    [% END %]
++        [% IF page.next_page %]
++        |
++        <a href="[% c.req.path %]?page=[% page.next_page %][% url_extra_args %]">Next</a>
++        [% END %]
+ 
+-    [% UNLESS page.current_page == page.last_page %]
+-    |
+-    <a href="[% c.req.path %]?page=[% page.last_page %][% url_extra_args %]">Last</a>
++        [% UNLESS page.current_page == page.last_page %]
++        |
++        <a href="[% c.req.path %]?page=[% page.last_page %][% url_extra_args %]">Last</a>
++        [% END %]
++    ]
+     [% END %]
+-
+-]
++</div>
+ [% END %]
+-
+-[% END %]
+
+Modified: trunk/root/base/shared/useful_tt_stuff
+===================================================================
+--- trunk/root/base/shared/useful_tt_stuff	2007-05-14 08:38:00 UTC (rev 335)
++++ trunk/root/base/shared/useful_tt_stuff	2007-05-14 08:38:05 UTC (rev 336)
+@@ -14,11 +14,11 @@
+     [% IF authed_user.preference.time_format %]
+         [% d.strftime(authed_user.preference.time_format.time_string) %]
+         [% IF authed_user.preference.show_tz %]
+-            [% d.time_zone_short_name() %]
++            &nbsp;[% d.time_zone_short_name() %]
+         [% END %]
+     [% ELSE %]
+         [% d.strftime('%c') %]
+-        [% d.time_zone_short_name() %]
++        &nbsp;[% d.time_zone_short_name() %]
+     [% END %]
+ [% END %]
+ 
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:24 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:24 +0200
+Subject: [Parley-svn] r338 - / trunk/root/base/forum trunk/root/base/thread
+Message-ID: <200705140838.l4E8cOQT016956@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:23 +0200 (Mon, 14 May 2007)
+New Revision: 338
+
+Modified:
+   /
+   trunk/root/base/forum/list
+   trunk/root/base/thread/view
+Log:
+ r3268 at wiggin:  chisel | 2007-05-11 19:02:33 +0100
+ / modified layout to look presentable with new styling
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3267
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3268
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/forum/list
+===================================================================
+--- trunk/root/base/forum/list	2007-05-14 08:38:10 UTC (rev 337)
++++ trunk/root/base/forum/list	2007-05-14 08:38:23 UTC (rev 338)
+@@ -1,29 +1,34 @@
+ <h1>Forum List</h1>
+ 
+ <table>
+-<tr>
+- <td>Forum</td>
+- <td>Last Post</td>
+-</tr>
+-[% WHILE (forum = forum_list.next) %]
+-<tr>
+- <td>
+-  <a href="forum/view?forum=[% forum.id %]" class="forum_link">[% forum.name %]</a>
+-  <br />
+-  <span class="forum_description">[% forum.description %]</span>
+- </td>
+- <td>
+-  [% IF forum.last_post %]
+-  [% nicedate(forum.last_post.created) %]
+-  <br />
+-     <span class="topic_creator">posted by
+-        <span class="post_creator">[% forum.last_post.creator.forum_name %]</span>
+-     </span>
+-  [% ELSE %]
+-  <br />
+-     <span class="topic_creator">No posts</span>
+-  [% END %]
+- </td>
+-</tr>
+-[% END %]
++    <tr>
++        <th>Forum</th>
++        <th>Last Post</th>
++        <th>Posts</th>
++    </tr>
++
++    [% WHILE (forum = forum_list.next) %]
++    <tr>
++        <td>
++            <a href="forum/view?forum=[% forum.id %]" class="forum_link">[% forum.name %]</a>
++            <br />
++            <span class="forum_description">[% forum.description %]</span>
++        </td>
++        <td>
++            [% IF forum.last_post %]
++            [% nicedate(forum.last_post.created) %]
++            <br />
++            <span class="topic_creator">posted by
++                <span class="post_creator">[% forum.last_post.creator.forum_name %]</span>
++            </span>
++            [% ELSE %]
++            <br />
++            <span class="topic_creator">No posts</span>
++            [% END %]
++        </td>
++        <td>
++            [% forum.post_count %]
++        </td>
++    </tr>
++    [% END %]
+ </table>
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-14 08:38:10 UTC (rev 337)
++++ trunk/root/base/thread/view	2007-05-14 08:38:23 UTC (rev 338)
+@@ -1,3 +1,115 @@
++<!-- thread/view -->
++
++[% SET dummy_value = post_list.reset %]
++
++<!-- thread subject, locked info, etc -->
++    [% IF 0 %]
++    [% PROCESS shared/threadcrumbs %]
++    [% PROCESS shared/thread_watch %]
++    [% PROCESS shared/pager_advanced %]
++
++    <small>
++    [% IF current_thread.locked %]
++        <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
++        Thread Locked
++    [% ELSE %]
++        <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
++    [% END %]
++    </small>
++    [% END %]
++<!-- end : thread subject, locked info, etc -->
++
++<!-- thread contents -->
++<table class="thread_posts">
++    <tbody>
++
++        <tr>
++            <td colspan="2" class="thread_header">
++                [% current_thread.subject %]
++            </td>
++        </tr>
++
++        <tr>
++            <td>
++                [% PROCESS shared/thread_watch %]
++            </td>
++            <td>
++                [% PROCESS shared/pager_advanced %]
++            </td>
++        </tr>
++
++    <!-- thread posts -->
++    [% WHILE (post = post_list.next) %]
++        <tr>
++            <td class="user_post_info">
++                <!-- user avatar -->
++                [% avatar_file = c.path_to('root') _ "/static/user_file/${post.creator.id}/avatar.jpg" %]
++                [% TRY %]
++                    [% USE avatar = Image(avatar_file) %]
++                    [% tmp = avatar.attr %]
++                    <img class="picborder" src="/static/user_file/[% post.creator.id %]/avatar.jpg" border="0" [% avatar.attr %] alt="Avatar" />
++                    <br />
++                [% CATCH %]
++                    <!-- No User Avatar -->
++                [% END %]
++                <!-- end : user avatar -->
++
++                [% post.creator.forum_name %]
++                <br />
++                    Posts: 
++                    [% post.creator.post_count %]
++                    post[% IF (post.creator.post_count != 1) %]s[% END %]
++                
++            </td>
++
++            <td class="post">
++                <!-- the body of the post -->
++                <div class="innerpost">
++                    [% IF post.quoted_post %]
++                    <div class="quote">
++                    <strong>[% post.quoted_post.creator.forum_name %] wrote:</strong><br>
++                    [% ForumCode.forumcode(post.quoted_text) %]<br />
++                    </div>
++                    <br />
++                    [% END %]
++                    [% ForumCode.forumcode(post.message) %]<br />
++                </div>
++                <!-- end : the body of the post -->
++
++                <div class="post_info">
++                    [% nicedate(post.created) %]
++                    [% UNLESS current_thread.locked %]
++                        <br />
++                        <br />
++                        <a class="button" href="thread/reply?post=[% post.id %]">Quote</a>
++                        <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
++                    [% END %]
++                </div>
++            </td>
++        </tr>
++    [% END %]
++    <!-- end : thread posts -->
++    </tbody>
++</table>
++<!-- end : thread contents -->
++
++<!-- post thread info -->
++    [% PROCESS shared/threadcrumbs %]
++    [% PROCESS shared/thread_watch %]
++    [% PROCESS shared/pager_advanced %]
++
++    <small>
++    [% IF current_thread.locked %]
++        <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
++        Thread Locked
++    [% ELSE %]
++        <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
++    [% END %]
++    </small>
++<!-- end : post thread info -->
++
++[% IF 0 %]
++<p>
+ <table class="maintable" align="center" border="0" cellpadding="0" cellspacing="0">
+   <tbody>
+     <tr>
+@@ -176,5 +288,8 @@
+ 
+   </tbody>
+ </table>
++</p>
++[% END %] [%# IF 0 %]
+ 
+ 
++<!-- end : thread/view -->
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:28 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:28 +0200
+Subject: [Parley-svn] r339 - / trunk/lib/Parley/Controller trunk/root/base/my
+Message-ID: <200705140838.l4E8cSoi017009@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:28 +0200 (Mon, 14 May 2007)
+New Revision: 339
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/preferences
+Log:
+ r3269 at wiggin:  chisel | 2007-05-11 19:03:59 +0100
+ / tweaks and fixes for (unfinished) preferences page
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3268
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3269
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-14 08:38:23 UTC (rev 338)
++++ trunk/lib/Parley/Controller/My.pm	2007-05-14 08:38:28 UTC (rev 339)
+@@ -4,6 +4,33 @@
+ use warnings;
+ use base 'Catalyst::Controller';
+ 
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Global class data
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++my %dfv_profile_for = (
++    # DFV validation profile for adding a new topic
++    timezone => {
++        require_some => {
++            tz_data => [ 1, qw(use_utc selectZone) ],
++        },
++
++        filters     => [qw( trim )],
++        msgs => {
++            format  => q{%s},
++            missing => q{One or more required fields are missing},
++
++            constraints => {
++                tz_data => 'you must do stuff',
++            },
++        },
++    },
++);
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Controller Actions
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
+ sub auto : Private {
+     my ($self, $c) = @_;
+     # need to be logged in to perform any 'my' actions
+@@ -19,6 +46,16 @@
+     #    $c->stash->{error}{message} = q{You need to authenticate your registration before you can start a new topic.};
+     #}
+ 
++
++    # data we always want in the stash for /my
++
++    # what's the current time? then we can show it in the TZ area
++    $c->stash->{current_time} = DateTime->now();
++
++    # fetch timezone categories
++    my $tz_categories = DateTime::TimeZone->all_names();
++    $c->stash->{tz_categories} = $tz_categories;
++
+     return 1;
+ }
+ 
+@@ -39,18 +76,48 @@
+         $c->session->{my_pref_came_from} = $c->request->referer();
+     }
+ 
+-    # what's the current time? then we can show it in the TZ area
+-    $c->stash->{current_time} = DateTime->now();
++    return;
++}
+ 
+-    # fetch timezone categories
+-    $tz_categories = DateTime::TimeZone->categories();
+-    $c->stash->{tz_categories} = $tz_categories;
++sub update :Path('/my/preferences/update') {
++    my ($self, $c) = @_;
++    # use the my/preferences template
++    $c->stash->{template} = 'my/preferences';
+ 
++    # are we updating TZ information?
++    # validate the form data
++    $c->form(
++        $dfv_profile_for{timezone}
++    );
++    # deal with missing/invalid fields
++    if ($c->form->has_missing()) {
++        $c->stash->{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c->form->missing ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c->form->has_invalid()) {
++        $c->stash->{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c->form->invalid ) {
++            push @{ $c->stash->{view}{error}{messages} }, $f;
++        }
++    }
+ 
++    # otherwise, the form data is ok ...
++    else {
++        $c->log->debug(
++            ref($c->_authed_user()->preference())
++        );
++        $c->response->redirect( $c->uri_for('/my/preferences') );
++    }
+ 
+     return;
+ }
+ 
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Private Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
+ =head1 NAME
+ 
+ Parley::Controller::My - Catalyst Controller
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-14 08:38:23 UTC (rev 338)
++++ trunk/root/base/my/preferences	2007-05-14 08:38:28 UTC (rev 339)
+@@ -1,67 +1,59 @@
+ <h1>Your preferences</h1>
+ 
++[% IF view.error.message %]
++    [% view.error.message %]
++    <ul>
++        [% FOREACH message IN view.error.messages %]
++            <li>[% message %]</li>
++        [% END %]
++    </ul>
++[% END %]
++
++
+ <h2>Timezone</h2>
+ 
+ <p>Select your desired location. This will be used to display times using your local timezone.</p>
+ 
+ <form action="my/preferences/update" method="POST" name="timezone">
+-    <table width="550">
+-
+-    [% IF tz_message %]
+-    <tr>
+-    <td colspan="2"><b><i>[% tz_message %]</i></b></td>
+-    </tr>
+-    [% END %]
+-
+-    <tr>
+-        <td>Time formatting example:</td>
+-        <td><i>[% nicedate(current_time) %]</i></td>
+-    </tr>
+-
+-    <tr>
+-    <td>
+-    <select id="selectZone" name="selectZone">
+-        <option>[ Select Zone ]</option>
+-        [% FOREACH item=tz_categories %]
+-        <option value="[% item %]">[% item %]</option>
++    <table width="550" border="1">
++        [% IF tz_message %]
++        <!-- Message to user -->
++        <tr>
++        <td colspan="2"><b><i>[% tz_message %]</i></b></td>
++        </tr>
+         [% END %]
+-    </select>
+-    </td>
+ 
+-    <td>
+-    <div id="selectPlace0">
+-    <select id="selectPlace" name="selectPlace">
+-        [%# if we have selectPlaceData ... %]
+-        [% IF selectPlaceData %]
+-        [% FOREACH item = selectPlaceData %]
+-        <option value="[% item %]">[% item %]</option>
+-        [% END %]
+-        [% ELSE %]
+-        <option>[ Select Zone First ]</option>
+-        [% END %]
+-    </select>
+-    </div>
++        <!-- TZ category list -->
++        <tr>
++            <td>
++                <select id="selectZone" name="selectZone">
++                    <option value="">[ Select Zone ]</option>
++                    [% FOREACH item=tz_categories %]
++                    <option value="[% item %]">[% item %]</option>
++                    [% END %]
++                </select>
++            </td>
+ 
+-    [% c.prototype.observe_field('selectZone',{
+-    url    => base _ 'my/preferences/setSelectPlaces',
+-    with   => "'zone='+document.getElementById('selectZone').value",
+-    update => 'selectPlace0',
+-    }) %]
++            <td class="right_align" />
++                <label for="use_utc">Use UTC</label>
++                <input type="checkbox" id="use_utc" name="use_utc" value="1" onChange="toggle_timezone_menus(this)"/>
++            </td>
++        </tr>
+ 
+-    </td>
+-    <tr>
+-    <td colspan="2" style="text-align: right;">
+-    <label for="use_utc">Use UTC</label>
+-    <input type="checkbox" id="use_utc" name="use_utc" value="1" onChange="toggle_timezone_menus(this)"/>
+-    </td>
+-    </tr>
++        <tr><td colspan="2">&nbsp;</td></tr>
+ 
+-    <tr>
+-    <td colspan="2" style="text-align: center;">
+-      <input type="submit" value="Update" name="update" class="input_button" />
+-    </td>
+-    </tr>
++        <tr>
++            <td>Time formatting example:</td>
++            <td><i>[% nicedate(current_time) %]</i></td>
++        </tr>
+ 
++        <tr><td colspan="2">&nbsp;</td></tr>
++
++        <tr>
++            <td colspan="2" style="text-align: center;">
++            <input type="submit" value="Update" name="update" class="input_button" />
++            </td>
++        </tr>
+     </table>
+ </form>
+ 
+@@ -70,10 +62,10 @@
+ 
+     function toggle_timezone_menus(checkbox) {
+         var zone_menu   = document.getElementById('selectZone');
+-        var place_menu  = document.getElementById('selectPlace');
++        //var place_menu  = document.getElementById('selectPlace');
+ 
+         zone_menu.disabled  = checkbox.checked;
+-        place_menu.disabled = checkbox.checked;
++        //place_menu.disabled = checkbox.checked;
+     }
+ 
+     // we want to make sure the menus are disabled if they need to be
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:42 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:42 +0200
+Subject: [Parley-svn] r341 - / trunk/root/base/thread trunk/root/css
+Message-ID: <200705140838.l4E8cgFH017117@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:42 +0200 (Mon, 14 May 2007)
+New Revision: 341
+
+Modified:
+   /
+   trunk/root/base/thread/view
+   trunk/root/css/common.css
+Log:
+ r3271 at wiggin:  chisel | 2007-05-11 19:24:56 +0100
+ + thread/view improvements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3270
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3271
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-14 08:38:38 UTC (rev 340)
++++ trunk/root/base/thread/view	2007-05-14 08:38:42 UTC (rev 341)
+@@ -29,14 +29,42 @@
+             </td>
+         </tr>
+ 
++        <!-- I'd really like to do this without a nested table -->
+         <tr>
+-            <td>
+-                [% PROCESS shared/thread_watch %]
++            <td colspan="2">
++                <table class="thread_info">
++                    <tbody>
++                        <tr>
++                            <td width="50%">
++                                [% PROCESS shared/thread_watch %]
++                            </td>
++                            <td width="50%" align="right">
++                                [% PROCESS shared/pager_advanced %]
++                            </td>
++                        </tr>
++                        <tr>
++                            <td width="50%">
++                                <small>
++                                    [% current_thread.view_count %]
++                                    [% IF current_thread.view_count == 1 %]view[% ELSE %]views[% END %].
++                                </small>
++                            </td>
++                            <td width="50%" align="right">
++                                <small>
++                                [% IF current_thread.locked %]
++                                    Thread Locked
++                                    <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
++                                [% ELSE %]
++                                    <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
++                                [% END %]
++                                </small>
++                            </td>
++                        </tr>
++                    </tbody>
++                </table>
+             </td>
+-            <td>
+-                [% PROCESS shared/pager_advanced %]
+-            </td>
+         </tr>
++        <!-- end : nested table evil -->
+ 
+     <!-- thread posts -->
+     [% WHILE (post = post_list.next) %]
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-14 08:38:38 UTC (rev 340)
++++ trunk/root/css/common.css	2007-05-14 08:38:42 UTC (rev 341)
+@@ -208,6 +208,18 @@
+     width:              500px;
+ }
+ 
++.thread_info {
++    margin:             0px;
++    width:              100%;
++    border:             none;
++    padding:            0px;
++}
++
++.thread_info td {
++    border:             none;
++    padding:            0px;
++}
++
+ .post {
+     padding-top:        5px;
+     vertical-align:     top;
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:38 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:38 +0200
+Subject: [Parley-svn] r340 - / trunk/lib/Parley/Controller
+Message-ID: <200705140838.l4E8ccia017067@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:38 +0200 (Mon, 14 May 2007)
+New Revision: 340
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/User.pm
+Log:
+ r3270 at wiggin:  chisel | 2007-05-11 19:10:56 +0100
+ / logging in after authenticating takes you to the default_uri, not (back) to the (expired) authentication URL
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3269
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3270
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2007-05-14 08:38:28 UTC (rev 339)
++++ trunk/lib/Parley/Controller/User.pm	2007-05-14 08:38:38 UTC (rev 340)
+@@ -42,6 +42,12 @@
+                 $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
+             }
+ 
++            # (else) if we've just been through the Authentication, don't go back there
++            elsif ($c->request->referer() =~ m{user/authenticate/}) {
++                # go to the default app URL
++                $c->response->redirect( $c->uri_for($c->config()->{default_uri}) );
++            }
++
+             # (else) redirect to where we were referred from, unless our referer is our action
+             elsif ( $c->request->referer() =~ m{\A$base}xms and $c->request->referer() !~ m{$action\z}xms) {
+                 # go to where we came from
+
+
+
+From chiselwright at mail.berlios.de  Mon May 14 10:38:46 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 14 May 2007 10:38:46 +0200
+Subject: [Parley-svn] r342 - / trunk/root/base/thread
+Message-ID: <200705140838.l4E8ck96017175@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-14 10:38:46 +0200 (Mon, 14 May 2007)
+New Revision: 342
+
+Modified:
+   /
+   trunk/root/base/thread/view
+Log:
+ r3272 at wiggin:  chisel | 2007-05-11 19:25:19 +0100
+ - remove old markup
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3271
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3272
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-14 08:38:42 UTC (rev 341)
++++ trunk/root/base/thread/view	2007-05-14 08:38:46 UTC (rev 342)
+@@ -136,188 +136,4 @@
+     </small>
+ <!-- end : post thread info -->
+ 
+-[% IF 0 %]
+-<p>
+-<table class="maintable" align="center" border="0" cellpadding="0" cellspacing="0">
+-  <tbody>
+-    <tr>
+-      <td>
+-
+-        <div align="center"></div>
+-        <br>
+-        <table align="center" border="0" cellpadding="0" cellspacing="6" width="100%">
+-          <tbody>
+-            <tr>
+-              <td>
+-                <a href="forum/list">Home</a>
+-                [% IF current_forum %]
+-                  &raquo;
+-                  <a href="forum/view?forum=[% current_forum.id %]">[% current_forum.name %]</a>
+-                  [% IF current_thread %]
+-                    &raquo;
+-                    <strong>
+-                    <a href="thread/view?thread=[% current_thread.id %]">[% ForumCode.escape(current_thread.subject) %]</a>
+-                    </strong>
+-                  [% END %]
+-
+-                  [%- IF authed_user %]
+-                  <br />
+-                  <small>
+-                      <strong>[% watcher_count %] [% IF watcher_count == 1 %]person[% ELSE %]people[% END %] watching this thread.</strong>
+-                      <br />
+-
+-                      [%- IF watching_thread %]
+-                          You are watching this thread.
+-                          (
+-                          <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]&watch=0">Remove Watch</a>
+-                          )
+-                      [%- ELSE %]
+-                          <a href="thread/watch?thread=[% current_thread.id %]&page=[% page.current_page %]">Watch this thread</a>
+-                      [%- END%]
+-                  </small>
+-                  [%- END %] [%# authed_user block %]
+-                [% END %]
+-              </td>
+-              <td class="right_align" valign="top">
+-                <small>
+-                [% INCLUDE shared/pager_advanced %]
+-                </small>
+-                <br />
+-                [% IF current_thread.locked %]
+-                <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
+-                Thread Locked
+-                [% ELSE %]
+-                <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
+-                [% END %]
+-              </td>
+-            </tr>
+-            
+-            <tr>
+-              <td colspan="2"></td>
+-            </tr>
+-          </tbody>
+-        </table>
+-
+-        [% SET dummy_value = post_list.reset %]
+-        <table class="forumtop" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+-          <tbody>
+-            <tr>
+-              <td></td>
+-            </tr>
+-          </tbody>
+-        </table>
+-
+-        [% WHILE (post = post_list.next) %]
+-        <table class="postwrap" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+-          <tbody>
+-            <tr>
+-              <td class="postbit" bgcolor="#ebeef2" valign="top" width="150">
+-                <table border="0" cellpadding="0" cellspacing="0">
+-                  <tbody>
+-                    <tr>
+-                      <td align="center">
+-                        <a href="">
+-                        [% avatar_file = c.path_to('root') _ "/static/user_file/${post.creator.id}/avatar.jpg" %]
+-                        [% TRY %]
+-                            [% USE avatar = Image(avatar_file) %]
+-                            [% tmp = avatar.attr %]
+-                            <img class="picborder" src="/static/user_file/[% post.creator.id %]/avatar.jpg" border="0" [% avatar.attr %] alt="Avatar" />
+-                        [% CATCH %]
+-                            <!-- No User Avatar -->
+-                        [% END %]
+-                        </a>
+-                      </td>
+-                    </tr>
+-                    <tr>
+-                      <td align="center" bgcolor="#ffffff">
+-                        <!-- <img src="posts_files/2.gif" width="1" height="1" alt="2.gif" /> -->
+-                      </td>
+-                    </tr>
+-                  </tbody>
+-                </table>
+-                
+-                <strong>
+-                  <a name="xx[% post.id %]"></a>
+-                  <a href="" name="[% post.id %]">[% post.creator.forum_name %]</a>
+-                </strong>
+-                <br />
+-                Posts: 
+-                [% post.creator.post_count %]
+-                post[% IF (post.creator.post_count != 1) %]s[% END %]
+-                <br />
+-              </td>
+-              
+-              <td class="post" bgcolor="#ffffff" valign="top">
+-                <div class="innerpost">
+-                  [% IF post.quoted_post %]
+-                  <div class="quote">
+-                    <strong>[% post.quoted_post.creator.forum_name %] wrote:</strong><br>
+-                    [% ForumCode.forumcode(post.quoted_text) %]<br />
+-                  </div>
+-                  <br />
+-                  [% END %]
+-                  [% ForumCode.forumcode(post.message) %]<br />
+-                </div>
+-              </td>
+-            </tr>
+-            <tr>
+-              <td class="postbit" bgcolor="#ebeef2"></td>
+-              <td class="post" align="right" bgcolor="#ffffff" valign="bottom">
+-                <span class="small">[% nicedate(post.created) %]</span>
+-                [% UNLESS current_thread.locked %]
+-                <span class="small_link">
+-                  <strong>
+-                    <a class="button" href="thread/reply?post=[% post.id %]">Quote</a>
+-                  </strong>
+-                </span>
+-                [% END %]
+-              </td>
+-            </tr>
+-          </tbody>
+-        </table>
+-[% END %]
+-      </td>
+-    </tr>
+-
+-    <tr>
+-        [% IF moderator %]
+-            <td>
+-                <!-- add/remove sticky -->
+-                [% IF current_thread.sticky %]
+-                <a href="admin/sticky?thread=[% current_thread.id %]&sticky=0">{S-}</a>
+-                [% ELSE %]
+-                <a href="admin/sticky?thread=[% current_thread.id %]">{S+}</a>
+-                [% END %]
+-
+-                <!-- add/remove locked -->
+-                [% IF current_thread.locked %]
+-                <a href="admin/lock?thread=[% current_thread.id %]&lock=0">{L-}</a>
+-                [% ELSE %]
+-                <a href="admin/lock?thread=[% current_thread.id %]">{L+}</a>
+-                [% END %]
+-
+-                <!-- add/removed active -->
+-                [% IF current_thread.active %]{A-}[% ELSE %]{A+}[% END %]
+-            </td>
+-        [% END %]
+-        <td class="right_align" valign="top">
+-        <small>
+-        [% INCLUDE shared/pager_advanced %]
+-        </small>
+-        <br />
+-        [% IF current_thread.locked %]
+-        <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
+-        Thread Locked
+-        [% ELSE %]
+-        <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
+-        [% END %]
+-        </td>
+-    </tr>
+-
+-  </tbody>
+-</table>
+-</p>
+-[% END %] [%# IF 0 %]
+-
+-
+ <!-- end : thread/view -->
+
+
+
+From chiselwright at mail.berlios.de  Tue May 15 15:37:40 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Tue, 15 May 2007 15:37:40 +0200
+Subject: [Parley-svn] r343 - / trunk/root/base/thread
+Message-ID: <200705151337.l4FDbee8012200@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-15 15:37:40 +0200 (Tue, 15 May 2007)
+New Revision: 343
+
+Modified:
+   /
+   trunk/root/base/thread/view
+Log:
+ r3284 at wiggin:  chisel | 2007-05-14 19:05:04 +0100
+ / tweaked display and layout of "thread information" block(s)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3272
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3284
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-14 08:38:46 UTC (rev 342)
++++ trunk/root/base/thread/view	2007-05-15 13:37:40 UTC (rev 343)
+@@ -2,23 +2,6 @@
+ 
+ [% SET dummy_value = post_list.reset %]
+ 
+-<!-- thread subject, locked info, etc -->
+-    [% IF 0 %]
+-    [% PROCESS shared/threadcrumbs %]
+-    [% PROCESS shared/thread_watch %]
+-    [% PROCESS shared/pager_advanced %]
+-
+-    <small>
+-    [% IF current_thread.locked %]
+-        <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
+-        Thread Locked
+-    [% ELSE %]
+-        <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
+-    [% END %]
+-    </small>
+-    [% END %]
+-<!-- end : thread subject, locked info, etc -->
+-
+ <!-- thread contents -->
+ <table class="thread_posts">
+     <tbody>
+@@ -117,23 +100,47 @@
+         </tr>
+     [% END %]
+     <!-- end : thread posts -->
++
++    <!-- post thread info -->
++        <!-- I'd really like to do this without a nested table -->
++        <tr>
++            <td colspan="2">
++                <table class="thread_info">
++                    <tbody>
++                        <tr>
++                            <td width="50%">
++                                [% PROCESS shared/thread_watch %]
++                            </td>
++                            <td width="50%" align="right">
++                                [% PROCESS shared/pager_advanced %]
++                            </td>
++                        </tr>
++                        <tr>
++                            <td width="50%">
++                                <small>
++                                    [% current_thread.view_count %]
++                                    [% IF current_thread.view_count == 1 %]view[% ELSE %]views[% END %].
++                                </small>
++                            </td>
++                            <td width="50%" align="right">
++                                <small>
++                                [% IF current_thread.locked %]
++                                    Thread Locked
++                                    <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
++                                [% ELSE %]
++                                    <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
++                                [% END %]
++                                </small>
++                            </td>
++                        </tr>
++                    </tbody>
++                </table>
++            </td>
++        </tr>
++        <!-- end : nested table evil -->
++    <!-- end : post thread info -->
++
+     </tbody>
+ </table>
+ <!-- end : thread contents -->
+-
+-<!-- post thread info -->
+-    [% PROCESS shared/threadcrumbs %]
+-    [% PROCESS shared/thread_watch %]
+-    [% PROCESS shared/pager_advanced %]
+-
+-    <small>
+-    [% IF current_thread.locked %]
+-        <img src="static/images/locked.png" alt="Locked" title="Locked Topic" width="16" height="16" />
+-        Thread Locked
+-    [% ELSE %]
+-        <a class="button" href="thread/reply?thread=[% current_thread.id %]">Reply</a>
+-    [% END %]
+-    </small>
+-<!-- end : post thread info -->
+-
+ <!-- end : thread/view -->
+
+
+
+From chiselwright at mail.berlios.de  Fri May 18 11:09:47 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Fri, 18 May 2007 11:09:47 +0200
+Subject: [Parley-svn] r344 - / trunk/lib/Parley/Controller
+	trunk/lib/Parley/Controller/User trunk/root/base
+	trunk/root/base/my trunk/root/base/search
+	trunk/root/base/thread trunk/root/css
+Message-ID: <200705180909.l4I99lUu006523@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-18 11:09:46 +0200 (Fri, 18 May 2007)
+New Revision: 344
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Controller/User.pm
+   trunk/lib/Parley/Controller/User/SignUp.pm
+   trunk/root/base/footer
+   trunk/root/base/my/preferences
+   trunk/root/base/search/forum
+   trunk/root/base/thread/view
+   trunk/root/css/common.css
+Log:
+ r3288 at wiggin:  chisel | 2007-05-17 18:40:42 +0100
+ + improved/fixed TZ setting functionality in preferences
+ + formfill from stash->{formdata} [as well as params]
+ + create person preference when they sign-up
+ + add user/profile page
+ + added some navigation links (in base/footer)
+ + tidied up layout for search/forum results page
+ + html-escape thread subject in thread/view
+ + add profile link for user in thread/view
+ + css improvements
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3284
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3288
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/My.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -76,6 +76,16 @@
+         $c->session->{my_pref_came_from} = $c->request->referer();
+     }
+ 
++    # formfill/stash data
++    if ('UTC' eq $c->_authed_user()->preference()->timezone()) {
++        $c->stash->{formdata}{use_utc} = 1;
++    }
++    else {
++        $c->stash->{formdata}{selectZone}
++            = $c->_authed_user()->preference()->timezone();
++        $c->log->dumper( $c->stash->{formdata} );
++    }
++
+     return;
+ }
+ 
+@@ -108,6 +118,19 @@
+         $c->log->debug(
+             ref($c->_authed_user()->preference())
+         );
++
++        # store preference values
++        if ($c->form->valid('use_utc')) {
++            $c->_authed_user()->preference()->timezone('UTC');
++        }
++        else {
++            $c->_authed_user()->preference()->timezone(
++                $c->form->valid('selectZone')
++            );
++        }
++        # store changes
++        $c->_authed_user()->preference()->update();
++
+         $c->response->redirect( $c->uri_for('/my/preferences') );
+     }
+ 
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/Root.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -199,6 +199,7 @@
+ 
+     # fill in any forms
+     $c->fillform( );
++    $c->fillform( $c->stash->{formdata} );
+ }
+ 
+ 
+
+Modified: trunk/lib/Parley/Controller/User/SignUp.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User/SignUp.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/User/SignUp.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -338,7 +338,7 @@
+ 
+ sub _txn_add_new_user {
+     my ($self, $c) = @_;
+-    my ($valid_results, $new_auth, $new_person, $status_ok);
++    my ($valid_results, $new_auth, $new_person, $new_preference, $status_ok);
+ 
+     # less typing
+     $valid_results = $c->form->valid;
+@@ -362,6 +362,17 @@
+         }
+     );
+ 
++    # add (default) prefs for new person
++    $new_preference = $c->model('ParleyDB')->resultset('Preference')->create(
++        {
++            # default everything
++            show_tz => 1,
++        }
++    );
++    # and link to the new person
++    $new_person->preference( $new_preference->id() );
++
++
+     # send an authentication email
+     $status_ok = $self->_new_user_authentication_email( $c, $new_person );
+ 
+
+Modified: trunk/lib/Parley/Controller/User.pm
+===================================================================
+--- trunk/lib/Parley/Controller/User.pm	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/lib/Parley/Controller/User.pm	2007-05-18 09:09:46 UTC (rev 344)
+@@ -87,8 +87,29 @@
+     }
+ }
+ 
++sub profile :Local {
++    my ($self, $c) = @_;
++    my ($user_id, $person);
+ 
++    $user_id = $c->request->param('user');
++    if (defined $user_id) {
++        # make sure we got a sane looking user-id
++        if (not $user_id =~ m{\A\d+\z}) {
++            $c->stash->{error}{message} = 'non-integer user passed';
++            return;
++        }
+ 
++        # fetch the matching user
++        $c->stash->{profiled_user}
++            = $c->model('ParleyDB::Person')->find( $user_id );
++    }
++    else {
++        $c->stash->{error}{message} = 'No user specified';
++        return;
++    }
++}
++
++
+ 1;
+ 
+ __END__
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/footer	2007-05-18 09:09:46 UTC (rev 344)
+@@ -6,6 +6,20 @@
+             <div id="navigation">
+                 <p>Navigation</p>
+                 [% PROCESS shared/navigation %]
++
++                <p>
++                <a href="javascript:;" onclick="search_dialog.show(); return false;">Search</a>
++                </p>
++
++                <p>
++                <a href="thread/recent">Recently Updated Threads</a>
++                </p>
++
++                [% IF authed_user %]
++                <p>
++                <a href="my/preferences">Preferences</a>
++                </p>
++                [% END %]
+             </div><!-- navigation div -->
+ 
+             <div id="extra">
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/my/preferences	2007-05-18 09:09:46 UTC (rev 344)
+@@ -40,7 +40,7 @@
+             </td>
+         </tr>
+ 
+-        <tr><td colspan="2">&nbsp;</td></tr>
++        <!-- <tr><td colspan="2">&nbsp;</td></tr> -->
+ 
+         <tr>
+             <td>Time formatting example:</td>
+
+Modified: trunk/root/base/search/forum
+===================================================================
+--- trunk/root/base/search/forum	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/search/forum	2007-05-18 09:09:46 UTC (rev 344)
+@@ -3,10 +3,11 @@
+ <h2>Searching for <em>[% search_terms.raw || '[nothing]' %]</em> in <em>[% search_forum.name || 'all forums' %]</em></h2>
+ 
+ [% IF search_results %]
+-    <table>
++
++    <table class="search_results">
+     <tr>
+-        <td>Subject</td>
+-        <td>Snippet</td>
++        <th>Subject</th>
++        <th>Snippet</th>
+     </tr>
+ 
+     [% WHILE (result = search_results.next) %]
+@@ -30,7 +31,7 @@
+     [% END %]
+ 
+     <tr>
+-        <td class="right_align" valign="top">
++        <td class="right_align" valign="top" colspan="2">
+         <small>
+         [% INCLUDE shared/pager_advanced %]
+         </small>
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/base/thread/view	2007-05-18 09:09:46 UTC (rev 344)
+@@ -8,7 +8,7 @@
+ 
+         <tr>
+             <td colspan="2" class="thread_header">
+-                [% current_thread.subject %]
++                [% ForumCode.escape(current_thread.subject) %]
+             </td>
+         </tr>
+ 
+@@ -65,9 +65,9 @@
+                 [% END %]
+                 <!-- end : user avatar -->
+ 
+-                [% post.creator.forum_name %]
++                <a href="user/profile?user=[% post.creator.id %]">[% post.creator.forum_name %]</a>
++
+                 <br />
+-                    Posts: 
+                     [% post.creator.post_count %]
+                     post[% IF (post.creator.post_count != 1) %]s[% END %]
+                 
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-15 13:37:40 UTC (rev 343)
++++ trunk/root/css/common.css	2007-05-18 09:09:46 UTC (rev 344)
+@@ -202,6 +202,34 @@
+     padding:            4px;
+ }
+ 
++.search_results {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
++.user_profile {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
++.user_profile_key {
++    font-weight:        bold;
++    text-align:         right;
++    vertical-align:     top;
++}
++
++td.user_profile_key {
++    width:              120px;
++}
++
++.user_profile_value {
++    font-weight:        none;
++    text-align:         left;
++    vertical-align:     top;
++}
++
+ .thread_posts {
+     margin-left:        50px;
+     margin-right:       50px;
+
+
+
+From chiselwright at mail.berlios.de  Mon May 21 22:13:08 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 21 May 2007 22:13:08 +0200
+Subject: [Parley-svn] r345 - / trunk/db trunk/lib/Parley/Controller
+	trunk/root/base trunk/root/base/my trunk/root/base/shared
+	trunk/root/css trunk/script
+Message-ID: <200705212013.l4LKD8ZU029004@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-21 22:13:05 +0200 (Mon, 21 May 2007)
+New Revision: 345
+
+Added:
+   trunk/db/patch_0.52_to_0.53.psql
+   trunk/root/base/my/tab_time
+   trunk/root/base/my/tab_you
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/header
+   trunk/root/base/my/preferences
+   trunk/root/base/shared/useful_tt_stuff
+   trunk/root/css/common.css
+   trunk/script/time_string_sample.pl
+Log:
+ r3301 at wiggin:  chisel | 2007-05-21 18:43:51 +0100
+ + new time_formats for preference_time_string table
+ + display time_formats in my/preferences
+ + set time_format and show_tz in my/preferences
+ + (p)refill time_format and show_tz fields in my/preferences
+ + split my/preferences with a (dojo) tabbed container
+ + added [unfinished] tab for user details (name, etc)
+ - removed unnecessary &nbsp; entities
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3288
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3301
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/db/parley.psql	2007-05-21 20:13:05 UTC (rev 345)
+@@ -34,6 +34,9 @@
+ INSERT INTO preference_time_string (time_string, sample, comment) VALUES ('%c','Thu 13 Jul 2006 18:15:00 BST','locale\'s date and time'); 
+ INSERT INTO preference_time_string (time_string, sample) VALUES ('%A at %R', 'Thursday at 18:15');
+ INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d', '18:15, Jul 13');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d ''%y', '18:15, Jul 13 \'06');
+ 
+ 
+ CREATE TABLE preference (
+
+Added: trunk/db/patch_0.52_to_0.53.psql
+===================================================================
+--- trunk/db/patch_0.52_to_0.53.psql	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/db/patch_0.52_to_0.53.psql	2007-05-21 20:13:05 UTC (rev 345)
+@@ -0,0 +1,19 @@
++-- Patch:
++--   From: 0.52
++--   To:   0.53
++--
++-- Description:
++--  new time format preferences
++
++BEGIN;
++
++-- patch starts here --
++
++--  new time format preferences
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%a, %d %b; %R', 'Thu, 13 Jul; 18:15');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d', '18:15, Jul 13');
++INSERT INTO preference_time_string (time_string, sample) VALUES ('%R, %b %d ''%y', '18:15, Jul 13 \'06');
++
++-- patch ends here --
++
++COMMIT;
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/lib/Parley/Controller/My.pm	2007-05-21 20:13:05 UTC (rev 345)
+@@ -14,6 +14,9 @@
+         require_some => {
+             tz_data => [ 1, qw(use_utc selectZone) ],
+         },
++        optional => [
++            qw( show_tz time_format ),
++        ],
+ 
+         filters     => [qw( trim )],
+         msgs => {
+@@ -56,6 +59,16 @@
+     my $tz_categories = DateTime::TimeZone->all_names();
+     $c->stash->{tz_categories} = $tz_categories;
+ 
++    # fetch time formats
++    $c->stash->{time_formats} =
++        $c->model('ParleyDB')->resultset('PreferenceTimeString')->search(
++            {},     # fetch everything
++            {
++                order_by    => 'sample',    # order by the "preview/sample" string
++            }
++        );
++
++
+     return 1;
+ }
+ 
+@@ -83,8 +96,15 @@
+     else {
+         $c->stash->{formdata}{selectZone}
+             = $c->_authed_user()->preference()->timezone();
+-        $c->log->dumper( $c->stash->{formdata} );
+     }
++    # time format
++    if (defined $c->_authed_user()->preference()->time_format()) {
++        $c->stash->{formdata}{time_format} =
++            $c->_authed_user()->preference()->time_format()->id();
++    }
++    # show tz?
++    $c->stash->{formdata}{show_tz}
++        = $c->_authed_user()->preference()->show_tz();
+ 
+     return;
+ }
+@@ -94,6 +114,10 @@
+     # use the my/preferences template
+     $c->stash->{template} = 'my/preferences';
+ 
++    # return to the right tab
++    # XXX $c->stash->{show_tab} = 'tab_time';
++    # XXX we lose this info when we redirect
++
+     # are we updating TZ information?
+     # validate the form data
+     $c->form(
+@@ -119,7 +143,7 @@
+             ref($c->_authed_user()->preference())
+         );
+ 
+-        # store preference values
++        # tz preference value
+         if ($c->form->valid('use_utc')) {
+             $c->_authed_user()->preference()->timezone('UTC');
+         }
+@@ -128,6 +152,19 @@
+                 $c->form->valid('selectZone')
+             );
+         }
++        # time_format preference
++        if (defined $c->form->valid('time_format')) {
++            $c->_authed_user()->preference()->time_format(
++                $c->form->valid('time_format')
++            )
++        }
++        else {
++            $c->_authed_user()->preference()->time_format( undef );
++        }
++        # show_tz
++        $c->_authed_user()->preference()->show_tz(
++            ($c->form->valid('show_tz') || 0)
++        );
+         # store changes
+         $c->_authed_user()->preference()->update();
+ 
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/header	2007-05-21 20:13:05 UTC (rev 345)
+@@ -39,6 +39,15 @@
+             dojo.require("dojo.lfx.*");         // animations and eye candy
+             dojo.require("dojo.widget.Dialog");
+             dojo.require("dojo.widget.Button");
++
++            dojo.require("dojo.widget.TabContainer");
++            dojo.require("dojo.widget.LinkPane");
++            dojo.require("dojo.widget.ContentPane");
++            dojo.require("dojo.widget.LayoutContainer");
++
++            dojo.require("dojo.widget.InlineEditBox");
++            dojo.require("dojo.event.*");
++            dojo.hostenv.writeIncludes();
+         </script>
+     </head>
+ 
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/my/preferences	2007-05-21 20:13:05 UTC (rev 345)
+@@ -9,72 +9,20 @@
+     </ul>
+ [% END %]
+ 
++<p>
++<div id="mainTabContainer" dojoType="TabContainer" style="width: 100%; height: 300px" selectedTab="[% show_pref_tab || 'tab_you' %]" >
++    <div id="tab_you" dojoType="ContentPane" label="Your Details">
++        [% PROCESS my/tab_you %]
++    </div>
++    <div id="tab_time" dojoType="ContentPane" label="Time">
++        [% PROCESS my/tab_time %]
++    </div>
++</div>
+ 
+-<h2>Timezone</h2>
+-
+-<p>Select your desired location. This will be used to display times using your local timezone.</p>
+-
+-<form action="my/preferences/update" method="POST" name="timezone">
+-    <table width="550" border="1">
+-        [% IF tz_message %]
+-        <!-- Message to user -->
+-        <tr>
+-        <td colspan="2"><b><i>[% tz_message %]</i></b></td>
+-        </tr>
+-        [% END %]
+-
+-        <!-- TZ category list -->
+-        <tr>
+-            <td>
+-                <select id="selectZone" name="selectZone">
+-                    <option value="">[ Select Zone ]</option>
+-                    [% FOREACH item=tz_categories %]
+-                    <option value="[% item %]">[% item %]</option>
+-                    [% END %]
+-                </select>
+-            </td>
+-
+-            <td class="right_align" />
+-                <label for="use_utc">Use UTC</label>
+-                <input type="checkbox" id="use_utc" name="use_utc" value="1" onChange="toggle_timezone_menus(this)"/>
+-            </td>
+-        </tr>
+-
+-        <!-- <tr><td colspan="2">&nbsp;</td></tr> -->
+-
+-        <tr>
+-            <td>Time formatting example:</td>
+-            <td><i>[% nicedate(current_time) %]</i></td>
+-        </tr>
+-
+-        <tr><td colspan="2">&nbsp;</td></tr>
+-
+-        <tr>
+-            <td colspan="2" style="text-align: center;">
+-            <input type="submit" value="Update" name="update" class="input_button" />
+-            </td>
+-        </tr>
+-    </table>
+-</form>
+-
+-<script language="JavaScript">
+-<!-- Begin
+-
+-    function toggle_timezone_menus(checkbox) {
+-        var zone_menu   = document.getElementById('selectZone');
+-        //var place_menu  = document.getElementById('selectPlace');
+-
+-        zone_menu.disabled  = checkbox.checked;
+-        //place_menu.disabled = checkbox.checked;
+-    }
+-
+-    // we want to make sure the menus are disabled if they need to be
+-    var use_utc_cbox = document.getElementById('use_utc');
+-    toggle_timezone_menus(use_utc_cbox);
+-    
+-// End -->
+-</script>
+-
+ [% IF c.session.my_pref_came_from %]
++<p>
+ <a href="[% c.session.my_pref_came_from %]">Return to the forum</a>
++</p>
++[% ELSE %]
++<p>&nbsp;</p>
+ [% END %]
+
+Added: trunk/root/base/my/tab_time
+===================================================================
+--- trunk/root/base/my/tab_time	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/my/tab_time	2007-05-21 20:13:05 UTC (rev 345)
+@@ -0,0 +1,81 @@
++<!-- preferences : time tab -->
++<p>Select your desired location. This will be used to display times using your local timezone.</p>
++
++<form action="my/preferences/update" method="POST" name="timezone">
++    <table width="550" border="1">
++        [% IF tz_message %]
++        <!-- Message to user -->
++        <tr>
++        <td colspan="2"><b><i>[% tz_message %]</i></b></td>
++        </tr>
++        [% END %]
++
++        <!-- TZ category list -->
++        <tr>
++            <td>
++                <select id="selectZone" name="selectZone">
++                    <option value="">[ Select Zone ]</option>
++                    [% FOREACH item=tz_categories %]
++                    <option value="[% item %]">[% item %]</option>
++                    [% END %]
++                </select>
++            </td>
++
++            <td class="right_align" />
++                <label for="use_utc">Use UTC</label>
++                <input type="checkbox" id="use_utc" name="use_utc" value="1" onChange="toggle_timezone_menus(this)"/>
++            </td>
++        </tr>
++
++        <!-- Time Format List -->
++        <tr>
++            <td>
++                <select id="time_format" name="time_format" style="text-align: center;">
++                    <option value="">(Default)</option>
++                    [% WHILE (tf = time_formats.next) %]
++                    <option value="[% tf.id %]">[% tf.sample %]</option>
++                    [% END %]
++                </select>
++            </td>
++            <td class="right_align">
++                <label for="show_tz">Show timezone</label>
++                <input type="checkbox" id="show_tz" name="show_tz" value="1" />
++            </td>
++        </tr>
++
++        <!-- <tr><td colspan="2">&nbsp;</td></tr> -->
++
++        <tr>
++            <td>Time formatting example:</td>
++            <td><i>[% nicedate(current_time) %]</i></td>
++        </tr>
++
++        <tr><td colspan="2">&nbsp;</td></tr>
++
++
++        <tr>
++            <td colspan="2" style="text-align: center;">
++            <input type="submit" value="Update" name="update" class="input_button" />
++            </td>
++        </tr>
++    </table>
++</form>
++
++<script language="JavaScript">
++<!-- Begin
++
++    function toggle_timezone_menus(checkbox) {
++        var zone_menu   = document.getElementById('selectZone');
++        //var place_menu  = document.getElementById('selectPlace');
++
++        zone_menu.disabled  = checkbox.checked;
++        //place_menu.disabled = checkbox.checked;
++    }
++
++    // we want to make sure the menus are disabled if they need to be
++    var use_utc_cbox = document.getElementById('use_utc');
++    toggle_timezone_menus(use_utc_cbox);
++    
++// End -->
++</script>
++<!-- (end) preferences : time tab -->
+
+Added: trunk/root/base/my/tab_you
+===================================================================
+--- trunk/root/base/my/tab_you	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/my/tab_you	2007-05-21 20:13:05 UTC (rev 345)
+@@ -0,0 +1,55 @@
++<!-- preferences : tab_you -->
++
++<table class="user_profile">
++    <tbody>
++        <tr>
++            <td width="25%">
++                First Name:
++            </td>
++
++            <td>
++                <div class="inlineEdit" dojoType="inlineEditBox" >
++                [% authed_user.first_name %]
++                </div>
++            </td>
++        </tr>
++
++        <tr>
++            <td width="25%">
++                Last Name:
++            </td>
++
++            <td>
++                <div class="inlineEdit" dojoType="inlineEditBox" >
++                [% authed_user.last_name %]
++                </div>
++            </td>
++        </tr>
++
++        <tr>
++            <td width="25%">
++                Forum Name:
++            </td>
++
++            <td>
++                <div class="inlineEdit" dojoType="inlineEditBox" >
++                [% authed_user.forum_name %]
++                </div>
++            </td>
++        </tr>
++
++        <tr>
++            <td width="25%">
++                Email Address
++            </td>
++
++            <td>
++                <div class="inlineEdit" dojoType="inlineEditBox" >
++                [% authed_user.email %]
++                </div>
++            </td>
++        </tr>
++    </tbody>
++</table>
++
++<!-- (end) preferences : tab_you -->
+
+Modified: trunk/root/base/shared/useful_tt_stuff
+===================================================================
+--- trunk/root/base/shared/useful_tt_stuff	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/base/shared/useful_tt_stuff	2007-05-21 20:13:05 UTC (rev 345)
+@@ -14,11 +14,11 @@
+     [% IF authed_user.preference.time_format %]
+         [% d.strftime(authed_user.preference.time_format.time_string) %]
+         [% IF authed_user.preference.show_tz %]
+-            &nbsp;[% d.time_zone_short_name() %]
++            [% d.time_zone_short_name() %]
+         [% END %]
+     [% ELSE %]
+         [% d.strftime('%c') %]
+-        &nbsp;[% d.time_zone_short_name() %]
++        [% d.time_zone_short_name() %]
+     [% END %]
+ [% END %]
+ 
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/root/css/common.css	2007-05-21 20:13:05 UTC (rev 345)
+@@ -53,6 +53,10 @@
+     padding:            3px;
+ }
+ 
++.dojoTabPaneWrapper {
++  padding : 10px 10px 10px 10px;
++}
++
+ /* dojo dialog styling - initially taken from dojo demo */
+ .dojoDialog {
+     background : #eee;
+
+Modified: trunk/script/time_string_sample.pl
+===================================================================
+--- trunk/script/time_string_sample.pl	2007-05-18 09:09:46 UTC (rev 344)
++++ trunk/script/time_string_sample.pl	2007-05-21 20:13:05 UTC (rev 345)
+@@ -1,6 +1,7 @@
+ #!/usr/bin/perl
+ use strict;
+ use warnings;
++use DateTime;
+ 
+ use POSIX 'strftime';
+ 
+@@ -10,8 +11,17 @@
+     q{%c},
+     q{%A at %R},
+     q{%a, %d %b; %R},
++
++    q{%R, %b %d},
++    q{%R, %b %d '%y},
++    q{%R, %b %d %Y},
+ );
+ 
+ foreach my $tf (@time_formats) {
++    my $dt = DateTime->now();
++    print $dt->strftime( $tf ), qq{\n};
++
+     printf(qq{INSERT INTO preference_time_string (time_string, sample) VALUES ('%s', '%s');\n}, $tf, strftime($tf, 0, 15, 18, 13, 6, 106));
++
++    print qq{\n};
+ }
+
+
+
+From chiselwright at mail.berlios.de  Mon May 21 22:13:57 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 21 May 2007 22:13:57 +0200
+Subject: [Parley-svn] r346 - / trunk/lib/Parley/Controller trunk/root/base/my
+Message-ID: <200705212013.l4LKDvCp029095@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-21 22:13:57 +0200 (Mon, 21 May 2007)
+New Revision: 346
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/preferences
+Log:
+ r3302 at wiggin:  chisel | 2007-05-21 18:50:45 +0100
+ / fix form submits for my/preferences so that they show the relevant tab on the page reload (by using flash instead of stash)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3301
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3302
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-21 20:13:05 UTC (rev 345)
++++ trunk/lib/Parley/Controller/My.pm	2007-05-21 20:13:57 UTC (rev 346)
+@@ -115,8 +115,8 @@
+     $c->stash->{template} = 'my/preferences';
+ 
+     # return to the right tab
+-    # XXX $c->stash->{show_tab} = 'tab_time';
+-    # XXX we lose this info when we redirect
++    # use session flash, or we lose the info with the redirect
++    $c->flash->{show_pref_tab} = 'tab_time';
+ 
+     # are we updating TZ information?
+     # validate the form data
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-21 20:13:05 UTC (rev 345)
++++ trunk/root/base/my/preferences	2007-05-21 20:13:57 UTC (rev 346)
+@@ -10,7 +10,7 @@
+ [% END %]
+ 
+ <p>
+-<div id="mainTabContainer" dojoType="TabContainer" style="width: 100%; height: 300px" selectedTab="[% show_pref_tab || 'tab_you' %]" >
++<div id="mainTabContainer" dojoType="TabContainer" style="width: 100%; height: 300px" selectedTab="[% c.flash.show_pref_tab || 'tab_you' %]" >
+     <div id="tab_you" dojoType="ContentPane" label="Your Details">
+         [% PROCESS my/tab_you %]
+     </div>
+
+
+
+From chiselwright at mail.berlios.de  Mon May 21 22:15:18 2007
+From: chiselwright at mail.berlios.de (chiselwright at BerliOS)
+Date: Mon, 21 May 2007 22:15:18 +0200
+Subject: [Parley-svn] r347 - / trunk/lib trunk/root/css
+Message-ID: <200705212015.l4LKFItg029277@sheep.berlios.de>
+
+Author: chiselwright
+Date: 2007-05-21 22:15:17 +0200 (Mon, 21 May 2007)
+New Revision: 347
+
+Modified:
+   /
+   trunk/lib/Parley.pm
+   trunk/root/css/common.css
+Log:
+ r3303 at wiggin:  chisel | 2007-05-21 19:04:30 +0100
+ / upped version number (looks like I forgot this after 0.52 was tagged)
+ + added form (CSS) style info
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3302
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3303
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2007-05-21 20:13:57 UTC (rev 346)
++++ trunk/lib/Parley.pm	2007-05-21 20:15:17 UTC (rev 347)
+@@ -28,7 +28,7 @@
+ 
+ use Parley::App::Communication::Email qw( :email );
+ 
+-our $VERSION = '0.52';
++our $VERSION = '0.53_001';
+ 
+ __PACKAGE__->config( version => $VERSION );
+ __PACKAGE__->setup;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-21 20:13:57 UTC (rev 346)
++++ trunk/root/css/common.css	2007-05-21 20:15:17 UTC (rev 347)
+@@ -292,3 +292,29 @@
+     text-decoration:    none;
+     margin:             2px;
+ }
++
++
++
++
++
++form input, form textarea {
++    /* display: inline; inline display must not be set or will hide submit buttons in IE 5x mac */
++    width:auto;      /* set width of form elements to auto-size, otherwise watch for wrap on resize */
++    margin:5px 0 0 10px; /* set margin on left of form elements rather than right of
++                              label aligns textarea better in IE */
++}
++
++form input#reset {
++    margin-left:0px; /* set margin-left back to zero on reset button (set above) */
++}
++
++form label { 
++    display: block;  /* block float the labels to left column, set a width */
++    float: left;
++    width: 150px;
++    padding: 0;
++    margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
++    text-align: right;
++    font-weight: bold;
++}
++
+
+
+

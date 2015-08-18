@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r971 - / trunk/lib/Parley/View trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-December/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r971%20-%20/%20trunk/lib/Parley/View%20trunk/t&In-Reply-To=%3C200812121900.mBCJ0cpe009599%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000852.html">
+   <LINK REL="Next"  HREF="000854.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r971 - / trunk/lib/Parley/View trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r971%20-%20/%20trunk/lib/Parley/View%20trunk/t&In-Reply-To=%3C200812121900.mBCJ0cpe009599%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r971 - / trunk/lib/Parley/View trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri Dec 12 20:00:38 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000852.html">[Parley-svn] r970 - / trunk
+</A></li>
+        <LI>Next message: <A HREF="000854.html">[Parley-svn] r972 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#853">[ date ]</a>
+              <a href="thread.html#853">[ thread ]</a>
+              <a href="subject.html#853">[ subject ]</a>
+              <a href="author.html#853">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-12-12 20:00:38 +0100 (Fri, 12 Dec 2008)
+New Revision: 971
+
+Added:
+   trunk/lib/Parley/View/JSON.pm
+   trunk/t/view_JSON.t
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r8611 at wiggin</A>:  chisel | 2008-12-12 07:47:16 +0000
+ + added JSON view
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8610
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:8611
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/lib/Parley/View/JSON.pm
+===================================================================
+--- trunk/lib/Parley/View/JSON.pm	2008-12-12 19:00:26 UTC (rev 970)
++++ trunk/lib/Parley/View/JSON.pm	2008-12-12 19:00:38 UTC (rev 971)
+@@ -0,0 +1,26 @@
++package Parley::View::JSON;
++use strict;
++use warnings;
++use base qw( Catalyst::View::JSON );
++
++1;
++__END__
++
++=head1 NAME
++
++Parley::View::JSON - Catalyst View
++
++=head1 DESCRIPTION
++
++Catalyst JSON View.
++
++=head1 AUTHOR
++
++Chisel Wright
++
++=head1 LICENSE
++
++This library is free software, you can redistribute it and/or modify
++it under the same terms as Perl itself.
++
++=cut
+
+Added: trunk/t/view_JSON.t
+===================================================================
+--- trunk/t/view_JSON.t	2008-12-12 19:00:26 UTC (rev 970)
++++ trunk/t/view_JSON.t	2008-12-12 19:00:38 UTC (rev 971)
+@@ -0,0 +1,6 @@
++use strict;
++use warnings;
++use Test::More tests =&gt; 1;
++
++BEGIN { use_ok 'Parley::View::JSON' }
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000852.html">[Parley-svn] r970 - / trunk
+</A></li>
+	<LI>Next message: <A HREF="000854.html">[Parley-svn] r972 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#853">[ date ]</a>
+              <a href="thread.html#853">[ thread ]</a>
+              <a href="subject.html#853">[ subject ]</a>
+              <a href="author.html#853">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

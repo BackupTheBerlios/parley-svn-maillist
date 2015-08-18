@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r577 - / trunk/root/email_templates	trunk/root/email_templates/en
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r577%20-%20/%20trunk/root/email_templates%0A%09trunk/root/email_templates/en&In-Reply-To=%3C200710222029.l9MKTLSH002148%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000464.html">
+   <LINK REL="Next"  HREF="000466.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r577 - / trunk/root/email_templates	trunk/root/email_templates/en</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r577%20-%20/%20trunk/root/email_templates%0A%09trunk/root/email_templates/en&In-Reply-To=%3C200710222029.l9MKTLSH002148%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r577 - / trunk/root/email_templates	trunk/root/email_templates/en">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Oct 22 22:29:21 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000464.html">[Parley-svn] r576 - / trunk/lib/Parley/App/Communication
+</A></li>
+        <LI>Next message: <A HREF="000466.html">[Parley-svn] r578 - / trunk/root/base/user/signup
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#465">[ date ]</a>
+              <a href="thread.html#465">[ thread ]</a>
+              <a href="subject.html#465">[ subject ]</a>
+              <a href="author.html#465">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-22 22:29:21 +0200 (Mon, 22 Oct 2007)
+New Revision: 577
+
+Added:
+   trunk/root/email_templates/en/
+   trunk/root/email_templates/en/authentication_email.eml
+   trunk/root/email_templates/en/password_reset.eml
+   trunk/root/email_templates/en/thread_update_notify.eml
+   trunk/root/email_templates/en/thread_update_notify.html
+   trunk/root/email_templates/en/username_reminder.eml
+Removed:
+   trunk/root/email_templates/authentication_email.eml
+   trunk/root/email_templates/password_reset.eml
+   trunk/root/email_templates/thread_update_notify.eml
+   trunk/root/email_templates/thread_update_notify.html
+   trunk/root/email_templates/username_reminder.eml
+Modified:
+   /
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4004 at wiggin</A>:  chisel | 2007-10-22 21:23:11 +0100
+ / moved templates into the generic English directory
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4003
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4004
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Deleted: trunk/root/email_templates/authentication_email.eml
+===================================================================
+--- trunk/root/email_templates/authentication_email.eml	2007-10-22 20:29:02 UTC (rev 576)
++++ trunk/root/email_templates/authentication_email.eml	2007-10-22 20:29:21 UTC (rev 577)
+@@ -1,12 +0,0 @@
+-[% person.first_name %],
+-
+-Thanks for registering with [% c.config.name %]
+-To complete your registration please click on the link below.
+-
+-  [% c.request.base %]user/authenticate/[% regauth.id %]
+-
+-and follow the on-screen instructions.
+-
+-Regards,
+-
+-The [% c.config.name %] team.
+
+Copied: trunk/root/email_templates/en/authentication_email.eml (from rev 266, trunk/root/email_templates/authentication_email.eml)
+
+Copied: trunk/root/email_templates/en/password_reset.eml (from rev 266, trunk/root/email_templates/password_reset.eml)
+
+Copied: trunk/root/email_templates/en/thread_update_notify.eml (from rev 405, trunk/root/email_templates/thread_update_notify.eml)
+
+Copied: trunk/root/email_templates/en/thread_update_notify.html (from rev 405, trunk/root/email_templates/thread_update_notify.html)
+
+Copied: trunk/root/email_templates/en/username_reminder.eml (from rev 266, trunk/root/email_templates/username_reminder.eml)
+
+Deleted: trunk/root/email_templates/password_reset.eml
+===================================================================
+--- trunk/root/email_templates/password_reset.eml	2007-10-22 20:29:02 UTC (rev 576)
++++ trunk/root/email_templates/password_reset.eml	2007-10-22 20:29:21 UTC (rev 577)
+@@ -1,11 +0,0 @@
+-[% person.first_name %],
+-
+-To reset your account password please click on the link below.
+-
+-  [% c.request.base %]user/password/reset/[% pwd_reset.id %]
+-
+-and follow the on-screen instructions.
+-
+-Regards,
+-
+-The [% c.config.name %] team.
+
+Deleted: trunk/root/email_templates/thread_update_notify.eml
+===================================================================
+--- trunk/root/email_templates/thread_update_notify.eml	2007-10-22 20:29:02 UTC (rev 576)
++++ trunk/root/email_templates/thread_update_notify.eml	2007-10-22 20:29:21 UTC (rev 577)
+@@ -1,19 +0,0 @@
+-[% person.first_name %],
+-
+-The thread &quot;[% post.thread.subject %]&quot;
+-has received a new reply by [% post.creator.forum_name %].
+-
+-Click here to continue reading the thread:
+-
+- [% c.req.base %]thread/next_post?thread=[% post.thread.id %]
+-
+-Click here to view the latest post in the thread:
+-
+- [% c.req.base %]post/view?post=[% post.id %]
+-
+-Please note: You will not receive any further notifications for this
+-thread until you view the post above or any posts created after it.
+-
+-Regards,
+-
+-The [% c.config.name %] team.
+
+Deleted: trunk/root/email_templates/thread_update_notify.html
+===================================================================
+--- trunk/root/email_templates/thread_update_notify.html	2007-10-22 20:29:02 UTC (rev 576)
++++ trunk/root/email_templates/thread_update_notify.html	2007-10-22 20:29:21 UTC (rev 577)
+@@ -1,30 +0,0 @@
+-&lt;html&gt;
+-    &lt;head&gt;
+-        &lt;title&gt;Thread Update Notification&lt;/title&gt;
+-    &lt;/head&gt;
+-
+-    &lt;body&gt;
+-        &lt;p&gt;[% person.first_name %],&lt;/p&gt;
+-
+-        &lt;p&gt;The thread &quot;[% post.thread.subject %]&quot;
+-        has received a new reply by [% post.creator.forum_name %].&lt;/p&gt;
+-
+-        &lt;p&gt;Choose one of the following actions:
+-        &lt;ul&gt;
+-            &lt;li&gt;
+-            &lt;a href=&quot;[% c.req.base %]thread/next_post?thread=[% post.thread.id %]&quot;&gt;Continue reading &quot;[% post.thread.subject %]&quot; from your last position&lt;/a&gt;
+-            &lt;/li&gt;
+-            &lt;li&gt;
+-            &lt;a href=&quot;[% c.req.base %]post/view?post=[% post.id %]&quot;&gt;View &quot;[% post.thread.subject %]&quot; from the new post&lt;/a&gt;
+-            &lt;/li&gt;
+-        &lt;/ul&gt;
+-        &lt;/p&gt;
+-
+-        &lt;p&gt;Please note: You &lt;b&gt;will not&lt;/b&gt; receive any further notifications for this thread until you view the post above
+-        or any posts created after it.&lt;/p&gt;
+-
+-        &lt;p&gt;Regards,&lt;/p&gt;
+-
+-        &lt;p&gt;The [% c.config.name %] team.&lt;/p&gt;
+-    &lt;/body&gt;
+-&lt;/html&gt;
+
+Deleted: trunk/root/email_templates/username_reminder.eml
+===================================================================
+--- trunk/root/email_templates/username_reminder.eml	2007-10-22 20:29:02 UTC (rev 576)
++++ trunk/root/email_templates/username_reminder.eml	2007-10-22 20:29:21 UTC (rev 577)
+@@ -1,13 +0,0 @@
+-[% person.first_name %],
+-
+-Your username for [% c.config.name %] is:
+-
+-  [% person.authentication.username %]
+-
+-You can visit [% c.config.name %] at:
+-
+-  [% c.request.base %]
+-
+-Regards,
+-
+-The [% c.config.name %] team.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000464.html">[Parley-svn] r576 - / trunk/lib/Parley/App/Communication
+</A></li>
+	<LI>Next message: <A HREF="000466.html">[Parley-svn] r578 - / trunk/root/base/user/signup
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#465">[ date ]</a>
+              <a href="thread.html#465">[ thread ]</a>
+              <a href="subject.html#465">[ subject ]</a>
+              <a href="author.html#465">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

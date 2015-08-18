@@ -1,0 +1,629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r563 - / trunk/lib/Parley/I18N trunk/root/base/user	trunk/root/base/user/lostpassword trunk/root/base/user/signup
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-October/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r563%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/user%0A%09trunk/root/base/user/lostpassword%20trunk/root/base/user/signup&In-Reply-To=%3C200710161936.l9GJanlw011053%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000450.html">
+   <LINK REL="Next"  HREF="000452.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r563 - / trunk/lib/Parley/I18N trunk/root/base/user	trunk/root/base/user/lostpassword trunk/root/base/user/signup</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r563%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/user%0A%09trunk/root/base/user/lostpassword%20trunk/root/base/user/signup&In-Reply-To=%3C200710161936.l9GJanlw011053%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r563 - / trunk/lib/Parley/I18N trunk/root/base/user	trunk/root/base/user/lostpassword trunk/root/base/user/signup">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Oct 16 21:36:49 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000450.html">[Parley-svn] r562 - / trunk/lib/Parley/I18N trunk/root/base/terms	trunk/root/base/thread
+</A></li>
+        <LI>Next message: <A HREF="000452.html">[Parley-svn] r564 - / trunk/lib/Parley/App	trunk/lib/Parley/App/Communication trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#451">[ date ]</a>
+              <a href="thread.html#451">[ thread ]</a>
+              <a href="subject.html#451">[ subject ]</a>
+              <a href="author.html#451">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-10-16 21:36:47 +0200 (Tue, 16 Oct 2007)
+New Revision: 563
+
+Modified:
+   /
+   trunk/lib/Parley/I18N/en.po
+   trunk/root/base/user/auth_emailed
+   trunk/root/base/user/auth_success
+   trunk/root/base/user/login
+   trunk/root/base/user/lostpassword/lost_password
+   trunk/root/base/user/lostpassword/lost_password_details_sent
+   trunk/root/base/user/lostpassword/reset
+   trunk/root/base/user/lostpassword/reset_success
+   trunk/root/base/user/profile
+   trunk/root/base/user/signup/signup
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3986 at wiggin</A>:  chisel | 2007-10-16 19:31:58 +0100
+ + added more i18n to the application templates
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3983
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3986
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/I18N/en.po
+===================================================================
+--- trunk/lib/Parley/I18N/en.po	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/lib/Parley/I18N/en.po	2007-10-16 19:36:47 UTC (rev 563)
+@@ -28,6 +28,9 @@
+ msgid &quot;All Rights Reserved&quot;
+ msgstr &quot;All Rights Reserved&quot;
+ 
++msgid &quot;An email has been sent to&quot;
++msgstr &quot;An email has been sent to&quot;
++
+ msgid &quot;An error has occurred&quot;
+ msgstr &quot;An error has occurred&quot;
+ 
+@@ -37,12 +40,18 @@
+ msgid &quot;CHANGE AVATAR&quot;
+ msgstr &quot;Change your avatar image by selecting a file and clicking the Upload button below&quot;
+ 
++msgid &quot;Click on the login link to continue&quot;
++msgstr &quot;Click on the login link to continue&quot;
++
+ msgid &quot;Close&quot;
+ msgstr &quot;Close&quot;
+ 
+ msgid &quot;Comment&quot;
+ msgstr &quot;Comment&quot;
+ 
++msgid &quot;Confirm Password&quot;
++msgstr &quot;Confirm Password&quot;
++
+ msgid &quot;Contents&quot;
+ msgstr &quot;Contents&quot;
+ 
+@@ -187,9 +196,21 @@
+ msgid &quot;My Watched Threads&quot;
+ msgstr &quot;My Watched Threads&quot;
+ 
++msgid &quot;Name&quot;
++msgstr &quot;Name&quot;
++
++msgid &quot;Never Posted&quot;
++msgstr &quot;Never Posted&quot;
++
++msgid &quot;New Password&quot;
++msgstr &quot;New Password&quot;
++
+ msgid &quot;Next&quot;
+ msgstr &quot;Next&quot;
+ 
++msgid &quot;Nickname&quot;
++msgstr &quot;Nickname&quot;
++
+ msgid &quot;No&quot;
+ msgstr &quot;No&quot;
+ 
+@@ -232,6 +253,27 @@
+ msgid &quot;Page&quot;
+ msgstr &quot;Page&quot;
+ 
++msgid &quot;PASSWORD DETAILS SENT&quot;
++msgstr &quot;You should recieve an email in the next few minutes with further instructions to reset your password.&quot;
++
++msgid &quot;PASSWORD GAIN&quot;
++msgstr &quot;To gain access to your account your password can be re-set, and an authentication email re-sent.&quot;
++
++msgid &quot;PASSWORD IMPOSSIBLE&quot;
++msgstr &quot;This makes it impossible to remind you of your current password.&quot;
++
++msgid &quot;PASSWORD PROCEED&quot;
++msgstr &quot;If you wish to proceed please enter the username or email address you signed up with.&quot;
++
++msgid &quot;PASSWORD RESET&quot;
++msgstr &quot;To reset your password enter your username and your desired password in the fields below, then click the &lt;em&gt;reset my password&lt;/em&gt; button to proceed.&quot;
++
++msgid &quot;PASSWORD RESET SUCCESS&quot;
++msgstr &quot;Your password has been set to the value you entered.&quot;
++
++msgid &quot;PASSWORD STORES&quot;
++msgstr &quot;stores an encrypted copy of your password or email address you signed up with.&quot;
++
+ msgid &quot;Password&quot;
+ msgstr &quot;Password&quot;
+ 
+@@ -265,6 +307,9 @@
+ msgid &quot;posts&quot;
+ msgstr &quot;posts&quot;
+ 
++msgid &quot;Posts Made&quot;
++msgstr &quot;Posts Made&quot;
++
+ msgid &quot;PREFS ADD WATCHES&quot;
+ msgstr &quot;Automatically add watches for new posts&quot;
+ 
+@@ -280,6 +325,9 @@
+ msgid &quot;Previous&quot;
+ msgstr &quot;Previous&quot;
+ 
++msgid &quot;PROFILE NOT FOUND&quot;
++msgstr &quot;Can't locate a profile for the requested user.&quot;
++
+ msgid &quot;Post New Terms&quot;
+ msgstr &quot;Post New Terms&quot;
+ 
+@@ -295,12 +343,18 @@
+ msgid &quot;Register&quot;
+ msgstr &quot;Register&quot;
+ 
+-msgid &quot;Reply&quot;
+-msgstr &quot;Reply&quot;
++msgid &quot;Registration Complete&quot;
++msgstr &quot;Registration Complete&quot;
+ 
+ msgid &quot;Remove Watch&quot;
+ msgstr &quot;Remove Watch&quot;
+ 
++msgid &quot;Reply&quot;
++msgstr &quot;Reply&quot;
++
++msgid &quot;Reset My Password&quot;
++msgstr &quot;Reset My Password&quot;
++
+ msgid &quot;Return to&quot;
+ msgstr &quot;Return to&quot;
+ 
+@@ -334,9 +388,39 @@
+ msgid &quot;Show timezone&quot;
+ msgstr &quot;Show timezone&quot;
+ 
+-msgid &quot;Signup&quot;
+-msgstr &quot;Signup&quot;
++msgid &quot;Sign Up&quot;
++msgstr &quot;Sign Up&quot;
+ 
++msgid &quot;SIGNUP COMPLETE FORM&quot;
++msgstr &quot;Complete the form below to create a new user account.&quot;
++
++msgid &quot;SIGNUP EMAIL&quot;
++msgstr &quot;Your Email Address&quot;
++
++msgid &quot;SIGNUP EMAIL CONFIRM&quot;
++msgstr &quot;Confirm Email Address&quot;
++
++msgid &quot;SIGNUP EMAIL USAGE&quot;
++msgstr &quot;Your email address will not be passed on to any third parties. It will be used to send an activation link for the new account. If you request thread update alerts this address will also be used for the notification emails.&quot;
++
++msgid &quot;SIGNUP ERRORS&quot;
++msgstr &quot;The following errors were found in your submission&quot;
++
++msgid &quot;SIGNUP FORUMNAME&quot;
++msgstr &quot;Forum Name&quot;
++
++msgid &quot;SIGNUP FORUMNAME DESCRIPTION&quot;
++msgstr &quot;Your &lt;em&gt;Forum Name&lt;/em&gt; will be displayed with all postings you make on the forums.  Forum names are all unique, so when two &quot;John Smith&quot;s register, only one will appear as \&quot;John Smith\&quot; when posting. (Sorry other John Smith!)&quot;
++
++msgid &quot;SIGNUP PASSWORD&quot;
++msgstr &quot;Desired Password&quot;
++
++msgid &quot;SIGNUP PASSWORD CONFIRM&quot;
++msgstr &quot;Confirm password&quot;
++
++msgid &quot;SIGNUP USERNAME&quot;
++msgstr &quot;Desired Username&quot;
++
+ msgid &quot;Site&quot;
+ msgstr &quot;Site&quot;
+ 
+@@ -379,6 +463,9 @@
+ msgid &quot;Terms and Conditions&quot;
+ msgstr &quot;Terms &amp; Conditions&quot;
+ 
++msgid &quot;Thanks for signing up&quot;
++msgstr &quot;Thanks for signing up&quot;
++
+ msgid &quot;The following error message was returned by the application&quot;
+ msgstr &quot;The following error message was returned by the application&quot;
+ 
+@@ -421,6 +508,18 @@
+ msgid &quot;Use UTC&quot;
+ msgstr &quot;Use UTC&quot;
+ 
++msgid &quot;USER ACTIVATE&quot;
++msgstr &quot;To activate your account click on the link in the email&quot;
++
++msgid &quot;USER ALMOST THERE&quot;
++msgstr &quot;Almost there...&quot;
++
++msgid &quot;USER AUTHENTICATED&quot;
++msgstr &quot;Your registration has been authenticated&quot;
++
++msgid &quot;User Profile&quot;
++msgstr &quot;User Profile&quot;
++
+ msgid &quot;Username&quot;
+ msgstr &quot;Username&quot;
+ 
+
+Modified: trunk/root/base/user/auth_emailed
+===================================================================
+--- trunk/root/base/user/auth_emailed	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/auth_emailed	2007-10-16 19:36:47 UTC (rev 563)
+@@ -1,8 +1,8 @@
+-&lt;h1&gt;Almost there...&lt;/h1&gt;
++&lt;h1&gt;[%l('USER ALMOST THERE')%]&lt;/h1&gt;
+ 
+-&lt;p&gt;Thanks for signing up [% newdata.first_name %]!&lt;/p&gt;
++&lt;p&gt;[%l('Thanks for signing up')%] [% newdata.first_name %]!&lt;/p&gt;
+ 
+ &lt;p&gt;
+-An email has been sent to &lt;i&gt;[% newdata.email %]&lt;/i&gt; which you should receive shortly.&lt;br /&gt;
+-To activate your account click on the link in the email.
++[%l('An email has been sent to')%] &lt;i&gt;[% newdata.email %]&lt;/i&gt;.&lt;br /&gt;
++[%l('USER ACTIVATE')%].
+ &lt;/p&gt;
+
+Modified: trunk/root/base/user/auth_success
+===================================================================
+--- trunk/root/base/user/auth_success	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/auth_success	2007-10-16 19:36:47 UTC (rev 563)
+@@ -1,3 +1,6 @@
+-&lt;h1&gt;Registration Complete&lt;/h1&gt;
++&lt;h1&gt;[%l('Registration Complete')%]&lt;/h1&gt;
+ 
+-&lt;p&gt;Your registration has been authenticated. Click on the login link to continue.&lt;/p&gt;
++&lt;p&gt;
++[%l('Your registration has been authenticated')%].
++[%l('Click on the login link to continue')%].
++&lt;/p&gt;
+
+Modified: trunk/root/base/user/login
+===================================================================
+--- trunk/root/base/user/login	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/login	2007-10-16 19:36:47 UTC (rev 563)
+@@ -7,19 +7,19 @@
+             [% message %]&lt;br /&gt;
+             [% END %]
+         &lt;/p&gt;
+-        &lt;label for=&quot;username&quot; accesskey=&quot;u&quot;&gt;&lt;b&gt;Username:&lt;/b&gt;&lt;/label&gt;
++        &lt;label for=&quot;username&quot; accesskey=&quot;u&quot;&gt;&lt;b&gt;[%l('Username')%]:&lt;/b&gt;&lt;/label&gt;
+         &lt;input type=&quot;text&quot; id=&quot;login_username&quot; name=&quot;username&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; /&gt;
+ 
+-        &lt;label for=&quot;login_password&quot; accesskey=&quot;p&quot;&gt;&lt;b&gt;Password:&lt;/b&gt;&lt;/label&gt;
++        &lt;label for=&quot;login_password&quot; accesskey=&quot;p&quot;&gt;&lt;b&gt;[%l('Password')%]:&lt;/b&gt;&lt;/label&gt;
+         &lt;input type=&quot;password&quot; id=&quot;login_password&quot; name=&quot;password&quot; size=&quot;40&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; /&gt;
+ 
+         &lt;br /&gt;
+-        &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;log in&lt;/button&gt;
++        &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;[%l('Login')%]&lt;/button&gt;
+ 
+             &lt;p align=&quot;right&quot;&gt;
+-            &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt;
++            &lt;a href=&quot;user/password/forgotten&quot;&gt;[%l('Forgotten Password')%]&lt;/a&gt;
+             |
+-            &lt;a href=&quot;user/signup&quot;&gt;Signup&lt;/a&gt;
++            &lt;a href=&quot;user/signup&quot;&gt;[%l('Register')%]&lt;/a&gt;
+             &lt;/p&gt;
+     &lt;/fieldset&gt;
+ &lt;/form&gt;
+
+Modified: trunk/root/base/user/lostpassword/lost_password
+===================================================================
+--- trunk/root/base/user/lostpassword/lost_password	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/lostpassword/lost_password	2007-10-16 19:36:47 UTC (rev 563)
+@@ -1,10 +1,13 @@
+ &lt;h1&gt;Password Reset&lt;/h1&gt;
+-&lt;p&gt;[% name %] stores an encrypted copy of your password. This makes it
+-impossible to remind you of your current password.&lt;/p&gt;
++&lt;p&gt;
++[% name %] [%l('PASSWORD STORES')%]
++[%l('PASSWORD IMPOSSIBLE')%]
++&lt;/p&gt;
+ 
+-&lt;p&gt;To gain access to your account your password can be re-set, and an
+-authentication email re-sent. If you wish to proceed please enter the username
+-or email address you signed up with.&lt;/p&gt;
++&lt;p&gt;
++[%l('PASSWORD GAIN')%]
++[%l('PASSWORD PROCEED')%]
++&lt;/p&gt;
+ 
+ &lt;form method=&quot;post&quot; action=&quot;user/password/forgotten&quot; name=&quot;password_reset_form&quot;&gt;
+     &lt;fieldset&gt;
+@@ -18,12 +21,12 @@
+         &lt;/p&gt;
+         [% END %]
+ 
+-        &lt;label for=&quot;pwd_reset_username&quot;&gt;Username:&lt;/a&gt;&lt;/label&gt;
++        &lt;label for=&quot;pwd_reset_username&quot;&gt;[%l('Username')%]:&lt;/a&gt;&lt;/label&gt;
+         &lt;input type=&quot;text&quot; id=&quot;pwd_reset_username&quot; name=&quot;username&quot; class=&quot;input_text&quot; tabindex=&quot;1&quot; size=&quot;40&quot; /&gt;
+ 
+-        &lt;label for=&quot;pwd_reset_email&quot;&gt;Email:&lt;/a&gt;&lt;/label&gt;
++        &lt;label for=&quot;pwd_reset_email&quot;&gt;[%l('Email Address')%]:&lt;/a&gt;&lt;/label&gt;
+         &lt;input type=&quot;text&quot; id=&quot;pwd_reset_email&quot; name=&quot;email&quot; class=&quot;input_text&quot; tabindex=&quot;2&quot; size=&quot;40&quot; /&gt;
+ 
+-        &lt;button name=&quot;pwd_reset_submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;reset my password&lt;/button&gt;
++        &lt;button name=&quot;pwd_reset_submit&quot; class=&quot;input_button&quot; tabindex=&quot;3&quot; /&gt;Reset My Password&lt;/button&gt;
+     &lt;/fieldset&gt;
+ &lt;/form&gt;
+
+Modified: trunk/root/base/user/lostpassword/lost_password_details_sent
+===================================================================
+--- trunk/root/base/user/lostpassword/lost_password_details_sent	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/lostpassword/lost_password_details_sent	2007-10-16 19:36:47 UTC (rev 563)
+@@ -1 +1 @@
+-&lt;p&gt;Details are in the post&lt;/p&gt;
++&lt;p&gt;[%l('PASSWORD DETAILS SENT')%]&lt;/p&gt;
+
+Modified: trunk/root/base/user/lostpassword/reset
+===================================================================
+--- trunk/root/base/user/lostpassword/reset	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/lostpassword/reset	2007-10-16 19:36:47 UTC (rev 563)
+@@ -1,7 +1,6 @@
+ &lt;form action=&quot;user/password/reset/[% reset_uid %]&quot; method=&quot;post&quot; name=&quot;password_reset_form&quot;&gt;
+ 
+-To reset your password enter your username and your desired password in the
+-fields below, then click the &lt;em&gt;reset my password&lt;/em&gt; button to proceed.
++[%l('PASSWORD RESET')%]
+ 
+     &lt;fieldset&gt;
+         [%- IF view.error.messages %]
+@@ -14,20 +13,20 @@
+         &lt;/p&gt;
+         [% END %]
+ 
+-        &lt;label&gt;Name:&lt;/label&gt;
++        &lt;label&gt;[%l('Name')%]:&lt;/label&gt;
+         &lt;input type=&quot;text&quot; value=&quot;[% reset_user.first_name %] [% reset_user.last_name %]&quot; tabindex=&quot;1&quot; readonly=&quot;readonly&quot; disabled=&quot;disabled&quot; size=&quot;40&quot; /&gt;
+ 
+-        &lt;label for=&quot;reset_username&quot;&gt;Username:&lt;/label&gt;
++        &lt;label for=&quot;reset_username&quot;&gt;[%l('Username')%]:&lt;/label&gt;
+         &lt;input type=&quot;text&quot; name=&quot;reset_username&quot; id=&quot;reset_username&quot; size=&quot;40&quot; tabindex=&quot;2&quot; /&gt;
+ 
+-        &lt;label for=&quot;new_password&quot;&gt;New password:&lt;/label&gt;
++        &lt;label for=&quot;new_password&quot;&gt;[%l('New Password')%]:&lt;/label&gt;
+         &lt;input type=&quot;password&quot; name=&quot;new_password&quot; id=&quot;new_password&quot; size=&quot;40&quot; tabindex=&quot;3&quot; /&gt;
+ 
+-        &lt;label for=&quot;confirm_password&quot;&gt;Confirm password:&lt;/label&gt;
++        &lt;label for=&quot;confirm_password&quot;&gt;[%l('Confirm Password')%]:&lt;/label&gt;
+         &lt;input type=&quot;password&quot; name=&quot;confirm_password&quot; id=&quot;confirm_password&quot; size=&quot;40&quot; tabindex=&quot;4&quot; /&gt;
+ 
+         &lt;br /&gt;
+-        &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;5&quot; name=&quot;reset_password&quot; /&gt;reset my password&lt;/button&gt;
++        &lt;button type=&quot;submit&quot; class=&quot;input_button&quot; tabindex=&quot;5&quot; name=&quot;reset_password&quot; /&gt;[%l('Reset My Password')%]&lt;/button&gt;
+ 
+     &lt;/fieldset&gt;
+ &lt;/form&gt;
+
+Modified: trunk/root/base/user/lostpassword/reset_success
+===================================================================
+--- trunk/root/base/user/lostpassword/reset_success	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/lostpassword/reset_success	2007-10-16 19:36:47 UTC (rev 563)
+@@ -1,2 +1,2 @@
+-Your password has been set to the value you entered. You may now 
+-&lt;a href=&quot;javascript:;&quot; onclick=&quot;login_dialog.show();&quot;&gt;login&lt;/a&gt;
++&lt;!-- I don't think we see this page any more --&gt;
++[%l('PASSWORD RESET SUCCESS')%]
+
+Modified: trunk/root/base/user/profile
+===================================================================
+--- trunk/root/base/user/profile	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/profile	2007-10-16 19:36:47 UTC (rev 563)
+@@ -1,5 +1,5 @@
+ &lt;!-- user/profile --&gt;
+-&lt;h1&gt;User Profile&lt;/h1&gt;
++&lt;h1&gt;[%l('User Profile')%]&lt;/h1&gt;
+ [% IF profiled_user %]
+ 
+ &lt;table class=&quot;user_profile&quot;&gt;
+@@ -19,7 +19,7 @@
+             [% END %]
+             &lt;!-- end : user avatar --&gt;
+             &lt;td class=&quot;user_profile_key&quot;&gt;
+-                Nickname:
++                [%l('Nickname')%]:
+             &lt;/td&gt;
+             &lt;td class=&quot;user_profile_value&quot;&gt;
+                 [% profiled_user.forum_name %]
+@@ -28,7 +28,7 @@
+ 
+         &lt;tr&gt;
+             &lt;td class=&quot;user_profile_key&quot;&gt;
+-                Posts made:
++                [%l('Posts Made')%]:
+             &lt;/td&gt;
+             &lt;td class=&quot;user_profile_value&quot;&gt;
+                 [% profiled_user.post_count %]
+@@ -37,7 +37,7 @@
+ 
+         &lt;tr&gt;
+             &lt;td class=&quot;user_profile_key&quot;&gt;
+-                Last Post:
++                [%l('Last Post')%]:
+             &lt;/td&gt;
+             &lt;td class=&quot;user_profile_value&quot;&gt;
+                 [% IF profiled_user.last_post %]
+@@ -45,7 +45,7 @@
+                 &lt;br /&gt;
+                 [% nicedate(profiled_user.last_post.created) %]
+                 [% ELSE %]
+-                Never Posted
++                [%l('Never Posted')%] 
+                 [% END %]
+             &lt;/td&gt;
+         &lt;/tr&gt;
+@@ -53,6 +53,6 @@
+ &lt;/table&gt;
+ 
+ [% ELSE %]
+-&lt;p&gt;Can't locate a profile for requested user&lt;/p&gt;
++&lt;p&gt;[%l('PROFILE NOT FOUND')%]&lt;/p&gt;
+ [% END %]
+ &lt;!-- end : user/profile --&gt;
+
+Modified: trunk/root/base/user/signup/signup
+===================================================================
+--- trunk/root/base/user/signup/signup	2007-10-14 14:20:06 UTC (rev 562)
++++ trunk/root/base/user/signup/signup	2007-10-16 19:36:47 UTC (rev 563)
+@@ -13,14 +13,14 @@
+     &lt;table class=&quot;signup&quot;&gt;
+ 		&lt;tr&gt;
+ 			&lt;td colspan=&quot;2&quot;&gt;
+-				Complete the form below to create a new user account.
++                [%l('SIGNUP COMPLETE FORM')%] 
+ 			&lt;/td&gt;
+ 		&lt;/tr&gt;
+ 
+ 		[% IF messages %]
+ 		&lt;tr&gt;
+ 			&lt;td colspan=&quot;2&quot;&gt;
+-				The following errors were found in your submission:&lt;br /&gt;
++				[%l('SIGNUP ERRORS')%]:&lt;br /&gt;
+ 				&lt;ul&gt;
+                     &lt;ul&gt;
+                         [% FOREACH message IN messages %]
+@@ -34,7 +34,7 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td width=&quot;20%&quot;&gt;
+-				&lt;label for=&quot;username&quot;&gt;Desired username:&lt;/label&gt;
++				&lt;label for=&quot;username&quot;&gt;[%l('DESIRED USERNAME')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;text&quot; id=&quot;new_username&quot; name=&quot;new_username&quot; class=&quot;input_text&quot; /&gt;
+@@ -44,7 +44,7 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td&gt;
+-				&lt;label for=&quot;password&quot;&gt;Desired password:&lt;/label&gt;
++				&lt;label for=&quot;password&quot;&gt;[%l('SIGNUP PASSWORD')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;password&quot; id=&quot;new_password&quot; name=&quot;new_password&quot; class=&quot;input_text&quot; /&gt;
+@@ -54,7 +54,7 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td&gt;
+-				&lt;label for=&quot;confirm_password&quot;&gt;Confirm password:&lt;/label&gt;
++				&lt;label for=&quot;confirm_password&quot;&gt;[%l('CONFIRM PASSWORD')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;password&quot; id=&quot;confirm_password&quot; name=&quot;confirm_password&quot; class=&quot;input_text&quot; /&gt;
+@@ -64,16 +64,13 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td colspan=&quot;2&quot;&gt;
+-				Your email address will not be passed on to any third parties.
+-				It will be used to send an activation link for the new account.
+-                If you request thread update alerts this address will also be used
+-                for the notification emails.
++                [%l('SIGNUP EMAIL USAGE')%] 
+ 			&lt;/td&gt;
+ 		&lt;/tr&gt;
+ 
+ 		&lt;tr&gt;
+ 			&lt;td&gt;
+-				&lt;label for=&quot;email&quot;&gt;Your email address:&lt;/label&gt;
++				&lt;label for=&quot;email&quot;&gt;[%l('SIGNUP EMAIL')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;text&quot; id=&quot;email&quot; name=&quot;email&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+@@ -83,7 +80,7 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td&gt;
+-				&lt;label for=&quot;confirm_email&quot;&gt;Confirm email address:&lt;/label&gt;
++				&lt;label for=&quot;confirm_email&quot;&gt;[%l('SIGNUP EMAIL CONFIRM')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;text&quot; id=&quot;confirm_email&quot; name=&quot;confirm_email&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+@@ -95,7 +92,7 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td&gt;
+-				&lt;label for=&quot;first_name&quot;&gt;First name:&lt;/label&gt;
++				&lt;label for=&quot;first_name&quot;&gt;[%l('First Name')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;text&quot; id=&quot;first_name&quot; name=&quot;first_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+@@ -105,7 +102,7 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td&gt;
+-				&lt;label for=&quot;first_name&quot;&gt;Last name:&lt;/label&gt;
++				&lt;label for=&quot;last_name&quot;&gt;[%l('Last Name')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;text&quot; id=&quot;last_name&quot; name=&quot;last_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+@@ -115,7 +112,7 @@
+ 
+ 		&lt;tr&gt;
+ 			&lt;td&gt;
+-				&lt;label for=&quot;first_name&quot;&gt;Forum name:&lt;/label&gt;
++				&lt;label for=&quot;first_name&quot;&gt;[%l('SIGNUP FORUMNAME')%]:&lt;/label&gt;
+ 			&lt;/td&gt;
+ 			&lt;td&gt;
+ 				&lt;input type=&quot;text&quot; id=&quot;forum_name&quot; name=&quot;forum_name&quot; size=&quot;40&quot; class=&quot;input_text&quot; /&gt;
+@@ -125,15 +122,13 @@
+ 		&lt;tr&gt;
+             &lt;td&gt;&nbsp;&lt;/td&gt;
+ 			&lt;td style=&quot;text-align:justify;&quot;&gt;
+-            Your &lt;em&gt;Forum Name&lt;/em&gt; will be displayed with all postings you make on the forums.
+-            Forum names are all unique, so when two &quot;John Smith&quot;s register, only one will appear
+-            as &quot;John Smith&quot; when posting. (Sorry other John Smith!)
++            [%l('SIGNUP FORUMNAME DESCRIPTION')%] 
+ 			&lt;/td&gt;
+ 		&lt;/tr&gt;
+ 
+ 		&lt;tr&gt;
+ 			&lt;td colspan=&quot;2&quot; style=&quot;text-align:center;&quot;&gt;
+-				&lt;input type=&quot;submit&quot; name=&quot;form_submit&quot; value=&quot;Sign Up&quot; class=&quot;input_button&quot; /&gt;
++				&lt;input type=&quot;submit&quot; name=&quot;form_submit&quot; value=&quot;[%l('Register')%]&quot; class=&quot;input_button&quot; /&gt;
+ 			&lt;/td&gt;
+ 		&lt;/tr&gt;
+     &lt;/table&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000450.html">[Parley-svn] r562 - / trunk/lib/Parley/I18N trunk/root/base/terms	trunk/root/base/thread
+</A></li>
+	<LI>Next message: <A HREF="000452.html">[Parley-svn] r564 - / trunk/lib/Parley/App	trunk/lib/Parley/App/Communication trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#451">[ date ]</a>
+              <a href="thread.html#451">[ thread ]</a>
+              <a href="subject.html#451">[ subject ]</a>
+              <a href="author.html#451">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

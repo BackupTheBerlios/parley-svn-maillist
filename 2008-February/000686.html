@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r798 - / trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/post	trunk/root/base/thread trunk/root/static/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r798%20-%20/%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/post%0A%09trunk/root/base/thread%20trunk/root/static/css&In-Reply-To=%3C200802122316.m1CNGCnM022353%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000685.html">
+   <LINK REL="Next"  HREF="000687.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r798 - / trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/post	trunk/root/base/thread trunk/root/static/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r798%20-%20/%20trunk/db%20trunk/lib/Parley/Controller%0A%09trunk/lib/Parley/Schema%20trunk/root/base/post%0A%09trunk/root/base/thread%20trunk/root/static/css&In-Reply-To=%3C200802122316.m1CNGCnM022353%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r798 - / trunk/db trunk/lib/Parley/Controller	trunk/lib/Parley/Schema trunk/root/base/post	trunk/root/base/thread trunk/root/static/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Feb 13 00:16:12 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000685.html">[Parley-svn] r797 - / trunk/lib/Parley/I18N
+</A></li>
+        <LI>Next message: <A HREF="000687.html">[Parley-svn] r799 - / trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#686">[ date ]</a>
+              <a href="thread.html#686">[ thread ]</a>
+              <a href="subject.html#686">[ subject ]</a>
+              <a href="author.html#686">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-13 00:16:10 +0100 (Wed, 13 Feb 2008)
+New Revision: 798
+
+Added:
+   trunk/db/patch_0.58_to_0.59.psql
+Modified:
+   /
+   trunk/lib/Parley/Controller/Post.pm
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/root/base/post/edit
+   trunk/root/base/thread/view
+   trunk/root/static/css/parley.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4653 at wiggin</A>:  chisel | 2008-02-12 22:40:27 +0000
+ + extend post table to include admin editor and individual post lock
+ + corresponding ::Schema changes for above addition
+ + allow moderators to edit posts; optionally locking individual post from further editing
+ / modify post/edit for moderator edit view (whose post, and lock checkbox)
+ / only show Reply/Quote buttons if we have a logged in user
+ + show Edit button for moderators to edit other posts
+ + class for admin edited post
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4652
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4653
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Added: trunk/db/patch_0.58_to_0.59.psql
+===================================================================
+--- trunk/db/patch_0.58_to_0.59.psql	2008-02-12 23:16:02 UTC (rev 797)
++++ trunk/db/patch_0.58_to_0.59.psql	2008-02-12 23:16:10 UTC (rev 798)
+@@ -0,0 +1,20 @@
++-- Patch:
++--   From: 0.58
++--   To:   0.59
++--
++-- Description:
++--  add flagging of posts edited by admin
++--  lock posts (so they can't be changed after being edited by admin)
++
++BEGIN;
++
++-- patch starts here --
++
++ALTER TABLE post
++    ADD COLUMN admin_editor_id integer references person(id),
++    ADD COLUMN locked boolean default False
++;
++
++-- patch ends here --
++
++COMMIT;
+
+Modified: trunk/lib/Parley/Controller/Post.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Post.pm	2008-02-12 23:16:02 UTC (rev 797)
++++ trunk/lib/Parley/Controller/Post.pm	2008-02-12 23:16:10 UTC (rev 798)
+@@ -15,6 +15,7 @@
+     # DFV validation profile for adding a new topic
+     edit_post =&gt; {
+         required    =&gt; [qw( post_message )],
++        optional    =&gt; [qw( lock_post )],
+         filters     =&gt; [qw( trim )],
+         msgs =&gt; {
+             format  =&gt; q{%s},
+@@ -42,14 +43,24 @@
+     $c-&gt;login_if_required($c-&gt;localize(q{EDIT LOGIN REQUIRED}));
+ 
+     # you can only edit you own posts
+-    # (unless you're a moderator, but we don't do that yet)
+-    if ($c-&gt;_authed_user()-&gt;id() != $c-&gt;_current_post()-&gt;creator()-&gt;id()) {
++    # (unless you're a moderator)
++    if (
++        (not $c-&gt;stash-&gt;{moderator})
++            and
++        ($c-&gt;_authed_user()-&gt;id() != $c-&gt;_current_post()-&gt;creator()-&gt;id())
++    ) {
+         $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{EDIT OWN POSTS ONLY});
+         return;
+     }
+ 
+-    # you can't edit a locked post
+-    elsif ($c-&gt;_current_post-&gt;thread-&gt;locked) {
++    # you can't edit post in a locked thread
++    # you also can't edit individually locked posts (unless you are a
++    # moderator)
++    elsif (
++        $c-&gt;_current_post-&gt;thread-&gt;locked
++            or
++        ($c-&gt;_current_post-&gt;locked and not $c-&gt;stash-&gt;{moderator})
++    ) {
+         $c-&gt;stash-&gt;{error}{message} = $c-&gt;localize(q{EDIT LOCKED POST});
+         return;
+     }
+@@ -74,6 +85,7 @@
+             }
+         }
+         # otherwise; everything seems fine - edit the post
++        # XXX why the HELL isn't this in a txn_do?!
+         else {
+             # update the post with the new information
+             $c-&gt;_current_post-&gt;message( $c-&gt;form-&gt;valid-&gt;{post_message} );
+@@ -81,6 +93,23 @@
+             # set the edited time
+             $c-&gt;_current_post-&gt;edited( DateTime-&gt;now() );
+ 
++            # did an 'evil' admin edit the post?
++            if (
++                ($c-&gt;_current_post-&gt;creator_id != $c-&gt;_authed_user-&gt;id)
++                    and
++                $c-&gt;stash-&gt;{moderator}
++            ) {
++                # stamp the post with the admin editor's mark
++                $c-&gt;_current_post-&gt;admin_editor_id(
++                    $c-&gt;_authed_user-&gt;id
++                );
++                # if they asked for the thread to be locked
++                # make it so...
++                if ($c-&gt;form-&gt;valid-&gt;{lock_post}) {
++                    $c-&gt;_current_post-&gt;locked( 1 );
++                }
++            }
++
+             # store the updates in the db
+             $c-&gt;_current_post-&gt;update();
+ 
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2008-02-12 23:16:02 UTC (rev 797)
++++ trunk/lib/Parley/Schema/Post.pm	2008-02-12 23:16:10 UTC (rev 798)
+@@ -85,6 +85,9 @@
+     is_nullable =&gt; 1,
+     size =&gt; 8,
+   },
++
++  admin_editor_id   =&gt; {},
++  locked            =&gt; {},
+ );
+ 
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+@@ -128,6 +131,10 @@
+     &quot;people&quot; =&gt; &quot;Person&quot;,
+     { &quot;foreign.last_post&quot; =&gt; &quot;self.id&quot; },
+ );
++__PACKAGE__-&gt;belongs_to(
++    &quot;admin_editor&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; &quot;self.admin_editor_id&quot; },
++);
+ 
+ 
+ 
+
+Modified: trunk/root/base/post/edit
+===================================================================
+--- trunk/root/base/post/edit	2008-02-12 23:16:02 UTC (rev 797)
++++ trunk/root/base/post/edit	2008-02-12 23:16:10 UTC (rev 798)
+@@ -18,6 +18,10 @@
+ &lt;/p&gt;
+ [% END %]
+ 
++[% IF authed_user.id != current_post.creator_id %]
++Editing [% current_post.creator.forum_name %]'s post
++[% END %]
++
+ &lt;form action=&quot;post/edit?post=[% current_post.id %]&quot; method=&quot;POST&quot; name=&quot;new_thread&quot;&gt;
+     &lt;table&gt;
+         &lt;tbody&gt;
+@@ -28,8 +32,20 @@
+                 &lt;/td&gt;
+             &lt;/tr&gt;
+ 
++            [% IF authed_user.id != current_post.creator_id %]
+             &lt;tr&gt;
+                 &lt;td&gt;&nbsp;&lt;/td&gt;
++                &lt;td&gt;
++                    &lt;input type=&quot;checkbox&quot; name=&quot;lock_post&quot; id=&quot;lock_post&quot; value=&quot;1&quot; /&gt;
++                    &lt;label for=&quot;lock_post&quot;&gt;
++                        [%l('ADMIN LOCK POST')%]
++                    &lt;/label&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++            [% END %]
++
++            &lt;tr&gt;
++                &lt;td&gt;&nbsp;&lt;/td&gt;
+                 &lt;td style=&quot;text-align: center;&quot;&gt;
+                     &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; id=&quot;message_preview&quot; /&gt;
+                     &lt;input type=&quot;submit&quot; value=&quot;[%l('Update Reply')%]&quot; name=&quot;post_update&quot;    class=&quot;input_button&quot; /&gt;
+
+Modified: trunk/root/base/thread/view
+===================================================================
+--- trunk/root/base/thread/view	2008-02-12 23:16:02 UTC (rev 797)
++++ trunk/root/base/thread/view	2008-02-12 23:16:10 UTC (rev 798)
+@@ -36,7 +36,7 @@
+                                 [% IF current_thread.locked %]
+                                     [%l('Thread Locked')%] 
+                                     &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-                                [% ELSE %]
++                                [% ELSIF authed_user %]
+                                     &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                                         &lt;span class=&quot;first-child&quot;&gt;
+                                             &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;[%l('Reply')%]&lt;/a&gt;
+@@ -76,6 +76,14 @@
+             &lt;/td&gt;
+ 
+             &lt;td class=&quot;post&quot;&gt;
++                    [% IF post.admin_editor %]
++                    &lt;div class=&quot;admin_edited_post&quot;&gt;
++                        [%l('Post Edited By: [_1]', post.admin_editor.forum_name)%]:
++                        [% IF post.locked %]
++                        &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Post')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
++                        [% END %]
++                    &lt;/div&gt;
++                    [% END %]
+                 &lt;!-- the body of the post --&gt;
+                 &lt;div class=&quot;innerpost&quot;&gt;
+                     [% IF post.quoted_post %]
+@@ -104,10 +112,10 @@
+                            [%l('IP Logged')%] 
+                         [% END %]
+                     [% END %]
+-                    [% UNLESS current_thread.locked %]
++                    [% IF (!current_thread.locked &amp;&amp; authed_user) %]
+                         &lt;br /&gt;
+                         &lt;br /&gt;
+-                        [% IF authed_user.id == post.creator.id %]
++                        [% IF ((authed_user.id == post.creator.id) &amp;&amp; !post.locked) || moderator %]
+                         &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                             &lt;span class=&quot;first-child&quot;&gt;
+                                 &lt;a href=&quot;post/edit?post=[% post.id %]&quot;&gt;[%l('Edit')%]&lt;/a&gt;
+@@ -157,7 +165,7 @@
+                                 [% IF current_thread.locked %]
+                                     [%l('Thread Locked')%] 
+                                     &lt;img src=&quot;static/images/icons/lock.png&quot; alt=&quot;[%l('Locked')%]&quot; title=&quot;[%l('Locked Topic')%]&quot; width=&quot;16&quot; height=&quot;16&quot; /&gt;
+-                                [% ELSE %]
++                                [% ELSIF authed_user %]
+                                     &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
+                                         &lt;span class=&quot;first-child&quot;&gt;
+                                             &lt;a href=&quot;thread/reply?thread=[% current_thread.id %]&quot;&gt;[%l('Reply')%]&lt;/a&gt;
+
+Modified: trunk/root/static/css/parley.css
+===================================================================
+--- trunk/root/static/css/parley.css	2008-02-12 23:16:02 UTC (rev 797)
++++ trunk/root/static/css/parley.css	2008-02-12 23:16:10 UTC (rev 798)
+@@ -136,6 +136,19 @@
+ }
+ 
+ /* style classes */
++
++.admin_edited_post {
++    color:              #000;
++    background:         #ccc;
++    padding:            2px;
++    padding-left:       10px;
++    padding-right:      10px;
++    border:             1px dashed #000;
++    margin-left:        15px;
++    font-size:          93%;
++    text-align:         right;
++}
++
+ .align_right {
+     text-align:         right;
+ }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000685.html">[Parley-svn] r797 - / trunk/lib/Parley/I18N
+</A></li>
+	<LI>Next message: <A HREF="000687.html">[Parley-svn] r799 - / trunk/t/schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#686">[ date ]</a>
+              <a href="thread.html#686">[ thread ]</a>
+              <a href="subject.html#686">[ subject ]</a>
+              <a href="author.html#686">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

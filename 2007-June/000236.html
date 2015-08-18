@@ -1,0 +1,332 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r348 - / trunk trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/root/static/images
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r348%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base%20trunk/root/base/my%20trunk/root/base/shared%0A%09trunk/root/css%20trunk/root/static/images&In-Reply-To=%3C200706041953.l54JrRui003015%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000237.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r348 - / trunk trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/root/static/images</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r348%20-%20/%20trunk%20trunk/lib/Parley/Controller%0A%09trunk/root/base%20trunk/root/base/my%20trunk/root/base/shared%0A%09trunk/root/css%20trunk/root/static/images&In-Reply-To=%3C200706041953.l54JrRui003015%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r348 - / trunk trunk/lib/Parley/Controller	trunk/root/base trunk/root/base/my trunk/root/base/shared	trunk/root/css trunk/root/static/images">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Jun  4 21:53:27 CEST 2007</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000237.html">[Parley-svn] r349 - / trunk/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#236">[ date ]</a>
+              <a href="thread.html#236">[ thread ]</a>
+              <a href="subject.html#236">[ subject ]</a>
+              <a href="author.html#236">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-06-04 21:53:26 +0200 (Mon, 04 Jun 2007)
+New Revision: 348
+
+Added:
+   trunk/root/base/my/tab_watch
+   trunk/root/static/images/unread_posts.gif
+Modified:
+   /
+   trunk/Changes
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/header
+   trunk/root/base/my/preferences
+   trunk/root/base/shared/login_dialog
+   trunk/root/base/shared/user_status
+   trunk/root/css/common.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3322 at wiggin</A>:  chisel | 2007-05-25 19:17:45 +0100
+ + fetch data for watched threads
+ / check for defined-ness before comparing referer()
+ / some w3c validation tweaks
+ + added Watches tab to my/preferences
+ + focus username field when showing login dialog
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3303
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3322
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/Changes
+===================================================================
+--- trunk/Changes	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/Changes	2007-06-04 19:53:26 UTC (rev 348)
+@@ -1,5 +1,14 @@
+ This file documents the revision history for Parley.
+ 
++0.53
++
++    - improved preference screen (time, watch info)
++    - preferences are now in a tabbed container
++    - tidied up CSS and layout
++    - added more missing dependencies to Makefile.PL
++    - person preference data now created at sign-up time
++    - added more time/TZ options for user
++
+ 0.52    Fri May  4 19:00:32 BST 2007
+ 
+     - added DB configuration to parley.yml
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/lib/Parley/Controller/My.pm	2007-06-04 19:53:26 UTC (rev 348)
+@@ -85,7 +85,11 @@
+     my ($tz_categories);
+ 
+     # where did we come from? it would be nice to return there when we're done
+-    if ($c-&gt;request-&gt;referer() !~ m{/my/preferences}xms) {
++    if (
++        defined $c-&gt;request-&gt;referer()
++            and 
++        $c-&gt;request-&gt;referer() !~ m{/my/preferences}xms
++    ) {
+         $c-&gt;session-&gt;{my_pref_came_from} = $c-&gt;request-&gt;referer();
+     }
+ 
+@@ -106,6 +110,21 @@
+     $c-&gt;stash-&gt;{formdata}{show_tz}
+         = $c-&gt;_authed_user()-&gt;preference()-&gt;show_tz();
+ 
++    # watched threads
++    my $watches = $c-&gt;model('ParleyDB')-&gt;resultset('ThreadView')-&gt;search(
++        {
++            person      =&gt; $c-&gt;_authed_user()-&gt;id(),
++            watched     =&gt; 1,
++        },
++        {
++            order_by    =&gt; 'last_post.created DESC',
++            join        =&gt; {
++                'thread' =&gt; 'last_post',
++            },
++        }
++    );
++    $c-&gt;stash-&gt;{thread_watches} = $watches;
++
+     return;
+ }
+ 
+@@ -174,6 +193,7 @@
+     return;
+ }
+ 
++
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ # Private Methods
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/header	2007-06-04 19:53:26 UTC (rev 348)
+@@ -27,15 +27,18 @@
+             [% END %]
+         &lt;/title&gt;
+         &lt;meta name=&quot;author&quot; content=&quot;Chisel Wright&quot; /&gt;
+-        &lt;link rel=&quot;shortcut icon&quot; href=&quot;favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
+-        &lt;link rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;css/common.css&quot; /&gt;
+-        &lt;link rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;css/layout23.css&quot; /&gt;
++        &lt;link rel=&quot;shortcut icon&quot; href=&quot;[% c.request.base %]/favicon.ico&quot; type=&quot;image/x-icon&quot; /&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/common.css&quot; /&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;stylesheet&quot; title=&quot;Default&quot; href=&quot;[% c.request.base %]/css/layout23.css&quot; /&gt;
+ 
+-        &lt;link rel=&quot;alternate stylesheet&quot; title=&quot;Layout 33&quot; href=&quot;css/layout33.css&quot; /&gt;
++        &lt;link type=&quot;text/css&quot; rel=&quot;alternate stylesheet&quot; title=&quot;Layout 33&quot; href=&quot;[% c.request.base %]/css/layout33.css&quot; /&gt;
+ 
+         &lt;!-- Dojo Magic --&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;/static/magic/dojo.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot;&gt;
++            var djConfig = { isDebug: true };
++        &lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[% c.request.base %]/static/magic/dojo.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot;&gt;
+             dojo.require(&quot;dojo.lfx.*&quot;);         // animations and eye candy
+             dojo.require(&quot;dojo.widget.Dialog&quot;);
+             dojo.require(&quot;dojo.widget.Button&quot;);
+
+Modified: trunk/root/base/my/preferences
+===================================================================
+--- trunk/root/base/my/preferences	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/my/preferences	2007-06-04 19:53:26 UTC (rev 348)
+@@ -14,9 +14,14 @@
+     &lt;div id=&quot;tab_you&quot; dojoType=&quot;ContentPane&quot; label=&quot;Your Details&quot;&gt;
+         [% PROCESS my/tab_you %]
+     &lt;/div&gt;
++
+     &lt;div id=&quot;tab_time&quot; dojoType=&quot;ContentPane&quot; label=&quot;Time&quot;&gt;
+         [% PROCESS my/tab_time %]
+     &lt;/div&gt;
++
++    &lt;div id=&quot;tab_watch&quot; dojoType=&quot;ContentPane&quot; label=&quot;Thread Watches&quot;&gt;
++        [% PROCESS my/tab_watch %]
++    &lt;/div&gt;
+ &lt;/div&gt;
+ 
+ [% IF c.session.my_pref_came_from %]
+
+Added: trunk/root/base/my/tab_watch
+===================================================================
+--- trunk/root/base/my/tab_watch	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/my/tab_watch	2007-06-04 19:53:26 UTC (rev 348)
+@@ -0,0 +1,56 @@
++[% IF thread_watches %]
++    &lt;table class=&quot;thread_watches&quot;&gt;
++        &lt;tbody&gt;
++            &lt;tr&gt;
++                &lt;th style=&quot;width:14px;&quot;&gt;&nbsp;&lt;/th&gt;
++                &lt;th&gt;Subject&lt;/th&gt;
++                &lt;th&gt;Last Modified&lt;/th&gt;
++                &lt;th&gt;Last Viewed&lt;/th&gt;
++            [% WHILE (watch = thread_watches.next) %]
++            [% thread = watch.thread %]
++            &lt;tr&gt;
++                &lt;td style=&quot;width:14px;&quot;&gt;
++                    [% IF (thread.last_post.created &gt; watch.timestamp) %]
++                    &lt;img src=&quot;static/images/unread_posts.gif&quot; width=&quot;12&quot; height=&quot;12&quot; alt=&quot;Unread Posts&quot; title=&quot;Unread Posts&quot; /&gt;
++                    [% ELSE %]
++                    &nbsp;
++                    [% END %]
++                &lt;/td&gt;
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;
++                    &lt;a href=&quot;thread/view?thread=[% thread.id %]&quot;&gt;
++                    [% ForumCode.escape(watch.thread.subject) %]
++                    &lt;/a&gt;
++                    &lt;br /&gt;
++                    &lt;span class=&quot;forum_mini_pager&quot;&gt;
++                        [%- IF authed_user || mini_pager %]
++                        [
++                            [%- IF authed_user %]
++                            &lt;a href=&quot;thread/next_post?thread=[% thread.id %]&quot;&gt;Continue&lt;/a&gt;
++                            [%- END %]
++                        ]
++                        [%- END %]
++                    &lt;/span&gt;
++                &lt;/td&gt;
++
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;
++                    [% nicedate(thread.last_post.created) %]
++                    &lt;br /&gt;
++                    &lt;span class=&quot;topic_creator&quot;&gt;last post by
++                    &lt;span class=&quot;post_creator&quot;&gt;[% thread.last_post.creator.forum_name %]&lt;/span&gt;
++                    &lt;/span&gt;
++                &lt;/td&gt;
++
++                &lt;td style=&quot;vertical-align: top;&quot;&gt;
++                    [% nicedate(watch.timestamp) %]
++                    &lt;br /&gt;
++                    [% IF (thread.last_post.created &gt; watch.timestamp) %]
++                    &lt;span class=&quot;topic_creator&quot;&gt;Unread posts&lt;/span&gt;
++                    [% END %]
++                &lt;/td&gt;
++            &lt;/tr&gt;
++            [% END %]
++        &lt;/tbody&gt;
++    &lt;/table&gt;
++[% ELSE %]
++    &lt;p&gt;You are not watching any threads&lt;/p&gt;
++[% END %]
+
+Modified: trunk/root/base/shared/login_dialog
+===================================================================
+--- trunk/root/base/shared/login_dialog	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/shared/login_dialog	2007-06-04 19:53:26 UTC (rev 348)
+@@ -22,7 +22,7 @@
+             &lt;label for=&quot;password&quot;&gt;&lt;b&gt;Password:&lt;/b&gt;&lt;/label&gt;
+             &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; style=&quot;width: 15em;&quot; class=&quot;input_text&quot; /&gt;
+             &lt;br /&gt;
+-            &lt;button type=&quot;submit&quot; value=&quot;log in&quot; class=&quot;input_button&quot; style=&quot;margin-left: 170px;&quot;/&gt;log in&lt;/button&gt;
++            &lt;button type=&quot;submit&quot; value=&quot;log in&quot; class=&quot;input_button&quot; style=&quot;margin-left: 170px;&quot;&gt;log in&lt;/button&gt;
+ 
+             &lt;p align=&quot;right&quot;&gt;
+             &lt;a href=&quot;user/password/forgotten&quot;&gt;Forgotten Password&lt;/a&gt;
+
+Modified: trunk/root/base/shared/user_status
+===================================================================
+--- trunk/root/base/shared/user_status	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/base/shared/user_status	2007-06-04 19:53:26 UTC (rev 348)
+@@ -10,7 +10,7 @@
+         ]&lt;/i&gt;
+     [% ELSE %]
+         &lt;i&gt;[
+-        &lt;a href=&quot;javascript:;&quot; onclick=&quot;login_dialog.show(); return false;&quot;&gt;Login&lt;/a&gt;
++        &lt;a href=&quot;javascript:;&quot; onclick=&quot;login_dialog.show(); dojo.byId('username').focus(); return false;&quot;&gt;Login&lt;/a&gt;
+         |
+         &lt;a href=&quot;user/signup&quot;&gt;Signup&lt;/a&gt;
+         ]&lt;/i&gt;
+
+Modified: trunk/root/css/common.css
+===================================================================
+--- trunk/root/css/common.css	2007-05-21 20:15:17 UTC (rev 347)
++++ trunk/root/css/common.css	2007-06-04 19:53:26 UTC (rev 348)
+@@ -206,6 +206,12 @@
+     padding:            4px;
+ }
+ 
++.thread_watches {
++    margin-left:        50px;
++    margin-right:       50px;
++    width:              500px;
++}
++
+ .search_results {
+     margin-left:        50px;
+     margin-right:       50px;
+
+Added: trunk/root/static/images/unread_posts.gif
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/root/static/images/unread_posts.gif
+___________________________________________________________________
+Name: svn:mime-type
+   + image/gif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000237.html">[Parley-svn] r349 - / trunk/root/base/user
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#236">[ date ]</a>
+              <a href="thread.html#236">[ thread ]</a>
+              <a href="subject.html#236">[ subject ]</a>
+              <a href="author.html#236">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r190 - / trunk/root/css
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r190%20-%20/%20trunk/root/css&In-Reply-To=%3C200608161340.k7GDeYbR014808%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000078.html">
+   <LINK REL="Next"  HREF="000080.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r190 - / trunk/root/css</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r190%20-%20/%20trunk/root/css&In-Reply-To=%3C200608161340.k7GDeYbR014808%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r190 - / trunk/root/css">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug 16 15:40:34 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000078.html">[Parley-svn] r189 - / trunk/root/base/thread
+</A></li>
+        <LI>Next message: <A HREF="000080.html">[Parley-svn] r191 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#79">[ date ]</a>
+              <a href="thread.html#79">[ thread ]</a>
+              <a href="subject.html#79">[ subject ]</a>
+              <a href="author.html#79">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2006-08-16 15:40:34 +0200 (Wed, 16 Aug 2006)
+New Revision: 190
+
+Modified:
+   /
+   trunk/root/css/default.css
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4924 at ferrari</A>:  chisel | 2006-07-19 18:56:11 +0100
+ + added: .forum_mini_pager
+ / modified #loginbox to work with dojo
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4923
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+   + 6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:4924
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+
+Modified: trunk/root/css/default.css
+===================================================================
+--- trunk/root/css/default.css	2006-08-16 13:40:30 UTC (rev 189)
++++ trunk/root/css/default.css	2006-08-16 13:40:34 UTC (rev 190)
+@@ -18,7 +18,6 @@
+     margin:     0px 0px 0px 0px;
+     padding:    10px;
+     height:     70px; 
+-	height:     70px; 
+ }
+ #left {
+     background: transparent;
+@@ -287,8 +286,15 @@
+ .topic_creator {
+     display:        block;
+     font-size:      0.8em;
+-    text-align:     right;
++    /*text-align:     right;*/
++    float: right;
+ }
++.forum_mini_pager {
++    display:        block;
++    font-size:      0.8em;
++    /*text-align:     right;*/
++    float: left;
++}
+ .topic_last_post {
+     font-size:      0.8em;
+ }
+@@ -431,7 +437,7 @@
+ }
+ 
+ 
+-#loginbox {
++#Xloginbox {
+     border: 1px solid #ccc;
+     width: 250px;
+     float: right;
+@@ -442,6 +448,20 @@
+     font-size:      0.8em;
+ }
+ 
++#loginbox {
++    position : absolute;
++    left : 200px;
++    top : 100px;
++    display : none;
++
++    border: 1px solid #000;
++    width: 250px;
++    font-size:      0.8em;
++    background-color: #f8f8f8;
++    background-color: #ccc;
++    padding: 5px;
++}
++
+ #searchbox {
+     border: 1px solid #ccc;
+     /*width: 400px;*/
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000078.html">[Parley-svn] r189 - / trunk/root/base/thread
+</A></li>
+	<LI>Next message: <A HREF="000080.html">[Parley-svn] r191 - / trunk/t
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#79">[ date ]</a>
+              <a href="thread.html#79">[ thread ]</a>
+              <a href="subject.html#79">[ subject ]</a>
+              <a href="author.html#79">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

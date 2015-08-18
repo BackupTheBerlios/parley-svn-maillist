@@ -1,0 +1,1684 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r630 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/t/schema
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r630%20-%20/%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%20trunk/t/schema&In-Reply-To=%3C200711012156.lA1LuLqa030006%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000517.html">
+   <LINK REL="Next"  HREF="000519.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r630 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/t/schema</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r630%20-%20/%20trunk/db%20trunk/lib/Parley%0A%09trunk/lib/Parley/Controller%20trunk/lib/Parley/Schema%20trunk/t/schema&In-Reply-To=%3C200711012156.lA1LuLqa030006%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r630 - / trunk/db trunk/lib/Parley	trunk/lib/Parley/Controller trunk/lib/Parley/Schema trunk/t/schema">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Nov  1 22:56:21 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000517.html">[Parley-svn] r629 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema
+</A></li>
+        <LI>Next message: <A HREF="000519.html">[Parley-svn] r631 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#518">[ date ]</a>
+              <a href="thread.html#518">[ thread ]</a>
+              <a href="subject.html#518">[ subject ]</a>
+              <a href="author.html#518">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-01 22:56:20 +0100 (Thu, 01 Nov 2007)
+New Revision: 630
+
+Added:
+   trunk/db/patch_0.57_to_0.58.psql
+Modified:
+   /
+   trunk/db/parley.psql
+   trunk/lib/Parley/Controller/Forum.pm
+   trunk/lib/Parley/Controller/Root.pm
+   trunk/lib/Parley/Schema.pm
+   trunk/lib/Parley/Schema/Authentication.pm
+   trunk/lib/Parley/Schema/EmailQueue.pm
+   trunk/lib/Parley/Schema/Forum.pm
+   trunk/lib/Parley/Schema/ForumModerator.pm
+   trunk/lib/Parley/Schema/PasswordReset.pm
+   trunk/lib/Parley/Schema/Person.pm
+   trunk/lib/Parley/Schema/Post.pm
+   trunk/lib/Parley/Schema/Preference.pm
+   trunk/lib/Parley/Schema/PreferenceTimeString.pm
+   trunk/lib/Parley/Schema/RegistrationAuthentication.pm
+   trunk/lib/Parley/Schema/TermsAgreed.pm
+   trunk/lib/Parley/Schema/Thread.pm
+   trunk/lib/Parley/Schema/ThreadView.pm
+   trunk/t/schema/authentication.t
+   trunk/t/schema/email_queue.t
+   trunk/t/schema/forum.t
+   trunk/t/schema/forum_moderator.t
+   trunk/t/schema/password_reset.t
+   trunk/t/schema/person.t
+   trunk/t/schema/post.t
+   trunk/t/schema/preference.t
+   trunk/t/schema/preference_time_string.t
+   trunk/t/schema/registration_authentication.t
+   trunk/t/schema/thread.t
+   trunk/t/schema/thread_view.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4112 at wiggin</A>:  chisel | 2007-11-01 21:02:32 +0000
+ / renamed database columns more sanely
+   - 'id' for PK
+   - 'XXX_id' for columns that reference other tables
+ / updated tests to expect new column names
+ / updated Schema files to represent the new schema
+ 
+ $ prove -lr t/schema/
+ ...
+ All tests successful, 32 subtests skipped.
+ Files=14, Tests=221,  8 wallclock secs ( 7.97 cusr +  0.50 csys =  8.47 CPU)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4111
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4112
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/db/parley.psql
+===================================================================
+--- trunk/db/parley.psql	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/db/parley.psql	2007-11-01 21:56:20 UTC (rev 630)
+@@ -12,7 +12,7 @@
+ 
+ -- we have authentication
+ CREATE TABLE authentication (
+-    authentication_id       SERIAL          not null        primary key,
++    id                      SERIAL          not null        primary key,
+     username                text            not null,
+     password                text            not null,
+     authenticated           boolean         NOT NULL        default False,
+@@ -23,7 +23,7 @@
+ 
+ -- a table of acceptable TZ strings
+ CREATE TABLE preference_time_string (
+-    preference_time_string_id       SERIAL      primary key,
++    id                              SERIAL      primary key,
+     time_string                     text        not null,
+     sample                          text        not null,
+     comment                         text
+@@ -40,11 +40,11 @@
+ 
+ 
+ CREATE TABLE preference (
+-    preference_id   SERIAL      primary key,
++    id             SERIAL      primary key,
+ 
+     timezone        text        not null
+             default 'UTC',
+-    time_format     integer     references preference_time_string,
++    time_format_id  integer     references preference_time_string(id),
+     show_tz         boolean     default True,
+ 
+     notify_thread_watch     boolean     default False,
+@@ -52,41 +52,41 @@
+ );
+ 
+ CREATE TABLE person (
+-    person_id       SERIAL      primary key,
++    id                  SERIAL      primary key,
+     
+-    first_name      text        not null,
+-    last_name       text        not null,
+-    email           text        not null,
++    first_name          text        not null,
++    last_name           text        not null,
++    email               text        not null,
+     
+-    forum_name      text        not null,
++    forum_name          text        not null,
+ 
+-    preference      integer
+-                    references preference,
++    preference_id       integer
++                        references preference(id),
+ 
+-    authentication  integer
+-                    references authentication,
++    authentication_id   integer
++                        references authentication(id),
+ 
+     UNIQUE(forum_name),
+     UNIQUE(email)
+ );
+ 
+ CREATE TABLE registration_authentication (
+-    registration_authentication_id  text  primary key,
+-    recipient       integer     not null
+-                    references person,
++    id              text  primary key,
++    recipient_id    integer     not null
++                    references person(id),
+     expires         date
+ );
+ 
+ -- new table used during forgotten password process
+ CREATE TABLE password_reset (
+-    password_reset_id       text        primary key,
+-    recipient               integer     not null
+-                            references person,
++    id                      text        primary key,
++    recipient_id            integer     not null
++                            references person(id),
+     expires                 timestamp
+ );
+ 
+ CREATE TABLE forum (
+-    forum_id        SERIAL      primary key,
++    id              SERIAL      primary key,
+     name            text        not null,
+     description     text,
+ 
+@@ -98,16 +98,16 @@
+ );
+ 
+ CREATE TABLE thread (
+-    thread_id       SERIAL      primary key,
+-    forum           integer     not null
+-                    references forum,
++    id              SERIAL      primary key,
++    forum_id        integer     not null
++                    references forum(id),
+ 
+     subject         text        not null,
+     
+     created         timestamp with time zone
+                     default CURRENT_TIMESTAMP,
+-    creator         integer     not null
+-                    references person,
++    creator_id      integer     not null
++                    references person(id),
+     post_count      integer     not null    default 0,
+     view_count      integer     not null    default 0,
+ 
+@@ -118,45 +118,45 @@
+ );
+ 
+ CREATE TABLE post (
+-    post_id         SERIAL      primary key,
+-    thread          integer     not null
+-                    references thread,
++    id              SERIAL      primary key,
++    thread_id       integer     not null
++                    references thread(id),
+ 
+     subject         text,
+     message         text        not null,
+ 
+     created         timestamp with time zone
+                     default CURRENT_TIMESTAMP,
+-    creator         integer     not null
+-                    references person,
++    creator_id      integer     not null
++                    references person(id),
+ 
+     ip_addr         inet
+ 
+ );
+ 
+ -- add ReplyTo information for post
+-ALTER TABLE post ADD COLUMN reply_to
+-    integer references post
++ALTER TABLE post ADD COLUMN reply_to_id
++    integer references post(id)
+ ;
+ -- deal with quoted replies
+ ALTER TABLE post
+-ADD COLUMN quoted_post
+-integer REFERENCES post;
++ADD COLUMN quoted_post_id
++integer REFERENCES post(id);
+ 
+ ALTER TABLE post
+ ADD COLUMN quoted_text text;
+ 
+ -- add LastPost information
+-ALTER TABLE thread ADD COLUMN last_post
+-    integer references post
++ALTER TABLE thread ADD COLUMN last_post_id
++    integer references post(id)
+ ;
+-ALTER TABLE forum ADD COLUMN last_post
+-    integer references post
++ALTER TABLE forum ADD COLUMN last_post_id
++    integer references post(id)
+ ;
+ 
+ -- person posting information
+-ALTER TABLE person ADD COLUMN last_post
+-    integer references post
++ALTER TABLE person ADD COLUMN last_post_id
++    integer references post(id)
+ ;
+ ALTER TABLE person ADD COLUMN post_count
+     integer NOT NULL default 0
+@@ -171,9 +171,9 @@
+ 
+ -- when a user last viewed a thread
+ CREATE TABLE thread_view (
+-    thread_view_id      SERIAL      not null        primary key,
+-    person              integer     not null        references person,
+-    thread              integer     not null        references thread,
++    id                  SERIAL      not null        primary key,
++    person_id           integer     not null        references person(id),
++    thread_id           integer     not null        references thread(id),
+     timestamp           timestamp with time zone    not null
+                         default CURRENT_TIMESTAMP,
+ 
+@@ -187,13 +187,13 @@
+ -- overall it's better to queue outgoing emails, and have a separate process
+ -- deal with them
+ CREATE TABLE email_queue (
+-    email_queue_id      SERIAL      not null        primary key,
++    id                  SERIAL      not null        primary key,
+     queued              timestamp with time zone    not null
+                         default CURRENT_TIMESTAMP,
+ 
+-    recipient           integer     not null        references person,
+-    cc                  integer                     references person,
+-    bcc                 integer                     references person,
++    recipient_id        integer     not null        references person(id),
++    cc_id               integer                     references person(id),
++    bcc_id              integer                     references person(id),
+ 
+     sender              text        not null,
+ 
+@@ -208,8 +208,8 @@
+ 
+ -- a table of person/forum to show who's a moderator
+ CREATE TABLE forum_moderator (
+-    person              integer     not null    references person,
+-    forum               integer     not null    references forum,
++    person_id           integer     not null    references person(id),
++    forum_id            integer     not null    references forum(id),
+     can_moderate        boolean     not null    default true,
+ 
+     unique(person,forum)
+@@ -232,7 +232,7 @@
+     id              serial      primary key,
+ 
+     person_id       integer     not null
+-                    references person(person_id),
++                    references person(id),
+     terms_id        integer     not null
+                     references terms(id),
+ 
+@@ -250,23 +250,23 @@
+ 
+ -- #0 authentication
+ INSERT INTO authentication
+-(authentication_id, username, password, authenticated)
++(id, username, password, authenticated)
+ VALUES
+ (0, 'topdog', md5('k1tt3n'), true);
+ 
+ -- #0 preference
+ INSERT INTO preference
+-(preference_id, timezone)
++(id, timezone)
+ VALUES
+ (0, 'UTC');
+ 
+ -- #0 person info
+ INSERT INTO person
+-(person_id,first_name, last_name, email, forum_name, authentication, preference)
++(id,first_name, last_name, email, forum_name, authentication, preference)
+ VALUES
+ (0, 'Top','Dog','<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">topdog at herlpacker.co.uk</A>','TopDog', 0, 0);
+ 
+-INSERT INTO forum (forum_id, name, description) VALUES (0, 'Off-Topic', 'General off-topic discussion');
++INSERT INTO forum (id, name, description) VALUES (0, 'Off-Topic', 'General off-topic discussion');
+ INSERT INTO forum (name, description) VALUES ('Suggestions', 'Things you think should be added');
+ INSERT INTO forum (name, description) VALUES ('Bugs', 'If you find anything broken, report it here');
+ 
+
+Added: trunk/db/patch_0.57_to_0.58.psql
+===================================================================
+--- trunk/db/patch_0.57_to_0.58.psql	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/db/patch_0.57_to_0.58.psql	2007-11-01 21:56:20 UTC (rev 630)
+@@ -0,0 +1,127 @@
++-- Patch:
++--   From: 0.57
++--   To:   0.58
++--
++-- Description:
++--  clean up column naming
++
++BEGIN;
++
++-- patch starts here --
++
++--
++-- authentication table
++--
++ALTER TABLE authentication
++    RENAME authentication_id TO id;
++
++--
++-- email_queue table
++--
++ALTER TABLE email_queue
++    RENAME email_queue_id TO id;
++ALTER TABLE email_queue
++    RENAME recipient TO recipient_id;
++ALTER TABLE email_queue
++    RENAME cc TO cc_id;
++ALTER TABLE email_queue
++    RENAME bcc TO bcc_id;
++
++--
++-- forum table
++--
++ALTER TABLE forum
++    RENAME forum_id TO id;
++ALTER TABLE forum
++    RENAME last_post TO last_post_id;
++
++--
++-- forum_moderator table
++--
++ALTER TABLE forum_moderator
++    RENAME person TO person_id;
++ALTER TABLE forum_moderator
++    RENAME forum TO forum_id;
++
++--
++-- password_reset table
++--
++ALTER TABLE password_reset
++    RENAME password_reset_id TO id;
++ALTER TABLE password_reset
++    RENAME recipient TO recipient_id;
++
++--
++-- person table
++--
++ALTER TABLE person
++    RENAME person_id TO id;
++ALTER TABLE person
++    RENAME preference TO preference_id;
++ALTER TABLE person
++    RENAME authentication TO authentication_id;
++ALTER TABLE person
++    RENAME last_post TO last_post_id;
++
++--
++-- post table
++--
++ALTER TABLE post
++    RENAME post_id TO id;
++ALTER TABLE post
++    RENAME thread TO thread_id;
++ALTER TABLE post
++    RENAME creator TO creator_id;
++ALTER TABLE post
++    RENAME reply_to TO reply_to_id;
++ALTER TABLE post
++    RENAME quoted_post TO quoted_post_id;
++
++--
++-- preference table
++--
++ALTER TABLE preference
++    RENAME preference_id TO id;
++ALTER TABLE preference
++    RENAME time_format TO time_format_id;
++
++--
++-- preference_time_string table
++--
++ALTER TABLE preference_time_string
++    RENAME preference_time_string_id TO id;
++
++--
++-- registration_authentication table
++--
++ALTER TABLE registration_authentication
++    RENAME registration_authentication_id TO id;
++ALTER TABLE registration_authentication
++    RENAME recipient TO recipient_id;
++
++--
++-- thread table
++--
++ALTER TABLE thread
++    RENAME thread_id TO id;
++ALTER TABLE thread
++    RENAME forum TO forum_id;
++ALTER TABLE thread
++    RENAME creator TO creator_id;
++ALTER TABLE thread
++    RENAME last_post TO last_post_id;
++
++--
++-- thread_view table
++--
++ALTER TABLE thread_view
++    RENAME thread_view_id TO id;
++ALTER TABLE thread_view
++    RENAME person TO person_id;
++ALTER TABLE thread_view
++    RENAME thread TO thread_id;
++
++
++-- patch ends here --
++
++COMMIT;
+
+Modified: trunk/lib/Parley/Controller/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Forum.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Controller/Forum.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -29,7 +29,7 @@
+     $c-&gt;stash-&gt;{thread_list} =
+         $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;search(
+             {
+-                forum       =&gt; $c-&gt;_current_forum-&gt;id(),
++                forum_id    =&gt; $c-&gt;_current_forum-&gt;id(),
+                 active      =&gt; 1,
+             },
+             {
+@@ -39,7 +39,7 @@
+                 rows        =&gt; $c-&gt;config-&gt;{threads_per_page},
+                 page        =&gt; $c-&gt;stash-&gt;{current_page},
+ 
+-                prefetch =&gt; [
++                _prefetch =&gt; [
+                     { creator =&gt; 'authentication' },
+                     'last_post',
+                 ],
+
+Modified: trunk/lib/Parley/Controller/Root.pm
+===================================================================
+--- trunk/lib/Parley/Controller/Root.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Controller/Root.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -49,7 +49,7 @@
+         $c-&gt;_current_post(
+             $c-&gt;model('ParleyDB')-&gt;resultset('Post')-&gt;find(
+                 {
+-                    post_id  =&gt; $c-&gt;request-&gt;param('post')
++                    'me.id'  =&gt; $c-&gt;request-&gt;param('post')
+                 }
+             )
+         );
+@@ -82,7 +82,7 @@
+         $c-&gt;_current_thread(
+             $c-&gt;model('ParleyDB')-&gt;resultset('Thread')-&gt;find(
+                 {
+-                    thread_id  =&gt; $c-&gt;request-&gt;param('thread'),
++                    'me.id'  =&gt; $c-&gt;request-&gt;param('thread'),
+                 }
+             )
+         );
+@@ -110,7 +110,7 @@
+         $c-&gt;_current_forum(
+             $c-&gt;model('ParleyDB')-&gt;resultset('Forum')-&gt;find(
+                 {
+-                    forum_id  =&gt; $c-&gt;request-&gt;param('forum'),
++                    'me.id'  =&gt; $c-&gt;request-&gt;param('forum'),
+                 }
+             )
+         );
+
+Modified: trunk/lib/Parley/Schema/Authentication.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Authentication.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/Authentication.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -10,42 +10,36 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;authentication&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;authentication_id&quot;,
+-  {
++  &quot;id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; &quot;nextval('authentication_authentication_id_seq'::regclass)&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 4,
+   },
+-  &quot;password&quot;,
+-  {
++  &quot;password&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;authenticated&quot;,
+-  {
++  &quot;authenticated&quot; =&gt; {
+     data_type =&gt; &quot;boolean&quot;,
+     default_value =&gt; &quot;false&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 1,
+   },
+-  &quot;username&quot;,
+-  {
++  &quot;username&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;authentication_id&quot;);
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;add_unique_constraint(&quot;authentication_username_key&quot;, [&quot;username&quot;]);
+ __PACKAGE__-&gt;has_many(
+-  &quot;people&quot;,
+-  &quot;Person&quot;,
+-  { &quot;foreign.authentication&quot; =&gt; &quot;self.authentication_id&quot; },
++  &quot;people&quot; =&gt; &quot;Person&quot;,
++  { &quot;foreign.authentication_id&quot; =&gt; &quot;self.id&quot; },
+ );
+ 
+ 1;
+-
+
+Modified: trunk/lib/Parley/Schema/EmailQueue.pm
+===================================================================
+--- trunk/lib/Parley/Schema/EmailQueue.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/EmailQueue.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -10,66 +10,78 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;email_queue&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;recipient&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;cc&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;bcc&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;sender&quot;,
+-  {
++  &quot;id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('email_queue_email_queue_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++  &quot;recipient_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;cc_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;bcc_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;sender&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 1,
+     size =&gt; undef,
+   },
+-  &quot;subject&quot;,
+-  {
++  &quot;subject&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;html_content&quot;,
+-  {
++  &quot;html_content&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 1,
+     size =&gt; undef,
+   },
+-  &quot;email_queue_id&quot;,
+-  {
+-    data_type =&gt; &quot;integer&quot;,
+-    default_value =&gt; &quot;nextval('email_queue_email_queue_id_seq'::regclass)&quot;,
+-    is_nullable =&gt; 0,
+-    size =&gt; 4,
+-  },
+-  &quot;attempted_delivery&quot;,
+-  {
++  &quot;attempted_delivery&quot; =&gt; {
+     data_type =&gt; &quot;boolean&quot;,
+     default_value =&gt; &quot;false&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 1,
+   },
+-  &quot;text_content&quot;,
+-  {
++  &quot;text_content&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;queued&quot;,
+-  {
++  &quot;queued&quot; =&gt; {
+     data_type =&gt; &quot;timestamp with time zone&quot;,
+     default_value =&gt; &quot;now()&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 8,
+   },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;email_queue_id&quot;);
+-__PACKAGE__-&gt;belongs_to(&quot;recipient&quot;, &quot;Person&quot;, { person_id =&gt; &quot;recipient&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;cc&quot;, &quot;Person&quot;, { person_id =&gt; &quot;recipient&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;bcc&quot;, &quot;Person&quot;, { person_id =&gt; &quot;recipient&quot; });
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++__PACKAGE__-&gt;belongs_to(
++    &quot;recipient&quot; =&gt;  &quot;Person&quot;,
++    { 'foreign.id' =&gt; 'self.recipient_id' }
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;cc&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; 'self.cc_id' }
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;bcc&quot; =&gt;  &quot;Person&quot;,
++    { 'foreign.id' =&gt; 'self.bcc_id' });
+ 
+ 1;
+-
+
+Modified: trunk/lib/Parley/Schema/Forum.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Forum.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/Forum.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -10,43 +10,51 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;forum&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;last_post&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;post_count&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;forum_id&quot;,
+-  {
++  &quot;id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; &quot;nextval('forum_forum_id_seq'::regclass)&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 4,
+   },
+-  &quot;active&quot;,
+-  {
++  &quot;last_post_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;post_count&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; 0,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;active&quot; =&gt; {
+     data_type =&gt; &quot;boolean&quot;,
+     default_value =&gt; &quot;true&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 1,
+   },
+-  &quot;name&quot;,
+-  {
++  &quot;name&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;description&quot;,
+-  {
++  &quot;description&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 1,
+     size =&gt; undef,
+   },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;forum_id&quot;);
++
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;add_unique_constraint(&quot;forum_name_key&quot;, [&quot;name&quot;]);
+-__PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.forum&quot; =&gt; &quot;self.forum_id&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { id =&gt; &quot;last_post&quot; });
++__PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.forum&quot; =&gt; &quot;self.id&quot; });
++__PACKAGE__-&gt;belongs_to(
++    &quot;last_post&quot; =&gt; &quot;Post&quot;,
++    { 'foreign.id' =&gt; 'self.last_post_id' },
++);
+ 
+ sub moderators {
+     my $self = shift;
+@@ -57,7 +65,7 @@
+     # get all forum_moderators for a given forum
+     $results = $schema-&gt;resultset('ForumModerator')-&gt;search(
+         {
+-            forum           =&gt; $self-&gt;id(),
++            forum_id        =&gt; $self-&gt;id(),
+             can_moderate    =&gt; 1,
+         },
+     );
+@@ -102,4 +110,3 @@
+ }
+ 
+ 1;
+-
+
+Modified: trunk/lib/Parley/Schema/ForumModerator.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ForumModerator.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/ForumModerator.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -7,14 +7,14 @@
+ __PACKAGE__-&gt;load_components('PK::Auto', 'Core');
+ __PACKAGE__-&gt;table('forum_moderator');
+ __PACKAGE__-&gt;add_columns(
+-    person =&gt; {
++    person_id =&gt; {
+         data_type       =&gt; &quot;integer&quot;,
+         default_value   =&gt; undef,
+         is_nullable     =&gt; 0,
+         size            =&gt; 4
+     },
+ 
+-    forum =&gt; {
++    forum_id =&gt; {
+         data_type       =&gt; &quot;integer&quot;,
+         default_value   =&gt; undef,
+         is_nullable     =&gt; 0,
+@@ -29,8 +29,17 @@
+     },
+ );
+ 
+-__PACKAGE__-&gt;add_unique_constraint('forum_moderator_person_key', ['person', 'forum']);
+-__PACKAGE__-&gt;belongs_to('person', 'Person', { person_id =&gt; 'person' });
+-__PACKAGE__-&gt;belongs_to('forum',  'Forum',  {  forum_id =&gt; 'forum'  });
++__PACKAGE__-&gt;add_unique_constraint(
++    'forum_moderator_person_key',
++    ['person_id', 'forum_id']
++);
++__PACKAGE__-&gt;belongs_to(
++    'person' =&gt; 'Person',
++    { 'foreign.id' =&gt; 'self.person_id' }
++);
++__PACKAGE__-&gt;belongs_to(
++    'forum' =&gt; 'Forum',
++    { 'foreign.id' =&gt; 'self.forum_id'  }
++);
+ 
+ 1;
+
+Modified: trunk/lib/Parley/Schema/PasswordReset.pm
+===================================================================
+--- trunk/lib/Parley/Schema/PasswordReset.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/PasswordReset.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -8,13 +8,13 @@
+ __PACKAGE__-&gt;table(&quot;password_reset&quot;);
+ __PACKAGE__-&gt;add_columns(
+ 
+-  password_reset_id =&gt; {
++  id =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+ 
+-  recipient =&gt; {
++  recipient_id =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+@@ -28,8 +28,11 @@
+   },
+ );
+ 
+-__PACKAGE__-&gt;set_primary_key(&quot;password_reset_id&quot;);
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ 
+-__PACKAGE__-&gt;belongs_to(&quot;recipient&quot;, &quot;Person&quot;, { person_id =&gt; &quot;recipient&quot; });
++__PACKAGE__-&gt;belongs_to(
++    &quot;recipient&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; 'self.recipient_id' }
++);
+ 
+ 1;
+
+Modified: trunk/lib/Parley/Schema/Person.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Person.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/Person.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -10,76 +10,101 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;person&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;person_id&quot;,
+-  {
++  &quot;id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; &quot;nextval('person_person_id_seq'::regclass)&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 4,
+   },
+-  &quot;authentication&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;last_name&quot;,
+-  {
++  &quot;authentication_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;last_name&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;email&quot;,
+-  {
++  &quot;email&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;forum_name&quot;,
+-  {
++  &quot;forum_name&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;preference&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;last_post&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;post_count&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;first_name&quot;,
+-  {
++  &quot;preference_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;last_post_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;post_count&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; 0,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;first_name&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;person_id&quot;);
+-__PACKAGE__-&gt;add_unique_constraint(&quot;person_forum_name_key&quot;, [&quot;forum_name&quot;]);
+-__PACKAGE__-&gt;add_unique_constraint(&quot;person_email_key&quot;, [&quot;email&quot;]);
+-__PACKAGE__-&gt;has_many(&quot;threads&quot;, &quot;Thread&quot;, { &quot;foreign.creator&quot; =&gt; &quot;self.person_id&quot; });
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++__PACKAGE__-&gt;add_unique_constraint(
++    &quot;person_forum_name_key&quot;,
++    [&quot;forum_name&quot;]
++);
++__PACKAGE__-&gt;add_unique_constraint(
++    &quot;person_email_key&quot;,
++    [&quot;email&quot;]
++);
+ __PACKAGE__-&gt;has_many(
++    &quot;threads&quot; =&gt; &quot;Thread&quot; =&gt;
++    { &quot;foreign.creator_id&quot; =&gt; &quot;self.id&quot; }
++);
++__PACKAGE__-&gt;has_many(
+   &quot;email_queues&quot;,
+   &quot;EmailQueue&quot;,
+-  { &quot;foreign.recipient&quot; =&gt; &quot;self.person_id&quot; },
++  { &quot;foreign.recipient_id&quot; =&gt; &quot;self.id&quot; },
+ );
+-__PACKAGE__-&gt;has_many(&quot;posts&quot;, &quot;Post&quot;, { &quot;foreign.creator&quot; =&gt; &quot;self.person_id&quot; });
+ __PACKAGE__-&gt;has_many(
+-  &quot;thread_views&quot;,
+-  &quot;ThreadView&quot;,
+-  { &quot;foreign.person&quot; =&gt; &quot;self.person_id&quot; },
++    &quot;posts&quot; =&gt; &quot;Post&quot;,
++    { &quot;foreign.creator_id&quot; =&gt; &quot;self.id&quot; });
++__PACKAGE__-&gt;has_many(
++  &quot;thread_views&quot; =&gt; &quot;ThreadView&quot;,
++  { &quot;foreign.person_id&quot; =&gt; &quot;self.id&quot; },
+ );
+-__PACKAGE__-&gt;belongs_to(&quot;preference&quot;, &quot;Preference&quot;, { preference_id =&gt; &quot;preference&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;last_post&quot;, &quot;Post&quot;, { id =&gt; &quot;last_post&quot; });
+ __PACKAGE__-&gt;belongs_to(
++    &quot;preference&quot; =&gt; &quot;Preference&quot;,
++    { 'foreign.id' =&gt; &quot;self.preference_id&quot; }
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;last_post&quot; =&gt; &quot;Post&quot;,
++    { 'foreign.id' =&gt; &quot;self.last_post_id&quot; });
++__PACKAGE__-&gt;belongs_to(
+   &quot;authentication&quot; =&gt; &quot;Authentication&quot;,
+-  { authentication_id =&gt; &quot;authentication&quot; },
++  { 'foreign.id' =&gt; 'self.authentication_id' },
+ );
+ __PACKAGE__-&gt;has_many(
+   &quot;registration_authentications&quot;,
+   &quot;RegistrationAuthentication&quot;,
+-  { &quot;foreign.recipient&quot; =&gt; &quot;self.person_id&quot; },
++  { &quot;foreign.recipient&quot; =&gt; &quot;self.id&quot; },
+ );
+ 
+ 1;
+-
+
+Modified: trunk/lib/Parley/Schema/Post.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Post.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/Post.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -89,32 +89,32 @@
+ __PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;has_many(
+     &quot;threads&quot; =&gt; &quot;Thread&quot;,
+-    { &quot;foreign.last_post&quot; =&gt; &quot;self.id&quot; }
++    { &quot;foreign.last_post_id&quot; =&gt; &quot;self.id&quot; }
+ );
+ __PACKAGE__-&gt;has_many(
+     &quot;forums&quot; =&gt; &quot;Forum&quot;,
+-    { &quot;foreign.last_post&quot; =&gt; &quot;self.id&quot; }
++    { &quot;foreign.last_post_id&quot; =&gt; &quot;self.id&quot; }
+ );
+ __PACKAGE__-&gt;belongs_to(
+     &quot;creator&quot; =&gt; &quot;Person&quot;,
+-    { person_id =&gt; &quot;creator_id&quot; },
++    { 'foreign.id' =&gt; &quot;self.creator_id&quot; },
+ );
+ __PACKAGE__-&gt;belongs_to(
+     &quot;reply_to&quot; =&gt; &quot;Post&quot;,
+-    { id =&gt; &quot;reply_to_id&quot; },
++    { 'foreign.id' =&gt; &quot;self.reply_to_id&quot; },
+     { join_type =&gt; 'left' },
+ );
+ __PACKAGE__-&gt;has_many(
+   &quot;post_reply_toes&quot; =&gt; &quot;Post&quot;,
+-  { &quot;foreign.reply_to&quot; =&gt; &quot;self.id&quot; },
++  { &quot;foreign.reply_to_id&quot; =&gt; &quot;self.id&quot; },
+ );
+ __PACKAGE__-&gt;belongs_to(
+     &quot;thread&quot; =&gt; &quot;Thread&quot;,
+-    { thread_id =&gt; &quot;thread_id&quot; },
++    { 'foreign.id' =&gt; &quot;self.thread_id&quot; },
+ );
+ __PACKAGE__-&gt;belongs_to(
+     &quot;quoted_post&quot; =&gt; &quot;Post&quot;,
+-    { id =&gt; &quot;quoted_post_id&quot; },
++    { 'foreign.id' =&gt; &quot;self.quoted_post_id&quot; },
+     { join_type =&gt; 'left' },
+ );
+ __PACKAGE__-&gt;has_many(
+
+Modified: trunk/lib/Parley/Schema/Preference.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Preference.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/Preference.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -10,23 +10,21 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;preference&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;timezone&quot;,
+-  {
+-    data_type =&gt; &quot;text&quot;,
+-    default_value =&gt; &quot;'UTC'::text&quot;,
+-    is_nullable =&gt; 0,
+-    size =&gt; undef,
+-  },
+-
+-  &quot;preference_id&quot;,
+-  {
++  &quot;id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; &quot;nextval('preference_preference_id_seq'::regclass)&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 4,
+   },
+ 
+-  'time_format' =&gt; {
++  &quot;timezone&quot; =&gt; {
++    data_type =&gt; &quot;text&quot;,
++    default_value =&gt; &quot;'UTC'::text&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; undef,
++  },
++
++  'time_format_id' =&gt; {
+     data_type =&gt; 'integer',
+     size =&gt; 4,
+   },
+@@ -49,15 +47,16 @@
+     size =&gt; 1,
+   },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;preference_id&quot;);
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;has_many(
+   &quot;people&quot;,
+   &quot;Person&quot;,
+-  { &quot;foreign.preference&quot; =&gt; &quot;self.preference_id&quot; },
++  { &quot;foreign.id&quot; =&gt; &quot;self.preference_id&quot; },
+ );
+ 
+-__PACKAGE__-&gt;belongs_to(&quot;time_format&quot;, &quot;PreferenceTimeString&quot;, { preference_time_string_id =&gt; &quot;time_format&quot; });
++__PACKAGE__-&gt;belongs_to(
++    &quot;time_format&quot; =&gt; &quot;PreferenceTimeString&quot;,
++    { 'foreign.id' =&gt; 'self.time_format_id' });
+ 
+ 
+ 1;
+-
+
+Modified: trunk/lib/Parley/Schema/PreferenceTimeString.pm
+===================================================================
+--- trunk/lib/Parley/Schema/PreferenceTimeString.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/PreferenceTimeString.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -6,7 +6,7 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;preference_time_string&quot;);
+ __PACKAGE__-&gt;add_columns(
+-    preference_time_string_id =&gt; {
++    id =&gt; {
+         data_type =&gt; &quot;integer&quot;,
+         default_value =&gt; &quot;nextval('preference_time_string_preference_time_string_id_seq'::regclass)&quot;,
+         is_nullable =&gt; 0,
+@@ -28,6 +28,6 @@
+         size =&gt; undef,
+     },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;preference_time_string_id&quot;);
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ 
+ 1;
+
+Modified: trunk/lib/Parley/Schema/RegistrationAuthentication.pm
+===================================================================
+--- trunk/lib/Parley/Schema/RegistrationAuthentication.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/RegistrationAuthentication.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -10,20 +10,28 @@
+ __PACKAGE__-&gt;load_components(&quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;registration_authentication&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;recipient&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;registration_authentication_id&quot;,
+-  {
++  &quot;id&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;expires&quot;,
+-  { data_type =&gt; &quot;date&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
++  &quot;recipient_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;expires&quot; =&gt; {
++    data_type =&gt; &quot;date&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;registration_authentication_id&quot;);
+-__PACKAGE__-&gt;belongs_to(&quot;recipient&quot;, &quot;Person&quot;, { person_id =&gt; &quot;recipient&quot; });
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++__PACKAGE__-&gt;belongs_to(
++    &quot;recipient&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; &quot;self.recipient_id&quot; });
+ 
+ 1;
+-
+
+Modified: trunk/lib/Parley/Schema/TermsAgreed.pm
+===================================================================
+--- trunk/lib/Parley/Schema/TermsAgreed.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/TermsAgreed.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -27,7 +27,7 @@
+ 
+ __PACKAGE__-&gt;belongs_to(
+     'person' =&gt; 'Person',
+-    { 'foreign.person_id' =&gt; 'self.person_id' }
++    { 'foreign.id' =&gt; 'self.person_id' }
+ );
+ __PACKAGE__-&gt;belongs_to(
+     'terms' =&gt; 'Terms',
+
+Modified: trunk/lib/Parley/Schema/Thread.pm
+===================================================================
+--- trunk/lib/Parley/Schema/Thread.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/Thread.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -10,82 +10,99 @@
+ __PACKAGE__-&gt;load_components('ResultSetManager', &quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;thread&quot;);
+ __PACKAGE__-&gt;add_columns(
+-  &quot;thread_id&quot;,
+-  {
++  &quot;id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; &quot;nextval('thread_thread_id_seq'::regclass)&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 4,
+   },
+-  &quot;locked&quot;,
+-  {
++  &quot;locked&quot; =&gt; {
+     data_type =&gt; &quot;boolean&quot;,
+     default_value =&gt; &quot;false&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 1,
+   },
+-  &quot;creator&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;subject&quot;,
+-  {
++  &quot;creator_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;subject&quot; =&gt; {
+     data_type =&gt; &quot;text&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; undef,
+   },
+-  &quot;active&quot;,
+-  {
++  &quot;active&quot; =&gt; {
+     data_type =&gt; &quot;boolean&quot;,
+     default_value =&gt; &quot;true&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 1,
+   },
+-  &quot;forum&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;created&quot;,
+-  {
++  &quot;forum_id&quot;, {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;created&quot; =&gt; {
+     data_type =&gt; &quot;timestamp with time zone&quot;,
+     default_value =&gt; &quot;now()&quot;,
+     is_nullable =&gt; 1,
+     size =&gt; 8,
+   },
+-  &quot;last_post&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; undef, is_nullable =&gt; 1, size =&gt; 4 },
+-  &quot;sticky&quot;,
+-  {
++  &quot;last_post_id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; undef,
++    is_nullable =&gt; 1,
++    size =&gt; 4
++  },
++  &quot;sticky&quot; =&gt; {
+     data_type =&gt; &quot;boolean&quot;,
+     default_value =&gt; &quot;false&quot;,
+     is_nullable =&gt; 0,
+     size =&gt; 1,
+   },
+-  &quot;post_count&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
+-  &quot;view_count&quot;,
+-  { data_type =&gt; &quot;integer&quot;, default_value =&gt; 0, is_nullable =&gt; 0, size =&gt; 4 },
++  &quot;post_count&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; 0,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
++  &quot;view_count&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; 0,
++    is_nullable =&gt; 0,
++    size =&gt; 4
++  },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;thread_id&quot;);
+-__PACKAGE__-&gt;belongs_to(&quot;creator&quot;, &quot;Person&quot;, { person_id =&gt; &quot;creator&quot; });
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
+ __PACKAGE__-&gt;belongs_to(
+-    &quot;last_post&quot;, &quot;Post&quot;,
+-    { id =&gt; &quot;last_post&quot; },
+-    { prefetch =&gt; [ qw/ creator / ] },
++    &quot;creator&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; 'self.creator_id' }
+ );
+-__PACKAGE__-&gt;belongs_to(&quot;forum&quot;, &quot;Forum&quot;, { forum_id =&gt; &quot;forum&quot; });
++__PACKAGE__-&gt;belongs_to(
++    &quot;last_post&quot; =&gt; &quot;Post&quot;,
++    { 'foreign.id' =&gt; 'self.last_post_id' },
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;forum&quot; =&gt;  &quot;Forum&quot;,
++    { 'foreign.id' =&gt; 'self.forum_id' }
++);
+ __PACKAGE__-&gt;has_many(
+-    &quot;posts&quot;, &quot;Post&quot;,
+-    { &quot;foreign.thread&quot; =&gt; &quot;self.thread_id&quot; },
++    &quot;posts&quot; =&gt; &quot;Post&quot;,
++    { &quot;foreign.thread_id&quot; =&gt; &quot;self.id&quot; },
+ );
+ __PACKAGE__-&gt;has_many(
+-  &quot;thread_views&quot;,
+-  &quot;ThreadView&quot;,
+-  { &quot;foreign.thread&quot; =&gt; &quot;self.thread_id&quot; },
++  &quot;thread_views&quot; =&gt; &quot;ThreadView&quot;,
++  { &quot;foreign.thread_id&quot; =&gt; &quot;self.id&quot; },
+ );
+ 
+ __PACKAGE__-&gt;has_many(
+-    'forum_moderators',
+-    'ForumModerator',
++    'forum_moderators' =&gt; 'ForumModerator',
+     {
+-        'foreign.forum' =&gt; 'self.forum',
++        'foreign.forum' =&gt; 'self.forum_id',
+     }
+ );
+ 
+
+Modified: trunk/lib/Parley/Schema/ThreadView.pm
+===================================================================
+--- trunk/lib/Parley/Schema/ThreadView.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema/ThreadView.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -13,6 +13,13 @@
+ __PACKAGE__-&gt;load_components('ResultSetManager', &quot;PK::Auto&quot;, &quot;Core&quot;);
+ __PACKAGE__-&gt;table(&quot;thread_view&quot;);
+ __PACKAGE__-&gt;add_columns(
++  &quot;id&quot; =&gt; {
++    data_type =&gt; &quot;integer&quot;,
++    default_value =&gt; &quot;nextval('thread_view_thread_view_id_seq'::regclass)&quot;,
++    is_nullable =&gt; 0,
++    size =&gt; 4,
++  },
++
+   &quot;watched&quot; =&gt; {
+     data_type =&gt; &quot;boolean&quot;,
+     default_value =&gt; &quot;false&quot;,
+@@ -20,13 +27,6 @@
+     size =&gt; 1,
+   },
+ 
+-  &quot;thread_view_id&quot; =&gt; {
+-    data_type =&gt; &quot;integer&quot;,
+-    default_value =&gt; &quot;nextval('thread_view_thread_view_id_seq'::regclass)&quot;,
+-    is_nullable =&gt; 0,
+-    size =&gt; 4,
+-  },
+-
+   &quot;last_notified&quot; =&gt; {
+     data_type =&gt; &quot;timestamp with time zone&quot;,
+     default_value =&gt; undef,
+@@ -34,7 +34,7 @@
+     size =&gt; 8,
+   },
+ 
+-  &quot;thread&quot; =&gt; {
++  &quot;thread_id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+@@ -46,17 +46,26 @@
+     is_nullable =&gt; 0,
+     size =&gt; 8,
+   },
+-  &quot;person&quot; =&gt; {
++  &quot;person_id&quot; =&gt; {
+     data_type =&gt; &quot;integer&quot;,
+     default_value =&gt; undef,
+     is_nullable =&gt; 0,
+     size =&gt; 4
+   },
+ );
+-__PACKAGE__-&gt;set_primary_key(&quot;thread_view_id&quot;);
+-__PACKAGE__-&gt;add_unique_constraint(&quot;thread_view_person_key&quot;, [&quot;person&quot;, &quot;thread&quot;]);
+-__PACKAGE__-&gt;belongs_to(&quot;thread&quot;, &quot;Thread&quot;, { thread_id =&gt; &quot;thread&quot; });
+-__PACKAGE__-&gt;belongs_to(&quot;person&quot;, &quot;Person&quot;, { person_id =&gt; &quot;person&quot; });
++__PACKAGE__-&gt;set_primary_key(&quot;id&quot;);
++__PACKAGE__-&gt;add_unique_constraint(
++    'thread_view_person_key',
++    ['person_id', 'thread_id']
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;thread&quot; =&gt; &quot;Thread&quot;,
++    { 'foreign.id' =&gt; 'self.thread_id' },
++);
++__PACKAGE__-&gt;belongs_to(
++    &quot;person&quot; =&gt; &quot;Person&quot;,
++    { 'foreign.id' =&gt; 'self.person_id' }
++);
+ 
+ 
+ 
+@@ -152,4 +161,3 @@
+ }
+ 
+ 1;
+-
+
+Modified: trunk/lib/Parley/Schema.pm
+===================================================================
+--- trunk/lib/Parley/Schema.pm	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/lib/Parley/Schema.pm	2007-11-01 21:56:20 UTC (rev 630)
+@@ -8,6 +8,6 @@
+ use base 'DBIx::Class::Schema';
+ 
+ __PACKAGE__-&gt;load_classes;
+-$ENV{DBIC_TRACE} = 0;
++#$ENV{DBIC_TRACE} = 1;
+ 
+ 1;
+
+Modified: trunk/t/schema/authentication.t
+===================================================================
+--- trunk/t/schema/authentication.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/authentication.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,7 +19,7 @@
+     {
+         columns =&gt; [
+             qw[
+-                authentication_id
++                id
+                 username
+                 password
+                 authenticated
+
+Modified: trunk/t/schema/email_queue.t
+===================================================================
+--- trunk/t/schema/email_queue.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/email_queue.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,11 +19,11 @@
+     {
+         columns =&gt; [
+             qw[
+-                email_queue_id
++                id
+                 queued
+-                recipient
+-                cc
+-                bcc
++                recipient_id
++                cc_id
++                bcc_id
+                 sender
+                 subject
+                 text_content
+
+Modified: trunk/t/schema/forum.t
+===================================================================
+--- trunk/t/schema/forum.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/forum.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,12 +19,12 @@
+     {
+         columns =&gt; [
+             qw[
+-                forum_id
++                id
+                 name
+                 description
+                 active
+                 post_count
+-                last_post
++                last_post_id
+             ]
+         ],
+ 
+
+Modified: trunk/t/schema/forum_moderator.t
+===================================================================
+--- trunk/t/schema/forum_moderator.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/forum_moderator.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,8 +19,8 @@
+     {
+         columns =&gt; [
+             qw[
+-                forum
+-                person
++                forum_id
++                person_id
+                 can_moderate
+             ]
+         ],
+
+Modified: trunk/t/schema/password_reset.t
+===================================================================
+--- trunk/t/schema/password_reset.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/password_reset.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,8 +19,8 @@
+     {
+         columns =&gt; [
+             qw[
+-                password_reset_id
+-                recipient
++                id
++                recipient_id
+                 expires
+             ]
+         ],
+
+Modified: trunk/t/schema/person.t
+===================================================================
+--- trunk/t/schema/person.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/person.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,14 +19,14 @@
+     {
+         columns =&gt; [
+             qw[
+-                person_id
+-                authentication
++                id
++                authentication_id
+                 first_name
+                 last_name
+                 email
+                 forum_name
+-                preference
+-                last_post
++                preference_id
++                last_post_id
+                 post_count
+             ]
+         ],
+
+Modified: trunk/t/schema/post.t
+===================================================================
+--- trunk/t/schema/post.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/post.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,15 +19,15 @@
+     {
+         columns =&gt; [
+             qw[
+-                post_id
+-                creator
++                id
++                creator_id
+                 subject
+-                quoted_post
++                quoted_post_id
+                 message
+                 quoted_text
+                 created
+-                thread
+-                reply_to
++                thread_id
++                reply_to_id
+                 edited
+                 ip_addr
+             ]
+
+Modified: trunk/t/schema/preference.t
+===================================================================
+--- trunk/t/schema/preference.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/preference.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,7 +19,7 @@
+     {
+         columns =&gt; [
+             qw[
+-                preference_id
++                id
+                 timezone
+                 time_format
+                 show_tz
+
+Modified: trunk/t/schema/preference_time_string.t
+===================================================================
+--- trunk/t/schema/preference_time_string.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/preference_time_string.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,7 +19,7 @@
+     {
+         columns =&gt; [
+             qw[
+-                preference_time_string_id
++                id
+                 time_string
+                 sample
+                 comment
+
+Modified: trunk/t/schema/registration_authentication.t
+===================================================================
+--- trunk/t/schema/registration_authentication.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/registration_authentication.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,8 +19,8 @@
+     {
+         columns =&gt; [
+             qw[
+-                registration_authentication_id
+-                recipient
++                id
++                recipient_id
+                 expires
+             ]
+         ],
+
+Modified: trunk/t/schema/thread.t
+===================================================================
+--- trunk/t/schema/thread.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/thread.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,17 +19,17 @@
+     {
+         columns =&gt; [
+             qw[
+-                thread_id
+-                forum
++                id
++                forum_id
+                 subject
+                 created
+-                creator
++                creator_id
+                 post_count
+                 view_count
+                 active
+                 sticky
+                 locked
+-                last_post
++                last_post_id
+             ]
+         ],
+ 
+
+Modified: trunk/t/schema/thread_view.t
+===================================================================
+--- trunk/t/schema/thread_view.t	2007-11-01 21:56:08 UTC (rev 629)
++++ trunk/t/schema/thread_view.t	2007-11-01 21:56:20 UTC (rev 630)
+@@ -19,9 +19,9 @@
+     {
+         columns =&gt; [
+             qw[
+-                thread_view_id
+-                person
+-                thread
++                id
++                person_id
++                thread_id
+                 timestamp
+                 watched
+                 last_notified
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000517.html">[Parley-svn] r629 - / trunk/lib trunk/lib/Parley/Controller	trunk/lib/Parley/Schema
+</A></li>
+	<LI>Next message: <A HREF="000519.html">[Parley-svn] r631 - / trunk/lib/Parley/Controller	trunk/lib/Parley/Schema
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#518">[ date ]</a>
+              <a href="thread.html#518">[ thread ]</a>
+              <a href="subject.html#518">[ subject ]</a>
+              <a href="author.html#518">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

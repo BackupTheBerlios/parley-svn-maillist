@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r779 - / trunk trunk/lib trunk/root/base	trunk/root/base/forum trunk/root/base/thread
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2008-February/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r779%20-%20/%20trunk%20trunk/lib%20trunk/root/base%0A%09trunk/root/base/forum%20trunk/root/base/thread&In-Reply-To=%3C200802050826.m158Qlkf001839%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000666.html">
+   <LINK REL="Next"  HREF="000668.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r779 - / trunk trunk/lib trunk/root/base	trunk/root/base/forum trunk/root/base/thread</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r779%20-%20/%20trunk%20trunk/lib%20trunk/root/base%0A%09trunk/root/base/forum%20trunk/root/base/thread&In-Reply-To=%3C200802050826.m158Qlkf001839%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r779 - / trunk trunk/lib trunk/root/base	trunk/root/base/forum trunk/root/base/thread">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Feb  5 09:26:47 CET 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000666.html">[Parley-svn] r778 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/root/base
+</A></li>
+        <LI>Next message: <A HREF="000668.html">[Parley-svn] r780 - / trunk trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#667">[ date ]</a>
+              <a href="thread.html#667">[ thread ]</a>
+              <a href="subject.html#667">[ subject ]</a>
+              <a href="author.html#667">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2008-02-05 09:26:46 +0100 (Tue, 05 Feb 2008)
+New Revision: 779
+
+Modified:
+   /
+   trunk/TODO
+   trunk/lib/Parley.pm
+   trunk/root/base/forum/view
+   trunk/root/base/header
+   trunk/root/base/thread/add
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4608 at wiggin</A>:  chisel | 2008-02-04 19:23:19 +0000
+ / updated TODO
+ / minor version bump
+ / fix (now) invalid YUI url (button vs button-beta)
+ + make &quot;Create New Thread&quot; more visible
+ + add a Cancel button to thread/add
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4598
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4608
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/TODO
+===================================================================
+--- trunk/TODO	2008-02-02 11:17:02 UTC (rev 778)
++++ trunk/TODO	2008-02-05 08:26:46 UTC (rev 779)
+@@ -1,7 +1,7 @@
+ TODO LIST
+ 
+   - add i18n for 'or'
+-  - more visible Create New Thread
++  - Quick Reply
+   - login form doesn't submit onEnter
+   - login form flickers on IE7 page load
+   - TESTS, TESTS, TESTS!
+@@ -18,6 +18,7 @@
+   - 'smileys'?
+   - realtime time-format example update (my/prefs - tab_time)
+   - timezone menu usability
++D - more visible Create New Thread
+ D - [bug] can't logout
+ D - styling: user prefs
+ D - styling: user profile
+
+Modified: trunk/lib/Parley.pm
+===================================================================
+--- trunk/lib/Parley.pm	2008-02-02 11:17:02 UTC (rev 778)
++++ trunk/lib/Parley.pm	2008-02-05 08:26:46 UTC (rev 779)
+@@ -3,7 +3,7 @@
+ use strict;
+ use warnings;
+ 
+-our $VERSION = '0.58_99_002';
++our $VERSION = '0.58_99_003';
+ 
+ use Catalyst::Runtime '5.70';
+ use Catalyst qw/
+
+Modified: trunk/root/base/forum/view
+===================================================================
+--- trunk/root/base/forum/view	2008-02-02 11:17:02 UTC (rev 778)
++++ trunk/root/base/forum/view	2008-02-05 08:26:46 UTC (rev 779)
+@@ -1,7 +1,16 @@
+ &lt;h1&gt;[% current_forum.name %] : List Of Active Threads&lt;/h1&gt;
+ 
+ [%- IF thread_list.count &gt; 0 %]
++
++&lt;div style=&quot;float:right; font-size: 85%;&quot;&gt;
++    &lt;span class=&quot;yui-button yui-link-button&quot;&gt;
++        &lt;span class=&quot;first-child&quot;&gt;
++            &lt;a href=&quot;[%c.uri_for('/thread/add',{'forum'=&gt;current_forum.id})%]&quot;&gt;[%l('Create New Thread')%]&lt;/a&gt;
++        &lt;/span&gt;
++    &lt;/span&gt;
++&lt;/div&gt;
+ [% PROCESS shared/pager_advanced %]
++
+ &lt;table class=&quot;forum_view&quot;&gt;
+     &lt;tbody&gt;
+         [%- WHILE (thread = thread_list.next) %]
+@@ -15,9 +24,7 @@
+     &lt;/tbody&gt;
+ &lt;/table&gt;
+ 
+-
+ [% PROCESS shared/pager_advanced %]
+ [% ELSE %]
+   No active threads in this forum
+ [% END %]
+-
+
+Modified: trunk/root/base/header
+===================================================================
+--- trunk/root/base/header	2008-02-02 11:17:02 UTC (rev 778)
++++ trunk/root/base/header	2008-02-05 08:26:46 UTC (rev 779)
+@@ -46,7 +46,7 @@
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container_core-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/container/container-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/utilities/utilities.js&quot;&gt;&lt;/script&gt;
+-        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/button/button-beta-min.js&quot;&gt;&lt;/script&gt;
++        &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/button/button-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/menu/menu-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/tabview/tabview-min.js&quot;&gt;&lt;/script&gt;
+         &lt;script type=&quot;text/javascript&quot; src=&quot;[%c.request.base%]/static/yui/logger/logger-min.js&quot;&gt;&lt;/script&gt;
+
+Modified: trunk/root/base/thread/add
+===================================================================
+--- trunk/root/base/thread/add	2008-02-02 11:17:02 UTC (rev 778)
++++ trunk/root/base/thread/add	2008-02-05 08:26:46 UTC (rev 779)
+@@ -31,9 +31,16 @@
+         &lt;/tr&gt;
+ 
+         &lt;tr&gt;
+-            &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
+-            &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; id=&quot;message_preview&quot; /&gt;
+-            &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Topic')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; /&gt;
++            &lt;td&gt;&nbsp;&lt;/td&gt;
++            &lt;td colspan=&quot;1&quot; style=&quot;text-align: left;&quot;&gt;
++                &lt;span class=&quot;yui-button yui-link-button&quot; style=&quot;margin-right:50px;margin-left:50px;&quot;&gt;
++                    &lt;span class=&quot;first-child&quot;&gt;
++                        &lt;a href=&quot;[%c.uri_for('/forum/view',{'forum'=&gt;current_forum.id})%]&quot;&gt;[%l('Cancel')%]&lt;/a&gt;
++                    &lt;/span&gt;
++                &lt;/span&gt;
++
++                &lt;input type=&quot;button&quot; value=&quot;[%l('Preview')%]&quot; name=&quot;preview_reply&quot; class=&quot;&quot; id=&quot;message_preview&quot; /&gt;
++                &lt;input type=&quot;submit&quot; value=&quot;[%l('Post New Topic')%]&quot; name=&quot;post_reply&quot; class=&quot;&quot; /&gt;
+             &lt;/td&gt;
+         &lt;/tr&gt;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000666.html">[Parley-svn] r778 - / trunk trunk/lib trunk/lib/Parley/Controller	trunk/root/base
+</A></li>
+	<LI>Next message: <A HREF="000668.html">[Parley-svn] r780 - / trunk trunk/lib/Parley/I18N
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#667">[ date ]</a>
+              <a href="thread.html#667">[ thread ]</a>
+              <a href="subject.html#667">[ subject ]</a>
+              <a href="author.html#667">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

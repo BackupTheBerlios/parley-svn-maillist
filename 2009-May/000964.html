@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1083 - / trunk trunk/t.output
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-May/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1083%20-%20/%20trunk%20trunk/t.output&In-Reply-To=%3C200905012102.n41L2ddx016249%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000963.html">
+   <LINK REL="Next"  HREF="000965.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1083 - / trunk trunk/t.output</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1083%20-%20/%20trunk%20trunk/t.output&In-Reply-To=%3C200905012102.n41L2ddx016249%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1083 - / trunk trunk/t.output">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Fri May  1 23:02:39 CEST 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000963.html">[Parley-svn] r1082 - / trunk trunk/lib/Parley trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000965.html">[Parley-svn] r1084 - / tags
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#964">[ date ]</a>
+              <a href="thread.html#964">[ thread ]</a>
+              <a href="subject.html#964">[ subject ]</a>
+              <a href="author.html#964">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-05-01 23:02:38 +0200 (Fri, 01 May 2009)
+New Revision: 1083
+
+Added:
+   trunk/t.output/1.2.1
+Modified:
+   /
+   trunk/META.yml
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9390 at wiggin</A>:  chisel | 2009-04-29 19:45:19 +0100
+ Re-run test-suite
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9389
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9390
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/META.yml
+===================================================================
+--- trunk/META.yml	2009-05-01 21:02:30 UTC (rev 1082)
++++ trunk/META.yml	2009-05-01 21:02:38 UTC (rev 1083)
+@@ -65,4 +65,4 @@
+   Time::Piece: 1.11
+ resources:
+   license: <A HREF="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</A>
+-version: 1.2.0
++version: 1.2.1
+
+Added: trunk/t.output/1.2.1
+===================================================================
+--- trunk/t.output/1.2.1	2009-05-01 21:02:30 UTC (rev 1082)
++++ trunk/t.output/1.2.1	2009-05-01 21:02:38 UTC (rev 1083)
+@@ -0,0 +1,23 @@
++PERL_DL_NONLAZY=1 /usr/bin/perl &quot;-MExtUtils::Command::MM&quot; &quot;-e&quot; &quot;test_harness(0, 'inc', 'blib/lib', 'blib/arch')&quot; t/*.t t/bug/*.t t/mechanize/*.t
++t/01app.........................ok
++t/02pod.........................skipped
++        all skipped: set TEST_POD to enable this test
++t/03podcoverage.................skipped
++        all skipped: set TEST_POD to enable this test
++t/04_forumcode..................ok
++t/05.userroles..................ok
++t/06.aggregate.controller.......ok
++t/07.aggregate.schematests......ok
++        75/294 skipped: various reasons
++t/50.text_search.sql............ok
++t/bug/01.forum_list_no_posts....ok
++t/mechanize/00.login............ok
++t/mechanize/01.main_page........ok
++t/mechanize/02.forum............ok
++t/model_ParleyDB................ok
++t/model_Post....................ok
++t/view_JSON.....................ok
++t/view_Plain....................ok
++t/view_TT.......................ok
++All tests successful, 2 tests and 75 subtests skipped.
++Files=17, Tests=464, 22 wallclock secs (19.60 cusr +  1.05 csys = 20.65 CPU)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000963.html">[Parley-svn] r1082 - / trunk trunk/lib/Parley trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000965.html">[Parley-svn] r1084 - / tags
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#964">[ date ]</a>
+              <a href="thread.html#964">[ thread ]</a>
+              <a href="subject.html#964">[ subject ]</a>
+              <a href="author.html#964">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

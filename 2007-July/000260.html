@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r372 - / trunk/lib/Template/Plugin trunk/t
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r372%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200707042215.l64MF7kv013442%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000259.html">
+   <LINK REL="Next"  HREF="000261.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r372 - / trunk/lib/Template/Plugin trunk/t</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r372%20-%20/%20trunk/lib/Template/Plugin%20trunk/t&In-Reply-To=%3C200707042215.l64MF7kv013442%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r372 - / trunk/lib/Template/Plugin trunk/t">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul  5 00:15:07 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000259.html">[Parley-svn] r371 - / trunk/lib/Template/Plugin trunk/t
+</A></li>
+        <LI>Next message: <A HREF="000261.html">[Parley-svn] r373 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#260">[ date ]</a>
+              <a href="thread.html#260">[ thread ]</a>
+              <a href="subject.html#260">[ subject ]</a>
+              <a href="author.html#260">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-07-05 00:15:07 +0200 (Thu, 05 Jul 2007)
+New Revision: 372
+
+Modified:
+   /
+   trunk/lib/Template/Plugin/ForumCode.pm
+   trunk/t/04_forumcode.t
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3439 at wiggin</A>:  chisel | 2007-06-29 11:40:34 +0100
+ + improved documentation
+ / allow colour/color as tagname (+tests)
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3438
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3439
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Template/Plugin/ForumCode.pm
+===================================================================
+--- trunk/lib/Template/Plugin/ForumCode.pm	2007-07-04 22:15:00 UTC (rev 371)
++++ trunk/lib/Template/Plugin/ForumCode.pm	2007-07-04 22:15:07 UTC (rev 372)
+@@ -59,8 +59,14 @@
+     # deal with acceptable [x]...[/x] markup
+     foreach my $tag (@{ $self-&gt;{simple_tags} }) {
+         # we should be able to combine these two into one
+-        $$textref =~ s{\[$tag\]}{&lt;$tag&gt;}g;
+-        $$textref =~ s{\[/$tag\]}{&lt;/$tag&gt;}g;
++        #$$textref =~ s{\[$tag\]}{&lt;$tag&gt;}g;
++        #$$textref =~ s{\[/$tag\]}{&lt;/$tag&gt;}g;
++        $$textref =~ s{
++            \[($tag)\]
++            (.+?)
++            \[/$tag\]
++        }
++        {&lt;$1&gt;$2&lt;/$1&gt;}xmsg;
+     }
+ }
+ 
+@@ -118,7 +124,7 @@
+ 
+     # deal with colouring
+     $$textref =~ s{
+-        \[color
++        \[(colou?r)
+         =
+         (
+               red | orange | yellow | green | blue
+@@ -128,9 +134,9 @@
+         )
+         \]
+         (.+?)
+-        \[/color\]
++        \[/\1\]
+     }
+-    {&lt;span style=&quot;color: $1&quot;&gt;$2&lt;/span&gt;}ixmsg;
++    {&lt;span style=&quot;color: $2&quot;&gt;$3&lt;/span&gt;}ixmsg;
+ }
+ 
+ sub _lists {
+@@ -240,16 +246,50 @@
+ 
+ Make the text between the markers I&lt;italicised&gt;.
+ 
+-=item B&lt;[url]&gt;...B&lt;[/url]&gt;
++=item B&lt;[url]&gt;<A HREF="http://...B&lt;[/url">http://...B&lt;[/url</A>]&gt;
+ 
+-Make the text between the markers into a HTML link. If you
++Make the text between the markers into a I&lt;HTML link&gt;. If you
+ would like to give the link a name, use the following format:
+ 
+-S&lt;[url B&lt;name=&quot;...&quot;&gt;]...[/url]&gt;
++S&lt;[url B&lt;name=&quot;...&quot;&gt;]<A HREF="http://...[/url">http://...[/url</A>]&gt;
+ 
++=item B&lt;[img]&gt;<A HREF="http://...B&lt;[/img">http://...B&lt;[/img</A>]&gt;
++
++Insert an I&lt;image&gt;, specified by the URL between the markers.
++
++=item B&lt;[colour=I&lt;code&gt;]&gt;...B&lt;[/colour]&gt;
++
++Make a block of text appear in the I&lt;colour&gt; specified by I&lt;code&gt;.
++
++I&lt;code&gt; can be any of the named colours: red, orange, yellow, green, blue, black, white.
++
++I&lt;code&gt; may also be a #RGB value in either the #XYZ or #XXYYZZ format.
++
++For the sake of international relations C&lt;&lt; [color=I&lt;code&gt;]...[/color] &gt;&gt; may aslo be used.
++
++=item B&lt;[list]&gt;...B&lt;[/list]&gt;
++
++Create an ordered or unordered list of items. To create an I&lt;unordered list&gt; use B&lt;[*]&gt; to
++mark the start of each list item. To create an I&lt;ordered list&gt; use B&lt;[1]&gt; to mark the start
++of each list item.
++
++  e.g. an unordered list
++   [list]
++   [*]apple
++   [*]orange
++   [*]banana
++   [/list]
++
++  e.g. an ordered list
++   [list]
++   [1]first
++   [2]second
++   [3]third
++   [/list]
++
+ =back
+ 
+-=head1 METHODS
++=head1 PUBLIC METHODS
+ 
+ =head2 new
+ 
+@@ -261,7 +301,7 @@
+ 
+ =head1 AUTHOR
+ 
+-Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">pause at herlpacker.co.uk</A>&gt; &gt;&gt;
++Chisel Wright C&lt;&lt; &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">chiselwright at users.berlios.de</A>&gt; &gt;&gt;
+ 
+ =head1 LICENSE
+ 
+
+Modified: trunk/t/04_forumcode.t
+===================================================================
+--- trunk/t/04_forumcode.t	2007-07-04 22:15:00 UTC (rev 371)
++++ trunk/t/04_forumcode.t	2007-07-04 22:15:07 UTC (rev 372)
+@@ -23,6 +23,10 @@
+             in  =&gt; '[b]foo[/b]',
+             out =&gt; '&lt;b&gt;foo&lt;/b&gt;',
+         },
++        {
++            in  =&gt; '[b]foo',
++            out =&gt; '[b]foo',
++        },
+         # **foo** bold magic
+         {
+             in  =&gt; '**foo**',
+@@ -146,6 +150,23 @@
+ 
+         # colouring
+         {
++            in      =&gt; q{[colour=red]Red Text[/colour]},
++            out     =&gt; q{&lt;span style=&quot;color: red&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[colour=#FF0000]Red Text[/colour]},
++            out     =&gt; q{&lt;span style=&quot;color: #FF0000&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[colour=#F00]Red Text[/colour]},
++            out     =&gt; q{&lt;span style=&quot;color: #F00&quot;&gt;Red Text&lt;/span&gt;},
++        },
++        {
++            in      =&gt; q{[colour=OrAnge]OrAnge Text[/colour]},
++            out     =&gt; q{&lt;span style=&quot;color: OrAnge&quot;&gt;OrAnge Text&lt;/span&gt;},
++        },
++        # coloring - for the Merkins
++        {
+             in      =&gt; q{[color=red]Red Text[/color]},
+             out     =&gt; q{&lt;span style=&quot;color: red&quot;&gt;Red Text&lt;/span&gt;},
+         },
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000259.html">[Parley-svn] r371 - / trunk/lib/Template/Plugin trunk/t
+</A></li>
+	<LI>Next message: <A HREF="000261.html">[Parley-svn] r373 - / trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#260">[ date ]</a>
+              <a href="thread.html#260">[ thread ]</a>
+              <a href="subject.html#260">[ subject ]</a>
+              <a href="author.html#260">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

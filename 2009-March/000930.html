@@ -1,0 +1,372 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r1048 - / trunk/lib/Parley/I18N trunk/root/base/search
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2009-March/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1048%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/search&In-Reply-To=%3C200903012051.n21KpubR022700%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000929.html">
+   <LINK REL="Next"  HREF="000931.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r1048 - / trunk/lib/Parley/I18N trunk/root/base/search</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r1048%20-%20/%20trunk/lib/Parley/I18N%20trunk/root/base/search&In-Reply-To=%3C200903012051.n21KpubR022700%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r1048 - / trunk/lib/Parley/I18N trunk/root/base/search">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Sun Mar  1 21:51:56 CET 2009</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000929.html">[Parley-svn] r1047 - / trunk/lib/Parley/Controller
+</A></li>
+        <LI>Next message: <A HREF="000931.html">[Parley-svn] r1049 - / trunk/todo.i18n
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#930">[ date ]</a>
+              <a href="thread.html#930">[ thread ]</a>
+              <a href="subject.html#930">[ subject ]</a>
+              <a href="author.html#930">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2009-03-01 21:51:55 +0100 (Sun, 01 Mar 2009)
+New Revision: 1048
+
+Modified:
+   /
+   trunk/lib/Parley/I18N/i_default.po
+   trunk/root/base/search/advanced
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r9202 at wiggin</A>:  chisel | 2009-02-27 07:26:15 +0000
+ + add i18n phrases for adv.search
+ / make adv.search page look a bit better
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9201
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:9202
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/I18N/i_default.po
+===================================================================
+--- trunk/lib/Parley/I18N/i_default.po	2009-03-01 20:51:37 UTC (rev 1047)
++++ trunk/lib/Parley/I18N/i_default.po	2009-03-01 20:51:55 UTC (rev 1048)
+@@ -19,6 +19,12 @@
+ msgid &quot;%quant(%1,view)&quot;
+ msgstr &quot;%quant(%1,view,views)&quot;
+ 
++msgid &quot;SEARCH FOR MESSAGES MATCHING&quot;
++msgstr &quot;Search for messages matching&quot;
++
++msgid &quot;OF THE FOLLOWING CRITERIA&quot;
++msgstr &quot;of the following criteria&quot;
++
+ msgid &quot;404 Not Found&quot;
+ msgstr &quot;404 Not Found&quot;
+ 
+@@ -76,9 +82,18 @@
+ msgid &quot;An error has occurred&quot;
+ msgstr &quot;An error has occurred&quot;
+ 
++msgid &quot;ALL&quot;
++msgstr &quot;all&quot;
++
++msgid &quot;ANY&quot;
++msgstr &quot;any&quot;
++
+ msgid &quot;AUTHENTICATION FAILED&quot;
+ msgstr &quot;Unable to authenticate the supplied login credentials&quot;
+ 
++msgid &quot;AUTHORS_NAME&quot;
++msgstr &quot;Author's Name&quot;
++
+ msgid &quot;Avatar&quot;
+ msgstr &quot;Avatar&quot;
+ 
+@@ -100,6 +115,9 @@
+ msgid &quot;Confirm Password&quot;
+ msgstr &quot;Confirm Password&quot;
+ 
++msgid &quot;CONTAINS&quot;
++msgstr &quot;contains&quot;
++
+ msgid &quot;Contents&quot;
+ msgstr &quot;Contents&quot;
+ 
+@@ -205,6 +223,9 @@
+ msgid &quot;Forgotten Password&quot;
+ msgstr &quot;Forgotten Password&quot;
+ 
++msgid &quot;FORUM&quot;
++msgstr &quot;Forum&quot;
++
+ msgid &quot;Forum&quot;
+ msgstr &quot;Forum&quot;
+ 
+@@ -267,6 +288,9 @@
+ msgid &quot;IP Logged&quot;
+ msgstr &quot;IP Logged&quot;
+ 
++msgid &quot;IS&quot;
++msgstr &quot;is&quot;
++
+ msgid &quot;Last&quot;
+ msgstr &quot;Last&quot;
+ 
+@@ -378,6 +402,9 @@
+ msgid &quot;Main Page&quot;
+ msgstr &quot;Main Page&quot;
+ 
++msgid &quot;MESSAGE&quot;
++msgstr &quot;Message&quot;
++
+ msgid &quot;Message&quot;
+ msgstr &quot;Message&quot;
+ 
+@@ -534,6 +561,9 @@
+ msgid &quot;people&quot;
+ msgstr &quot;people&quot;
+ 
++msgid &quot;POSTED&quot;
++msgstr &quot;Posted&quot;
++
+ msgid &quot;posted by&quot;
+ msgstr &quot;posted by&quot;
+ 
+@@ -720,6 +750,9 @@
+ msgid &quot;Subject&quot;
+ msgstr &quot;Subject&quot;
+ 
++msgid &quot;SUBJECT&quot;
++msgstr &quot;Subject&quot;
++
+ msgid &quot;Summary of Changes&quot;
+ msgstr &quot;Summary of Changes&quot;
+ 
+@@ -893,7 +926,27 @@
+ 
+ 
+ # UNITS OF TIME
++msgid &quot;AT ANY TIME&quot;
++msgstr &quot;at any time&quot;
+ 
++msgid &quot;IN THE LAST HOUR&quot;
++msgstr &quot;in the last hour&quot;
++
++msgid &quot;IN THE LAST DAY&quot;
++msgstr &quot;in the last day&quot;
++
++msgid &quot;IN THE LAST MONTH&quot;
++msgstr &quot;in the last month&quot;
++
++msgid &quot;IN THE LAST SIX MONTHS&quot;
++msgstr &quot;in the last six months&quot;
++
++msgid &quot;IN THE LAST YEAR&quot;
++msgstr &quot;in the last year&quot;
++
++msgid &quot;OVER A YEAR AGO&quot;
++msgstr &quot;over a year ago&quot;
++
+ msgid &quot;second&quot;
+ msgstr &quot;second&quot;
+ 
+
+Modified: trunk/root/base/search/advanced
+===================================================================
+--- trunk/root/base/search/advanced	2009-03-01 20:51:37 UTC (rev 1047)
++++ trunk/root/base/search/advanced	2009-03-01 20:51:55 UTC (rev 1048)
+@@ -1,62 +1,105 @@
+ &lt;h1&gt;Search Forums&lt;/h1&gt;
+ 
+-&lt;form method=&quot;get&quot; action=&quot;[%c.uri_for('/search/advanced')%]&quot;&gt;
++&lt;form method=&quot;get&quot; action=&quot;[%c.uri_for('/search/advanced')%]&quot; id=&quot;advanced_search&quot;&gt;
+ 
+-Search for messages matching
+-&lt;select name=&quot;match_type&quot;&gt;
+-    &lt;option value=&quot;any&quot;&gt;any&lt;/option&gt;
+-    &lt;option value=&quot;all&quot;&gt;all&lt;/option&gt;
++[% BLOCK search_type %]
++&lt;select name=&quot;[%name%]&quot;&gt;
++    &lt;option value=&quot;contains&quot;&gt;[%l('CONTAINS')%]&lt;/option&gt;
++    &lt;option value=&quot;exact&quot;&gt;[%l('IS')%]&lt;/option&gt;
+ &lt;/select&gt;
+-of the following criteria:
+-&lt;br /&gt;
++[% END %]
+ 
+-Subject
+-[% INCLUDE search_type name=&quot;subject_search_type&quot; %]
+-&lt;input type=&quot;text&quot; name=&quot;subject_search_terms&quot; /&gt;
+-&lt;br /&gt;
++    [%l('SEARCH FOR MESSAGES MATCHING')%]
++    &lt;select name=&quot;match_type&quot;&gt;
++        &lt;option value=&quot;any&quot;&gt;[%l('ANY')%]&lt;/option&gt;
++        &lt;option value=&quot;all&quot;&gt;[%l('ALL')%]&lt;/option&gt;
++    &lt;/select&gt;
++    [%l('OF THE FOLLOWING CRITERIA')%]:
+ 
+-Message
+-[% INCLUDE search_type name=&quot;message_search_type&quot; %]
+-&lt;input type=&quot;text&quot; name=&quot;message_search_terms&quot; /&gt;
+-&lt;br /&gt;
++    &lt;div class=&quot;yui-gf top_padded&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            [%l('SUBJECT')%]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            [% INCLUDE search_type name=&quot;subject_search_type&quot; %]
++            &lt;input type=&quot;text&quot; name=&quot;subject_search_terms&quot; /&gt;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-Author's name
+-[% INCLUDE search_type name=&quot;author_search_type&quot; %]
+-&lt;input type=&quot;text&quot; name=&quot;author_search_terms&quot; /&gt;
+-&lt;br /&gt;
++    &lt;div class=&quot;yui-gf&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            [%l('MESSAGE')%]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            [% INCLUDE search_type name=&quot;message_search_type&quot; %]
++            &lt;input type=&quot;text&quot; name=&quot;message_search_terms&quot; /&gt;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-Posted
+-&lt;select name=&quot;search_post_date&quot;&gt;
+-    &lt;option value=&quot;&quot;&gt;at any time&lt;/option&gt;
+-    &lt;option value=&quot;last_hour&quot;&gt;in the last hour&lt;/option&gt;
+-    &lt;option value=&quot;last_day&quot;&gt;in the last day&lt;/option&gt;
+-    &lt;option value=&quot;last_month&quot;&gt;in the last month&lt;/option&gt;
+-    &lt;option value=&quot;last_six_months&quot;&gt;in the last six months&lt;/option&gt;
+-    &lt;option value=&quot;last_year&quot;&gt;in the last year&lt;/option&gt;
+-    &lt;option value=&quot;over_a_year&quot;&gt;over a year ago&lt;/option&gt;
+-&lt;/select&gt;
+-&lt;br /&gt;
++    &lt;div class=&quot;yui-gf&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            [%l('AUTHORS_NAME')%]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            [% INCLUDE search_type name=&quot;author_search_type&quot; %]
++            &lt;input type=&quot;text&quot; name=&quot;author_search_terms&quot; /&gt;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-Forum:
+-[% IF available_forums %]
+-&lt;select id=&quot;search_forum&quot; name=&quot;search_forum&quot; multiple=&quot;multiple&quot;&gt;
+-[% SET dummy=available_forums.reset %]
+-&lt;optgroup label=&quot;[%l('Forums')%]&quot;&gt;
+-[% WHILE (forum = available_forums.next) %]
+-&lt;option value=&quot;[% forum.id %]&quot;&gt;[% forum.name %]&lt;/option&gt;
+-[% END %]
+-&lt;/select&gt;
+-[% END %]
++    &lt;div class=&quot;yui-gf&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            [%l('POSTED')%]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;select name=&quot;search_post_date&quot;&gt;
++                &lt;option value=&quot;&quot;&gt;[%l('AT ANY TIME')%]&lt;/option&gt;
++                &lt;option value=&quot;last_hour&quot;&gt;[%l('IN THE LAST HOUR')%]&lt;/option&gt;
++                &lt;option value=&quot;last_day&quot;&gt;[%l('IN THE LAST DAY')%]&lt;/option&gt;
++                &lt;option value=&quot;last_month&quot;&gt;[%l('IN THE LAST MONTH')%]&lt;/option&gt;
++                &lt;option value=&quot;last_six_months&quot;&gt;[%l('IN THE LAST SIX MONTHS')%]&lt;/option&gt;
++                &lt;option value=&quot;last_year&quot;&gt;[%l('IN THE LAST YEAR')%]&lt;/option&gt;
++                &lt;option value=&quot;over_a_year&quot;&gt;[%l('OVER A YEAR AGO')%]&lt;/option&gt;
++            &lt;/select&gt;
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-&lt;input type=&quot;submit&quot; value=&quot;Search&quot; /&gt;
++    &lt;div style=&quot;background-color:#ccc;margin-top:5px;margin-bottom:5px;&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
+ 
+-[% PROCESS search/results %]
++    &lt;div class=&quot;yui-gf&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            [%l('FORUM')%]
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            [% IF available_forums %]
++            &lt;select id=&quot;search_forum&quot; name=&quot;search_forum&quot; multiple=&quot;multiple&quot; class=&quot;multiple&quot;&gt;
++                [% SET dummy=available_forums.reset %]
++                &lt;optgroup label=&quot;[%l('Forums')%]&quot;&gt;
++                [% WHILE (forum = available_forums.next) %]
++                &lt;option value=&quot;[% forum.id %]&quot;&gt;[% forum.name %]&lt;/option&gt;
++                [% END %]
++            &lt;/select&gt;
++            [% END %]
++        &lt;/div&gt;
++    &lt;/div&gt;
+ 
+-[% BLOCK search_type %]
+-&lt;select name=&quot;[%name%]&quot;&gt;
+-    &lt;option value=&quot;contains&quot;&gt;contains&lt;/option&gt;
+-    &lt;option value=&quot;exact&quot;&gt;is&lt;/option&gt;
+-&lt;/select&gt;
+-[% END %]
++    &lt;div style=&quot;background-color:#ccc;margin-top:5px;margin-bottom:5px;&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
+ 
++    &lt;div class=&quot;yui-gf&quot;&gt;
++        &lt;div class=&quot;yui-u first align_right&quot;&gt;
++            &nbsp;
++        &lt;/div&gt;
++        &lt;div class=&quot;yui-u&quot;&gt;
++            &lt;input type=&quot;submit&quot; value=&quot;[%l('Search')%]&quot; /&gt;
++        &lt;/div&gt;
++    &lt;/div&gt;
++
++    &lt;div style=&quot;background-color:#ccc;margin-top:5px;margin-bottom:5px;&quot;&gt;
++        &nbsp;
++    &lt;/div&gt;
+ &lt;/form&gt;
++
++[% PROCESS search/results %]
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000929.html">[Parley-svn] r1047 - / trunk/lib/Parley/Controller
+</A></li>
+	<LI>Next message: <A HREF="000931.html">[Parley-svn] r1049 - / trunk/todo.i18n
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#930">[ date ]</a>
+              <a href="thread.html#930">[ thread ]</a>
+              <a href="subject.html#930">[ subject ]</a>
+              <a href="author.html#930">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

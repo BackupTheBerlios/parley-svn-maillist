@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r676 - / trunk/root/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-November/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r676%20-%20/%20trunk/root/base&In-Reply-To=%3C200711261955.lAQJtJCX022048%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000563.html">
+   <LINK REL="Next"  HREF="000565.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r676 - / trunk/root/base</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r676%20-%20/%20trunk/root/base&In-Reply-To=%3C200711261955.lAQJtJCX022048%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r676 - / trunk/root/base">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Mon Nov 26 20:55:19 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000563.html">[Parley-svn] r675 - / trunk/root/base/shared
+</A></li>
+        <LI>Next message: <A HREF="000565.html">[Parley-svn] r677 - / trunk/root/base trunk/root/base/forum	trunk/root/base/shared trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#564">[ date ]</a>
+              <a href="thread.html#564">[ thread ]</a>
+              <a href="subject.html#564">[ subject ]</a>
+              <a href="author.html#564">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-11-26 20:55:19 +0100 (Mon, 26 Nov 2007)
+New Revision: 676
+
+Modified:
+   /
+   trunk/root/base/footer
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r4281 at wiggin</A>:  chisel | 2007-11-26 10:28:34 +0000
+ / general tidying up, and moved script based PROCESS files to end of content
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4280
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:4281
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/root/base/footer
+===================================================================
+--- trunk/root/base/footer	2007-11-26 19:54:43 UTC (rev 675)
++++ trunk/root/base/footer	2007-11-26 19:55:19 UTC (rev 676)
+@@ -1,39 +1,27 @@
+ &lt;!-- Footer : Start --&gt;
+-                &lt;/div&gt;&lt;!-- content div --&gt;
+-            &lt;/div&gt;&lt;!-- wrapper div --&gt;
++            &lt;/div&gt;&lt;!-- id=&quot;bd&quot; --&gt;
+ 
+-            &lt;div id=&quot;navigation&quot;&gt;
+-            &lt;p&gt; &nbsp; &lt;/p&gt;
+-            &lt;/div&gt;&lt;!-- navigation div --&gt;
+-
+-            &lt;div id=&quot;extra&quot;&gt;
+-            &lt;p&gt; &nbsp; &lt;/p&gt;
+-                [%# PROCESS shared/user_status %]
+-            &lt;/div&gt;&lt;!-- extra div --&gt;
+-
+-            &lt;div id=&quot;footer&quot;&gt;
+-                &lt;span style=&quot;text-align:right;display:block;&quot;&gt;
++            &lt;div id=&quot;ft&quot;&gt;
++                &lt;p&gt;
+                 &lt;a href=&quot;<A HREF="http://developer.berlios.de/projects/parley">http://developer.berlios.de/projects/parley</A>&quot;&gt;Parley&lt;/a&gt;
+                 version ([%c.config.version%])
+                 &copy; Chisel Wright 2006-2007. [%l('All Rights Reserved')%].
+-                &lt;/span&gt;
+-            &lt;/div&gt;&lt;!-- footer div --&gt;
++                &lt;/p&gt;
++            &lt;/div&gt;&lt;!-- id=&quot;ft&quot; --&gt;
+ 
+-
+-            &lt;span style=&quot;display: block; float: right; margin-right: 20px;&quot;&gt;
+-            &lt;a href=&quot;<A HREF="http://catalystframework.org">http://catalystframework.org</A>&quot;&gt;&lt;img
+-                src=&quot;static/images/btn_88x31_powered.png&quot;
+-                width=&quot;88&quot;
+-                height=&quot;31&quot;
+-                alt=&quot;Powered By Catalyst&quot;
+-                style=&quot;border: none;&quot;
+-                /&gt;&lt;/a&gt;
++            &lt;span style=&quot;display: block; float: right; margin-right: 20px; margin-top: 5px;&quot;&gt;
++                &lt;a href=&quot;<A HREF="http://catalystframework.org">http://catalystframework.org</A>&quot;&gt;&lt;img
++                    src=&quot;static/images/btn_88x31_powered.png&quot;
++                    width=&quot;88&quot;
++                    height=&quot;31&quot;
++                    alt=&quot;Powered By Catalyst&quot;
++                    style=&quot;border: none;&quot;
++                    /&gt;&lt;/a&gt;
+             &lt;/span&gt;
+-
+-            [% INCLUDE shared/login_dialog %]
+-            [% INCLUDE shared/search_dialog %]
+-        &lt;/div&gt;&lt;!-- container div --&gt;
+-
++            [% PROCESS shared/search_dialog %]
++            [% PROCESS shared/small_loading_please_wait %]
++            [% PROCESS shared/login_dialog %]
++        &lt;/div&gt;&lt;!-- id=&quot;doc3&quot; --&gt;
+     &lt;/body&gt;
+ &lt;/html&gt;
+ &lt;!-- Footer : End --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000563.html">[Parley-svn] r675 - / trunk/root/base/shared
+</A></li>
+	<LI>Next message: <A HREF="000565.html">[Parley-svn] r677 - / trunk/root/base trunk/root/base/forum	trunk/root/base/shared trunk/root/css
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#564">[ date ]</a>
+              <a href="thread.html#564">[ thread ]</a>
+              <a href="subject.html#564">[ subject ]</a>
+              <a href="author.html#564">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,347 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Parley-svn] r364 - / trunk/lib/Parley/Controller trunk/root/base/my
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/parley-svn/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r364%20-%20/%20trunk/lib/Parley/Controller%20trunk/root/base/my&In-Reply-To=%3C200706252210.l5PMAYQP025323%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000251.html">
+   <LINK REL="Next"  HREF="000253.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Parley-svn] r364 - / trunk/lib/Parley/Controller trunk/root/base/my</H1>
+    <B>chiselwright at BerliOS</B> 
+    <A HREF="mailto:parley-svn%40lists.berlios.de?Subject=Re%3A%20%5BParley-svn%5D%20r364%20-%20/%20trunk/lib/Parley/Controller%20trunk/root/base/my&In-Reply-To=%3C200706252210.l5PMAYQP025323%40sheep.berlios.de%3E"
+       TITLE="[Parley-svn] r364 - / trunk/lib/Parley/Controller trunk/root/base/my">chiselwright at mail.berlios.de
+       </A><BR>
+    <I>Tue Jun 26 00:10:34 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000251.html">[Parley-svn] r363 - / trunk/lib/Parley/Controller/User
+</A></li>
+        <LI>Next message: <A HREF="000253.html">[Parley-svn] r365 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#252">[ date ]</a>
+              <a href="thread.html#252">[ thread ]</a>
+              <a href="subject.html#252">[ subject ]</a>
+              <a href="author.html#252">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: chiselwright
+Date: 2007-06-26 00:10:34 +0200 (Tue, 26 Jun 2007)
+New Revision: 364
+
+Modified:
+   /
+   trunk/lib/Parley/Controller/My.pm
+   trunk/root/base/my/tab_notifications
+   trunk/root/base/my/tab_time
+Log:
+ <A HREF="https://lists.berlios.de/mailman/listinfo/parley-svn">r3411 at wiggin</A>:  chisel | 2007-06-21 09:20:00 +0100
+ / modify the way we process form submissions for preferences and begin to factor out some common elements
+ / rename DFV 'timezone' profile to 'time_format' and set some default values
+ + new DFV profile for 'notifications'
+ + add form_name hidden field to template(s) so we know which form to process
+ / factor out handling for time_format preferences (into _process_form_time_format())
+ + added _form_data_valid() to factor out common DFV checks, i.e. has_missing() and has_invalid()
+ + added _process_form_notifications() to handle notification preference changes
+ / remove &quot;disabled&quot; attribute from notification preference check boxes
+
+
+
+Property changes on: 
+___________________________________________________________________
+Name: svk:merge
+   - 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3410
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+   + 6a361f96-f029-0410-94f8-848cdd0f6ccf:/local/parley:3411
+6fba2e3f-c318-0410-85fa-910d1bc53201:/local/parley:5151
+c0683b51-46fc-0310-adae-a083e7ee0929:/local/berlios/parley:15762
+f1659af6-751b-0410-a472-c93ec2bf8afc:/local/parley:1222
+
+Modified: trunk/lib/Parley/Controller/My.pm
+===================================================================
+--- trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:15 UTC (rev 363)
++++ trunk/lib/Parley/Controller/My.pm	2007-06-25 22:10:34 UTC (rev 364)
+@@ -9,8 +9,15 @@
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ my %dfv_profile_for = (
+-    # DFV validation profile for adding a new topic
+-    timezone =&gt; {
++    # DFV validation profile for preferences
++    time_format =&gt; {
++        # make sure we get *something* for checkboxes
++        # (which don't submit anything at all when unchecked)
++        defaults =&gt; {
++            use_utc     =&gt; 0,
++            show_tz     =&gt; 0,
++        },
++
+         require_some =&gt; {
+             tz_data =&gt; [ 1, qw(use_utc selectZone) ],
+         },
+@@ -28,6 +35,22 @@
+             },
+         },
+     },
++
++    notifications =&gt; {
++        # make sure we get *something* for checkboxes
++        # (which don't submit anything at all when unchecked)
++        defaults =&gt; {
++            watch_on_post       =&gt; 0,
++            notify_thread_watch =&gt; 0,
++        },
++
++        required =&gt; [
++            qw(
++                watch_on_post
++                notify_thread_watch
++            )
++        ],
++    },
+ );
+ 
+ # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -135,33 +158,120 @@
+ 
+ sub update :Path('/my/preferences/update') {
+     my ($self, $c) = @_;
++    my $form_name = $c-&gt;request-&gt;param('form_name');
++
+     # use the my/preferences template
+     $c-&gt;stash-&gt;{template} = 'my/preferences';
+ 
+-    # return to the right tab
+-    # use session flash, or we lose the info with the redirect
+-    $c-&gt;flash-&gt;{show_pref_tab} = 'tab_time';
++    # make sure the form name matches something we have a DFV profile for
++    if (not exists $dfv_profile_for{ $form_name }) {
++        $c-&gt;stash-&gt;{error}{message} = &quot;no such form: $form_name&quot;;
++        return;
++    }
+ 
+-    # are we updating TZ information?
+-    # validate the form data
++    # validate the specified form
+     $c-&gt;form(
+-        $dfv_profile_for{timezone}
++        $dfv_profile_for{ $form_name }
+     );
++
++    # are we updating TZ preferences?
++    if ('time_format' eq $form_name) {
++        # return to the right tab
++        # use session flash, or we lose the info with the redirect
++        $c-&gt;flash-&gt;{show_pref_tab} = 'tab_time';
++
++        $self-&gt;_process_form_time_format( $c );
++    }
++    # are we updating notification preferences?
++    elsif ('notifications' eq $form_name) {
++        # return to the right tab
++        # use session flash, or we lose the info with the redirect
++        $c-&gt;flash-&gt;{show_pref_tab} = 'tab_notify';
++
++        $self-&gt;_process_form_notifications( $c );
++    }
++
++    # otherwise we haven't decided how to handle the specified form ...
++    else {
++        $c-&gt;stash-&gt;{error}{message} = &quot;don't know how to handle: $form_name&quot;;
++        return;
++    }
++
++    return;
++}
++
++
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++# Private Methods
++# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++sub _form_data_valid {
++    my ($self, $c) = @_;
++
+     # deal with missing/invalid fields
+     if ($c-&gt;form-&gt;has_missing()) {
+         $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
+         foreach my $f ( $c-&gt;form-&gt;missing ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
++
++        return; # invalid form data
+     }
+     elsif ($c-&gt;form-&gt;has_invalid()) {
+         $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
+         foreach my $f ( $c-&gt;form-&gt;invalid ) {
+             push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
+         }
++
++        return; # invalid form data
+     }
+ 
+     # otherwise, the form data is ok ...
++    return 1;
++}
++
++sub _process_form_notifications {
++    my ($self, $c) = @_;
++
++    if (not $self-&gt;_form_data_valid($c)) {
++        return;
++    }
++
++    # Automatically add watches for new posts?
++    $c-&gt;_authed_user()-&gt;preference()-&gt;watch_on_post(
++        $c-&gt;form-&gt;valid('watch_on_post')
++    );
++
++    # Receive email notification for watched threads
++    $c-&gt;_authed_user()-&gt;preference()-&gt;notify_thread_watch(
++        $c-&gt;form-&gt;valid('notify_thread_watch')
++    );
++
++    # store changes
++    $c-&gt;_authed_user()-&gt;preference()-&gt;update;
++
++    return;
++}
++
++
++sub _process_form_time_format {
++    my ($self, $c) = @_;
++
++    # deal with missing/invalid fields
++    if ($c-&gt;form-&gt;has_missing()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{You must fill in all the required fields};
++        foreach my $f ( $c-&gt;form-&gt;missing ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++    elsif ($c-&gt;form-&gt;has_invalid()) {
++        $c-&gt;stash-&gt;{view}{error}{message} = q{One or more fields are invalid};
++        foreach my $f ( $c-&gt;form-&gt;invalid ) {
++            push @{ $c-&gt;stash-&gt;{view}{error}{messages} }, $f;
++        }
++    }
++
++    # otherwise, the form data is ok ...
+     else {
+         $c-&gt;log-&gt;debug(
+             ref($c-&gt;_authed_user()-&gt;preference())
+@@ -198,11 +308,6 @@
+     return;
+ }
+ 
+-
+-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-# Private Methods
+-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+ =head1 NAME
+ 
+ Parley::Controller::My - Catalyst Controller
+
+Modified: trunk/root/base/my/tab_notifications
+===================================================================
+--- trunk/root/base/my/tab_notifications	2007-06-25 22:10:15 UTC (rev 363)
++++ trunk/root/base/my/tab_notifications	2007-06-25 22:10:34 UTC (rev 364)
+@@ -1,19 +1,30 @@
+ &lt;!-- preferences : notification tab --&gt;
+ 
+-&lt;table class=&quot;prefs_notification&quot;&gt;
+-    &lt;tbody&gt;
+-        &lt;tr&gt;
+-            &lt;td&gt;
+-                &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %] disabled=&quot;true&quot; /&gt;
+-                Automatically add watches for new posts
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-        &lt;tr&gt;
+-            &lt;td&gt;
+-                &lt;input type=&quot;checkbox&quot; name=&quot;notify_thread_watch&quot; value=&quot;1&quot; [% IF authed_user.preference.notify_thread_watch %]checked=&quot;checked&quot; [% END %] disabled=&quot;true&quot; /&gt;
+-                Recieve email notification for watched threads
+-            &lt;/td&gt;
+-        &lt;/tr&gt;
+-    &lt;/tbody&gt;
+-&lt;/table&gt;
++&lt;form action=&quot;my/preferences/update&quot; method=&quot;POST&quot; name=&quot;notifications&quot;&gt;
++    &lt;input type=&quot;hidden&quot; name=&quot;form_name&quot; value=&quot;notifications&quot;&gt;
++    &lt;table class=&quot;prefs_notification&quot;&gt;
++        &lt;tbody&gt;
++            &lt;tr&gt;
++                &lt;td&gt;
++                    &lt;input type=&quot;checkbox&quot; name=&quot;watch_on_post&quot; value=&quot;1&quot; [% IF authed_user.preference.watch_on_post %]checked=&quot;checked&quot; [% END %] /&gt;
++                    Automatically add watches for new posts
++                &lt;/td&gt;
++            &lt;/tr&gt;
++            &lt;tr&gt;
++                &lt;td&gt;
++                    &lt;input type=&quot;checkbox&quot; name=&quot;notify_thread_watch&quot; value=&quot;1&quot; [% IF authed_user.preference.notify_thread_watch %]checked=&quot;checked&quot; [% END %] /&gt;
++                    Receive email notification for watched threads
++                &lt;/td&gt;
++            &lt;/tr&gt;
++
++            &lt;tr&gt;&lt;td colspan=&quot;2&quot;&gt;&nbsp;&lt;/td&gt;&lt;/tr&gt;
++
++            &lt;tr&gt;
++                &lt;td colspan=&quot;2&quot; style=&quot;text-align: center;&quot;&gt;
++                &lt;input type=&quot;submit&quot; value=&quot;Update&quot; name=&quot;update&quot; class=&quot;input_button&quot; /&gt;
++                &lt;/td&gt;
++            &lt;/tr&gt;
++        &lt;/tbody&gt;
++    &lt;/table&gt;
++&lt;/form&gt;
+ &lt;!-- (end) preferences : notification tab --&gt;
+
+Modified: trunk/root/base/my/tab_time
+===================================================================
+--- trunk/root/base/my/tab_time	2007-06-25 22:10:15 UTC (rev 363)
++++ trunk/root/base/my/tab_time	2007-06-25 22:10:34 UTC (rev 364)
+@@ -1,7 +1,8 @@
+ &lt;!-- preferences : time tab --&gt;
+ &lt;p&gt;Select your desired location. This will be used to display times using your local timezone.&lt;/p&gt;
+ 
+-&lt;form action=&quot;my/preferences/update&quot; method=&quot;POST&quot; name=&quot;timezone&quot;&gt;
++&lt;form action=&quot;my/preferences/update&quot; method=&quot;POST&quot; name=&quot;time_format&quot;&gt;
++    &lt;input type=&quot;hidden&quot; name=&quot;form_name&quot; value=&quot;time_format&quot;&gt;
+     &lt;table width=&quot;550&quot; border=&quot;1&quot;&gt;
+         [% IF tz_message %]
+         &lt;!-- Message to user --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000251.html">[Parley-svn] r363 - / trunk/lib/Parley/Controller/User
+</A></li>
+	<LI>Next message: <A HREF="000253.html">[Parley-svn] r365 - / trunk/lib/Parley/Controller
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#252">[ date ]</a>
+              <a href="thread.html#252">[ thread ]</a>
+              <a href="subject.html#252">[ subject ]</a>
+              <a href="author.html#252">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/parley-svn">More information about the Parley-svn
+mailing list</a><br>
+</body></html>
